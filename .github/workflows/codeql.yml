@@ -8,6 +8,7 @@ on:
   schedule:
     # Weekly scan, Monday 06:00 UTC. Catches advisories published mid-week.
     - cron: "0 6 * * 1"
+  workflow_dispatch:
 
 permissions:
   actions: read
