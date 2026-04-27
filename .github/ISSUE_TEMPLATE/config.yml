@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/RajuPrasai/NepDateWidget/security/advisories/new
+    about: Report security issues privately. Do not open a public issue for security vulnerabilities.
+  - name: Question or discussion
+    url: https://github.com/RajuPrasai/NepDateWidget/discussions
+    about: For "how do I..." questions and general discussion, use Discussions instead of Issues.

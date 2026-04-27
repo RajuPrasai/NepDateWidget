@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#dc3f10" />
+  <title>NepDate Widget - Nepali Calendar for Your Windows Desktop</title>
+  <meta name="description" content="A tiny Nepali (Bikram Sambat) calendar that lives on your Windows taskbar. Date conversion, EMI, password generator, ping, unit conversion, reminders and more, in one widget." />
+  <link rel="canonical" href="https://rajuprasai.github.io/NepDateWidget/" />
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" href="assets/logo.png?v=2" />
+  <link rel="apple-touch-icon" href="assets/logo.png?v=2" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="NepDate Widget - Nepali Calendar for Your Windows Desktop" />
+  <meta property="og:description" content="A tiny Nepali calendar on your taskbar, with every Nepali tool you actually use." />
+  <meta property="og:image" content="https://rajuprasai.github.io/NepDateWidget/assets/screenshots/Minibar.png" />
+  <meta property="og:url" content="https://rajuprasai.github.io/NepDateWidget/" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "NepDate Widget",
+    "operatingSystem": "Windows 10 1903+, Windows 11",
+    "applicationCategory": "DesktopApplication",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "author": { "@type": "Person", "name": "Raju Prasai" },
+    "url": "https://rajuprasai.github.io/NepDateWidget/",
+    "license": "https://opensource.org/licenses/MIT"
+  }
+  </script>
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Inline theme bootstrap. Resolves stored preference (light/dark/system)
+       to a concrete data-theme so first paint matches the final state. -->
+  <script>
+    (function () {
+      try {
+        var p = localStorage.getItem('nepdate-theme');
+        if (p !== 'light' && p !== 'dark' && p !== 'system') p = 'system';
+        var resolved = p === 'system'
+          ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : p;
+        document.documentElement.setAttribute('data-theme', resolved);
+        document.documentElement.setAttribute('data-theme-pref', p);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-theme-pref', 'system');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="index.html">
+        <img class="logo-img" src="assets/logo.png?v=2" alt="NepDate Widget logo" width="30" height="30" />
+        <span>NepDate Widget</span>
+      </a>
+      <nav class="nav-main" aria-label="Primary">
+        <a href="index.html" class="active">Home</a>
+        <a href="features.html">Features</a>
+        <a href="gallery.html">Screenshots</a>
+        <a href="download.html">Download</a>
+        <a href="changelog.html">Changelog</a>
+        <a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a>
+      </nav>
+      <div class="header-right">
+                <a class="btn btn-momo btn-sm" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener" aria-label="Buy me a momo">
+          <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z"/><path d="M9 6.6c.4-1.1 1.5-1.9 2.7-1.9.4 0 .8.1 1.2.3-.4.4-.7.9-.9 1.5l-.2.7c-.4-.1-.8-.3-1.2-.3-.6 0-1.1.2-1.6.5l-.5-.4c.2-.2.3-.3.5-.4Zm6 0 .5-.4c.2.1.3.2.5.4-.4-.3-1-.5-1.6-.5-.4 0-.8.2-1.2.3l-.2-.7c-.2-.6-.5-1.1-.9-1.5.4-.2.8-.3 1.2-.3 1.2 0 2.3.8 2.7 1.9-.3.3-.6.6-1 .8Z"/><path d="M12 4.5c0-.7.6-1.3 1.3-1.3.4 0 .7.1 1 .4-.3.6-.5 1.3-.5 2 0 .3 0 .7.1 1l-.7-.1c-.7 0-1.3-.6-1.3-1.3 0-.3.1-.5.1-.7Z"/><path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z"/></svg></span>
+          <span>Buy me a momo</span>
+        </a>
+        <a class="github-btn" href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener" aria-label="GitHub repository">
+          <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span>GitHub</span>
+        </a>
+        <div class="theme-switch" role="group" aria-label="Theme">
+          <button type="button" data-theme-value="light" aria-label="Light theme" title="Light">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button type="button" data-theme-value="dark" aria-label="Dark theme" title="Dark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn hamburger" aria-label="Open menu"><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="overlay"></div>
+  <nav class="mobile-nav" aria-label="Mobile">
+    <a href="index.html" class="active">Home</a>
+    <a href="features.html">Features</a>
+    <a href="gallery.html">Screenshots</a>
+    <a href="download.html">Download</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a>
+    <a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">Buy me a momo</a>
+  </nav>
+
+  <main id="main">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div>
+            <div class="chips" aria-label="Project facts">
+              <span class="chip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="8" height="8" rx="1"/><rect x="13" y="4" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg>
+                Windows 10 / 11
+              </span>
+              <span class="chip chip-success">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+                Free &amp; open source
+              </span>
+              <span class="chip">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                MIT License
+              </span>
+              <span class="chip chip-accent">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-12V5l-8-3-8 3v5c0 8 8 12 8 12z"/></svg>
+                Zero telemetry
+              </span>
+            </div><h1>
+              The Nepali calendar that <span class="grad">lives on your taskbar</span>.
+            </h1>
+            <p class="lede">
+              NepDate Widget is a tiny, always-on-screen mini bar that shows the current Bikram Sambat
+              and Gregorian date, time, and timezone. Click it to expand into a full calendar plus
+              every Nepali tool you actually use, from BS&nbsp;↔&nbsp;AD conversion and EMI to
+              ping, password generation, and reminders.
+            </p>
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="download.html">Download for Windows
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              </a>
+              <a class="btn btn-secondary" href="features.html">Tour the features</a>
+              <a class="btn btn-momo" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">
+                <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z"/><path d="M9 6.6c.4-1.1 1.5-1.9 2.7-1.9.4 0 .8.1 1.2.3-.4.4-.7.9-.9 1.5l-.2.7c-.4-.1-.8-.3-1.2-.3-.6 0-1.1.2-1.6.5l-.5-.4c.2-.2.3-.3.5-.4Zm6 0 .5-.4c.2.1.3.2.5.4-.4-.3-1-.5-1.6-.5-.4 0-.8.2-1.2.3l-.2-.7c-.2-.6-.5-1.1-.9-1.5.4-.2.8-.3 1.2-.3 1.2 0 2.3.8 2.7 1.9-.3.3-.6.6-1 .8Z"/><path d="M12 4.5c0-.7.6-1.3 1.3-1.3.4 0 .7.1 1 .4-.3.6-.5 1.3-.5 2 0 .3 0 .7.1 1l-.7-.1c-.7 0-1.3-.6-1.3-1.3 0-.3.1-.5.1-.7Z"/><path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z"/></svg></span>
+                Buy me a momo
+              </a>
+            </div>
+            <div class="hero-stats">
+              <div class="hero-stat"><span class="n">7</span><span class="l">Tabs</span></div>
+              <div class="hero-stat"><span class="n">20+</span><span class="l">Tools</span></div>
+              <div class="hero-stat"><span class="n">20</span><span class="l">Color Presets</span></div>
+              <div class="hero-stat"><span class="n">0<small style="font-size:.6em;color:var(--text-muted)">MB</small></span><span class="l">Telemetry</span></div>
+            </div>
+          </div>
+
+          <!-- Hero shot: screenshot collage (decorative, free-floating) -->
+          <div class="hero-collage" aria-label="Screenshot collage">
+            <div class="hc-glow"></div>
+            <div class="hc-item hc-tl" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="Loan EMI calculator" tabindex="0" role="button" aria-label="View Loan EMI calculator"><img src="assets/screenshots/tab-bank-emi.png" alt="Loan EMI calculator" loading="eager" /></div>
+            <div class="hc-item hc-tr" data-lightbox="assets/screenshots/tab-network-ping.png" data-caption="Network ping" tabindex="0" role="button" aria-label="View Network ping"><img src="assets/screenshots/tab-network-ping.png" alt="Network ping" loading="eager" /></div>
+            <div class="hc-item hc-bl" data-lightbox="assets/screenshots/tab-text-password.png" data-caption="Password generator" tabindex="0" role="button" aria-label="View Password generator"><img src="assets/screenshots/tab-text-password.png" alt="Password generator" loading="eager" /></div>
+            <div class="hc-item hc-br" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area unit conversion" tabindex="0" role="button" aria-label="View Area unit conversion"><img src="assets/screenshots/tab-unit-area.png" alt="Area unit conversion" loading="eager" /></div>
+            <div class="hc-item hc-side-l" data-lightbox="assets/screenshots/tab-date-convert.png" data-caption="BS - AD date conversion" tabindex="0" role="button" aria-label="View BS - AD date conversion"><img src="assets/screenshots/tab-date-convert.png" alt="BS - AD date conversion" loading="eager" /></div>
+            <div class="hc-item hc-side-r" data-lightbox="assets/screenshots/tab-more-reminder.png" data-caption="Reminders pinned to BS dates" tabindex="0" role="button" aria-label="View Reminders pinned to BS dates"><img src="assets/screenshots/tab-more-reminder.png" alt="Reminders pinned to BS dates" loading="eager" /></div>
+            <div class="hc-item hc-front" data-lightbox="assets/screenshots/tab-settings.png" data-caption="Settings: appearance, language, presets" tabindex="0" role="button" aria-label="View Settings: appearance, language, presets"><img src="assets/screenshots/tab-settings.png" alt="Settings: appearance, language, presets" loading="eager" /></div>
+            <div class="hc-item hc-hero" data-lightbox="assets/screenshots/tab-calander.png" data-caption="Bikram Sambat calendar" tabindex="0" role="button" aria-label="View Bikram Sambat calendar"><img src="assets/screenshots/tab-calander.png" alt="Bikram Sambat calendar" loading="eager" /></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mini Bar showcase -->
+    <section class="section section-flush" id="minibar">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">Always on screen</div>
+          <h2 class="section-title">A bar that fits where the clock would.</h2>
+          <p class="section-sub">
+            Two compact lines pinned to your taskbar. Each element toggles independently from settings,
+            so you keep only what matters. Click the bar to expand into the full app.
+          </p>
+        </div>
+      </div>
+
+      <!-- Full-bleed Windows 11 style taskbar mock -->
+      <div class="win-taskbar" role="img" aria-label="NepDate Widget on the Windows taskbar showing day, time, BS date, and AD date">
+        <div class="win-taskbar-tray" role="button" tabindex="0" title="Open calendar preview" aria-label="Open NepDate Widget calendar preview" data-lightbox="assets/screenshots/tab-calander.png" data-caption="Bikram Sambat month grid with tithi, holidays, and fiscal quarter">
+          <div class="wt-text">
+            <div class="wt-line wt-line-top">Wednesday <span class="wt-sep">|</span> Kathmandu <span class="wt-time">1:42 PM</span></div>
+            <div class="wt-line wt-line-bot"><strong>Baishakh 09, 2083</strong> <span class="wt-sep">|</span> <strong>Apr 22, 2026</strong></div>
+          </div>
+        </div>
+        <div class="win-taskbar-icons" aria-hidden="true">
+          <button class="wt-icon is-active" tabindex="-1" title="Start">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true">
+              <rect x="3"  y="3"  width="8" height="8" rx="1"/>
+              <rect x="13" y="3"  width="8" height="8" rx="1"/>
+              <rect x="3"  y="13" width="8" height="8" rx="1"/>
+              <rect x="13" y="13" width="8" height="8" rx="1"/>
+            </svg>
+          </button>
+          <button class="wt-icon" tabindex="-1" title="Search">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="6"/>
+              <line x1="20" y1="20" x2="15.5" y2="15.5"/>
+            </svg>
+          </button>
+          <button class="wt-icon" tabindex="-1" title="File Explorer">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 7.5C3 6.67 3.67 6 4.5 6h4l2 2h9c.83 0 1.5.67 1.5 1.5v8c0 .83-.67 1.5-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5V7.5Z"/>
+            </svg>
+          </button>
+          <button class="wt-icon" tabindex="-1" title="Browser">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="win-taskbar-clock" aria-hidden="true">
+          <div>1:42 PM</div>
+          <div>4/22/2026</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features grid -->
+    <section class="section" id="features" style="background:var(--bg-alt);">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">What's inside</div>
+          <h2 class="section-title">One widget. Every Nepali tool you actually use.</h2>
+          <p class="section-sub">
+            Built around the Nepali calendar but doesn't stop there. Conversions, finance, network,
+            text utilities, units, notes and reminders, all without leaving the widget.
+          </p>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+            <h3>Bikram Sambat Calendar</h3>
+            <p>Full BS month grid with English day numbers alongside, tithi, holidays, and the current fiscal quarter at a glance.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4M3 11v-1a4 4 0 014-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 01-4 4H3"/></svg></div>
+            <h3>Date Conversion</h3>
+            <p>BS ↔ AD in either direction, instantly. Long and short formats. Remembers your last direction.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+            <h3>Timezone Converter</h3>
+            <p>Compact labeled dropdowns like Kathmandu +05:45 and Singapore +08:00. One-click swap.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 3 5-8"/></svg></div>
+            <h3>Loan EMI &amp; Interest</h3>
+            <p>Monthly EMI with full amortization schedule. Multi-period simple interest with rate changes over time.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+            <h3>Password Generator</h3>
+            <p>A–Z, a–z, 0–9, symbols, and Nepali characters. Live strength meter on any password you paste in.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div>
+            <h3>Network Utilities</h3>
+            <p>My IP, ping, port scan, traceroute, whois, and DNS lookup, all baked into the widget.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+            <h3>Unit Conversion</h3>
+            <p>Local Nepali units like Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, plus weight and metric conversions.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
+            <h3>Text Tools</h3>
+            <p>Word count, Devanagari ↔ Romanized script conversion, Unicode helpers, and the password generator.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+            <h3>Notes &amp; Reminders</h3>
+            <p>One-shot or recurring reminders pinned to BS dates. Quick notes alongside, all stored locally.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg></div>
+            <h3>English &amp; नेपाली</h3>
+            <p>Switch the entire UI between English and Nepali instantly, no restart needed.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg></div>
+            <h3>20 Color Presets</h3>
+            <p>Forest, Ocean, Sunset, Cherry, Aurora, Midnight, Slate, Monochrome, Ember, Default. Each with light and dark variants.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
+            <h3>One small installer</h3>
+            <p>Single Windows installer. Per-user, no admin prompt, no telemetry. Quietly auto-updates in the background so you stay current without thinking about it.</p>
+          </div>
+        </div>
+
+        <div style="text-align:center; margin-top:36px;">
+          <a class="btn btn-secondary" href="features.html">See every feature in detail
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Powered by NepDate -->
+    <section class="section" id="powered">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">Built on</div>
+          <h2 class="section-title">Powered by NepDate</h2>
+          <p class="section-sub">
+            Every BS date, every conversion, every fiscal year calculation in this widget runs on
+            <strong>NepDate</strong>, the high performance Bikram Sambat library for .NET. Zero
+            allocations, nanosecond conversions, full calendar metadata.
+          </p>
+        </div>
+
+        <div class="crosslink-card">
+          <div class="ic ic-logo">
+            <img src="assets/logo.png?v=2" alt="NepDate logo" width="44" height="44" />
+          </div>
+          <div class="body">
+            <span class="label">.NET Library</span>
+            <h3>NepDate</h3>
+            <p>Drop-in Bikram Sambat support for any .NET application. Same author. Same quality bar.</p>
+          </div>
+          <div class="cta">
+            <a class="btn btn-primary" href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">
+              Visit NepDate
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" style="background:var(--bg-alt);">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">FAQ</div>
+          <h2 class="section-title">Quick answers</h2>
+        </div>
+
+        <div class="faq">
+          <div class="faq-item">
+            <button class="faq-q" type="button">What does NepDate Widget cost?</button>
+            <div class="faq-a"><div class="faq-a-inner"><p>Nothing. It's free, MIT licensed, and open source. If it saves you time, you can support development with the <strong>Buy me a momo</strong> button.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">Does it phone home or send any data?</button>
+            <div class="faq-a"><div class="faq-a-inner"><p>No. There is no telemetry, no analytics, no account, and no network calls except when you explicitly use the network tools (My IP, ping, scan, trace, whois, DNS). Your settings, notes, and reminders stay on your machine.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">Where is my data stored?</button>
+            <div class="faq-a"><div class="faq-a-inner"><p>In your local user profile under <code>%LocalAppData%\NepDateWidget</code>. Settings, notes, and reminders all live there. Nothing is written to system folders.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">Do I need to install anything?</button>
+            <div class="faq-a"><div class="faq-a-inner"><p>Just run the installer. It's a per-user install, so there's no UAC prompt, and the widget launches immediately. New versions arrive automatically in the background.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">What Windows versions are supported?</button>
+            <div class="faq-a"><div class="faq-a-inner"><p>Windows 10 and Windows 11.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">How is this different from the NepDate library?</button>
+            <div class="faq-a"><div class="faq-a-inner"><p><a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate</a> is a .NET library that other developers integrate into their own applications. NepDate Widget is the end-user desktop app for everyone else, and it uses NepDate internally for every BS date operation.</p></div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-q" type="button">Where can I report a bug or request a feature?</button>
+            <div class="faq-a"><div class="faq-a-inner"><p>On <a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">GitHub Issues</a>. Pull requests are welcome.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sponsor -->
+    <section class="section" id="sponsor">
+      <div class="container">
+        <div class="sponsor-card">
+          <div class="sponsor-ico" aria-hidden="true">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z"/><path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z"/><path d="M9 6c.5-1 1.6-1.6 2.7-1.6.5 0 1 .1 1.4.4-.5.5-.9 1.1-1.1 1.8l-.2.6c-.4-.1-.8-.2-1.2-.2-.6 0-1.2.2-1.6.5L8 7c.3-.4.6-.7 1-1Zm6 0 .5.6c.4.3 1 .5 1.6.5-.4-.3-1-.5-1.6-.5-.4 0-.8.1-1.2.2l-.2-.6c-.2-.7-.6-1.3-1.1-1.8.4-.3.9-.4 1.4-.4 1.1 0 2.2.6 2.6 1.6Z"/></svg>
+          </div>
+          <h3>Support NepDate Widget</h3>
+          <p>If the widget saves you time every day, consider chipping in a momo. It keeps NepDate and NepDate Widget free, ad-free, and actively maintained.</p>
+          <a class="btn btn-momo btn-lg" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">
+            <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z"/><path d="M9 6.6c.4-1.1 1.5-1.9 2.7-1.9.4 0 .8.1 1.2.3-.4.4-.7.9-.9 1.5l-.2.7c-.4-.1-.8-.3-1.2-.3-.6 0-1.1.2-1.6.5l-.5-.4c.2-.2.3-.3.5-.4Zm6 0 .5-.4c.2.1.3.2.5.4-.4-.3-1-.5-1.6-.5-.4 0-.8.2-1.2.3l-.2-.7c-.2-.6-.5-1.1-.9-1.5.4-.2.8-.3 1.2-.3 1.2 0 2.3.8 2.7 1.9-.3.3-.6.6-1 .8Z"/><path d="M12 4.5c0-.7.6-1.3 1.3-1.3.4 0 .7.1 1 .4-.3.6-.5 1.3-.5 2 0 .3 0 .7.1 1l-.7-.1c-.7 0-1.3-.6-1.3-1.3 0-.3.1-.5.1-.7Z"/><path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z"/></svg></span>
+            Buy me a momo
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="index.html" style="margin-bottom:12px;">
+            <img class="logo-img" src="assets/logo.png?v=2" alt="NepDate Widget logo" width="30" height="30" />
+            <span>NepDate Widget</span>
+          </a>
+          <p>A tiny Nepali calendar that lives on your Windows taskbar, with every Nepali tool you actually use.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="features.html">Features</a></li>
+            <li><a href="gallery.html">Screenshots</a></li>
+            <li><a href="download.html">Download</a></li>
+            <li><a href="changelog.html">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget/releases" target="_blank" rel="noopener">All Releases</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">Issues</a></li>
+            <li><a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">Sponsor</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>NepDate Family</h4>
+          <ul>
+            <li><a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a></li>
+            <li><a href="https://www.nuget.org/packages/NepDate/" target="_blank" rel="noopener">NepDate on NuGet</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDate" target="_blank" rel="noopener">NepDate on GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025–2026 NepDate Widget. MIT License.</span>
+        <span>Built with care for the Nepali desktop.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

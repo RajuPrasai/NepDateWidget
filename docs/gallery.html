@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#dc3f10" />
+  <title>Screenshots - NepDate Widget</title>
+  <meta name="description" content="Screenshots of NepDate Widget mini bar, calendar, date conversion, EMI, password generator, network tools, unit conversion, reminders, and settings." />
+  <link rel="canonical" href="https://rajuprasai.github.io/NepDateWidget/gallery.html" />
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" href="assets/logo.png?v=2" />
+  <link rel="apple-touch-icon" href="assets/logo.png?v=2" />
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- Inline theme bootstrap. Resolves stored preference (light/dark/system)
+       to a concrete data-theme so first paint matches the final state. -->
+  <script>
+    (function () {
+      try {
+        var p = localStorage.getItem('nepdate-theme');
+        if (p !== 'light' && p !== 'dark' && p !== 'system') p = 'system';
+        var resolved = p === 'system'
+          ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : p;
+        document.documentElement.setAttribute('data-theme', resolved);
+        document.documentElement.setAttribute('data-theme-pref', p);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-theme-pref', 'system');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="index.html">
+        <img class="logo-img" src="assets/logo.png?v=2" alt="NepDate Widget logo" width="30" height="30" />
+        <span>NepDate Widget</span>
+      </a>
+      <nav class="nav-main" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="features.html">Features</a>
+        <a href="gallery.html" class="active">Screenshots</a>
+        <a href="download.html">Download</a>
+        <a href="changelog.html">Changelog</a>
+        <a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a>
+      </nav>
+      <div class="header-right">
+                <a class="btn btn-momo btn-sm" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener" aria-label="Buy me a momo">
+          <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z"/><path d="M9 6.6c.4-1.1 1.5-1.9 2.7-1.9.4 0 .8.1 1.2.3-.4.4-.7.9-.9 1.5l-.2.7c-.4-.1-.8-.3-1.2-.3-.6 0-1.1.2-1.6.5l-.5-.4c.2-.2.3-.3.5-.4Zm6 0 .5-.4c.2.1.3.2.5.4-.4-.3-1-.5-1.6-.5-.4 0-.8.2-1.2.3l-.2-.7c-.2-.6-.5-1.1-.9-1.5.4-.2.8-.3 1.2-.3 1.2 0 2.3.8 2.7 1.9-.3.3-.6.6-1 .8Z"/><path d="M12 4.5c0-.7.6-1.3 1.3-1.3.4 0 .7.1 1 .4-.3.6-.5 1.3-.5 2 0 .3 0 .7.1 1l-.7-.1c-.7 0-1.3-.6-1.3-1.3 0-.3.1-.5.1-.7Z"/><path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z"/></svg></span>
+          <span>Buy me a momo</span>
+        </a>
+        <a class="github-btn" href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener" aria-label="GitHub repository">
+          <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span>GitHub</span>
+        </a>
+        <div class="theme-switch" role="group" aria-label="Theme">
+          <button type="button" data-theme-value="light" aria-label="Light theme" title="Light">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button type="button" data-theme-value="dark" aria-label="Dark theme" title="Dark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn hamburger" aria-label="Open menu"><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="overlay"></div>
+  <nav class="mobile-nav" aria-label="Mobile">
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="gallery.html" class="active">Screenshots</a>
+    <a href="download.html">Download</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a>
+    <a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">Buy me a momo</a>
+  </nav>
+
+  <main id="main">
+
+    <section class="hero" style="padding: 64px 0 24px;">
+      <div class="container">
+        <div style="max-width: 760px; margin: 0 auto; text-align: center;">
+          <div class="section-eyebrow">Screenshots</div>
+          <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 14px;">See NepDate Widget in action</h1>
+          <p class="lede" style="margin: 0 auto;">Click any image to open the lightbox. Use arrow keys to navigate.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top: 24px;">
+      <div class="container">
+
+        <h2 style="text-align:center; font-size: 1.3rem; margin: 0 0 24px; color: var(--text-muted);">Mini Bar</h2>
+        <div class="gallery" style="margin-bottom: 64px;">
+          <div class="shot" data-lightbox="assets/screenshots/Minibar.png" data-caption="Mini bar - day, time, BS date, AD date">
+            <img src="assets/screenshots/Minibar.png" alt="Mini bar - day, time, BS date, AD date" />
+            <div class="cap">Mini bar</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/minibar-with-windows-icons.png" data-caption="Mini bar sitting alongside the Windows taskbar icons">
+            <img src="assets/screenshots/minibar-with-windows-icons.png" alt="Mini bar in context with Windows taskbar" />
+            <div class="cap">Beside the Windows taskbar</div>
+          </div>
+        </div>
+
+        <h2 style="text-align:center; font-size: 1.3rem; margin: 0 0 24px; color: var(--text-muted);">Home - Calendar</h2>
+        <div class="gallery" style="margin-bottom: 64px;">
+          <div class="shot" data-lightbox="assets/screenshots/tab-calander.png" data-caption="Bikram Sambat month grid with tithi, holidays, and fiscal quarter">
+            <img src="assets/screenshots/tab-calander.png" alt="Calendar tab" />
+            <div class="cap">Calendar with tithi and festivals</div>
+          </div>
+        </div>
+
+        <h2 style="text-align:center; font-size: 1.3rem; margin: 0 0 24px; color: var(--text-muted);">Date - Convert, Days, Time</h2>
+        <div class="gallery" style="margin-bottom: 64px;">
+          <div class="shot" data-lightbox="assets/screenshots/tab-date-convert.png" data-caption="BS ↔ AD date conversion">
+            <img src="assets/screenshots/tab-date-convert.png" alt="Date convert" />
+            <div class="cap">Convert BS ↔ AD</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-date-days.png" data-caption="Add, subtract, and difference between BS dates">
+            <img src="assets/screenshots/tab-date-days.png" alt="Date days" />
+            <div class="cap">Add, subtract, and difference</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-date-time.png" data-caption="Timezone converter with compact dropdowns">
+            <img src="assets/screenshots/tab-date-time.png" alt="Timezone conversion" />
+            <div class="cap">Timezone converter</div>
+          </div>
+        </div>
+
+        <h2 style="text-align:center; font-size: 1.3rem; margin: 0 0 24px; color: var(--text-muted);">Bank - EMI &amp; Interest</h2>
+        <div class="gallery" style="margin-bottom: 64px;">
+          <div class="shot" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="Loan EMI calculator with full amortization schedule">
+            <img src="assets/screenshots/tab-bank-emi.png" alt="EMI" />
+            <div class="cap">EMI calculator</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-bank-interest.png" data-caption="Multi-period simple interest calculator">
+            <img src="assets/screenshots/tab-bank-interest.png" alt="Interest" />
+            <div class="cap">Multi-period interest</div>
+          </div>
+        </div>
+
+        <h2 style="text-align:center; font-size: 1.3rem; margin: 0 0 24px; color: var(--text-muted);">Text - Password, Word, Unicode, Script</h2>
+        <div class="gallery" style="margin-bottom: 64px;">
+          <div class="shot" data-lightbox="assets/screenshots/tab-text-password.png" data-caption="Password generator with live strength meter">
+            <img src="assets/screenshots/tab-text-password.png" alt="Password" />
+            <div class="cap">Password generator</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-text-word.png" data-caption="Word and character count">
+            <img src="assets/screenshots/tab-text-word.png" alt="Word count" />
+            <div class="cap">Word count</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-text-unicode.png" data-caption="Unicode helpers">
+            <img src="assets/screenshots/tab-text-unicode.png" alt="Unicode" />
+            <div class="cap">Unicode helpers</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-text-script.png" data-caption="Devanagari ↔ Romanized script conversion">
+            <img src="assets/screenshots/tab-text-script.png" alt="Script" />
+            <div class="cap">Script converter</div>
+          </div>
+        </div>
+
+        <h2 style="text-align:center; font-size: 1.3rem; margin: 0 0 24px; color: var(--text-muted);">Network - My IP, Ping</h2>
+        <div class="gallery" style="margin-bottom: 64px;">
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-myip.png" data-caption="My IP - public, private, and geolocation">
+            <img src="assets/screenshots/tab-network-myip.png" alt="My IP" />
+            <div class="cap">My IP</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-ping.png" data-caption="Ping a host with packet count and RTT summary">
+            <img src="assets/screenshots/tab-network-ping.png" alt="Ping" />
+            <div class="cap">Ping</div>
+          </div>
+        </div>
+
+        <h2 style="text-align:center; font-size: 1.3rem; margin: 0 0 24px; color: var(--text-muted);">Unit - Area &amp; Weight</h2>
+        <div class="gallery" style="margin-bottom: 64px;">
+          <div class="shot" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area conversion - Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, plus metric">
+            <img src="assets/screenshots/tab-unit-area.png" alt="Area" />
+            <div class="cap">Area conversion</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-unit-weight.png" data-caption="Weight conversion - Tola, Lal, Pau, Mana, plus metric">
+            <img src="assets/screenshots/tab-unit-weight.png" alt="Weight" />
+            <div class="cap">Weight conversion</div>
+          </div>
+        </div>
+
+        <h2 style="text-align:center; font-size: 1.3rem; margin: 0 0 24px; color: var(--text-muted);">More - Notes &amp; Reminders</h2>
+        <div class="gallery" style="margin-bottom: 64px;">
+          <div class="shot" data-lightbox="assets/screenshots/tab-more-notes.png" data-caption="Quick local notes alongside your calendar">
+            <img src="assets/screenshots/tab-more-notes.png" alt="Notes" />
+            <div class="cap">Notes</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-more-reminder.png" data-caption="One-shot or recurring reminders pinned to BS dates">
+            <img src="assets/screenshots/tab-more-reminder.png" alt="Reminders" />
+            <div class="cap">Reminders</div>
+          </div>
+        </div>
+
+        <h2 style="text-align:center; font-size: 1.3rem; margin: 0 0 24px; color: var(--text-muted);">Settings</h2>
+        <div class="gallery">
+          <div class="shot" data-lightbox="assets/screenshots/tab-settings.png" data-caption="Appearance, language, color presets, mini bar toggles, and start with Windows">
+            <img src="assets/screenshots/tab-settings.png" alt="Settings" />
+            <div class="cap">Settings panel</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="index.html" style="margin-bottom:12px;">
+            <img class="logo-img" src="assets/logo.png?v=2" alt="NepDate Widget logo" width="30" height="30" />
+            <span>NepDate Widget</span>
+          </a>
+          <p>A tiny Nepali calendar that lives on your Windows taskbar, with every Nepali tool you actually use.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="features.html">Features</a></li>
+            <li><a href="gallery.html">Screenshots</a></li>
+            <li><a href="download.html">Download</a></li>
+            <li><a href="changelog.html">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget/releases" target="_blank" rel="noopener">All Releases</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">Issues</a></li>
+            <li><a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">Sponsor</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>NepDate Family</h4>
+          <ul>
+            <li><a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a></li>
+            <li><a href="https://www.nuget.org/packages/NepDate/" target="_blank" rel="noopener">NepDate on NuGet</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDate" target="_blank" rel="noopener">NepDate on GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025–2026 NepDate Widget. MIT License.</span>
+        <span>Built with care for the Nepali desktop.</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+

@@ -1,0 +1,413 @@
+<UserControl x:Class="NepDateWidget.Views.UnitView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
+             mc:Ignorable="d"
+             UseLayoutRounding="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             d:DataContext="{d:DesignInstance vm:UnitViewModel}"
+             d:Width="380">
+
+    <UserControl.Resources>
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
+        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
+
+        <!-- Pill-button for mode selector (same as ConverterView) -->
+        <Style x:Key="PillButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Padding"         Value="14,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Opacity"         Value="0.55" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                <Setter Property="Opacity"    Value="0.8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Bordered button for copy / sub-mode toggles -->
+        <Style x:Key="DirButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="FontWeight"      Value="SemiBold" />
+            <Setter Property="Height"          Value="36" />
+            <Setter Property="Padding"         Value="8,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Accent (primary action) button -->
+        <Style x:Key="AccentButton" TargetType="Button">
+            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="FontWeight"      Value="SemiBold" />
+            <Setter Property="Height"          Value="36" />
+            <Setter Property="Padding"         Value="8,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.82" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.68" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- InputBoxStyle, OutputBoxStyle, MultilineInputStyle, MultilineOutputStyle: from global TextBoxStyles.xaml -->
+
+        <!-- Themed ComboBox for unit dropdowns -->
+        <Style x:Key="UnitComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height"          Value="36" />
+            <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Padding"         Value="6,0" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="MainBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6" />
+                            <ToggleButton Focusable="False" Background="Transparent" BorderThickness="0"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                       RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="Transparent" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                            <ContentPresenter Margin="8,0,28,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                              IsHitTestVisible="False" />
+                            <TextBlock Text="▾" FontSize="11"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,8,0" IsHitTestVisible="False" />
+                            <Popup Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True" Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Border MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Background="{DynamicResource WidgetInputBrush}"
+                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                        BorderThickness="0.7" CornerRadius="4" Margin="0,2,0,0">
+                                    <Border.Resources>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="Background"  Value="{DynamicResource WidgetInputBrush}" />
+                                            <Setter Property="Foreground"  Value="{DynamicResource WidgetForegroundBrush}" />
+                                            <Setter Property="Padding"     Value="8,5" />
+                                            <Setter Property="BorderThickness" Value="0" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsHighlighted" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Resources>
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="MainBorder" Property="Background"
+                                        Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="MainBorder" Property="Background"
+                                        Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Focusable="False"
+                  PanningMode="VerticalOnly">
+
+        <StackPanel Margin="8,4,8,0"
+                    MaxWidth="1024">
+
+<!-- Mode selector: Area | Weight -->
+            <Border Background="{DynamicResource WidgetInputBrush}"
+                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                BorderThickness="0.7"
+                CornerRadius="7"
+                Padding="3"
+                Margin="0,0,0,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Command="{Binding SetModeAreaCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeArea}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconArea}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeLabelArea}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button Grid.Column="1" Command="{Binding SetModeWeightCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeWeight}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconWeight}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeLabelWeight}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
+                BorderThickness="0.7"
+                CornerRadius="8"
+                Padding="12,10">
+                <StackPanel>
+
+                    <!-- AREA mode -->
+                    <StackPanel Visibility="{Binding IsModeArea, Converter={StaticResource BoolToVis}}">
+
+                        <!-- From row label -->
+                        <TextBlock Text="{Binding AreaFromLabel}"
+                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                       FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+
+                        <!-- From: value + unit -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0"
+          ItemsSource="{Binding AreaUnits}"
+          SelectedIndex="{Binding AreaFromUnit}"
+          Style="{StaticResource UnitComboBoxStyle}"
+          MaxDropDownHeight="200" />
+                            
+                            <TextBox x:Name="AreaInputBox"
+                         Grid.Column="2"
+                         Text="{Binding AreaFromValue, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="{Binding HintAreaValue}"
+                         Style="{StaticResource InputBoxStyle}"
+                         ContextMenu="{x:Null}" />
+                        </Grid>
+
+                        <!-- To row label -->
+                        <TextBlock Text="{Binding AreaToLabel}"
+                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                       FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+
+                        <!-- To: result + unit + copy -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0"
+ItemsSource="{Binding AreaUnits}"
+SelectedIndex="{Binding AreaToUnit}"
+Style="{StaticResource UnitComboBoxStyle}"
+MaxDropDownHeight="200" />
+                            <TextBox Grid.Column="2"
+                         Text="{Binding AreaResult, Mode=OneWay}" Tag="--"
+                         Style="{StaticResource OutputBoxStyle}"
+                         GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                         PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                        </Grid>
+
+                        <!-- Error -->
+                        <TextBlock Margin="0,6,0,0" Text="{Binding AreaError}"
+                       FontSize="12" Foreground="{DynamicResource WidgetErrorBrush}"
+                       HorizontalAlignment="Center"
+                       Visibility="{Binding AreaHasError, Converter={StaticResource BoolToVis}}" />
+                    </StackPanel>
+
+                    <!-- WEIGHT mode -->
+                    <StackPanel Visibility="{Binding IsModeWeight, Converter={StaticResource BoolToVis}}">
+
+                        <TextBlock Text="{Binding WeightFromLabel}"
+                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                       FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="WeightInputBox"
+                         Grid.Column="2"
+                         Text="{Binding WeightFromValue, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="{Binding HintWeightValue}"
+                         Style="{StaticResource InputBoxStyle}"
+                         ContextMenu="{x:Null}" />
+                            <ComboBox Grid.Column="0"
+                          ItemsSource="{Binding WeightUnits}"
+                          SelectedIndex="{Binding WeightFromUnit}"
+                          Style="{StaticResource UnitComboBoxStyle}"
+                          MaxDropDownHeight="200" />
+                        </Grid>
+
+                        <TextBlock Text="{Binding WeightToLabel}"
+                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                       FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="2"
+                         Text="{Binding WeightResult, Mode=OneWay}" Tag="--"
+                         Style="{StaticResource OutputBoxStyle}"
+                         GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                         PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                            <ComboBox Grid.Column="0"
+                          ItemsSource="{Binding WeightUnits}"
+                          SelectedIndex="{Binding WeightToUnit}"
+                          Style="{StaticResource UnitComboBoxStyle}"
+                          MaxDropDownHeight="200" />
+                        </Grid>
+
+                        <!-- Error -->
+                        <TextBlock Margin="0,6,0,0" Text="{Binding WeightError}"
+                       FontSize="12" Foreground="{DynamicResource WidgetErrorBrush}"
+                       HorizontalAlignment="Center"
+                       Visibility="{Binding WeightHasError, Converter={StaticResource BoolToVis}}" />
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,358 @@
+<UserControl x:Class="NepDateWidget.Views.MoreView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:conv="clr-namespace:NepDateWidget.Converters"
+             mc:Ignorable="d"
+             UseLayoutRounding="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             d:DataContext="{d:DesignInstance vm:MoreViewModel}"
+             d:Width="380">
+
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <conv:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True" />
+
+        <Style x:Key="SectionHeading" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+
+        <Style x:Key="ItemCard" TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="Margin" Value="0,0,0,4" />
+        </Style>
+
+        <Style x:Key="MItemBtn" TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="4,4" />
+            <Setter Property="Width" Value="28" />
+            <Setter Property="Height" Value="28" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.7" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="MItemBtnDanger" TargetType="Button" BasedOn="{StaticResource MItemBtn}">
+            <Setter Property="Background" Value="{DynamicResource WidgetErrorBrush}" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+
+        <Style x:Key="MItemBtnAccent" TargetType="Button" BasedOn="{StaticResource MItemBtn}">
+            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+
+        <Style x:Key="MItemBtnSecondary" TargetType="Button" BasedOn="{StaticResource MItemBtn}">
+            <Setter Property="Background" Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Width" Value="Auto" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+
+        <Style x:Key="PillButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Padding"         Value="14,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Opacity"         Value="0.55" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                    <Setter Property="Opacity" Value="0.9" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="6,4">
+        <StackPanel MaxWidth="1024">
+
+            <!-- Mode selector: Notes | Reminders -->
+            <Border Background="{DynamicResource WidgetInputBrush}"
+                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                    BorderThickness="0.7"
+                    CornerRadius="7"
+                    Padding="3"
+                    Margin="0,0,0,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" Command="{Binding SetModeNotesCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeNotes}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconText}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding NotesHeadingLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Column="1" Command="{Binding SetModeRemindersCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeReminders}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconBell}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding RemindersHeadingLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- ── Notes Section ──────────────────────────────────────── -->
+            <Border Visibility="{Binding IsModeNotes, Converter={StaticResource BoolToVis}}"
+                    Background="{DynamicResource WidgetBackgroundBrush}"
+                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                    BorderThickness="0.7" CornerRadius="8" Padding="12,10" Margin="0,0,0,8">
+                <StackPanel>
+                    <!-- Empty state -->
+                    <StackPanel HorizontalAlignment="Center" Margin="0,8"
+                                Visibility="{Binding HasNotes, Converter={StaticResource InverseBoolToVis}}">
+                        <TextBlock Text="{Binding NoNotesLabel}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   Opacity="0.5" FontSize="13"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="{Binding NoNotesHintLabel}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   Opacity="0.35" FontSize="11"
+                                   HorizontalAlignment="Center" Margin="0,2,0,0" />
+                    </StackPanel>
+
+                    <!-- Notes list -->
+                    <ItemsControl ItemsSource="{Binding Notes}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:NoteItemViewModel}">
+                                <Border Style="{StaticResource ItemCard}">
+                                    <StackPanel>
+                                        <!-- View mode -->
+                                        <Grid Visibility="{Binding IsNotEditing, Converter={StaticResource BoolToVis}}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding DisplayDate}"
+                                                           Foreground="{DynamicResource WidgetAccentBrush}"
+                                                           FontSize="11" Opacity="0.8" />
+                                                <TextBlock Text="{Binding Text}"
+                                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                           FontSize="13" TextWrapping="Wrap"
+                                                           TextAlignment="Left"
+                                                           HorizontalAlignment="Left" />
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Style="{StaticResource MItemBtn}" Margin="4,0"
+                                                    Command="{Binding DataContext.StartEditNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding DateKey}">
+                                                <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                      Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                      StrokeThickness="1.2" Stretch="Uniform"
+                                                      Width="12" Height="12" />
+                                            </Button>
+                                            <Button Grid.Column="2" Style="{StaticResource MItemBtnDanger}"
+                                                    Command="{Binding DataContext.DeleteNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding DateKey}">
+                                                <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                      Stroke="White"
+                                                      StrokeThickness="1.2" Stretch="Uniform"
+                                                      Width="12" Height="12" />
+                                            </Button>
+                                        </Grid>
+                                        <!-- Edit mode -->
+                                        <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="{Binding DisplayDate}"
+                                                       Foreground="{DynamicResource WidgetAccentBrush}"
+                                                       FontSize="11" Opacity="0.8" Margin="0,0,0,4" />
+                                            <TextBox Text="{Binding DataContext.NoteEditBuffer, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
+                                                     Style="{StaticResource MultilineInputStyle}"
+                                                     Height="50" />
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
+                                                <Button Style="{StaticResource MItemBtnSecondary}"
+                                                        Command="{Binding DataContext.CancelNoteEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        Content="{Binding DataContext.CancelLabel, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,0,4,0" />
+                                                <Button Style="{StaticResource MItemBtnAccent}"
+                                                        Command="{Binding DataContext.SaveNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        Content="{Binding DataContext.SaveLabel, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- ── Reminders Section ──────────────────────────────────── -->
+            <Border Visibility="{Binding IsModeReminders, Converter={StaticResource BoolToVis}}"
+                    Background="{DynamicResource WidgetBackgroundBrush}"
+                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                    BorderThickness="0.7" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
+                <StackPanel>
+                    <!-- Empty state -->
+                    <StackPanel HorizontalAlignment="Center" Margin="0,8"
+                                Visibility="{Binding HasReminders, Converter={StaticResource InverseBoolToVis}}">
+                        <TextBlock Text="{Binding NoRemindersLabel}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   Opacity="0.5" FontSize="13"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="{Binding NoRemindersHintLabel}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   Opacity="0.35" FontSize="11"
+                                   HorizontalAlignment="Center" Margin="0,2,0,0" />
+                    </StackPanel>
+
+                    <!-- Reminders list -->
+                    <ItemsControl ItemsSource="{Binding Reminders}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:ReminderItemViewModel}">
+                                <Border>
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+                                            <Setter Property="CornerRadius" Value="6" />
+                                            <Setter Property="Padding" Value="10,8" />
+                                            <Setter Property="Margin" Value="0,0,0,4" />
+                                            <Setter Property="Opacity" Value="1" />
+                                            <Setter Property="BorderThickness" Value="1.5" />
+                                            <Setter Property="BorderBrush" Value="Transparent" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                                                    <Setter Property="Opacity" Value="0.5" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Title}"
+                                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                           FontSize="13" FontWeight="SemiBold"
+                                                           TextTrimming="CharacterEllipsis" />
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Date}"
+                                                               Foreground="{DynamicResource WidgetAccentBrush}"
+                                                               FontSize="11" />
+                                                    <TextBlock Text="{Binding Time}"
+                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                               Opacity="0.6" FontSize="11" Margin="6,0,0,0" />
+                                                    <TextBlock Text="{Binding RecurrenceText}"
+                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                               Opacity="0.5" FontSize="11" Margin="6,0,0,0" />
+                                                </StackPanel>
+                                                <TextBlock Text="{Binding Notes}"
+                                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                           Opacity="0.5" FontSize="12"
+                                                           TextTrimming="CharacterEllipsis" MaxWidth="260"
+                                                           Visibility="{Binding HasNotes, Converter={StaticResource BoolToVis}}" />
+                                            </StackPanel>
+                                            <Button Grid.Column="1" Style="{StaticResource MItemBtn}" Margin="4,0"
+                                                    Command="{Binding DataContext.EditReminderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    Visibility="{Binding IsCompleted, Converter={StaticResource InverseBoolToVis}}">
+                                                <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                      Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                      StrokeThickness="1.2" Stretch="Uniform"
+                                                      Width="12" Height="12" />
+                                            </Button>
+                                            <Button Grid.Column="2" Style="{StaticResource MItemBtnDanger}"
+                                                    Command="{Binding DataContext.DeleteReminderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding Id}">
+                                                <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                      Stroke="White"
+                                                      StrokeThickness="1.2" Stretch="Uniform"
+                                                      Width="12" Height="12" />
+                                            </Button>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

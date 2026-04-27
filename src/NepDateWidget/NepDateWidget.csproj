@@ -1,0 +1,108 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>
+		<OutputType Condition="'$(Configuration)' != 'Release'">Exe</OutputType>
+		<TargetFramework>net10.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>NepDateWidget.snk</AssemblyOriginatorKeyFile>
+
+		<!-- Assembly identity -->
+		<AssemblyName>NepDateWidget</AssemblyName>
+		<RootNamespace>NepDateWidget</RootNamespace>
+		<Version>1.0.0</Version>
+		<FileVersion>1.0.0.0</FileVersion>
+		<AssemblyTitle>NepDate Widget</AssemblyTitle>
+		<Company>RajuPrasai</Company>
+		<Authors>RajuPrasai</Authors>
+		<Product>NepDate Widget</Product>
+		<Description>A desktop widget for Nepali (BS) and English (AD) dates, calendar navigation, and date conversion.</Description>
+		<Copyright>Copyright (c) 2025-2026 RajuPrasai</Copyright>
+		<!-- PolyForm Strict 1.0.0 is not on the SPDX license list, so we cannot use
+		     PackageLicenseExpression. Reference the LICENSE file directly instead. -->
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<RepositoryUrl>https://github.com/RajuPrasai/NepDateWidget</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageProjectUrl>https://github.com/RajuPrasai/NepDateWidget</PackageProjectUrl>
+		<NeutralLanguage>en</NeutralLanguage>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+
+		<!-- Application icon (EXE taskbar / explorer icon) -->
+		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+
+		<!-- We define Main() ourselves in App.xaml.cs so Velopack's CLI hook
+		     can run before WPF starts. Suppress the auto-generated Main from
+		     ApplicationDefinition by treating App.xaml as a Page. -->
+		<StartupObject>NepDateWidget.App</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ApplicationDefinition Remove="App.xaml" />
+	  <Page Include="App.xaml" />
+	</ItemGroup>
+
+	<!-- Release-mode optimisations -->
+	<!-- DebugType=embedded ships PDBs inside the assembly so user crash logs
+	     contain file/line info for support, at the cost of ~1-2 MB EXE size.
+	     This is much more useful than DebugType=none (no symbols at all). -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<Optimize>true</Optimize>
+		<DebugType>embedded</DebugType>
+		<RunAnalyzers>true</RunAnalyzers>
+	</PropertyGroup>
+
+	<!-- App icon assets -->
+	<ItemGroup>
+		<Resource Include="Assets\icon.png" />
+		<None Include="..\..\LICENSE" Pack="true" PackagePath="\" Visible="false" />
+		<None Include="..\..\THIRD_PARTY_NOTICES.md" Pack="true" PackagePath="\" Visible="false" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
+	  <PackageReference Include="NepDate" Version="2.0.6" />
+	  <PackageReference Include="Velopack" Version="0.0.1298" />
+	</ItemGroup>
+
+	<!-- Embedded font families. All non-Microsoft fonts are bundled so they are available regardless of what the user has installed. SIL OFL licensed (Inter, JetBrains Mono, Fira Code, Source Sans 3, Source Code Pro, IBM Plex Sans/Mono, Roboto, Roboto Mono, Noto Sans, Cascadia Code). Three weights per family (Regular, Medium, Bold) — italic and other weights omitted to keep installer size down. -->
+	<ItemGroup>
+		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-Light.ttf" />
+		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-SemiBold.ttf" />
+		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Inter\Inter-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Inter\Inter-Medium.ttf" />
+		<Resource Include="Assets\Fonts\Inter\Inter-Bold.ttf" />
+		<Resource Include="Assets\Fonts\JetBrainsMono\JetBrainsMono-Regular.ttf" />
+		<Resource Include="Assets\Fonts\JetBrainsMono\JetBrainsMono-Medium.ttf" />
+		<Resource Include="Assets\Fonts\JetBrainsMono\JetBrainsMono-Bold.ttf" />
+		<Resource Include="Assets\Fonts\FiraCode\FiraCode-Regular.ttf" />
+		<Resource Include="Assets\Fonts\FiraCode\FiraCode-Medium.ttf" />
+		<Resource Include="Assets\Fonts\FiraCode\FiraCode-Bold.ttf" />
+		<Resource Include="Assets\Fonts\SourceSans3\SourceSans3-Regular.ttf" />
+		<Resource Include="Assets\Fonts\SourceSans3\SourceSans3-Medium.ttf" />
+		<Resource Include="Assets\Fonts\SourceSans3\SourceSans3-Bold.ttf" />
+		<Resource Include="Assets\Fonts\SourceCodePro\SourceCodePro-Regular.ttf" />
+		<Resource Include="Assets\Fonts\SourceCodePro\SourceCodePro-Medium.ttf" />
+		<Resource Include="Assets\Fonts\SourceCodePro\SourceCodePro-Bold.ttf" />
+		<Resource Include="Assets\Fonts\IBMPlexSans\IBMPlexSans-Regular.ttf" />
+		<Resource Include="Assets\Fonts\IBMPlexSans\IBMPlexSans-Medium.ttf" />
+		<Resource Include="Assets\Fonts\IBMPlexSans\IBMPlexSans-Bold.ttf" />
+		<Resource Include="Assets\Fonts\IBMPlexMono\IBMPlexMono-Regular.ttf" />
+		<Resource Include="Assets\Fonts\IBMPlexMono\IBMPlexMono-Medium.ttf" />
+		<Resource Include="Assets\Fonts\IBMPlexMono\IBMPlexMono-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Roboto\Roboto-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Roboto\Roboto-Medium.ttf" />
+		<Resource Include="Assets\Fonts\Roboto\Roboto-Bold.ttf" />
+		<Resource Include="Assets\Fonts\RobotoMono\RobotoMono-Regular.ttf" />
+		<Resource Include="Assets\Fonts\RobotoMono\RobotoMono-Medium.ttf" />
+		<Resource Include="Assets\Fonts\RobotoMono\RobotoMono-Bold.ttf" />
+		<Resource Include="Assets\Fonts\NotoSans\NotoSans-Regular.ttf" />
+		<Resource Include="Assets\Fonts\NotoSans\NotoSans-Medium.ttf" />
+		<Resource Include="Assets\Fonts\NotoSans\NotoSans-Bold.ttf" />
+	</ItemGroup>
+
+</Project>

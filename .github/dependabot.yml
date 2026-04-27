@@ -1,0 +1,39 @@
+version: 2
+updates:
+  # NuGet packages used by the app and tests.
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    groups:
+      production-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "xunit*"
+          - "Microsoft.NET.Test.Sdk"
+          - "coverlet*"
+      test-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "xunit*"
+          - "Microsoft.NET.Test.Sdk"
+          - "coverlet*"
+    ignore:
+      # Velopack is pinned intentionally; the CLI version in build-release.ps1
+      # and release.yml must match the runtime package. Bump manually after
+      # verifying the CLI side.
+      - dependency-name: "Velopack"
+
+  # GitHub Actions referenced in .github/workflows/*.yml.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 3
+    groups:
+      actions:
+        patterns:
+          - "*"
