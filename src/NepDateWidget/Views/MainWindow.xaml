@@ -1,0 +1,208 @@
+<Window x:Class="NepDateWidget.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+        xmlns:cvt="clr-namespace:NepDateWidget.Converters"
+        xmlns:views="clr-namespace:NepDateWidget.Views"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        SizeToContent="WidthAndHeight"
+        ResizeMode="NoResize"
+        MinWidth="0" MinHeight="0"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="False"
+        RenderOptions.ClearTypeHint="Enabled"
+        Topmost="{Binding AlwaysOnTop}"
+        Foreground="{DynamicResource WidgetForegroundBrush}"
+        FontFamily="{DynamicResource WidgetFontFamily}"
+        TextOptions.TextFormattingMode="Display"
+        TextOptions.TextRenderingMode="ClearType"
+        TextOptions.TextHintingMode="Fixed"
+        d:DataContext="{d:DesignInstance vm:MainViewModel}"
+        d:Width="500" d:Height="48">
+
+    <!--
+        MainWindow is the persistent mini pill. It always lives at the user's chosen
+        anchor position, owned by Shell_TrayWnd so Win+D cannot push it behind the
+        taskbar, hidden from Alt+Tab via WS_EX_TOOLWINDOW, and always sized to the
+        content of MiniBarView.
+
+        When the user clicks the pill, MainViewModel.IsExpanded flips to true; the
+        code-behind lazily constructs ExpandedShellWindow, hides the pill, and shows
+        the shell. Closing the shell flips IsExpanded back to false; the shell hides
+        and the pill reappears at its anchor position.
+    -->
+
+    <Window.Resources>
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
+        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
+    </Window.Resources>
+
+    <Border x:Name="WidgetBorder"
+            CornerRadius="{Binding CornerRadiusValue}"
+            BorderThickness="0.7"
+            ClipToBounds="True"
+            MouseLeftButtonDown="WidgetBorder_MouseLeftButtonDown"
+            MouseMove="WidgetBorder_MouseMove"
+            MouseLeftButtonUp="WidgetBorder_MouseLeftButtonUp">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="Background"  Value="{DynamicResource WidgetBackgroundBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource WidgetBorderBrush}" />
+                <Style.Triggers>
+                    <!-- Transparent when collapsed: near-zero alpha so mouse events still work.
+                         Full #00 alpha on a layered window loses Win32 hit-testing. -->
+                    <DataTrigger Binding="{Binding IsCollapsedTransparent}" Value="True">
+                        <Setter Property="Background"  Value="#01000000" />
+                        <Setter Property="BorderBrush" Value="Transparent" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+
+        <views:MiniBarView x:Name="MiniBarStrip"
+                           DataContext="{Binding MiniBar}"
+                           ToolTip="{Binding FullDateTooltip}"
+                           Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=Window}}"
+                           ContextMenuOpening="MiniBar_ContextMenuOpening">
+            <views:MiniBarView.ContextMenu>
+                <ContextMenu Style="{StaticResource WidgetContextMenuStyle}"
+                             DataContext="{Binding PlacementTarget.Tag,
+                                           RelativeSource={RelativeSource Self}}">
+                    <ContextMenu.Resources>
+                        <Style TargetType="MenuItem" BasedOn="{StaticResource WidgetMenuItemStyle}" />
+                        <Style TargetType="Separator" BasedOn="{StaticResource WidgetSeparatorStyle}" />
+                    </ContextMenu.Resources>
+
+                    <MenuItem Header="{Binding MenuToolsSectionLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconCalendar}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                        <MenuItem Header="{Binding MenuToolsConvertLabel}" Command="{Binding OpenToolsConvertCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconConverter}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuToolsDaysLabel}" Command="{Binding OpenToolsDaysCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconDays}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuToolsTimeLabel}" Command="{Binding OpenToolsTimeCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconClock}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+
+                    <MenuItem Header="{Binding MenuBankingSectionLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconBanking}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                        <MenuItem Header="{Binding MenuBankingInterestLabel}" Command="{Binding OpenBankingInterestCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconCalculator}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuBankingEmiLabel}" Command="{Binding OpenBankingEmiCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconCalculator}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+
+                    <MenuItem Header="{Binding MenuUnitSectionLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconRuler}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                        <MenuItem Header="{Binding MenuUnitAreaLabel}" Command="{Binding OpenUnitAreaCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconArea}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuUnitWeightLabel}" Command="{Binding OpenUnitWeightCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconWeight}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+
+                    <MenuItem Header="{Binding MenuNetworkSectionLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconNetwork}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                        <MenuItem Header="{Binding MenuNetworkMyIpLabel}" Command="{Binding OpenNetworkMyIpCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconMyIp}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuNetworkPingLabel}" Command="{Binding OpenNetworkPingCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconPing}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuNetworkScanLabel}" Command="{Binding OpenNetworkScanCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconScan}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuNetworkTraceLabel}" Command="{Binding OpenNetworkTraceCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconTrace}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuNetworkWhoisLabel}" Command="{Binding OpenNetworkWhoisCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconWhois}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuNetworkDnsLabel}" Command="{Binding OpenNetworkDnsCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconDns}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+
+                    <MenuItem Header="{Binding MenuTextSectionLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconText}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                        <MenuItem Header="{Binding MenuTextUnicodeLabel}" Command="{Binding OpenTextUnicodeCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconUnicode}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuTextWordLabel}" Command="{Binding OpenTextWordCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconWordCount}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuTextPasswordLabel}" Command="{Binding OpenTextPasswordCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconLock}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuTextScriptLabel}" Command="{Binding OpenTextScriptCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconScript}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+
+                    <MenuItem Header="{Binding MenuCopyTodayLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconCopy}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                        <MenuItem Header="{Binding CopyTodayBsShortLabel}" Command="{Binding CopyTodayBsShortCommand}" />
+                        <MenuItem Header="{Binding CopyTodayBsLongLabel}" Command="{Binding CopyTodayBsLongCommand}" />
+                        <MenuItem Header="{Binding CopyTodayAdShortLabel}" Command="{Binding CopyTodayAdShortCommand}" />
+                        <MenuItem Header="{Binding CopyTodayAdLongLabel}" Command="{Binding CopyTodayAdLongCommand}" />
+                    </MenuItem>
+
+                    <Separator Style="{StaticResource WidgetSectionSeparatorStyle}" />
+
+                    <MenuItem Header="{Binding MenuMoreLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}"
+                              Command="{Binding OpenMoreCommand}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconMore}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <MenuItem Header="{Binding MenuSettingsLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}"
+                              Command="{Binding OpenSettingsCommand}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconSettings}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+
+                    <MenuItem Header="{Binding MenuExitLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}"
+                              Command="{Binding ExitCommand}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconExit}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </views:MiniBarView.ContextMenu>
+        </views:MiniBarView>
+    </Border>
+</Window>

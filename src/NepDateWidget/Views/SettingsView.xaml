@@ -1,0 +1,1363 @@
+<UserControl x:Class="NepDateWidget.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
+             mc:Ignorable="d"
+             UseLayoutRounding="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
+             d:Width="380">
+
+    <UserControl.Resources>
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis" Invert="False" />
+        <CubicEase x:Key="SmoothEase" EasingMode="EaseInOut" />
+        <!-- Toggle style for option buttons (radio-like) -->
+        <Style x:Key="OptionButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Padding"         Value="10,0" />
+            <Setter Property="Margin"          Value="0,0,4,4" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Bd"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.82" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard FillBehavior="Stop">
+                                            <DoubleAnimation Storyboard.TargetName="Bd"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="1" Duration="0:0:0.15" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Checkbox style - iOS-style toggle switch -->
+        <Style x:Key="SettingsCheckBox" TargetType="CheckBox">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="Cursor"  Value="Hand" />
+            <Setter Property="Margin"  Value="0,5" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border x:Name="Track"
+                                    Width="36" Height="20"
+                                    CornerRadius="10"
+                                    Background="{DynamicResource WidgetInputBrush}"
+                                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                    BorderThickness="0.7">
+                                <Border x:Name="Thumb"
+                                        Width="16" Height="16"
+                                        CornerRadius="8"
+                                        Background="{DynamicResource WidgetInputBorderBrush}"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Margin="1,0,0,0">
+                                    <Border.RenderTransform>
+                                        <TranslateTransform x:Name="ThumbTranslate" X="0" />
+                                    </Border.RenderTransform>
+                                </Border>
+                            </Border>
+                            <ContentPresenter Margin="8,0,0,0"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Track" Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
+                                <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                                <Setter TargetName="Thumb" Property="Background"  Value="White" />
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbTranslate"
+                                                             Storyboard.TargetProperty="X"
+                                                             To="18" Duration="0:0:0.18"
+                                                             EasingFunction="{StaticResource SmoothEase}" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ThumbTranslate"
+                                                             Storyboard.TargetProperty="X"
+                                                             To="0" Duration="0:0:0.18"
+                                                             EasingFunction="{StaticResource SmoothEase}" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Section label (card title) -->
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="Margin"     Value="0,0,0,8" />
+        </Style>
+
+        <!-- Bootstrap-style card panel -->
+        <Style x:Key="CardPanel" TargetType="Border">
+            <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="CornerRadius"    Value="8" />
+            <Setter Property="Padding"         Value="10,8" />
+            <Setter Property="Margin"          Value="0,0,0,8" />
+        </Style>
+
+        <!-- Fully themed ComboBox: fixes white-background in dark mode -->
+        <Style x:Key="ThemedComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Padding"         Value="6,0" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"   Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll"              Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <!-- Background / border -->
+                            <Border x:Name="MainBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4" />
+                            <!-- Transparent full-area click target that toggles the dropdown -->
+                            <ToggleButton Focusable="False"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                       RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="Transparent" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                            <!-- Selected-item display -->
+                            <ContentPresenter x:Name="ContentSite"
+                                              Margin="8,0,28,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                              IsHitTestVisible="False" />
+                            <!-- Dropdown arrow -->
+                            <TextBlock Text="▾"
+                                       FontSize="11"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,8,0"
+                                       IsHitTestVisible="False" />
+                            <!-- Dropdown popup -->
+                            <Popup x:Name="PART_Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Border MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Background="{DynamicResource WidgetInputBrush}"
+                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                        BorderThickness="0.7"
+                                        CornerRadius="4"
+                                        Margin="0,2,0,0">
+                                    <Border.Resources>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="OverridesDefaultStyle" Value="True" />
+                                            <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
+                                            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+                                            <Setter Property="Padding"         Value="8,5" />
+                                            <Setter Property="BorderThickness" Value="0" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ComboBoxItem">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                                                Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsHighlighted" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Resources>
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="MainBorder" Property="Background"
+                                        Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="MainBorder" Property="Background"
+                                        Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Focusable="False"
+                  PanningMode="VerticalOnly">
+        <StackPanel Margin="10,8,10,10"
+                    MaxWidth="1024">
+
+            <!-- ══ Card: Appearance ════════════════════════════════════════ -->
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <TextBlock Text="{Binding AppearanceSectionLabel}" Style="{StaticResource SectionLabel}" />
+
+                    <!-- Language -->
+                    <TextBlock Text="{Binding LanguageLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               FontSize="12" Opacity="0.65" Margin="0,0,0,4" />
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="English" Command="{Binding SetLanguageEnCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLanguageEn}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="नेपाली" Command="{Binding SetLanguageNeCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsLanguageNe}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </WrapPanel>
+
+                    <!-- Theme -->
+                    <TextBlock Text="{Binding ThemeLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               FontSize="12" Opacity="0.65" Margin="0,0,0,4" />
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="{Binding ThemeDarkLabel}" Command="{Binding SetThemeDarkCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsThemeDark}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding ThemeLightLabel}" Command="{Binding SetThemeLightCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsThemeLight}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </WrapPanel>
+
+                    <!-- Background Preset -->
+                    <TextBlock Text="{Binding BackgroundLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               FontSize="12" Opacity="0.65" Margin="0,0,0,4" />
+                    <WrapPanel Margin="0,0,0,10">
+                        <Button Content="{Binding PresetDefaultLabel}"  Command="{Binding SetPresetDefaultCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetDefault}"    Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding PresetOceanLabel}"    Command="{Binding SetPresetOceanCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetOcean}"      Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding PresetForestLabel}"   Command="{Binding SetPresetForestCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetForest}"     Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding PresetSunsetLabel}"   Command="{Binding SetPresetSunsetCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetSunset}"     Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding PresetMonoLabel}"     Command="{Binding SetPresetMonoCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetMonochrome}"  Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding PresetAuroraLabel}"   Command="{Binding SetPresetAuroraCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetAurora}"     Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding PresetCherryLabel}"   Command="{Binding SetPresetCherryCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetCherry}"     Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding PresetMidnightLabel}" Command="{Binding SetPresetMidnightCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetMidnight}"   Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding PresetSlateLabel}"    Command="{Binding SetPresetSlateCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetSlate}"      Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding PresetEmberLabel}"    Command="{Binding SetPresetEmberCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPresetEmber}"      Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </WrapPanel>
+
+                    <!-- Corner Style -->
+                    <TextBlock Text="{Binding CornerStyleLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               FontSize="12" Opacity="0.65" Margin="0,0,0,4" />
+                    <WrapPanel>
+                        <Button Content="{Binding CornerRoundedLabel}" Command="{Binding SetCornerRoundedCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCornerRounded}" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <Button Content="{Binding CornerSharpLabel}"   Command="{Binding SetCornerSharpCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsCornerSharp}"   Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </WrapPanel>
+
+                    <!-- Font -->
+                    <TextBlock Text="{Binding FontLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               FontSize="12" Opacity="0.65" Margin="0,6,0,4" />
+                    <ComboBox ItemsSource="{x:Static vm:SettingsViewModel.FontFamilyNames}"
+                              SelectedItem="{Binding FontFamily}"
+                              MaxDropDownHeight="220"
+                              Style="{StaticResource ThemedComboBoxStyle}"
+                              Margin="0,0,0,6" />
+                </StackPanel>
+            </Border>
+
+            <!-- ══ Card: Collapsed Display ═════════════════════════════════ -->
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <TextBlock Text="{Binding CollapsedDisplayLabel}" Style="{StaticResource SectionLabel}" />
+
+                    <!-- Master toggle: Show Timezone (controls time/tz/offset/format) -->
+                    <CheckBox Content="{Binding ShowTimezoneLabel}"
+                              IsChecked="{Binding ShowTimezone}"
+                              Style="{StaticResource SettingsCheckBox}" />
+
+                    <!-- Timezone sub-settings: only visible when ShowTimezone is checked -->
+                    <StackPanel Visibility="{Binding ShowTimezone, Converter={StaticResource BoolToVis}}"
+                                Margin="16,0,0,0">
+                        <!-- Clock format: 12h / 24h -->
+                        <TextBlock Text="{Binding ClockFormatLabel}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   FontSize="12" Opacity="0.65" Margin="0,6,0,4" />
+                        <WrapPanel Margin="0,0,0,8">
+                            <Button Content="12h" Command="{Binding SetClockFormat12hCommand}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsClockFormat12h}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                                <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Content="24h" Command="{Binding SetClockFormat24hCommand}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource OptionButton}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsClockFormat24h}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}"/>
+                                                <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </WrapPanel>
+
+                        <TextBlock Text="{Binding TimezoneLabel}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   FontSize="12" Opacity="0.65" Margin="0,6,0,4" />
+                        <ComboBox ItemsSource="{Binding Timezones}"
+                                  SelectedItem="{Binding SelectedTimezone}"
+                                  DisplayMemberPath="DisplayName"
+                                  MaxDropDownHeight="220"
+                                  Style="{StaticResource ThemedComboBoxStyle}"
+                                  Margin="0,0,0,6" />
+
+                        <CheckBox Content="{Binding ShowOffsetLabel}"
+                                  IsChecked="{Binding ShowOffset}"
+                                  Style="{StaticResource SettingsCheckBox}" />
+                        <CheckBox Content="{Binding ShowSecondsLabel}"
+                                  IsChecked="{Binding ShowSecondsInClock}"
+                                  Style="{StaticResource SettingsCheckBox}" />
+                    </StackPanel>
+
+                    <CheckBox Content="{Binding ShowDayLabel}"
+                              IsChecked="{Binding ShowDayOfWeek}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding ShowEnglishLabel}"
+                              IsChecked="{Binding ShowEnglishDate}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding TransparentWhenCollapsedLabel}"
+                              IsChecked="{Binding TransparentWhenCollapsed}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                </StackPanel>
+            </Border>
+
+            <!-- ══ Card: Calendar ══════════════════════════════════════════ -->
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <TextBlock Text="{Binding CalendarSectionLabel}" Style="{StaticResource SectionLabel}" />
+                    <!-- Sorted: Show English day numbers (22) → Highlight Saturdays (19+) -->
+                    <CheckBox Content="{Binding HighlightSaturdaysLabel}"
+                              IsChecked="{Binding HighlightSaturdays}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding HighlightSundaysLabel}"
+                              IsChecked="{Binding HighlightSundays}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding ShowEngDayNumsLabel}"
+                              IsChecked="{Binding ShowEnglishDayNumbers}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding ShowTithiLabel}"
+                              IsChecked="{Binding ShowTithi}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding ShowEventsLabel}"
+                              IsChecked="{Binding ShowEvents}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding HighlightPublicHolidaysLabel}"
+                              IsChecked="{Binding HighlightPublicHolidays}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding ShowHolidayCountdownLabel}"
+                              IsChecked="{Binding ShowHolidayCountdown}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding ShowDailyEventsNotificationLabel}"
+                              IsChecked="{Binding ShowDailyEventsNotification}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding ShowFiscalYearLabel}"
+                              IsChecked="{Binding ShowFiscalYear}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <!-- Highlight color picker -->
+                    <TextBlock Text="{Binding HighlightColorLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               FontSize="12" Opacity="0.65" Margin="0,6,0,4" />
+                    <WrapPanel Margin="0,0,0,4">
+                        <!-- Default (theme color) -->
+                        <Button Command="{Binding SetHighlightColorDefaultCommand}" ToolTip="Default" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorDefault, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorDefault}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Red -->
+                        <Button Command="{Binding SetHighlightColorRedCommand}" ToolTip="Red" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#E53935" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorRed, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorRed}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Orange -->
+                        <Button Command="{Binding SetHighlightColorOrangeCommand}" ToolTip="Orange" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#F4511E" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorOrange, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorOrange}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Pink -->
+                        <Button Command="{Binding SetHighlightColorPinkCommand}" ToolTip="Pink" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#EC407A" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorPink, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorPink}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Purple -->
+                        <Button Command="{Binding SetHighlightColorPurpleCommand}" ToolTip="Purple" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#AB47BC" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorPurple, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorPurple}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Blue -->
+                        <Button Command="{Binding SetHighlightColorBlueCommand}" ToolTip="Blue" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#1E88E5" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorBlue, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorBlue}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Teal -->
+                        <Button Command="{Binding SetHighlightColorTealCommand}" ToolTip="Teal" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#26A69A" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorTeal, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorTeal}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Green -->
+                        <Button Command="{Binding SetHighlightColorGreenCommand}" ToolTip="Green" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#43A047" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorGreen, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorGreen}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Yellow -->
+                        <Button Command="{Binding SetHighlightColorYellowCommand}" ToolTip="Yellow" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#FDD835" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="#333333">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorYellow, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorYellow}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Amber -->
+                        <Button Command="{Binding SetHighlightColorAmberCommand}" ToolTip="Amber" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#FFB300" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="#333333">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorAmber, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorAmber}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Cyan -->
+                        <Button Command="{Binding SetHighlightColorCyanCommand}" ToolTip="Cyan" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#00ACC1" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorCyan, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorCyan}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Indigo -->
+                        <Button Command="{Binding SetHighlightColorIndigoCommand}" ToolTip="Indigo" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#3949AB" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorIndigo, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorIndigo}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                        <!-- Brown -->
+                        <Button Command="{Binding SetHighlightColorBrownCommand}" ToolTip="Brown" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background" Value="#6D4C41" />
+                                    <Setter Property="BorderThickness" Value="1.5" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="12">
+                                                    <TextBlock Text="✓" FontSize="11" FontWeight="Bold"
+                                                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                               Foreground="White">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DataContext.IsHighlightColorBrown, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Binding="{Binding IsHighlightColorBrown}" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    </DataTrigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </WrapPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- ══ Card: Behavior ══════════════════════════════════════════ -->
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <TextBlock Text="{Binding BehaviorSectionLabel}" Style="{StaticResource SectionLabel}" />
+                    <!-- Sorted: Animation (9) → Always on top (13) → Start with Windows (18) -->
+                    <CheckBox Content="{Binding AnimationLabel}"
+                              IsChecked="{Binding AnimationEnabled}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding AlwaysOnTopLabel}"
+                              IsChecked="{Binding AlwaysOnTop}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding AutoStartLabel}"
+                              IsChecked="{Binding AutoStart}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <CheckBox Content="{Binding HideFullscreenLabel}"
+                              IsChecked="{Binding HideOnFullscreen}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                </StackPanel>
+            </Border>
+
+            <!-- ══ Card: Notification ═══════════════════════════════════════ -->
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <TextBlock Text="{Binding NotificationSectionLabel}" Style="{StaticResource SectionLabel}" />
+                    <CheckBox Content="{Binding NotificationSoundLabel}"
+                              IsChecked="{Binding NotificationSound}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <Grid Margin="0,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding NotificationDurationLabel}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   FontSize="12" Opacity="0.65"
+                                   VerticalAlignment="Center" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding NotificationDurationDisplay}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                    <Slider Minimum="5" Maximum="60"
+                            Value="{Binding NotificationDurationSeconds}"
+                            SmallChange="5" LargeChange="10"
+                            TickFrequency="5" IsSnapToTickEnabled="True"
+                            Style="{DynamicResource IosSlider}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Log file size ──────────────────────────────────── -->
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding LogSizeLabel}"
+                                   Style="{StaticResource SectionLabel}"
+                                   Margin="0" />
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding LogMaxSizeMbDisplay}"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                    <Slider Minimum="5" Maximum="100"
+                            Value="{Binding LogMaxSizeMb}"
+                            SmallChange="5" LargeChange="10"
+                            TickFrequency="5" IsSnapToTickEnabled="True"
+                            Style="{DynamicResource IosSlider}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Hotkey configuration ─────────────────────────────── -->
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <TextBlock Text="{Binding HotkeyLabel}"
+                               Style="{StaticResource SectionLabel}" />
+                    <Grid Margin="0,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="HotkeyInput"
+                                 Text="{Binding HotkeyDisplayText, Mode=OneWay}"
+                                 IsReadOnly="True"
+                                 Style="{StaticResource InputBoxStyle}"
+                                 Cursor="Hand"
+                                 GotFocus="HotkeyInput_GotFocus"
+                                 LostFocus="HotkeyInput_LostFocus"
+                                 PreviewKeyDown="HotkeyInput_PreviewKeyDown" />
+                        <Button Grid.Column="1"
+                                Content="{Binding HotkeyClearLabel}"
+                                Command="{Binding ClearHotkeyCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="6,0,0,0"
+                                VerticalAlignment="Center" />
+                    </Grid>
+                    <TextBlock Text="{Binding HotkeyErrorText}"
+                               Foreground="{DynamicResource WidgetErrorBrush}"
+                               FontSize="11"
+                               Visibility="{Binding HasHotkeyError, Converter={StaticResource BoolToVis}}"
+                               Margin="0,4,0,0"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
+            <!-- Updates ─────────────────────────────────────────── -->
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <TextBlock Text="{Binding UpdateSectionLabel}"
+                               Style="{StaticResource SectionLabel}" />
+                    <CheckBox Content="{Binding AutoUpdateLabel}"
+                              IsChecked="{Binding AutoCheckForUpdates}"
+                              Style="{StaticResource SettingsCheckBox}" />
+                    <Button Content="{Binding CheckUpdateNowLabel}"
+                            Command="{Binding CheckForUpdatesNowCommand}"
+                            Style="{StaticResource OptionButton}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,6,0,0" />
+                    <TextBlock Text="{Binding UpdateStatusText}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               Opacity="0.75"
+                               FontSize="11"
+                               TextWrapping="Wrap"
+                               Margin="0,6,0,0"
+                               Visibility="{Binding HasUpdateStatus, Converter={StaticResource BoolToVis}}" />
+                </StackPanel>
+            </Border>
+
+            <!-- Reset to defaults ───────────────────────────────── -->
+            <Border Style="{StaticResource CardPanel}">
+                <Button Content="{Binding ResetToDefaultsLabel}"
+                        Command="{Binding ResetToDefaultsCommand}"
+                        Style="{StaticResource OptionButton}"
+                        HorizontalAlignment="Stretch"
+                        Background="{DynamicResource WidgetAccentBrush}"
+                        Foreground="{DynamicResource WidgetDayTodayTextBrush}"
+                        BorderBrush="{DynamicResource WidgetAccentBrush}" />
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

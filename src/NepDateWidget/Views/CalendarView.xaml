@@ -1,0 +1,864 @@
+<UserControl x:Class="NepDateWidget.Views.CalendarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
+             mc:Ignorable="d"
+             UseLayoutRounding="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             d:DataContext="{d:DesignInstance vm:CalendarViewModel}"
+             d:Width="300" d:Height="420">
+
+    <UserControl.Resources>
+
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis" Invert="False" />
+
+        <!-- Chevron geometries for nav buttons -->
+        <StreamGeometry x:Key="ChevronLeft">M10,2 L4,8 L10,14</StreamGeometry>
+        <StreamGeometry x:Key="ChevronRight">M6,2 L12,8 L6,14</StreamGeometry>
+
+        <!-- ── Day cell style ───────────────────────────────────────────────── -->
+        <!--
+            Priority order (highest first):
+              1. IsToday      → accent fill, dark text
+              2. IsSaturday   → holiday colour text
+              3. IsHighlighted → highlight colour text
+              4. IsPadding    → invisible text
+              5. Default      → normal foreground
+        -->
+        <Style x:Key="DayCellStyle" TargetType="Border">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="CornerRadius"    Value="0" />
+            <Setter Property="Margin"          Value="0" />
+            <Setter Property="Padding"         Value="2,2,2,1" />
+            <Setter Property="MinHeight"       Value="36" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetGridLineBrush}" />
+            <Setter Property="BorderThickness" Value="0,0,1,1" />
+        </Style>
+
+        <Style x:Key="DayTextStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment"   Value="Center" />
+            <Setter Property="FontSize"            Value="14" />
+            <Setter Property="FontWeight"          Value="SemiBold" />
+            <Setter Property="Foreground"          Value="{DynamicResource WidgetForegroundBrush}" />
+        </Style>
+
+        <!-- Header row day-of-week label style -->
+        <Style x:Key="DowHeaderStyle" TargetType="TextBlock">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment"   Value="Center" />
+            <Setter Property="FontSize"            Value="12" />
+            <Setter Property="FontWeight"          Value="SemiBold" />
+            <Setter Property="Opacity"             Value="0.8" />
+            <Setter Property="Foreground"          Value="{DynamicResource WidgetForegroundBrush}" />
+        </Style>
+
+        <!-- Navigation button style -->
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Background"   Value="Transparent" />
+            <Setter Property="BorderBrush"  Value="Transparent" />
+            <Setter Property="Foreground"   Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"     Value="18" />
+            <Setter Property="Cursor"       Value="Hand" />
+            <Setter Property="Padding"      Value="0,0,0,0" />
+            <Setter Property="MinWidth"     Value="28" />
+            <Setter Property="MinHeight"    Value="28" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                             From="0.6" To="1" Duration="0:0:0.12" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.3" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Compact themed ComboBox for month navigation -->
+        <Style x:Key="CalNavComboStyle" TargetType="ComboBox">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="14" />
+            <Setter Property="FontWeight"      Value="SemiBold" />
+            <Setter Property="Padding"         Value="4,0,4,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="HoverBd"
+                                    Background="Transparent"
+                                    CornerRadius="4"
+                                    Padding="0,0"
+                                    Margin="0,2" />
+                            <ToggleButton Focusable="False" Background="Transparent" BorderThickness="0"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                      RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press" Cursor="Hand" Height="28" VerticalAlignment="Top">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="Transparent"
+                                                            HorizontalAlignment="Stretch"
+                                                            VerticalAlignment="Stretch" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                            <TextBlock x:Name="ContentSite"
+                                       Margin="{TemplateBinding Padding}"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding SelectedItem, RelativeSource={RelativeSource TemplatedParent}}"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       FontWeight="{TemplateBinding FontWeight}"
+                                       IsHitTestVisible="False" />
+                            <Popup x:Name="PART_Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Fade">
+                                <Border Background="{DynamicResource WidgetInputBrush}"
+                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                        BorderThickness="0.7" CornerRadius="4" Margin="0,2,0,0">
+                                    <Border.Resources>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="OverridesDefaultStyle" Value="True" />
+                                            <Setter Property="Background"  Value="{DynamicResource WidgetInputBrush}" />
+                                            <Setter Property="Foreground"  Value="{DynamicResource WidgetForegroundBrush}" />
+                                            <Setter Property="Padding"     Value="10,5" />
+                                            <Setter Property="FontSize"    Value="12" />
+                                            <Setter Property="FontWeight"  Value="Normal" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ComboBoxItem">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                                                Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsHighlighted" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Resources>
+                                    <ScrollViewer SnapsToDevicePixels="True"
+                                                    MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="HoverBd" Property="Background"
+                                        Value="{DynamicResource WidgetCalHeaderHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="HoverBd" Property="Background"
+                                        Value="{DynamicResource WidgetCalHeaderHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid Margin="8,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- month header -->
+            <RowDefinition Height="6"    />
+            <!-- spacer -->
+            <RowDefinition Height="Auto" />
+            <!-- day-of-week headers -->
+            <RowDefinition Height="*"    />
+            <!-- day grid (fills remaining space) -->
+            <RowDefinition Height="Auto" />
+            <!-- fiscal year footer -->
+        </Grid.RowDefinitions>
+
+        <!-- ── Month / Year header ──────────────────────────────────────── -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*"    />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- App icon spanning both rows -->
+            <Image Grid.Column="0" Grid.RowSpan="2"
+                   Source="/Assets/icon.png"
+                   Width="34" Height="34"
+                   RenderOptions.BitmapScalingMode="HighQuality"
+                   VerticalAlignment="Center"
+                   Margin="0,0,2,0"
+                   IsHitTestVisible="False" />
+
+            <!-- Row 0: Year + Month -->
+            <StackPanel Grid.Row="0" Grid.Column="1"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center">
+                <ComboBox x:Name="YearCombo"
+                          ItemsSource="{Binding YearNames}"
+                          SelectedIndex="{Binding SelectedYearIndex, Mode=OneWay}"
+                          SelectionChanged="YearCombo_SelectionChanged"
+                          Style="{StaticResource CalNavComboStyle}"
+                          FontSize="{Binding HeaderFontSize}"
+                          MaxDropDownHeight="270" />
+                <ComboBox x:Name="MonthCombo"
+          ItemsSource="{Binding NepaliMonthNames}"
+          SelectedIndex="{Binding SelectedMonthIndex, Mode=OneWay}"
+          SelectionChanged="MonthCombo_SelectionChanged"
+          Style="{StaticResource CalNavComboStyle}"
+          FontSize="{Binding HeaderFontSize}"
+          Margin="-2,0,0,0" />
+            </StackPanel>
+
+            <!-- Row 1: AD month/year as secondary text -->
+            <TextBlock Grid.Row="1" Grid.Column="1"
+                       Text="{Binding AdMonthLabel}"
+                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                       FontSize="{Binding SubHeaderFontSize}"
+                       Opacity="0.8"
+                       Margin="4,-2,0,0" />
+
+            <!-- Holiday countdown banner: right-aligned in the header column,
+                 spans both header rows so it sits between the AD/BS labels and
+                 the navigation buttons. Single-event days render one centered
+                 line; multi-event days add a "+N more events" sub-line below.
+                 Clicking opens a popup with every upcoming public holiday. -->
+            <ToggleButton x:Name="HolidayBannerToggle"
+                          Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+                          ToolTip="{Binding HolidayCountdownTooltip}"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Center"
+                          MaxWidth="220"
+                          Margin="8,0,8,0"
+                          IsTabStop="False"
+                          Focusable="False"
+                          Cursor="Hand"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          Padding="6,3"
+                          Visibility="{Binding HasHolidayCountdown, Converter={StaticResource BoolToVis}}">
+                <ToggleButton.Style>
+                    <Style TargetType="ToggleButton">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Chrome"
+                                            Background="{TemplateBinding Background}"
+                                            CornerRadius="6"
+                                            Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center"
+                                                          VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Chrome" Property="Background"
+                                                    Value="{DynamicResource WidgetHoverBrush}" />
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Chrome" Property="Background"
+                                                    Value="{DynamicResource WidgetHoverBrush}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ToggleButton.Style>
+
+                <ItemsControl ItemsSource="{Binding HolidayCountdownLines}"
+                              AlternationCount="2"
+                              HorizontalContentAlignment="Stretch"
+                              IsTabStop="False" Focusable="False">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       TextWrapping="NoWrap"
+                                       TextTrimming="CharacterEllipsis"
+                                       Margin="0,0,0,1">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <!-- First line is the primary message: keep centered.
+                                             Second line is the "+N more" rollup: align right
+                                             so it reads as a subtle suffix under the primary.
+                                             AlternationIndex lives on the container, so we
+                                             reach it via ContentPresenter ancestor lookup. -->
+                                        <Setter Property="TextAlignment" Value="Center" />
+                                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                        <Setter Property="Opacity" Value="1" />
+                                        <Style.Triggers>
+                                            <DataTrigger Value="1"
+                                                Binding="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource AncestorType=ContentPresenter}}">
+                                                <Setter Property="TextAlignment" Value="Right" />
+                                                <Setter Property="Opacity" Value="0.65" />
+                                                <Setter Property="FontSize" Value="10" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ToggleButton>
+
+            <!-- Holiday countdown popup: full grouped list of upcoming public
+                 holidays. Anchored to the banner toggle, closes on click-out
+                 or Esc. Kept lightweight: header + scrollable list of rows. -->
+            <Popup PlacementTarget="{Binding ElementName=HolidayBannerToggle}"
+                   Placement="Bottom"
+                   StaysOpen="False"
+                   AllowsTransparency="True"
+                   PopupAnimation="Fade"
+                   HorizontalOffset="0" VerticalOffset="4"
+                   IsOpen="{Binding IsChecked, ElementName=HolidayBannerToggle, Mode=TwoWay}">
+                <Border Background="{DynamicResource WidgetInputBrush}"
+                        BorderBrush="{DynamicResource WidgetGridLineBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8"
+                        Padding="14,12"
+                        MaxWidth="320"
+                        SnapsToDevicePixels="True">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.18" Color="#000000" />
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="{Binding HolidayPopupTitle}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   FontWeight="SemiBold"
+                                   FontSize="12"
+                                   Opacity="0.7"
+                                   Margin="0,0,0,8" />
+                        <ScrollViewer MaxHeight="320"
+                                      VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                            <ItemsControl ItemsSource="{Binding HolidayPopupEntries}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid Margin="0,3">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding Name}"
+                                                           Foreground="{DynamicResource WidgetDaySaturdayBrush}"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="12"
+                                                           TextWrapping="Wrap" />
+                                                <TextBlock Text="{Binding DateLabel}"
+                                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                           FontSize="10.5"
+                                                           Opacity="0.65"
+                                                           Margin="0,1,0,0" />
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1"
+                                                       Text="{Binding WhenLabel}"
+                                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                       FontSize="10.5"
+                                                       Opacity="0.55"
+                                                       VerticalAlignment="Center"
+                                                       Margin="10,0,0,0" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </StackPanel>
+                </Border>
+            </Popup>
+
+            <!-- Nav buttons span both rows, vertically centered -->
+            <!-- Prev month -->
+            <Button Grid.Column="2" Grid.RowSpan="2"
+                    Style="{StaticResource NavButtonStyle}"
+                    Command="{Binding PrevMonthCommand}"
+                    IsEnabled="{Binding CanGoPrev}"
+                    ToolTip="{Binding PrevLabel}">
+                <Path Data="{StaticResource ChevronLeft}"
+                      Stroke="{DynamicResource WidgetForegroundBrush}"
+                      StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                      Stretch="Uniform" Width="10" Height="10" />
+            </Button>
+
+            <!-- Go to today -->
+            <Button Grid.Column="3" Grid.RowSpan="2"
+                    Width="28" Height="28"
+                    Padding="0,0,0,0"
+                    Command="{Binding GoTodayCommand}"
+                    ToolTip="{Binding GoTodayLabel}"
+                    Margin="1,0,1,0">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource NavButtonStyle}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsShowingToday}" Value="True">
+                                <Setter Property="Opacity" Value="0.3" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Ellipse Width="10" Height="10"
+                         HorizontalAlignment="Left"
+                         VerticalAlignment="Top"
+                         Fill="{DynamicResource WidgetForegroundBrush}" />
+            </Button>
+
+            <!-- Next month -->
+            <Button Grid.Column="4" Grid.RowSpan="2"
+                    Style="{StaticResource NavButtonStyle}"
+                    Command="{Binding NextMonthCommand}"
+                    IsEnabled="{Binding CanGoNext}"
+                    ToolTip="{Binding NextLabel}">
+                <Path Data="{StaticResource ChevronRight}"
+                      Stroke="{DynamicResource WidgetForegroundBrush}"
+                      StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                      Stretch="Uniform" Width="10" Height="10" />
+            </Button>
+        </Grid>
+
+        <!-- ── Day-of-week headers + Day grid wrapped in a single bordered container ── -->
+        <Border Grid.Row="2" Grid.RowSpan="2"
+                BorderBrush="{DynamicResource WidgetGridLineBrush}"
+                BorderThickness="0.6"
+                Margin="0,0,0,2">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="0" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding DataContext.IsCornerRounded, RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                            <Setter Property="CornerRadius" Value="6" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <Grid ClipToBounds="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <ItemsControl Grid.Row="0" ItemsSource="{Binding DayOfWeekHeaders}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1" Columns="7" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="{DynamicResource WidgetGridLineBrush}"
+                            BorderThickness="0,0,1,1"
+                            Padding="0,6,0,7">
+                                <TextBlock Text="{Binding}"
+                                   Style="{StaticResource DowHeaderStyle}"
+                                   FontSize="{Binding DataContext.DowFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <!-- ── Day grid ──────────────────────────────────────────────────── -->
+                <ItemsControl Grid.Row="1" x:Name="DaysGrid" ItemsSource="{Binding Days}">
+                    <ItemsControl.CacheMode>
+                        <BitmapCache />
+                    </ItemsControl.CacheMode>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="7" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type vm:CalendarDayViewModel}">
+                            <!--
+                        Each cell: large BS number in centre + small AD badge at bottom-right.
+                        State priority via triggers (lower = higher override):
+                          IsPadding    → invisible
+                          IsSaturday   → holiday colour                          IsSunday     → holiday colour                          IsHighlighted→ green
+                          IsToday      → accent background, dark text
+                    -->
+                            <Border Cursor="Hand">
+                                <Border.Style>
+                                    <Style TargetType="Border" BasedOn="{StaticResource DayCellStyle}">
+                                        <Style.Triggers>
+                                            <!-- Weekend/Holiday: tint background + bottom accent stripe -->
+                                            <DataTrigger Binding="{Binding ShowSaturdayHighlight}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WidgetDayWeekendTintBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ShowSundayHighlight}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WidgetDayWeekendTintBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ShowHolidayHighlight}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WidgetDayWeekendTintBrush}" />
+                                            </DataTrigger>
+                                            <!-- Today wins over weekend/holiday -->
+                                            <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WidgetDayTodayBrush}" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource WidgetGridLineBrush}" />
+                                                <Setter Property="BorderThickness" Value="0,0,1,1" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsPadding}" Value="True">
+                                                <Setter Property="Cursor" Value="Arrow" />
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="BorderBrush" Value="{DynamicResource WidgetGridLineBrush}" />
+                                                <Setter Property="BorderThickness" Value="0,0,1,1" />
+                                            </DataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding IsPadding}" Value="False" />
+                                                    <Condition Binding="{Binding IsToday}" Value="False" />
+                                                    <Condition Binding="{Binding ShowSaturdayHighlight}" Value="False" />
+                                                    <Condition Binding="{Binding ShowSundayHighlight}" Value="False" />
+                                                    <Condition Binding="{Binding ShowHolidayHighlight}" Value="False" />
+                                                </MultiDataTrigger.Conditions>
+                                                <MultiDataTrigger.Setters>
+                                                    <Setter Property="Background" Value="Transparent" />
+                                                </MultiDataTrigger.Setters>
+                                            </MultiDataTrigger>
+                                            <!-- Suppress the right-click menu on padding cells (no date data). -->
+                                            <DataTrigger Binding="{Binding HasCopyOptions}" Value="False">
+                                                <Setter Property="ContextMenu" Value="{x:Null}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Border.InputBindings>
+                                    <MouseBinding MouseAction="LeftClick"
+                                          Command="{Binding DataContext.DayCellClickCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                          CommandParameter="{Binding}" />
+                                </Border.InputBindings>
+                                <!--
+                                    Tag carries the CalendarViewModel so the ContextMenu (which
+                                    lives outside the visual tree) can reach CopyDateCommand via
+                                    PlacementTarget.Tag. The ContextMenu itself is suppressed for
+                                    padding cells through the HasCopyOptions style trigger below.
+                                -->
+                                <Border.Tag>
+                                    <Binding Path="DataContext" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                </Border.Tag>
+                                <Border.ContextMenu>
+                                    <ContextMenu Style="{StaticResource WidgetContextMenuStyle}"
+                                                 DataContext="{Binding PlacementTarget.DataContext,
+                                                                       RelativeSource={RelativeSource Self}}">
+                                        <ContextMenu.Resources>
+                                            <!--
+                                                Non-interactive header row. Acts as a quiet section
+                                                label above the date options. No divider line - the
+                                                lower opacity and tighter typography are enough to
+                                                set it apart from the interactive items below.
+                                            -->
+                                            <Style x:Key="CopyHeaderItem" TargetType="MenuItem">
+                                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                                <Setter Property="IsHitTestVisible" Value="False" />
+                                                <Setter Property="Focusable" Value="False" />
+                                                <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="MenuItem">
+                                                            <Border Padding="12,6,12,2">
+                                                                <TextBlock Text="{TemplateBinding Header}"
+                                                                           FontSize="10"
+                                                                           FontWeight="SemiBold"
+                                                                           Opacity="0.45"
+                                                                           TextOptions.TextFormattingMode="Display" />
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                            <!--
+                                                Date-row items: same look as the rest of the app's
+                                                menu (WidgetMenuItemStyle), header bound to the
+                                                formatted date value itself.
+                                            -->
+                                            <Style x:Key="CopyOptionItem" TargetType="MenuItem"
+                                                   BasedOn="{StaticResource WidgetMenuItemStyle}">
+                                                <Setter Property="Command"
+                                                        Value="{Binding PlacementTarget.Tag.CopyDateCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}" />
+                                            </Style>
+                                        </ContextMenu.Resources>
+
+                                        <MenuItem Header="{Binding CopyMenuTitle}"
+                                                  Style="{StaticResource CopyHeaderItem}" />
+                                        <MenuItem Style="{StaticResource CopyOptionItem}"
+                                                  Header="{Binding CopyFormatOptions[0].Header}"
+                                                  CommandParameter="{Binding CopyFormatOptions[0]}" />
+                                        <MenuItem Style="{StaticResource CopyOptionItem}"
+                                                  Header="{Binding CopyFormatOptions[1].Header}"
+                                                  CommandParameter="{Binding CopyFormatOptions[1]}" />
+                                        <MenuItem Style="{StaticResource CopyOptionItem}"
+                                                  Header="{Binding CopyFormatOptions[2].Header}"
+                                                  CommandParameter="{Binding CopyFormatOptions[2]}" />
+                                        <MenuItem Style="{StaticResource CopyOptionItem}"
+                                                  Header="{Binding CopyFormatOptions[3].Header}"
+                                                  CommandParameter="{Binding CopyFormatOptions[3]}" />
+                                    </ContextMenu>
+                                </Border.ContextMenu>
+
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Row 0: Events (one per row, with ... overflow indicator) -->
+                                    <StackPanel Grid.Row="0">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Setter Property="TextElement.Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding HasVisibleEvents}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding ShowSaturdayHighlight}" Value="True">
+                                                        <Setter Property="TextElement.Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding ShowSundayHighlight}" Value="True">
+                                                        <Setter Property="TextElement.Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding ShowHolidayHighlight}" Value="True">
+                                                        <Setter Property="TextElement.Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                        <Setter Property="TextElement.Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <ItemsControl ItemsSource="{Binding VisibleEvents}" IsHitTestVisible="False">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}"
+                                                       FontSize="{Binding DataContext.EventFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Margin="1,1,1,0" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <!-- Row 1: Reminder dot (absolute top-left) + BS day number (centred) -->
+                                    <Grid Grid.Row="1">
+                                        <!-- Reminder dot indicator (top-left) -->
+                                        <Ellipse Width="6" Height="6"
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Top"
+                                         Margin="3,3,0,0"
+                                         Fill="{DynamicResource WidgetAccentBrush}"
+                                         IsHitTestVisible="False"
+                                         ToolTip="{Binding ReminderTooltip}">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasReminders}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <!-- ── Large BS (Nepali) day number, centred ── -->
+                                        <!-- TextFormattingMode=Ideal preserves curve smoothness for the
+                                             larger day digits; Display mode (used app-wide for crisp small
+                                             UI text) over-snaps mid-size curved glyphs and produces visible
+                                             facets on "8", "3", "0". -->
+                                        <TextBlock Text="{Binding DayText}"
+                                                   TextOptions.TextFormattingMode="Ideal"
+                                                   TextOptions.TextHintingMode="Auto">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock" BasedOn="{StaticResource DayTextStyle}">
+                                                    <Setter Property="FontSize" Value="{Binding DataContext.DayNumberFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsPadding}" Value="True">
+                                                            <Setter Property="Foreground" Value="Transparent" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsSaturday}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                        </DataTrigger>
+                                                        <!-- Revert Saturday only when its setting is off -->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsSaturday}" Value="True" />
+                                                                <Condition Binding="{Binding ShowSaturdayHighlight}" Value="False" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                            <Setter Property="FontWeight"  Value="Normal" />
+                                                        </MultiDataTrigger>
+                                                        <DataTrigger Binding="{Binding IsSunday}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                            <Setter Property="FontWeight"  Value="SemiBold" />
+                                                        </DataTrigger>
+                                                        <!-- Revert Sunday only when its setting is off -->
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding IsSunday}" Value="True" />
+                                                                <Condition Binding="{Binding ShowSundayHighlight}" Value="False" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                            <Setter Property="FontWeight"  Value="Normal" />
+                                                        </MultiDataTrigger>
+                                                        <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayHighlightedBrush}" />
+                                                        </DataTrigger>
+                                                        <!-- Public holiday — placed before IsToday so today accent still wins -->
+                                                        <DataTrigger Binding="{Binding ShowHolidayHighlight}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                            <Setter Property="FontWeight"  Value="SemiBold" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                            <Setter Property="FontWeight"  Value="SemiBold" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+
+                                    <!-- Row 2: Tithi (left) + AD badge (right) -->
+                                    <Grid Grid.Row="2" Margin="2,0,2,2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Tithi (bottom-left) -->
+                                        <TextBlock Grid.Column="0"
+                                           Text="{Binding TithiText}"
+                                           FontSize="{Binding DataContext.TithiFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                           HorizontalAlignment="Left"
+                                           VerticalAlignment="Bottom"
+                                           IsHitTestVisible="False">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    <Setter Property="Opacity" Value="0.70" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ShowTithiText}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding ShowSaturdayHighlight}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                            <Setter Property="Opacity" Value="0.85" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding ShowSundayHighlight}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                            <Setter Property="Opacity" Value="0.85" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding ShowHolidayHighlight}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                            <Setter Property="Opacity" Value="0.85" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                            <Setter Property="Opacity" Value="0.75" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <!-- ── Small AD (English) day number badge, bottom-right ── -->
+                                        <Border Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        CornerRadius="4"
+                                        Padding="3,2,3,1"
+                                        SnapsToDevicePixels="False"
+                                        UseLayoutRounding="False"
+                                        Background="{DynamicResource WidgetInputBrush}">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ShowEnglishBadge}" Value="False">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <TextBlock Text="{Binding EnglishDayText}"
+                                               FontSize="{Binding DataContext.AdBadgeFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                               IsHitTestVisible="False" />
+                                        </Border>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </Grid>
+        </Border>
+
+        <!-- ── Fiscal year footer (moved to MainWindow bottom bar) ──────── -->
+        <Border Grid.Row="4"
+                Padding="2,4,2,2" Margin="0,5,0,0"
+                Visibility="Collapsed">
+            <TextBlock Text="{Binding FiscalFooterText}"
+                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                       Opacity="0.8"
+                       FontSize="11"
+                       HorizontalAlignment="Center"
+                       TextTrimming="CharacterEllipsis" />
+        </Border>
+
+    </Grid>
+</UserControl>
