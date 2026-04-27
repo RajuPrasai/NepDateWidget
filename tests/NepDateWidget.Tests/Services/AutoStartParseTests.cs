@@ -81,8 +81,8 @@ public class AutoStartParseTests
     {
         // Velopack installs to %LocalAppData%\NepDateWidget\current\NepDateWidget.exe.
         // No spaces in default path - simple unquoted parse must work.
-        var input = "\"C:\\Users\\rajup\\AppData\\Local\\NepDateWidget\\current\\NepDateWidget.exe\"";
-        var expected = "C:\\Users\\rajup\\AppData\\Local\\NepDateWidget\\current\\NepDateWidget.exe";
+        var input = "\"C:\\Users\\example\\AppData\\Local\\NepDateWidget\\current\\NepDateWidget.exe\"";
+        var expected = "C:\\Users\\example\\AppData\\Local\\NepDateWidget\\current\\NepDateWidget.exe";
         Assert.Equal(expected, AutoStartService.ParseStoredExePath(input));
     }
 }

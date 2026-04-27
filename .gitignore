@@ -80,3 +80,6 @@ $RECYCLE.BIN/
 *.bak
 *.swp
 *~
+
+# ── Local working notes (AI scratchpad, prep checklists, etc.) ───────────────
+AI/

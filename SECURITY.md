@@ -5,7 +5,6 @@
 | Version | Supported          |
 |---------|--------------------|
 | 1.0.x   | Yes                |
-| < 1.0   | No (pre-release)   |
 
 Security fixes are issued only against the latest published
 release. Older builds will not receive backports.
@@ -14,10 +13,9 @@ release. Older builds will not receive backports.
 
 **Do not open a public GitHub issue for security problems.**
 
-Report privately via either of the following channels:
+Report privately via:
 
 - GitHub Security Advisories: <https://github.com/RajuPrasai/NepDateWidget/security/advisories/new>
-- Email: replace this line with a real contact address before publishing.
 
 Please include:
 
