@@ -61,14 +61,21 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
+                        <Grid x:Name="Root">
+                            <Border x:Name="BgLayer" Background="{TemplateBinding Background}" CornerRadius="6" />
+                            <Border Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.85" />
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.40" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -348,7 +355,7 @@
 
                 <!-- Recurrence toggle row -->
                 <TextBlock Text="{Binding RecurrenceLabel}" Style="{StaticResource FieldLabel}" />
-                <UniformGrid Columns="4">
+                <UniformGrid Columns="5">
                     <RadioButton Content="{Binding RecurrenceOptions[0]}"
                                  Style="{StaticResource RecurrenceToggle}"
                                  IsChecked="{Binding EditRecurrenceIndex, Converter={StaticResource IntEqual}, ConverterParameter=0}"
@@ -364,7 +371,11 @@
                     <RadioButton Content="{Binding RecurrenceOptions[3]}"
                                  Style="{StaticResource RecurrenceToggle}"
                                  IsChecked="{Binding EditRecurrenceIndex, Converter={StaticResource IntEqual}, ConverterParameter=3}"
-                                 GroupName="Recurrence" TabIndex="8" />
+                                 Margin="0,0,3,0" GroupName="Recurrence" TabIndex="8" />
+                    <RadioButton Content="{Binding RecurrenceOptions[4]}"
+                                 Style="{StaticResource RecurrenceToggle}"
+                                 IsChecked="{Binding EditRecurrenceIndex, Converter={StaticResource IntEqual}, ConverterParameter=4}"
+                                 GroupName="Recurrence" TabIndex="9" />
                 </UniformGrid>
 
                 <!-- End date (only visible for recurring reminders) -->
@@ -390,17 +401,31 @@
 
                 <!-- Save / Cancel -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,8,0,0">
-                    <Button Content="{Binding CancelLabel}"
-                            Style="{StaticResource RBtnSecondary}"
-                            Command="{Binding CancelEditCommand}" Margin="0,0,6,0" TabIndex="10" />
-                    <Button Content="{Binding SaveLabel}"
-                            Style="{StaticResource RBtn}"
-                            Command="{Binding SaveCommand}" TabIndex="11" />
+                    <Button Style="{StaticResource RBtnSecondary}"
+                            Command="{Binding CancelEditCommand}" Margin="0,0,6,0" TabIndex="10">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconWindowClose}"
+                                  Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.4"
+                                  Fill="Transparent" Stretch="Uniform"
+                                  Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                            <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource RBtn}"
+                            Command="{Binding SaveCommand}" TabIndex="11">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconCheck}"
+                                  Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.5"
+                                  Fill="Transparent" Stretch="Uniform"
+                                  Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,7,0" />
+                            <TextBlock Text="{Binding SaveLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </StackPanel>
 
             <!-- Footer: Add button -->
-            <Button Grid.Row="3" Content="{Binding AddLabel}"
+            <Button Grid.Row="3"
                     Command="{Binding StartAddCommand}"
                     HorizontalAlignment="Stretch" Margin="0,6,0,0">
                 <Button.Style>
@@ -412,6 +437,13 @@
                         </Style.Triggers>
                     </Style>
                 </Button.Style>
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource IconBell}"
+                          Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                          Fill="Transparent" Stretch="Uniform"
+                          Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,7,0" />
+                    <TextBlock Text="{Binding AddLabel}" VerticalAlignment="Center" />
+                </StackPanel>
             </Button>
 
             <!-- Discard changes inline banner -->
@@ -425,12 +457,28 @@
                                FontSize="15" FontWeight="SemiBold"
                                HorizontalAlignment="Center" Margin="0,0,0,12" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Content="{Binding DiscardYesLabel}" Style="{StaticResource RBtn}"
+                        <Button Style="{StaticResource RBtn}"
                                 Command="{Binding ConfirmDiscardCommand}"
-                                Width="80" Margin="0,0,8,0" />
-                        <Button Content="{Binding CancelLabel}" Style="{StaticResource RBtnSecondary}"
+                                MinWidth="80" Margin="0,0,8,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconCheck}"
+                                      Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.5"
+                                      Fill="Transparent" Stretch="Uniform"
+                                      Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding DiscardYesLabel}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource RBtnSecondary}"
                                 Command="{Binding CancelDiscardCommand}"
-                                Width="80" />
+                                MinWidth="80">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconWindowClose}"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.4"
+                                      Fill="Transparent" Stretch="Uniform"
+                                      Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </StackPanel>
             </Border>

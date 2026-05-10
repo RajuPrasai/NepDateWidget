@@ -590,7 +590,9 @@
                         <ComboBox ItemsSource="{Binding Timezones}"
                                   SelectedItem="{Binding SelectedTimezone}"
                                   DisplayMemberPath="DisplayName"
-                                  MaxDropDownHeight="220"
+                                  TextSearch.TextPath="DisplayName"
+                                  IsTextSearchEnabled="True"
+                                  MaxDropDownHeight="340"
                                   Style="{StaticResource ThemedComboBoxStyle}"
                                   Margin="0,0,0,6" />
 
@@ -1261,6 +1263,11 @@
                             SmallChange="5" LargeChange="10"
                             TickFrequency="5" IsSnapToTickEnabled="True"
                             Style="{DynamicResource IosSlider}" />
+                    <Button Content="{Binding TestNotificationLabel}"
+                            Command="{Binding TestNotificationCommand}"
+                            Style="{StaticResource OptionButton}"
+                            HorizontalAlignment="Left"
+                            Margin="0,6,0,0" />
                 </StackPanel>
             </Border>
 

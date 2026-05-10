@@ -63,23 +63,24 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
+                        <Grid x:Name="Root">
+                            <Border x:Name="BgLayer" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6" />
+                            <Border Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.82" />
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.68" />
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.4" />
+                                <Setter TargetName="Root" Property="Opacity" Value="0.4" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -382,10 +383,17 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-                                <Button Content="{Binding FetchLabel}"
-                                        Style="{StaticResource AccentButton}"
+                                <Button Style="{StaticResource AccentButton}"
                                         Command="{Binding FetchMyIpCommand}"
-                                        Width="90" />
+                                        MinWidth="90">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconMyIp}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding FetchLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
                                 <Border Width="8" />
                                 <Border Style="{StaticResource BusyIndicator}"
                                         Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
@@ -422,10 +430,17 @@
                                          Style="{StaticResource InputBoxStyle}"
                                          Text="{Binding PingCount, UpdateSourceTrigger=PropertyChanged}" />
                                 <Button Grid.Column="4"
-                                        Content="{Binding PingLabel}"
                                         Style="{StaticResource AccentButton}"
                                         Command="{Binding PingCommand}"
-                                        Width="72" />
+                                        MinWidth="72">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconPing}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding PingLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
                             </Grid>
                             <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,6">
                                 <TextBlock Text="{Binding CountLabel}"
@@ -448,10 +463,17 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
-                                <Button Content="{Binding ScanLabel}"
-                                        Style="{StaticResource AccentButton}"
+                                <Button Style="{StaticResource AccentButton}"
                                         Command="{Binding ScanCommand}"
-                                        Width="90" />
+                                        MinWidth="90">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconScan}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding ScanLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
                                 <Border Width="10" />
                                 <TextBlock Text="{Binding ScanStatus}"
                                            Foreground="{DynamicResource WidgetForegroundBrush}"
@@ -614,10 +636,17 @@
                                          Tag="{Binding HostLabel}"
                                          PreviewKeyDown="TraceHost_PreviewKeyDown" />
                                 <Button Grid.Column="2"
-                                        Content="{Binding TraceLabel}"
                                         Style="{StaticResource AccentButton}"
                                         Command="{Binding TraceCommand}"
-                                        Width="72" />
+                                        MinWidth="72">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconTrace}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding TraceLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
                             </Grid>
                             <TextBox Grid.Row="1" Style="{StaticResource ResultBoxStyle}"
                                      Text="{Binding TraceResult, Mode=OneWay}"
@@ -644,10 +673,17 @@
                                          Tag="{Binding DomainLabel}"
                                          PreviewKeyDown="WhoisDomain_PreviewKeyDown" />
                                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                    <Button Content="{Binding WhoisLabel}"
-                                            Style="{StaticResource AccentButton}"
+                                    <Button Style="{StaticResource AccentButton}"
                                             Command="{Binding WhoisCommand}"
-                                            Width="72" />
+                                            MinWidth="72">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource IconWhois}"
+                                                  Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                                  Fill="Transparent" Stretch="Uniform"
+                                                  Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                            <TextBlock Text="{Binding WhoisLabel}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
                                     <Border Width="8" />
                                     <Border Style="{StaticResource BusyIndicator}"
                                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
@@ -679,10 +715,17 @@
                                          Tag="{Binding HostLabel}"
                                          PreviewKeyDown="DnsHost_PreviewKeyDown" />
                                 <StackPanel Grid.Column="2" Orientation="Horizontal">
-                                    <Button Content="{Binding DnsLabel}"
-                                            Style="{StaticResource AccentButton}"
+                                    <Button Style="{StaticResource AccentButton}"
                                             Command="{Binding DnsCommand}"
-                                            Width="72" />
+                                            MinWidth="72">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource IconDns}"
+                                                  Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                                  Fill="Transparent" Stretch="Uniform"
+                                                  Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                            <TextBlock Text="{Binding DnsLabel}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
                                     <Border Width="8" />
                                     <Border Style="{StaticResource BusyIndicator}"
                                             Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"

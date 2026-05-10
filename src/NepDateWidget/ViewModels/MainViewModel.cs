@@ -59,6 +59,13 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private bool _expandedPinned;
+    public bool ExpandedPinned
+    {
+        get => _expandedPinned;
+        set => SetProperty(ref _expandedPinned, value);
+    }
+
     private string _language = "en";
     public string Language
     {
@@ -272,8 +279,8 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         }
     }
 
-    /// <summary>True when the widget is collapsed AND transparent mode is on.</summary>
-    public bool IsCollapsedTransparent => !_isExpanded && _transparentWhenCollapsed;
+    /// <summary>True when transparent mode is on (pill stays transparent at all times).</summary>
+    public bool IsCollapsedTransparent => _transparentWhenCollapsed;
 
     private bool _autoStart;
     public bool AutoStart
@@ -394,6 +401,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     public ICommand OpenNetworkDnsCommand     { get; }
 
     // Quick-toggle for the pin button in the tab strip
+    public ICommand ToggleExpandedPinCommand { get; }
 
     // Text tools shortcuts (context menu)
     public ICommand OpenTextUnicodeCommand  { get; }
@@ -446,6 +454,12 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     public event EventHandler? RunBoxFocusRequested;
 
+    /// <summary>
+    /// Raised when the user navigates to a tab or mode while the shell is already expanded.
+    /// The View subscribes to bring the shell window to the foreground.
+    /// </summary>
+    public event EventHandler? ShellBringToFrontRequested;
+
     // ── Construction ─────────────────────────────────────────────────────────
 
     public MainViewModel(
@@ -457,8 +471,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         IAutoStartService autoStartService,
         IReminderService? reminderService = null,
         INotesService? notesService = null,
+        IDocumentService? documentService = null,
+        ISearchHistoryService? searchHistoryService = null,
         IUpdateService? updateService = null,
-        IHolidayLookupService? holidayLookupService = null)
+        IHolidayLookupService? holidayLookupService = null,
+        INepaliDateAdapter? adapter = null)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
@@ -511,6 +528,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
                                          s.HighlightSundays,
                                          selectedTimezoneId: s.SelectedTimezoneId,
                                          reminderService: reminderService,
+                                         notesService: notesService,
                                          showTithi: s.ShowTithi,
                                          showEvents: s.ShowEvents,
                                          highlightPublicHolidays: s.HighlightPublicHolidays,
@@ -528,7 +546,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         TextTools = new TextToolsViewModel(localizationService);
         RunBox = new RunBoxViewModel(settingsService, localizationService);
         About = new AboutViewModel(localizationService);
-        More = new MoreViewModel(localizationService, notesService, reminderService);
+        More = new MoreViewModel(localizationService, notesService, reminderService, documentService, searchHistoryService, adapter: adapter);
 
         // When settings are applied from the Settings tab, sync live state
         Settings.SettingsApplied += (_, _) => SyncFromSettings();
@@ -553,6 +571,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         OpenSettingsCommand = new RelayCommand(OpenSettings);
         OpenAboutCommand    = new RelayCommand(OpenAbout);
         OpenMoreCommand     = new RelayCommand(OpenMore);
+        ToggleExpandedPinCommand = new RelayCommand(() => ExpandedPinned = !ExpandedPinned);
         SetLanguageEnCommand = new RelayCommand(() => Language = "en");
         SetLanguageNeCommand = new RelayCommand(() => Language = "ne");
         SetThemeDarkCommand = new RelayCommand(() => Theme = "Dark");
@@ -623,28 +642,29 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenSettings()
     {
-        if (!_isExpanded)
-            ToggleExpanded();
+        if (!_isExpanded) ToggleExpanded();
+        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
         SelectedTabIndex = 8;
     }
 
     private void OpenAbout()
     {
-        if (!_isExpanded)
-            ToggleExpanded();
+        if (!_isExpanded) ToggleExpanded();
+        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
         SelectedTabIndex = 7;
     }
 
     private void OpenMore()
     {
-        if (!_isExpanded)
-            ToggleExpanded();
+        if (!_isExpanded) ToggleExpanded();
+        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
         SelectedTabIndex = 6;
     }
+
     private void OpenToolsMode(int mode)
     {
-        if (!_isExpanded)
-            ToggleExpanded();
+        if (!_isExpanded) ToggleExpanded();
+        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
         SelectedTabIndex = 1;
         Calendar.Converter.ActiveMode = mode;
     }
@@ -655,8 +675,8 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenBankingMode(int mode)
     {
-        if (!_isExpanded)
-            ToggleExpanded();
+        if (!_isExpanded) ToggleExpanded();
+        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
         SelectedTabIndex = 4;
         Banking.ActiveMode = mode;
     }
@@ -667,8 +687,8 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenUnitMode(int mode)
     {
-        if (!_isExpanded)
-            ToggleExpanded();
+        if (!_isExpanded) ToggleExpanded();
+        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
         SelectedTabIndex = 2;
         Unit.ActiveMode = mode;
     }
@@ -681,8 +701,8 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenTextMode(int mode)
     {
-        if (!_isExpanded)
-            ToggleExpanded();
+        if (!_isExpanded) ToggleExpanded();
+        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
         SelectedTabIndex = 3;
         TextTools.ActiveMode = mode;
     }
@@ -693,8 +713,8 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenNetworkMode(int mode)
     {
-        if (!_isExpanded)
-            ToggleExpanded();
+        if (!_isExpanded) ToggleExpanded();
+        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
         SelectedTabIndex = 5;
         Network.ActiveMode = mode;
     }

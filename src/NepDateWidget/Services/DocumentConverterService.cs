@@ -13,7 +13,7 @@ namespace NepDateWidget.Services;
 ///
 /// The transform delegate signature is (string text, string? fontName) → string.
 /// fontName is:
-///   null  for .txt files (no font context — caller should convert unconditionally)
+///   null  for .txt files (no font context - caller should convert unconditionally)
 ///   ""    for .docx/.doc runs that have no explicit font set (inherited)
 ///   name  for runs with an explicit font (e.g. "Preeti", "Times New Roman")
 /// </summary>

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:NepDateWidget.Views"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
              xmlns:cvt="clr-namespace:NepDateWidget.Converters"
              mc:Ignorable="d"
@@ -21,8 +22,13 @@
             <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
             <Setter Property="TextWrapping" Value="NoWrap" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding DataContext.IsCollapsedTransparent,
-                             RelativeSource={RelativeSource AncestorType=Window}}" Value="True">
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding DataContext.IsCollapsedTransparent,
+                                     RelativeSource={RelativeSource AncestorType=Window}}" Value="True" />
+                        <Condition Binding="{Binding UseTransparentStyling,
+                                     RelativeSource={RelativeSource AncestorType={x:Type views:MiniBarView}}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
                     <Setter Property="Foreground" Value="White" />
                     <Setter Property="Effect">
                         <Setter.Value>
@@ -31,7 +37,7 @@
                                               Direction="270" />
                         </Setter.Value>
                     </Setter>
-                </DataTrigger>
+                </MultiDataTrigger>
             </Style.Triggers>
         </Style>
     </UserControl.Resources>

@@ -84,7 +84,7 @@ public interface INepaliDateAdapter
 
     /// <summary>
     /// Returns calendar metadata for a given BS date from the NepDate library.
-    /// Covers 2001–2089 BS; returns empty/false values outside that range without throwing.
+    /// Covers 2001-2089 BS; returns empty/false values outside that range without throwing.
     /// </summary>
     (bool IsPublicHoliday, string TithiEn, string TithiNp, string[] EventsEn, string[] EventsNp)
         GetCalendarInfo(int bsYear, int bsMonth, int bsDay);

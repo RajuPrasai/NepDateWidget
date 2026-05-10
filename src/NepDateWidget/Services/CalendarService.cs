@@ -8,7 +8,7 @@ namespace NepDateWidget.Services;
 /// </summary>
 public sealed class CalendarService : ICalendarService
 {
-    // NepDate supports 1901/01/01 – 2199/12/30
+    // NepDate supports 1901/01/01 - 2199/12/30
     private const int MinBsYear = 1901;
     private const int MaxBsYear = 2199;
     private const int MinBsMonth = 1;

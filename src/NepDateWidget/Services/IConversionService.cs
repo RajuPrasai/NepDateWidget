@@ -13,15 +13,15 @@ public interface IConversionService
     /// Converts an AD (Gregorian) date to BS.
     /// </summary>
     /// <param name="adYear">Gregorian year.</param>
-    /// <param name="adMonth">Gregorian month (1–12).</param>
+    /// <param name="adMonth">Gregorian month (1-12).</param>
     /// <param name="adDay">Gregorian day.</param>
     ConversionResult AdToBs(int adYear, int adMonth, int adDay);
 
     /// <summary>
     /// Converts a BS (Bikram Sambat) date to AD.
     /// </summary>
-    /// <param name="bsYear">BS year (1901–2199).</param>
-    /// <param name="bsMonth">BS month (1–12).</param>
+    /// <param name="bsYear">BS year (1901-2199).</param>
+    /// <param name="bsMonth">BS month (1-12).</param>
     /// <param name="bsDay">BS day.</param>
     ConversionResult BsToAd(int bsYear, int bsMonth, int bsDay);
 

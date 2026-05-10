@@ -31,7 +31,7 @@ public sealed class ConversionService : IConversionService
 
         var result = _adapter.AdToBs(adDate);
         if (result is null)
-            return ConversionResult.Fail("The AD date is outside the supported BS range (1901–2199).");
+            return ConversionResult.Fail("The AD date is outside the supported BS range (1901-2199).");
 
         var (bsYear, bsMonth, bsDay) = result.Value;
         return ConversionResult.Ok(

@@ -328,9 +328,27 @@ public sealed class ReminderService : IReminderService
             }
             case ReminderRecurrence.Monthly:
             {
-                var next = _adapter.AddMonths(y, m, d, 1);
-                if (next is null) return false;
-                r.BsDate = ReminderEntry.FormatDate(next.Value.Year, next.Value.Month, next.Value.Day);
+                // Preserve the original intended day so months with fewer days don't
+                // permanently drift to a lower day (e.g. a 32nd-day reminder stays at
+                // 32 intent, clamped per month, not locked to the first clamped value).
+                var origParts = ReminderEntry.ParseDate(r.OriginalBsDate);
+                int origDay = origParts?.Day ?? d;
+                int newM = m + 1, newY = y;
+                if (newM > 12) { newM = 1; newY++; }
+                int maxDay = _adapter.GetDaysInMonth(newY, newM);
+                if (maxDay <= 0) return false;
+                r.BsDate = ReminderEntry.FormatDate(newY, newM, Math.Min(origDay, maxDay));
+                return true;
+            }
+            case ReminderRecurrence.Yearly:
+            {
+                var origParts = ReminderEntry.ParseDate(r.OriginalBsDate);
+                int origMonth = origParts?.Month ?? m;
+                int origDay   = origParts?.Day   ?? d;
+                int newY = y + 1;
+                int maxDay = _adapter.GetDaysInMonth(newY, origMonth);
+                if (maxDay <= 0) return false;
+                r.BsDate = ReminderEntry.FormatDate(newY, origMonth, Math.Min(origDay, maxDay));
                 return true;
             }
             default:
@@ -398,6 +416,14 @@ public sealed class ReminderService : IReminderService
                 // Monthly is complex due to BS month day count variations (day clamping).
                 // Simulate from original date using AddMonths(orig, n) to avoid drift.
                 return WouldRecurMonthlyOnDate(origY, origM, origD, targetY, targetM, targetD, targetAd.Value);
+
+            case ReminderRecurrence.Yearly:
+                // Same month every year, day clamped to what that month supports.
+                if (targetM != origM) return false;
+                if (targetY <= origY) return false;
+                int maxDayY = _adapter.GetDaysInMonth(targetY, origM);
+                if (maxDayY <= 0) return false;
+                return targetD == Math.Min(origD, maxDayY);
 
             default:
                 return false;

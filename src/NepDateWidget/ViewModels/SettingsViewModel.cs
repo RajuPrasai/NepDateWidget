@@ -373,6 +373,7 @@ public sealed class SettingsViewModel : ViewModelBase
     private bool _notificationSound = true;
     public bool NotificationSound { get => _notificationSound; set { if (SetProperty(ref _notificationSound, value)) { Log.Action($"setting: notification-sound {value}"); Apply(); } } }
     public string NotificationSoundLabel { get; private set; } = string.Empty;
+    public string TestNotificationLabel  { get; private set; } = string.Empty;
 
     // ── Clock: show seconds ──────────────────────────────────────────────────
 
@@ -471,9 +472,11 @@ public sealed class SettingsViewModel : ViewModelBase
     public ICommand SetPresetCommand { get; }
     public ICommand SetHighlightColorCommand { get; }
     public ICommand CheckForUpdatesNowCommand { get; private set; } = null!;
+    public ICommand TestNotificationCommand   { get; }
 
     // ── Callback to parent (MainViewModel) ───────────────────────────────────
     public event EventHandler? SettingsApplied;
+    public event EventHandler? TestNotificationRequested;
 
     public SettingsViewModel(
         ISettingsService settingsService,
@@ -578,6 +581,8 @@ public sealed class SettingsViewModel : ViewModelBase
             async () => await CheckForUpdatesNowAsync(),
             () => !_isCheckingForUpdates);
 
+        TestNotificationCommand = new RelayCommand(() => TestNotificationRequested?.Invoke(this, EventArgs.Empty));
+
         RefreshLabels();
     }
 
@@ -598,26 +603,32 @@ public sealed class SettingsViewModel : ViewModelBase
     {
         Timezones.Clear();
         var localTz = TimeZoneInfo.Local;
-
-        // Add "(Local)" entry first - keep the short name but prefix with "Local "
-        var localShort = TimezoneItem.FromTimeZoneInfo(localTz);
-        var localItem = new TimezoneItem(localTz.Id, $"Local · {localShort.DisplayName}");
-        Timezones.Add(localItem);
-        _selectedTimezone = localItem;
+        TimezoneItem? savedItem = null;
 
         foreach (var tz in TimeZoneInfo.GetSystemTimeZones())
         {
-            if (tz.Id == localTz.Id) continue; // already added
-            var item = TimezoneItem.FromTimeZoneInfo(tz);
+            // For the local timezone, append "(Local)" so it stands out without
+            // being moved to the top and disrupting the UTC-offset sort order.
+            bool isLocal = tz.Id == localTz.Id;
+            string label = isLocal
+                ? $"{tz.DisplayName} (Local)"
+                : tz.DisplayName;
+            var item = new TimezoneItem(tz.Id, label);
             Timezones.Add(item);
 
-            if (string.Equals(tz.Id, savedId, StringComparison.OrdinalIgnoreCase))
-                _selectedTimezone = item;
+            if (string.IsNullOrEmpty(savedId) || string.Equals(savedId, localTz.Id, StringComparison.OrdinalIgnoreCase))
+            {
+                if (isLocal) _selectedTimezone = item;
+            }
+            else if (string.Equals(tz.Id, savedId, StringComparison.OrdinalIgnoreCase))
+            {
+                savedItem = item;
+            }
         }
 
-        // If saved timezone matched the local timezone, keep local selected
-        if (string.IsNullOrEmpty(savedId) || string.Equals(savedId, localTz.Id, StringComparison.OrdinalIgnoreCase))
-            _selectedTimezone = localItem;
+        if (savedItem is not null)
+            _selectedTimezone = savedItem;
+        _selectedTimezone ??= Timezones.FirstOrDefault();
     }
 
     private void Apply()
@@ -718,6 +729,7 @@ public sealed class SettingsViewModel : ViewModelBase
         NotificationDurationLabel = _loc.Get("settings.notification_duration");
         NotificationSoundLabel = _loc.Get("settings.notification_sound");
         NotificationSectionLabel = _loc.Get("settings.notification");
+        TestNotificationLabel = _loc.Get("settings.test_notification");
         ShowSecondsLabel = _loc.Get("settings.show_seconds");
         ShowFiscalYearLabel = _loc.Get("settings.show_fiscal_year");
         HideFullscreenLabel = _loc.Get("settings.hide_fullscreen");
@@ -775,6 +787,7 @@ public sealed class SettingsViewModel : ViewModelBase
         OnPropertyChanged(nameof(NotificationDurationLabel));
         OnPropertyChanged(nameof(NotificationSoundLabel));
         OnPropertyChanged(nameof(NotificationSectionLabel));
+        OnPropertyChanged(nameof(TestNotificationLabel));
         OnPropertyChanged(nameof(ShowSecondsLabel));
         OnPropertyChanged(nameof(ShowFiscalYearLabel));
         OnPropertyChanged(nameof(HideFullscreenLabel));
@@ -1058,29 +1071,12 @@ public sealed class TimezoneItem
     public override string ToString() => DisplayName;
 
     /// <summary>
-    /// Builds a compact display label e.g. "Singapore +08:00" or "Nepal +05:45".
-    /// Strips the "(UTC±xx:xx) " preamble, takes the first city/region before any
-    /// comma or parenthetical, removes common "Standard/Daylight/Summer Time" suffixes.
+    /// Builds a display label using the system timezone display name, which is already
+    /// in the standard professional format: "(UTC+05:45) Kathmandu".
+    /// Pass displayNameOverride to append a suffix such as " (Local)".
     /// </summary>
     public static TimezoneItem FromTimeZoneInfo(TimeZoneInfo tz, string? displayNameOverride = null)
     {
-        var offset = tz.BaseUtcOffset;
-        var sign = offset < TimeSpan.Zero ? "-" : "+";
-        var abs = offset.Duration();
-        var offsetStr = $"{sign}{(int)abs.TotalHours:D2}:{abs.Minutes:D2}";
-
-        var name = displayNameOverride ?? tz.DisplayName;
-
-        const string utcPrefix = "(UTC";
-        if (name.StartsWith(utcPrefix, StringComparison.OrdinalIgnoreCase))
-        {
-            var closeParen = name.IndexOf(')');
-            if (closeParen >= 0 && closeParen + 1 < name.Length)
-            {
-                name = name[(closeParen + 1)..].TrimStart();
-            }
-        }
-
-        return new TimezoneItem(tz.Id, $"{name} {offsetStr}");
+        return new TimezoneItem(tz.Id, displayNameOverride ?? tz.DisplayName);
     }
 }

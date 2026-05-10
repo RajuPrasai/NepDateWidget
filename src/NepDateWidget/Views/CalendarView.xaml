@@ -367,57 +367,125 @@
                    PopupAnimation="Fade"
                    HorizontalOffset="0" VerticalOffset="4"
                    IsOpen="{Binding IsChecked, ElementName=HolidayBannerToggle, Mode=TwoWay}">
-                <Border Background="{DynamicResource WidgetInputBrush}"
-                        BorderBrush="{DynamicResource WidgetGridLineBrush}"
-                        BorderThickness="1"
-                        CornerRadius="8"
-                        Padding="14,12"
-                        MaxWidth="320"
+                <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                        BorderBrush="{DynamicResource WidgetBorderBrush}"
+                        BorderThickness="0.7"
+                        CornerRadius="12"
+                        MinWidth="260"
+                        MaxWidth="340"
                         SnapsToDevicePixels="True">
                     <Border.Effect>
-                        <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.18" Color="#000000" />
+                        <DropShadowEffect BlurRadius="22" ShadowDepth="3" Opacity="0.26" Color="#000000" />
                     </Border.Effect>
                     <StackPanel>
-                        <TextBlock Text="{Binding HolidayPopupTitle}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontWeight="SemiBold"
-                                   FontSize="12"
-                                   Opacity="0.7"
-                                   Margin="0,0,0,8" />
-                        <ScrollViewer MaxHeight="320"
+                        <!-- Header -->
+                        <Border Padding="16,12,16,10">
+                            <TextBlock Text="{Binding HolidayPopupTitle}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontWeight="SemiBold"
+                                       FontSize="11"
+                                       Opacity="0.45" />
+                        </Border>
+                        <Border Height="0.6" Background="{DynamicResource WidgetDividerBrush}" />
+                        <!-- Entry list -->
+                        <ScrollViewer MaxHeight="300"
                                       VerticalScrollBarVisibility="Auto"
                                       HorizontalScrollBarVisibility="Disabled">
+                            <Border Padding="10,8,10,10">
                             <ItemsControl ItemsSource="{Binding HolidayPopupEntries}">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Grid Margin="0,3">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0">
-                                                <TextBlock Text="{Binding Name}"
-                                                           Foreground="{DynamicResource WidgetDaySaturdayBrush}"
-                                                           FontWeight="SemiBold"
-                                                           FontSize="12"
-                                                           TextWrapping="Wrap" />
-                                                <TextBlock Text="{Binding DateLabel}"
-                                                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                           FontSize="10.5"
-                                                           Opacity="0.65"
-                                                           Margin="0,1,0,0" />
-                                            </StackPanel>
-                                            <TextBlock Grid.Column="1"
-                                                       Text="{Binding WhenLabel}"
-                                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                       FontSize="10.5"
-                                                       Opacity="0.55"
-                                                       VerticalAlignment="Center"
-                                                       Margin="10,0,0,0" />
-                                        </Grid>
+                                        <!--
+                                            Today rows use the input surface (card-level) background — more
+                                            visually stable than WidgetHoverBrush which can be near-invisible.
+                                        -->
+                                        <Border Margin="0,2" Padding="8,7" CornerRadius="6">
+                                            <Border.Style>
+                                                <Style TargetType="Border">
+                                                    <Setter Property="Background" Value="Transparent" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                            <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Border.Style>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <!-- Status dot -->
+                                                <Ellipse Grid.Column="0"
+                                                         Width="6" Height="6"
+                                                         VerticalAlignment="Top"
+                                                         Margin="0,3,9,0">
+                                                    <Ellipse.Style>
+                                                        <Style TargetType="Ellipse">
+                                                            <Setter Property="Fill"    Value="{DynamicResource WidgetForegroundBrush}" />
+                                                            <Setter Property="Opacity" Value="0.30" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                                    <Setter Property="Fill"    Value="{DynamicResource WidgetAccentBrush}" />
+                                                                    <Setter Property="Opacity" Value="1" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Ellipse.Style>
+                                                </Ellipse>
+                                                <!-- Name + date -->
+                                                <StackPanel Grid.Column="1">
+                                                    <TextBlock Text="{Binding Name}"
+                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                               FontWeight="SemiBold"
+                                                               FontSize="12"
+                                                               TextWrapping="Wrap" />
+                                                    <TextBlock Text="{Binding DateLabel}"
+                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                               FontSize="10.5"
+                                                               Opacity="0.48"
+                                                               Margin="0,2,0,0" />
+                                                </StackPanel>
+                                                <!-- When badge -->
+                                                <Border Grid.Column="2"
+                                                        CornerRadius="5"
+                                                        Padding="7,3"
+                                                        Margin="10,0,0,0"
+                                                        VerticalAlignment="Center">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
+                                                    <TextBlock Text="{Binding WhenLabel}">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                                <Setter Property="FontSize"   Value="10.5" />
+                                                                <Setter Property="FontWeight" Value="SemiBold" />
+                                                                <Setter Property="Opacity"    Value="0.62" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                                        <Setter Property="Opacity"    Value="1" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </Border>
+                                            </Grid>
+                                        </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+                            </Border>
                         </ScrollViewer>
                     </StackPanel>
                 </Border>
@@ -503,9 +571,29 @@
                             <Border BorderBrush="{DynamicResource WidgetGridLineBrush}"
                             BorderThickness="0,0,1,1"
                             Padding="0,6,0,7">
-                                <TextBlock Text="{Binding}"
-                                   Style="{StaticResource DowHeaderStyle}"
-                                   FontSize="{Binding DataContext.DowFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}" />
+                                <TextBlock Text="{Binding Label}"
+                                   FontSize="{Binding DataContext.DowFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock" BasedOn="{StaticResource DowHeaderStyle}">
+                                            <Style.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsSaturday}" Value="True" />
+                                                        <Condition Binding="{Binding DataContext.HighlightSaturdays, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                </MultiDataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding IsSunday}" Value="True" />
+                                                        <Condition Binding="{Binding DataContext.HighlightSundays, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -694,12 +782,12 @@
 
                                     <!-- Row 1: Reminder dot (absolute top-left) + BS day number (centred) -->
                                     <Grid Grid.Row="1">
-                                        <!-- Reminder dot indicator (top-left) -->
+                                        <!-- Reminder dot: red, always leftmost -->
                                         <Ellipse Width="6" Height="6"
                                          HorizontalAlignment="Left"
                                          VerticalAlignment="Top"
                                          Margin="3,3,0,0"
-                                         Fill="{DynamicResource WidgetAccentBrush}"
+                                         Fill="{DynamicResource WidgetErrorBrush}"
                                          IsHitTestVisible="False"
                                          ToolTip="{Binding ReminderTooltip}">
                                             <Ellipse.Style>
@@ -709,6 +797,32 @@
                                                         <DataTrigger Binding="{Binding HasReminders}" Value="True">
                                                             <Setter Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+                                        <!-- Note dot: theme foreground, leftmost when alone, right of reminder dot when both present -->
+                                        <Ellipse Width="6" Height="6"
+                                         HorizontalAlignment="Left"
+                                         VerticalAlignment="Top"
+                                         Fill="{DynamicResource WidgetForegroundBrush}"
+                                         Opacity="0.45"
+                                         IsHitTestVisible="False">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Setter Property="Margin" Value="3,3,0,0" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding HasNote}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                        <MultiDataTrigger>
+                                                            <MultiDataTrigger.Conditions>
+                                                                <Condition Binding="{Binding HasNote}" Value="True" />
+                                                                <Condition Binding="{Binding HasReminders}" Value="True" />
+                                                            </MultiDataTrigger.Conditions>
+                                                            <Setter Property="Margin" Value="11,3,0,0" />
+                                                        </MultiDataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
                                             </Ellipse.Style>
@@ -756,7 +870,7 @@
                                                         <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
                                                             <Setter Property="Foreground" Value="{DynamicResource WidgetDayHighlightedBrush}" />
                                                         </DataTrigger>
-                                                        <!-- Public holiday — placed before IsToday so today accent still wins -->
+                                                        <!-- Public holiday - placed before IsToday so today accent still wins -->
                                                         <DataTrigger Binding="{Binding ShowHolidayHighlight}" Value="True">
                                                             <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
                                                             <Setter Property="FontWeight"  Value="SemiBold" />
@@ -779,41 +893,88 @@
                                         </Grid.ColumnDefinitions>
 
                                         <!-- Tithi (bottom-left) -->
-                                        <TextBlock Grid.Column="0"
-                                           Text="{Binding TithiText}"
-                                           FontSize="{Binding DataContext.TithiFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Bottom"
-                                           IsHitTestVisible="False">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
+                                        <!--
+                                            Two-layer Grid so pill border opacity and text opacity are independent.
+                                            Layer 1: Border (outline only, no children) — dimmed via Opacity trigger.
+                                            Layer 2: TextBlock — always full opacity, unaffected by the Border's Opacity.
+                                        -->
+                                        <Grid Grid.Column="0"
+                                              HorizontalAlignment="Left"
+                                              VerticalAlignment="Bottom"
+                                              IsHitTestVisible="False">
+                                            <Grid.Style>
+                                                <Style TargetType="Grid">
                                                     <Setter Property="Visibility" Value="Collapsed" />
-                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
-                                                    <Setter Property="Opacity" Value="0.70" />
                                                     <Style.Triggers>
                                                         <DataTrigger Binding="{Binding ShowTithiText}" Value="True">
                                                             <Setter Property="Visibility" Value="Visible" />
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding ShowSaturdayHighlight}" Value="True">
-                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
-                                                            <Setter Property="Opacity" Value="0.85" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding ShowSundayHighlight}" Value="True">
-                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
-                                                            <Setter Property="Opacity" Value="0.85" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding ShowHolidayHighlight}" Value="True">
-                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
-                                                            <Setter Property="Opacity" Value="0.85" />
-                                                        </DataTrigger>
-                                                        <DataTrigger Binding="{Binding IsToday}" Value="True">
-                                                            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                                            <Setter Property="Opacity" Value="0.75" />
-                                                        </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
+                                            </Grid.Style>
+
+                                            <!-- Pill outline — Opacity here does NOT affect the sibling TextBlock -->
+                                            <Border CornerRadius="4"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    Background="Transparent"
+                                                    IsHitTestVisible="False">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Setter Property="BorderThickness" Value="0" />
+                                                        <Setter Property="BorderBrush"     Value="Transparent" />
+                                                        <Style.Triggers>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsPurnima}" Value="True" />
+                                                                    <Condition Binding="{Binding IsToday}"   Value="False" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="BorderThickness" Value="1" />
+                                                                <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                                                <Setter Property="Opacity"         Value="0.15" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsAunsi}"  Value="True" />
+                                                                    <Condition Binding="{Binding IsToday}" Value="False" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="BorderThickness" Value="1" />
+                                                                <Setter Property="BorderBrush"     Value="{DynamicResource WidgetForegroundBrush}" />
+                                                                <Setter Property="Opacity"         Value="0.12" />
+                                                            </MultiDataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                            </Border>
+
+                                            <!-- Text — full opacity, padding provides breathing room inside the pill -->
+                                            <TextBlock
+                                               Text="{Binding TithiText}"
+                                               Padding="5,0"
+                                               FontSize="{Binding DataContext.TithiFontSize, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               IsHitTestVisible="False">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding ShowSaturdayHighlight}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ShowSundayHighlight}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding ShowHolidayHighlight}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource WidgetDaySaturdayBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding IsToday}" Value="True">
+                                                                <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                                <Setter Property="Opacity"    Value="0.75" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Grid>
 
                                         <!-- ── Small AD (English) day number badge, bottom-right ── -->
                                         <Border Grid.Column="1"

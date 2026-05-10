@@ -29,26 +29,16 @@ public partial class DayInfoPopup : Window
 
         Deactivated += OnDeactivated;
 
-        Loaded += (_, _) =>
-        {
-            // Focus note box automatically when editing starts
-            _vm.PropertyChanged += (s, e) =>
-            {
-                if (e.PropertyName == nameof(DayInfoViewModel.IsEditingNote) && _vm.IsEditingNote)
-                    NoteBox.Focus();
-            };
-        };
+        Loaded += (_, _) => { };
     }
 
     private void OnDeactivated(object? sender, EventArgs e)
     {
         if (_isClosing) return;
-        if (_vm.IsEditingNote) return;
 
         Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, () =>
         {
             if (_isClosing) return;
-            if (NepDateWidget.Helpers.WindowHelpers.IsAnyAppWindowActive(this)) return;
 
             ClosedByDeactivation = true;
             _isClosing = true;
@@ -61,12 +51,6 @@ public partial class DayInfoPopup : Window
     {
         if (e.Key == Key.Escape)
         {
-            if (_vm.IsEditingNote)
-            {
-                _vm.CancelNoteCommand.Execute(null);
-                e.Handled = true;
-                return;
-            }
             _isClosing = true;
             Deactivated -= OnDeactivated;
             Close();

@@ -287,8 +287,8 @@ public sealed class NepaliDateAdapter : INepaliDateAdapter
     private static void ValidateBsYearMonth(int year, int month)
     {
         if (year < 1901 || year > 2199)
-            throw new ArgumentOutOfRangeException(nameof(year), $"BS year {year} is outside the supported range 1901–2199.");
+            throw new ArgumentOutOfRangeException(nameof(year), $"BS year {year} is outside the supported range 1901-2199.");
         if (month < 1 || month > 12)
-            throw new ArgumentOutOfRangeException(nameof(month), $"BS month {month} must be 1–12.");
+            throw new ArgumentOutOfRangeException(nameof(month), $"BS month {month} must be 1-12.");
     }
 }

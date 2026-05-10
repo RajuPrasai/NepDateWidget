@@ -310,9 +310,15 @@ public sealed class RunBoxViewModel : ViewModelBase
 
     private bool TryShellExecute(string input)
     {
+        var (fileName, arguments) = ParseCommandLine(input);
         try
         {
-            Process.Start(new ProcessStartInfo { FileName = input, UseShellExecute = true });
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = fileName,
+                Arguments = arguments,
+                UseShellExecute = true,
+            });
             Log.Action($"runbox: shell executed \"{input}\"");
             AddToHistory(input);
             return true;
@@ -321,6 +327,28 @@ public sealed class RunBoxViewModel : ViewModelBase
         {
             return false; // Caller will try search fallback
         }
+    }
+
+    /// <summary>
+    /// Splits a raw command-line string into executable and arguments, matching
+    /// the same parsing Windows native Run dialog applies. Quoted executables
+    /// such as "C:\Program Files\app.exe" --flag are handled correctly.
+    /// </summary>
+    private static (string fileName, string arguments) ParseCommandLine(string input)
+    {
+        if (input.StartsWith('"'))
+        {
+            var close = input.IndexOf('"', 1);
+            if (close > 1)
+                return (input[1..close].Trim(), input[(close + 1)..].TrimStart());
+            // Unclosed quote: strip the leading quote and fall through to space-split.
+            input = input[1..].TrimStart();
+        }
+
+        var space = input.IndexOf(' ');
+        return space > 0
+            ? (input[..space], input[(space + 1)..].TrimStart())
+            : (input, string.Empty);
     }
 
     private bool TrySearchFallback(string input)

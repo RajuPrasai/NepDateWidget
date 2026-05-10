@@ -106,25 +106,42 @@
             <div class="release-body">
               <h4>Calendar</h4>
               <ul>
-                <li><strong>Upcoming holiday countdown:</strong> the calendar header now shows a
-                  live "X days until …" banner for the next public holiday. Multiple events on the
-                  same day render on separate lines, and a hover tooltip lists upcoming holidays
-                  for the next year. Toggleable from Settings.</li>
-                <li><strong>Right-click any date to copy:</strong> a context menu on every calendar
-                  cell lets you copy that date to the clipboard in four formats (BS short, BS long,
-                  AD ISO, AD long). BS rows respect the active language; AD stays ASCII for safe
-                  pasting into external apps.</li>
+                <li><strong>Upcoming holiday countdown:</strong> the calendar header shows a live
+                  &ldquo;X days until &hellip;&rdquo; banner for the next public holiday. Hover to
+                  see upcoming holidays for the next year. Toggleable from Settings.</li>
                 <li><strong>Daily events notification:</strong> on the first launch of each day,
-                  the widget shows a notification listing today's calendar events (festivals and
-                  observances, excluding tithis) using the same chrome as reminder notifications.
+                  a notification lists today&rsquo;s festivals and observances.
                   Toggleable from Settings.</li>
+                <li><strong>Note and reminder dots:</strong> calendar days with a note show a
+                  colored dot; days with a reminder show a red dot. Both appear together
+                  when a day has both.</li>
+                <li><strong>Day info popup edit/delete:</strong> clicking a calendar day now shows
+                  a popup with the note and any reminders for that date. Edit or delete each item
+                  inline without opening the More tab.</li>
+              </ul>
+
+              <h4>Documents</h4>
+              <ul>
+                <li><strong>Documents tab:</strong> attach files (PDF, images, Word, Excel) to the
+                  widget with a title, tags, and optional notes. Search by title or tag. Open the
+                  file or jump to its folder directly from the widget. All files are stored locally
+                  under the app&rsquo;s data directory.</li>
+                <li><strong>Quick Access pinning:</strong> the Documents folder is automatically
+                  pinned to Windows Explorer Quick Access on every startup, so it appears in the
+                  sidebar of every file-upload dialog.</li>
+              </ul>
+
+              <h4>RunBox</h4>
+              <ul>
+                <li><strong>Proper command parsing:</strong> the RunBox now runs commands exactly
+                  like the Windows native Run dialog.</li>
               </ul>
 
               <h4>Startup</h4>
               <ul>
-                <li><strong>First-run autostart:</strong> "Start with Windows" is enabled
-                  automatically on the first launch and stays in sync with the registry on every
-                  subsequent run. Disabling it from Settings is honored permanently.</li>
+                <li><strong>First-run autostart:</strong> &ldquo;Start with Windows&rdquo; is
+                  enabled automatically on the first launch and stays in sync with the registry
+                  on every subsequent run. Disabling it from Settings is honored permanently.</li>
               </ul>
             </div>
           </article>
@@ -200,14 +217,22 @@
                 <li><strong>Reminders:</strong> one-shot or recurring (daily, weekly, monthly, yearly), pinned to BS dates</li>
               </ul>
 
+              <h4>RunBox</h4>
+              <ul>
+                <li>Global hotkey (default Ctrl+Shift+Space) summons a compact command launcher from anywhere in Windows</li>
+                <li>Runs program names and shell commands, opens file paths, detects URLs and opens them in the default browser, falls back to a Google search for anything else</li>
+                <li>History of up to 50 entries with prefix-ranked filtering, arrow-key navigation, and Tab completion</li>
+                <li>Hotkey configurable from Settings</li>
+              </ul>
+
               <h4>Appearance &amp; settings</h4>
               <ul>
                 <li>Light and Dark themes</li>
                 <li>10 color presets × 2 themes = 20 combinations (Forest, Ocean, Default, Sunset, Cherry, Aurora, Midnight, Slate, Monochrome, Ember)</li>
                 <li>Rounded or sharp corners</li>
                 <li>English / नेपाली UI switch with no restart</li>
-                <li>Start with Windows toggle</li>
-              </ul>
+                <li>Start with Windows toggle</li>                <li>RunBox hotkey configuration (record any key combination)</li>
+                <li>Notification display duration and sound toggle</li>              </ul>
 
               <h4>Distribution &amp; storage</h4>
               <ul>

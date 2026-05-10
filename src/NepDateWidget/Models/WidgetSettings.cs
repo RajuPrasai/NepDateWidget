@@ -70,7 +70,7 @@ public sealed class WidgetSettings
     public string ConverterDefaultDirection { get; set; } = "BStoAD";
 
     // Logging
-    /// <summary>Maximum size of nepdate.log before old entries are trimmed. Range: 5–100 MB.</summary>
+    /// <summary>Maximum size of nepdate.log before old entries are trimmed. Range: 5-100 MB.</summary>
     public int LogMaxSizeMb { get; set; } = 10;
 
     // RunBox
@@ -126,7 +126,7 @@ public sealed class WidgetSettings
     public int RunBoxHotkeyKey { get; set; } = 0x20;
 
     // Notification
-    /// <summary>How many seconds a reminder notification stays on screen before auto-dismissing. Range: 5–60.</summary>
+    /// <summary>How many seconds a reminder notification stays on screen before auto-dismissing. Range: 5-60.</summary>
     public int NotificationDurationSeconds { get; set; } = 10;
     public bool NotificationSound { get; set; } = true;
 
@@ -156,7 +156,7 @@ public sealed class WidgetSettings
     // Expand behavior
     /// <summary>
     /// Tab index that was selected the last time the widget was expanded.
-    /// Persisted so the widget always reopens on the user's last tab. Range: 0–8.
+    /// Persisted so the widget always reopens on the user's last tab. Range: 0-8.
     /// </summary>
     public int LastExpandedTab { get; set; } = 0;
 

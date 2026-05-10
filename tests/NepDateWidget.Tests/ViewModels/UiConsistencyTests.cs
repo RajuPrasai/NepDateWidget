@@ -212,12 +212,12 @@ public class UiConsistencyTests
     // ── IsCollapsedTransparent semantics ──────────────────────────────────────
 
     [Fact]
-    public void IsCollapsedTransparent_FalseWhenExpanded()
+    public void IsCollapsedTransparent_TrueWhenExpandedAndTransparencyOn()
     {
         var vm = CreateMain();
         vm.TransparentWhenCollapsed = true;
         vm.ToggleExpandedCommand.Execute(null); // expand
-        Assert.False(vm.IsCollapsedTransparent);
+        Assert.True(vm.IsCollapsedTransparent);
     }
 
     [Fact]
@@ -337,7 +337,7 @@ public class UiConsistencyTests
     {
         var vm = CreateCalendar();
         Assert.Equal(7, vm.DayOfWeekHeaders.Count);
-        Assert.All(vm.DayOfWeekHeaders, h => Assert.NotEmpty(h));
+        Assert.All(vm.DayOfWeekHeaders, h => Assert.NotEmpty(h.Label));
     }
 
     // ── First expand opens Calendar (index 0) by default ─────────────────

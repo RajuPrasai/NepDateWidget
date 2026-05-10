@@ -176,7 +176,7 @@ public sealed class ThemeService : IThemeService
         Application.Current.Resources[key] = new SolidColorBrush(color);
     }
 
-    /// <summary>Linearly blends <paramref name="a"/> toward <paramref name="b"/> by <paramref name="t"/> (0–1).</summary>
+    /// <summary>Linearly blends <paramref name="a"/> toward <paramref name="b"/> by <paramref name="t"/> (0-1).</summary>
     private static Color Blend(Color a, Color b, float t)
     {
         return Color.FromRgb(

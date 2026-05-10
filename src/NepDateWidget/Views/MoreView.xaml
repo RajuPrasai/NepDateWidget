@@ -41,14 +41,21 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                CornerRadius="4"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
+                        <Grid x:Name="Root">
+                            <Border x:Name="BgLayer" Background="{TemplateBinding Background}" CornerRadius="4" />
+                            <Border Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.7" />
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.40" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -106,12 +113,127 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!-- Slim themed ComboBox (matches Settings dropdowns) -->
+        <Style x:Key="ThemedComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Padding"         Value="6,0" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"   Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll"              Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="MainBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4" />
+                            <ToggleButton Focusable="False"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                       RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="Transparent" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="ContentSite"
+                                              Margin="8,0,28,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                              IsHitTestVisible="False" />
+                            <TextBlock Text="▾"
+                                       FontSize="11"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,8,0"
+                                       IsHitTestVisible="False" />
+                            <Popup x:Name="PART_Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Border MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Background="{DynamicResource WidgetInputBrush}"
+                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                        BorderThickness="0.7"
+                                        CornerRadius="4"
+                                        Margin="0,2,0,0">
+                                    <Border.Resources>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="OverridesDefaultStyle" Value="True" />
+                                            <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
+                                            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+                                            <Setter Property="Padding"         Value="8,5" />
+                                            <Setter Property="BorderThickness" Value="0" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ComboBoxItem">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                                                Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsHighlighted" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Resources>
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="MainBorder" Property="Background"
+                                        Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="6,4">
         <StackPanel MaxWidth="1024">
 
-            <!-- Mode selector: Notes | Reminders -->
+            <!-- Mode selector: Documents | Notes | Reminders -->
             <Border Background="{DynamicResource WidgetInputBrush}"
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                     BorderThickness="0.7"
@@ -122,8 +244,32 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" Command="{Binding SetModeNotesCommand}">
+                    <Button Grid.Column="0" Command="{Binding SetModeDocumentsCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeDocuments}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconFiles}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding DocsHeadingLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Column="1" Command="{Binding SetModeNotesCommand}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
                                 <Style.Triggers>
@@ -146,7 +292,7 @@
                             <TextBlock Text="{Binding NotesHeadingLabel}" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Grid.Column="1" Command="{Binding SetModeRemindersCommand}">
+                    <Button Grid.Column="2" Command="{Binding SetModeRemindersCommand}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
                                 <Style.Triggers>
@@ -176,79 +322,204 @@
             <Border Visibility="{Binding IsModeNotes, Converter={StaticResource BoolToVis}}"
                     Background="{DynamicResource WidgetBackgroundBrush}"
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.7" CornerRadius="8" Padding="12,10" Margin="0,0,0,8">
+                    BorderThickness="0.7" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
                 <StackPanel>
+                    <!-- Search bar + Add button in same row -->
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0"
+                                Background="{DynamicResource WidgetInputBrush}"
+                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                BorderThickness="0.7" CornerRadius="6" Height="34">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Path Grid.Column="0" Data="{StaticResource IconScan}"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}"
+                                      StrokeThickness="1.1" Stretch="Uniform"
+                                      Width="13" Height="13" Opacity="0.4"
+                                      VerticalAlignment="Center" Margin="8,0,4,0" />
+                                <TextBox Grid.Column="1"
+                                         Text="{Binding NoteSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource InputBoxStyle}"
+                                         Tag="{Binding NoteSearchHintLabel}"
+                                         Background="Transparent" BorderThickness="0"
+                                         Height="34" VerticalAlignment="Center">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Escape" Command="{Binding ClearNoteSearchCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Grid.Column="2"
+                                        Command="{Binding ClearNoteSearchCommand}"
+                                        Visibility="{Binding NoteSearchClearVisible, Converter={StaticResource BoolToVis}}"
+                                        Margin="0,0,6,0">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background"      Value="Transparent" />
+                                            <Setter Property="BorderThickness" Value="0" />
+                                            <Setter Property="Padding"         Value="3,3" />
+                                            <Setter Property="Cursor"          Value="Hand" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Opacity" Value="0.6" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                    <Path Data="M6 18L18 6M6 6l12 12"
+                                          Stroke="{DynamicResource WidgetForegroundBrush}"
+                                          StrokeThickness="1.5" Stretch="Uniform"
+                                          Width="9" Height="9" />
+                                </Button>
+                            </Grid>
+                        </Border>
+                        <Button Grid.Column="1" Style="{StaticResource MItemBtnAccent}"
+                                Command="{Binding AddNoteCommand}"
+                                Height="34" Margin="6,0,0,0"
+                                Visibility="{Binding IsNoteFormOpen, Converter={StaticResource InverseBoolToVis}}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconPlus}"
+                                      Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.5"
+                                      Fill="Transparent" Stretch="Uniform"
+                                      Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding AddNoteLabel}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!-- Add / Edit inline form -->
+                    <Border Visibility="{Binding IsNoteFormOpen, Converter={StaticResource BoolToVis}}"
+                            Background="{DynamicResource WidgetInputBrush}"
+                            CornerRadius="7" Padding="10,10" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBlock Text="{Binding NoteFormTitleLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="13" FontWeight="SemiBold" Margin="0,0,0,10" />
+
+                            <!-- Date field -->
+                            <TextBlock Text="{Binding NoteFieldDateLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                            <TextBox x:Name="NoteFormFirstInput"
+                                     Text="{Binding NoteFormDateInput, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource InputBoxStyle}"
+                                     Height="34"
+                                     Tag="{Binding NoteDateFormatHintLabel}"
+                                     Margin="0,0,0,8" />
+
+                            <!-- Note text -->
+                            <TextBlock Text="{Binding NoteFieldTextLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                            <TextBox Text="{Binding NoteFormText, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource MultilineInputStyle}"
+                                     Tag="Write your note here..."
+                                     Height="70" AcceptsReturn="True" TextWrapping="Wrap"
+                                     Margin="0,0,0,8" />
+
+                            <!-- Validation error -->
+                            <TextBlock Text="{Binding NoteFormError}"
+                                       Foreground="{DynamicResource WidgetErrorBrush}"
+                                       FontSize="11" Margin="0,0,0,4"
+                                       Visibility="{Binding HasNoteFormError, Converter={StaticResource BoolToVis}}" />
+
+                            <!-- Form actions -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Style="{StaticResource MItemBtnSecondary}"
+                                        Command="{Binding CancelNoteFormCommand}"
+                                        Margin="0,0,4,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconWindowClose}"
+                                              Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.3"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource MItemBtnAccent}"
+                                        Command="{Binding SaveNoteFormCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconCheck}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding SaveLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
                     <!-- Empty state -->
-                    <StackPanel HorizontalAlignment="Center" Margin="0,8"
-                                Visibility="{Binding HasNotes, Converter={StaticResource InverseBoolToVis}}">
+                    <StackPanel HorizontalAlignment="Center" Margin="0,10"
+                                Visibility="{Binding ShowNoteEmpty, Converter={StaticResource BoolToVis}}">
                         <TextBlock Text="{Binding NoNotesLabel}"
                                    Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   Opacity="0.5" FontSize="13"
-                                   HorizontalAlignment="Center" />
+                                   Opacity="0.5" FontSize="13" HorizontalAlignment="Center" />
                         <TextBlock Text="{Binding NoNotesHintLabel}"
                                    Foreground="{DynamicResource WidgetForegroundBrush}"
                                    Opacity="0.35" FontSize="11"
-                                   HorizontalAlignment="Center" Margin="0,2,0,0" />
+                                   HorizontalAlignment="Center" Margin="0,2,0,0"
+                                   TextWrapping="Wrap" MaxWidth="240" TextAlignment="Center" />
                     </StackPanel>
 
+                    <!-- No search results -->
+                    <TextBlock Text="{Binding NoNoteResultsLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               Opacity="0.5" FontSize="13" HorizontalAlignment="Center" Margin="0,10"
+                               Visibility="{Binding ShowNoteNoResults, Converter={StaticResource BoolToVis}}" />
+
                     <!-- Notes list -->
-                    <ItemsControl ItemsSource="{Binding Notes}">
+                    <ItemsControl ItemsSource="{Binding FilteredNotes}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:NoteItemViewModel}">
                                 <Border Style="{StaticResource ItemCard}">
-                                    <StackPanel>
-                                        <!-- View mode -->
-                                        <Grid Visibility="{Binding IsNotEditing, Converter={StaticResource BoolToVis}}">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding DisplayDate}"
-                                                           Foreground="{DynamicResource WidgetAccentBrush}"
-                                                           FontSize="11" Opacity="0.8" />
-                                                <TextBlock Text="{Binding Text}"
-                                                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                           FontSize="13" TextWrapping="Wrap"
-                                                           TextAlignment="Left"
-                                                           HorizontalAlignment="Left" />
-                                            </StackPanel>
-                                            <Button Grid.Column="1" Style="{StaticResource MItemBtn}" Margin="4,0"
-                                                    Command="{Binding DataContext.StartEditNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding DateKey}">
-                                                <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                                      Stroke="{DynamicResource WidgetForegroundBrush}"
-                                                      StrokeThickness="1.2" Stretch="Uniform"
-                                                      Width="12" Height="12" />
-                                            </Button>
-                                            <Button Grid.Column="2" Style="{StaticResource MItemBtnDanger}"
-                                                    Command="{Binding DataContext.DeleteNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding DateKey}">
-                                                <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                      Stroke="White"
-                                                      StrokeThickness="1.2" Stretch="Uniform"
-                                                      Width="12" Height="12" />
-                                            </Button>
-                                        </Grid>
-                                        <!-- Edit mode -->
-                                        <StackPanel Visibility="{Binding IsEditing, Converter={StaticResource BoolToVis}}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
                                             <TextBlock Text="{Binding DisplayDate}"
                                                        Foreground="{DynamicResource WidgetAccentBrush}"
-                                                       FontSize="11" Opacity="0.8" Margin="0,0,0,4" />
-                                            <TextBox Text="{Binding DataContext.NoteEditBuffer, RelativeSource={RelativeSource AncestorType=UserControl}, UpdateSourceTrigger=PropertyChanged}"
-                                                     Style="{StaticResource MultilineInputStyle}"
-                                                     Height="50" />
-                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,4,0,0">
-                                                <Button Style="{StaticResource MItemBtnSecondary}"
-                                                        Command="{Binding DataContext.CancelNoteEditCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        Content="{Binding DataContext.CancelLabel, RelativeSource={RelativeSource AncestorType=UserControl}}" Margin="0,0,4,0" />
-                                                <Button Style="{StaticResource MItemBtnAccent}"
-                                                        Command="{Binding DataContext.SaveNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                        Content="{Binding DataContext.SaveLabel, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                                            </StackPanel>
+                                                       FontSize="11" Opacity="0.8" />
+                                            <TextBlock Text="{Binding Text}"
+                                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                       FontSize="13" TextWrapping="Wrap" />
                                         </StackPanel>
-                                    </StackPanel>
+                                        <Button Grid.Column="1" Style="{StaticResource MItemBtn}" Margin="4,0,0,0"
+                                                Command="{Binding DataContext.StartEditNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding DateKey}">
+                                            <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                  StrokeThickness="1.2" Stretch="Uniform"
+                                                  Width="12" Height="12" />
+                                        </Button>
+                                        <Button Grid.Column="2" Style="{StaticResource MItemBtn}" Margin="4,0,0,0"
+                                                Command="{Binding DataContext.DeleteNoteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding DateKey}">
+                                            <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                  StrokeThickness="1.2" Stretch="Uniform"
+                                                  Width="12" Height="12" />
+                                        </Button>
+                                    </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -262,97 +533,885 @@
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                     BorderThickness="0.7" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
                 <StackPanel>
+                    <!-- Search bar + Add button in same row -->
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0"
+                                Background="{DynamicResource WidgetInputBrush}"
+                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                BorderThickness="0.7" CornerRadius="6" Height="34">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Path Grid.Column="0" Data="{StaticResource IconScan}"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}"
+                                      StrokeThickness="1.1" Stretch="Uniform"
+                                      Width="13" Height="13" Opacity="0.4"
+                                      VerticalAlignment="Center" Margin="8,0,4,0" />
+                                <TextBox Grid.Column="1"
+                                         Text="{Binding ReminderSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource InputBoxStyle}"
+                                         Tag="{Binding ReminderSearchHintLabel}"
+                                         Background="Transparent" BorderThickness="0"
+                                         Height="34" VerticalAlignment="Center">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding Key="Escape" Command="{Binding ClearReminderSearchCommand}" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                                <Button Grid.Column="2"
+                                        Command="{Binding ClearReminderSearchCommand}"
+                                        Visibility="{Binding ReminderSearchClearVisible, Converter={StaticResource BoolToVis}}"
+                                        Margin="0,0,6,0">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Background"      Value="Transparent" />
+                                            <Setter Property="BorderThickness" Value="0" />
+                                            <Setter Property="Padding"         Value="3,3" />
+                                            <Setter Property="Cursor"          Value="Hand" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Opacity" Value="0.6" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
+                                    <Path Data="M6 18L18 6M6 6l12 12"
+                                          Stroke="{DynamicResource WidgetForegroundBrush}"
+                                          StrokeThickness="1.5" Stretch="Uniform"
+                                          Width="9" Height="9" />
+                                </Button>
+                            </Grid>
+                        </Border>
+                        <Button Grid.Column="1" Style="{StaticResource MItemBtnAccent}"
+                                Command="{Binding AddNewReminderCommand}"
+                                Height="34" Margin="6,0,0,0"
+                                Visibility="{Binding IsReminderFormOpen, Converter={StaticResource InverseBoolToVis}}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconPlus}"
+                                      Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.5"
+                                      Fill="Transparent" Stretch="Uniform"
+                                      Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding AddReminderLabel}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!-- Add / Edit inline form -->
+                    <Border Visibility="{Binding IsReminderFormOpen, Converter={StaticResource BoolToVis}}"
+                            Background="{DynamicResource WidgetInputBrush}"
+                            CornerRadius="7" Padding="10,10" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBlock Text="{Binding ReminderFormTitleLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="13" FontWeight="SemiBold" Margin="0,0,0,10" />
+
+                            <!-- Title -->
+                            <TextBlock Text="{Binding ReminderFieldTitleLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                            <TextBox x:Name="ReminderFormFirstInput"
+                                     Text="{Binding ReminderFormTitle, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource InputBoxStyle}"
+                                     Height="34"
+                                     Tag="{Binding HintReminderTitle}"
+                                     Margin="0,0,0,2" />
+                            <TextBlock Text="{Binding ReminderTitleError}"
+                                       Foreground="{DynamicResource WidgetErrorBrush}"
+                                       FontSize="11" Margin="0,0,0,6"
+                                       Visibility="{Binding HasReminderTitleError, Converter={StaticResource BoolToVis}}" />
+
+                            <!-- Date + Time in same row -->
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <!-- Date -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding ReminderFieldDateLabel}"
+                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                               FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                    <TextBox Text="{Binding ReminderFormDate, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource InputBoxStyle}"
+                                             Height="34"
+                                             Tag="{Binding HintReminderDate}" />
+                                    <TextBlock Text="{Binding ReminderDateError}"
+                                               Foreground="{DynamicResource WidgetErrorBrush}"
+                                               FontSize="11" Margin="0,2,0,0"
+                                               Visibility="{Binding HasReminderDateError, Converter={StaticResource BoolToVis}}" />
+                                </StackPanel>
+                                <!-- Time -->
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="{Binding ReminderFieldTimeLabel}"
+                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                               FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox Grid.Column="0"
+                                                 Text="{Binding ReminderFormTime, UpdateSourceTrigger=PropertyChanged}"
+                                                 Style="{StaticResource InputBoxStyle}"
+                                                 Height="34"
+                                                 Tag="{Binding HintReminderTime}"
+                                                 Margin="0,0,4,0" />
+                                        <!-- Single AM/PM toggle -->
+                                        <Button Grid.Column="1"
+                                                Command="{Binding ToggleReminderAmPmCommand}"
+                                                Height="34" Width="48"
+                                                Style="{StaticResource MItemBtnAccent}">
+                                            <TextBlock Text="{Binding ReminderAmPmLabel}"
+                                                       FontSize="12" FontWeight="SemiBold" />
+                                        </Button>
+                                    </Grid>
+                                    <TextBlock Text="{Binding ReminderTimeError}"
+                                               Foreground="{DynamicResource WidgetErrorBrush}"
+                                               FontSize="11" Margin="0,2,0,0"
+                                               Visibility="{Binding HasReminderTimeError, Converter={StaticResource BoolToVis}}" />
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Recurrence -->
+                            <TextBlock Text="{Binding ReminderFieldRecurLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                            <ComboBox ItemsSource="{Binding ReminderRecurrenceOptions}"
+                                      SelectedIndex="{Binding ReminderFormRecurrenceIndex}"
+                                      Style="{StaticResource ThemedComboBoxStyle}"
+                                      Margin="0,0,0,8" />
+
+                            <!-- End Date (only shown when recurrence is set) -->
+                            <StackPanel Visibility="{Binding ShowReminderEndDate, Converter={StaticResource BoolToVis}}">
+                                <TextBlock Text="{Binding ReminderFieldEndDateLabel}"
+                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                           FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                <TextBox Text="{Binding ReminderFormEndDate, UpdateSourceTrigger=PropertyChanged}"
+                                         Style="{StaticResource InputBoxStyle}"
+                                         Height="34"
+                                         Tag="{Binding HintReminderDate}"
+                                         Margin="0,0,0,2" />
+                                <TextBlock Text="{Binding ReminderEndDateError}"
+                                           Foreground="{DynamicResource WidgetErrorBrush}"
+                                           FontSize="11" Margin="0,0,0,6"
+                                           Visibility="{Binding HasReminderEndDateError, Converter={StaticResource BoolToVis}}" />
+                            </StackPanel>
+
+                            <!-- Notes -->
+                            <TextBlock Text="{Binding ReminderFieldNotesLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                            <TextBox Text="{Binding ReminderFormNotes, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource MultilineInputStyle}"
+                                     Tag="{Binding HintReminderNotes}"
+                                     Height="50" AcceptsReturn="True" TextWrapping="Wrap"
+                                     Margin="0,0,0,8" />
+
+                            <!-- Form actions -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Style="{StaticResource MItemBtnSecondary}"
+                                        Command="{Binding CancelReminderFormCommand}"
+                                        Margin="0,0,4,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconWindowClose}"
+                                              Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.3"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource MItemBtnAccent}"
+                                        Command="{Binding SaveReminderFormCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconCheck}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding SaveLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
                     <!-- Empty state -->
-                    <StackPanel HorizontalAlignment="Center" Margin="0,8"
-                                Visibility="{Binding HasReminders, Converter={StaticResource InverseBoolToVis}}">
+                    <StackPanel HorizontalAlignment="Center" Margin="0,10"
+                                Visibility="{Binding ShowReminderEmpty, Converter={StaticResource BoolToVis}}">
                         <TextBlock Text="{Binding NoRemindersLabel}"
                                    Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   Opacity="0.5" FontSize="13"
-                                   HorizontalAlignment="Center" />
+                                   Opacity="0.5" FontSize="13" HorizontalAlignment="Center" />
                         <TextBlock Text="{Binding NoRemindersHintLabel}"
                                    Foreground="{DynamicResource WidgetForegroundBrush}"
                                    Opacity="0.35" FontSize="11"
-                                   HorizontalAlignment="Center" Margin="0,2,0,0" />
+                                   HorizontalAlignment="Center" Margin="0,2,0,0"
+                                   TextWrapping="Wrap" MaxWidth="240" TextAlignment="Center" />
                     </StackPanel>
 
+                    <!-- No search results -->
+                    <TextBlock Text="{Binding NoReminderResultsLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               Opacity="0.5" FontSize="13" HorizontalAlignment="Center" Margin="0,10"
+                               Visibility="{Binding ShowReminderNoResults, Converter={StaticResource BoolToVis}}" />
+
                     <!-- Reminders list -->
-                    <ItemsControl ItemsSource="{Binding Reminders}">
+                    <ItemsControl ItemsSource="{Binding FilteredReminders}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:ReminderItemViewModel}">
                                 <Border>
                                     <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
-                                            <Setter Property="CornerRadius" Value="6" />
-                                            <Setter Property="Padding" Value="10,8" />
-                                            <Setter Property="Margin" Value="0,0,0,4" />
-                                            <Setter Property="Opacity" Value="1" />
-                                            <Setter Property="BorderThickness" Value="1.5" />
-                                            <Setter Property="BorderBrush" Value="Transparent" />
+                                        <Style TargetType="Border" BasedOn="{StaticResource ItemCard}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsCompleted}" Value="True">
                                                     <Setter Property="Opacity" Value="0.5" />
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsHighlighted}" Value="True">
                                                     <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="BorderThickness" Value="1.5" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </Border.Style>
-                                    <StackPanel>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto" />
-                                            </Grid.ColumnDefinitions>
-                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding Title}"
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Title}"
+                                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                       FontSize="13" FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis" />
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Date}"
+                                                           Foreground="{DynamicResource WidgetAccentBrush}"
+                                                           FontSize="11" />
+                                                <TextBlock Text="{Binding Time}"
                                                            Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                           FontSize="13" FontWeight="SemiBold"
-                                                           TextTrimming="CharacterEllipsis" />
-                                                <StackPanel Orientation="Horizontal">
-                                                    <TextBlock Text="{Binding Date}"
-                                                               Foreground="{DynamicResource WidgetAccentBrush}"
-                                                               FontSize="11" />
-                                                    <TextBlock Text="{Binding Time}"
-                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                               Opacity="0.6" FontSize="11" Margin="6,0,0,0" />
-                                                    <TextBlock Text="{Binding RecurrenceText}"
-                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                               Opacity="0.5" FontSize="11" Margin="6,0,0,0" />
-                                                </StackPanel>
-                                                <TextBlock Text="{Binding Notes}"
+                                                           Opacity="0.6" FontSize="11" Margin="6,0,0,0" />
+                                                <TextBlock Text="{Binding RecurrenceText}"
                                                            Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                           Opacity="0.5" FontSize="12"
-                                                           TextTrimming="CharacterEllipsis" MaxWidth="260"
-                                                           Visibility="{Binding HasNotes, Converter={StaticResource BoolToVis}}" />
+                                                           Opacity="0.5" FontSize="11" Margin="6,0,0,0" />
                                             </StackPanel>
-                                            <Button Grid.Column="1" Style="{StaticResource MItemBtn}" Margin="4,0"
-                                                    Command="{Binding DataContext.EditReminderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding Id}"
-                                                    Visibility="{Binding IsCompleted, Converter={StaticResource InverseBoolToVis}}">
-                                                <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                                                      Stroke="{DynamicResource WidgetForegroundBrush}"
-                                                      StrokeThickness="1.2" Stretch="Uniform"
-                                                      Width="12" Height="12" />
-                                            </Button>
-                                            <Button Grid.Column="2" Style="{StaticResource MItemBtnDanger}"
-                                                    Command="{Binding DataContext.DeleteReminderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding Id}">
-                                                <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                                      Stroke="White"
-                                                      StrokeThickness="1.2" Stretch="Uniform"
-                                                      Width="12" Height="12" />
-                                            </Button>
-                                        </Grid>
-                                    </StackPanel>
+                                            <TextBlock Text="{Binding Notes}"
+                                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                       Opacity="0.5" FontSize="12"
+                                                       TextTrimming="CharacterEllipsis" MaxWidth="260"
+                                                       Visibility="{Binding HasNotes, Converter={StaticResource BoolToVis}}" />
+                                        </StackPanel>
+                                        <Button Grid.Column="1" Style="{StaticResource MItemBtn}" Margin="4,0,0,0"
+                                                Command="{Binding DataContext.EditReminderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding Id}"
+                                                Visibility="{Binding IsCompleted, Converter={StaticResource InverseBoolToVis}}">
+                                            <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                  StrokeThickness="1.2" Stretch="Uniform"
+                                                  Width="12" Height="12" />
+                                        </Button>
+                                        <Button Grid.Column="2" Style="{StaticResource MItemBtn}" Margin="4,0,0,0"
+                                                Command="{Binding DataContext.DeleteReminderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding Id}">
+                                            <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                  StrokeThickness="1.2" Stretch="Uniform"
+                                                  Width="12" Height="12" />
+                                        </Button>
+                                    </Grid>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                 </StackPanel>
             </Border>
+
+            <!-- ── Documents Section ─────────────────────────────────── -->
+            <Border Visibility="{Binding IsModeDocuments, Converter={StaticResource BoolToVis}}"
+                    Background="{DynamicResource WidgetBackgroundBrush}"
+                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                    BorderThickness="0.7" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
+                <StackPanel>
+
+                    <!-- Search bar + Add button in same row -->
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Search bar -->
+                        <Grid Grid.Column="0">
+                            <Border x:Name="DocSearchBorder"
+                                    Background="{DynamicResource WidgetInputBrush}"
+                                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                    BorderThickness="0.7" CornerRadius="6" Height="34">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Path Grid.Column="0" Data="{StaticResource IconScan}"
+                                          Stroke="{DynamicResource WidgetForegroundBrush}"
+                                          StrokeThickness="1.1" Stretch="Uniform"
+                                          Width="13" Height="13" Opacity="0.4"
+                                          VerticalAlignment="Center" Margin="8,0,4,0" />
+                                    <TextBox x:Name="DocSearchBox"
+                                             Grid.Column="1"
+                                             Text="{Binding DocSearchText, UpdateSourceTrigger=PropertyChanged}"
+                                             Style="{StaticResource InputBoxStyle}"
+                                             Tag="{Binding DocSearchHintLabel}"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Height="34"
+                                             VerticalAlignment="Center"
+                                             GotFocus="SearchBox_GotFocus"
+                                             LostFocus="SearchBox_LostFocus">
+                                        <TextBox.InputBindings>
+                                            <KeyBinding Key="Enter"  Command="{Binding CommitDocSearchCommand}" />
+                                            <KeyBinding Key="Escape" Command="{Binding ClearDocSearchCommand}" />
+                                        </TextBox.InputBindings>
+                                    </TextBox>
+                                    <Button Grid.Column="2"
+                                            Command="{Binding ClearDocSearchCommand}"
+                                            Visibility="{Binding DocSearchClearVisible, Converter={StaticResource BoolToVis}}"
+                                            Margin="0,0,6,0">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Background"      Value="Transparent" />
+                                                <Setter Property="BorderThickness" Value="0" />
+                                                <Setter Property="Padding"         Value="3,3" />
+                                                <Setter Property="Cursor"          Value="Hand" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Padding="{TemplateBinding Padding}">
+                                                                <ContentPresenter />
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Opacity" Value="0.6" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                        <Path Data="M6 18L18 6M6 6l12 12"
+                                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                                              StrokeThickness="1.5" Stretch="Uniform"
+                                              Width="9" Height="9" />
+                                    </Button>
+                                </Grid>
+                            </Border>
+                            <Popup IsOpen="{Binding IsDocSuggestionsOpen}"
+                                   PlacementTarget="{Binding ElementName=DocSearchBorder}"
+                                   Placement="Bottom"
+                                   StaysOpen="True"
+                                   AllowsTransparency="True"
+                                   Width="{Binding ActualWidth, ElementName=DocSearchBorder}">
+                                <Border Background="{DynamicResource WidgetInputBrush}"
+                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                        BorderThickness="0.7" CornerRadius="0,0,5,5" Padding="3">
+                                    <ItemsControl x:Name="DocSuggestionList"
+                                                  ItemsSource="{Binding DocSearchSuggestions}"
+                                                  MaxHeight="150">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Button Content="{Binding}"
+                                                        HorizontalAlignment="Stretch"
+                                                        HorizontalContentAlignment="Left"
+                                                        Command="{Binding DataContext.SelectDocSuggestionCommand, ElementName=DocSuggestionList}"
+                                                        CommandParameter="{Binding}">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Background"          Value="Transparent" />
+                                                            <Setter Property="BorderThickness"     Value="0" />
+                                                            <Setter Property="Foreground"          Value="{DynamicResource WidgetForegroundBrush}" />
+                                                            <Setter Property="FontSize"            Value="12" />
+                                                            <Setter Property="Padding"             Value="8,5" />
+                                                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                                            <Setter Property="Cursor"              Value="Hand" />
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Button">
+                                                                        <Border Background="{TemplateBinding Background}"
+                                                                                CornerRadius="4"
+                                                                                Padding="{TemplateBinding Padding}">
+                                                                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <!-- Add button (hidden while form is open) -->
+                        <Button Grid.Column="1" Style="{StaticResource MItemBtnAccent}"
+                                Command="{Binding ShowAddDocumentCommand}"
+                                Height="34" Margin="6,0,0,0"
+                                Visibility="{Binding IsDocFormOpen, Converter={StaticResource InverseBoolToVis}}">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconPlus}"
+                                      Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.5"
+                                      Fill="Transparent" Stretch="Uniform"
+                                      Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding AddDocLabel}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+
+                    <!-- Add / Edit inline form -->
+                    <Border Visibility="{Binding IsDocFormOpen, Converter={StaticResource BoolToVis}}"
+                            Background="{DynamicResource WidgetInputBrush}"
+                            CornerRadius="7" Padding="10,10" Margin="0,0,0,8">
+                        <StackPanel>
+                            <TextBlock Text="{Binding DocFormTitleLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="13" FontWeight="SemiBold" Margin="0,0,0,10" />
+
+                            <!-- Title -->
+                            <TextBlock Text="{Binding DocFieldTitleLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                            <TextBox Text="{Binding DocEditTitle, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource InputBoxStyle}"
+                                     Height="34"
+                                     Tag="e.g. Citizenship Front, Passport..."
+                                     Margin="0,0,0,6" />
+
+                            <!-- Title preset chips -->
+                            <ItemsControl ItemsSource="{Binding DocTitlePresets}" Margin="0,0,0,8">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding}"
+                                                Command="{Binding DataContext.SetDocTitlePresetCommand,
+                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Cursor="Hand" Margin="0,0,3,3">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+                                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+                                                    <Setter Property="BorderThickness" Value="0.7" />
+                                                    <Setter Property="FontSize"        Value="10.5" />
+                                                    <Setter Property="Padding"         Value="6,2" />
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}"
+                                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                                        CornerRadius="4"
+                                                                        Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Opacity" Value="0.7" />
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Tags -->
+                            <TextBlock Text="{Binding DocFieldTagsLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11" Opacity="0.65" Margin="0,0,0,4" />
+
+                            <!-- Selected tag chips -->
+                            <ItemsControl ItemsSource="{Binding DocEditTags}" Margin="0,0,0,4">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource WidgetAccentBrush}"
+                                                CornerRadius="10" Padding="7,2" Margin="0,0,4,3">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding StringFormat='#{0}'}"
+                                                           Foreground="{DynamicResource WidgetDayTodayTextBrush}"
+                                                           FontSize="11" VerticalAlignment="Center" />
+                                                <Button Command="{Binding DataContext.RemoveDocTagCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        Margin="4,0,0,0">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button">
+                                                            <Setter Property="Background"      Value="Transparent" />
+                                                            <Setter Property="BorderThickness" Value="0" />
+                                                            <Setter Property="Padding"         Value="0" />
+                                                            <Setter Property="Cursor"          Value="Hand" />
+                                                            <Setter Property="Template">
+                                                                <Setter.Value>
+                                                                    <ControlTemplate TargetType="Button">
+                                                                        <ContentPresenter />
+                                                                        <ControlTemplate.Triggers>
+                                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                                <Setter Property="Opacity" Value="0.6" />
+                                                                            </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                    </ControlTemplate>
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                        </Style>
+                                                    </Button.Style>
+                                                    <Path Data="M4 4L10 10M4 10L10 4"
+                                                          Stroke="{DynamicResource WidgetDayTodayTextBrush}"
+                                                          StrokeThickness="1.3" Stretch="Uniform"
+                                                          Width="8" Height="8" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- Custom tag input -->
+                            <TextBox Text="{Binding DocEditTagInput, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource InputBoxStyle}"
+                                     Height="34"
+                                     Tag="Custom tag... (Enter or comma to add)"
+                                     Margin="0,0,0,4">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding AddDocTagFromInputCommand}" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+
+                            <!-- Tag preset chips -->
+                            <ItemsControl ItemsSource="{Binding DocTagPresets}" Margin="0,0,0,8">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Content="{Binding}"
+                                                Command="{Binding DataContext.AddDocTagPresetCommand,
+                                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Cursor="Hand" Margin="0,0,3,3">
+                                            <Button.Style>
+                                                <Style TargetType="Button">
+                                                    <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
+                                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+                                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+                                                    <Setter Property="BorderThickness" Value="0.7" />
+                                                    <Setter Property="FontSize"        Value="10.5" />
+                                                    <Setter Property="Padding"         Value="6,2" />
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Border Background="{TemplateBinding Background}"
+                                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                                        CornerRadius="10"
+                                                                        Padding="{TemplateBinding Padding}">
+                                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                                        <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                                    </Trigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                            <!-- File (required) -->
+                            <TextBlock Text="{Binding DocFieldFileLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0"
+                                        Background="{DynamicResource WidgetBackgroundBrush}"
+                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                        BorderThickness="0.7" CornerRadius="6"
+                                        Height="34" Padding="8,0" Margin="0,0,4,0">
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding DocNoFileHintLabel}"
+                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                   Opacity="0.35" FontSize="12" VerticalAlignment="Center"
+                                                   Visibility="{Binding DocEditHasFile, Converter={StaticResource InverseBoolToVis}}" />
+                                        <Border Background="{DynamicResource WidgetAccentBrush}"
+                                                CornerRadius="3" Padding="4,1" Margin="0,0,6,0"
+                                                VerticalAlignment="Center"
+                                                Visibility="{Binding DocEditHasFile, Converter={StaticResource BoolToVis}}">
+                                            <TextBlock Text="{Binding DocEditFileExtension}"
+                                                       Foreground="{DynamicResource WidgetDayTodayTextBrush}"
+                                                       FontSize="10" FontWeight="SemiBold" />
+                                        </Border>
+                                        <TextBlock Text="{Binding DocEditFileName}"
+                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                   FontSize="12" VerticalAlignment="Center"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   Visibility="{Binding DocEditHasFile, Converter={StaticResource BoolToVis}}" />
+                                    </StackPanel>
+                                </Border>
+                                <Button Grid.Column="1" Style="{StaticResource MItemBtnSecondary}"
+                                        Height="34"
+                                        Command="{Binding BrowseDocumentFileCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconFolderOpen}"
+                                              Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.3"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding DocBrowseLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Grid.Column="2" Style="{StaticResource MItemBtn}"
+                                        Command="{Binding ClearDocumentFileCommand}"
+                                        ToolTip="{Binding DocClearFileLabel}"
+                                        Margin="4,0,0,0"
+                                        Visibility="{Binding DocEditHasFile, Converter={StaticResource BoolToVis}}">
+                                    <Path Data="M6 18L18 6M6 6l12 12"
+                                          Stroke="{DynamicResource WidgetForegroundBrush}"
+                                          StrokeThickness="1.5" Stretch="Uniform"
+                                          Width="9" Height="9" />
+                                </Button>
+                            </Grid>
+
+                            <!-- Notes (optional) -->
+                            <TextBlock Text="{Binding DocFieldNotesLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                            <TextBox Text="{Binding DocEditNotes, UpdateSourceTrigger=PropertyChanged}"
+                                     Style="{StaticResource MultilineInputStyle}"
+                                     Tag="Optional notes about this document..."
+                                     Height="46" Margin="0,0,0,8" />
+
+                            <!-- Validation error -->
+                            <TextBlock Text="{Binding DocEditError}"
+                                       Foreground="{DynamicResource WidgetErrorBrush}"
+                                       FontSize="11" Margin="0,0,0,4"
+                                       Visibility="{Binding HasDocEditError, Converter={StaticResource BoolToVis}}" />
+
+                            <!-- Form actions -->
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Style="{StaticResource MItemBtnSecondary}"
+                                        Command="{Binding CancelDocumentEditCommand}"
+                                        Margin="0,0,4,0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconWindowClose}"
+                                              Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.3"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Button Style="{StaticResource MItemBtnAccent}"
+                                        Command="{Binding SaveDocumentCommand}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconCheck}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding SaveLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Empty state: no documents -->
+                    <StackPanel HorizontalAlignment="Center" Margin="0,10"
+                                Visibility="{Binding ShowDocEmpty, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding NoDocsLabel}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   Opacity="0.5" FontSize="13" HorizontalAlignment="Center" />
+                        <TextBlock Text="{Binding NoDocsHintLabel}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   Opacity="0.35" FontSize="11"
+                                   HorizontalAlignment="Center" Margin="0,2,0,0"
+                                   TextWrapping="Wrap" MaxWidth="240" TextAlignment="Center" />
+                    </StackPanel>
+
+                    <!-- Empty state: search no results -->
+                    <TextBlock Text="{Binding NoDocsResultsLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               Opacity="0.5" FontSize="13" HorizontalAlignment="Center" Margin="0,10"
+                               Visibility="{Binding ShowDocNoResults, Converter={StaticResource BoolToVis}}" />
+
+                    <!-- Documents list -->
+                    <ItemsControl ItemsSource="{Binding FilteredDocuments}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:DocItemViewModel}">
+                                <Border Style="{StaticResource ItemCard}">
+                                    <StackPanel>
+                                        <!-- Title + ext badge + hover-revealed action buttons -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0"
+                                                       Text="{Binding Title}"
+                                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                       FontSize="14" FontWeight="SemiBold"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       VerticalAlignment="Center" />
+                                            <!-- Extension badge — always visible, click to reveal in Explorer -->
+                                            <Button Grid.Column="1" Margin="6,0,0,0"
+                                                    Visibility="{Binding HasFile, Converter={StaticResource BoolToVis}}"
+                                                    Command="{Binding DataContext.OpenDocumentFolderCommand,
+                                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    VerticalAlignment="Center">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Background"      Value="Transparent" />
+                                                        <Setter Property="BorderThickness" Value="0" />
+                                                        <Setter Property="Padding"         Value="0" />
+                                                        <Setter Property="Cursor"          Value="Hand" />
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <ContentPresenter />
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter Property="Opacity" Value="0.7" />
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Button.Style>
+                                                <Border Background="{DynamicResource WidgetAccentBrush}"
+                                                        CornerRadius="3" Padding="5,2">
+                                                    <TextBlock Text="{Binding FileExtension}"
+                                                               Foreground="{DynamicResource WidgetDayTodayTextBrush}"
+                                                               FontSize="10" FontWeight="SemiBold" />
+                                                </Border>
+                                            </Button>
+                                            <!-- Action buttons -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <Button Style="{StaticResource MItemBtn}"
+                                                        Margin="4,0,0,0"
+                                                        IsEnabled="{Binding FileExists}"
+                                                        ToolTip="{Binding DataContext.DocOpenLabel,
+                                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        Command="{Binding DataContext.OpenDocumentCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding Id}">
+                                                    <Path Data="{StaticResource IconExternalLink}"
+                                                          Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                          StrokeThickness="1.2" Stretch="Uniform"
+                                                          Width="12" Height="12" />
+                                                </Button>
+                                                <Button Style="{StaticResource MItemBtn}"
+                                                        Margin="4,0,0,0"
+                                                        Command="{Binding DataContext.EditDocumentCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding Id}">
+                                                    <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                          Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                          StrokeThickness="1.2" Stretch="Uniform"
+                                                          Width="12" Height="12" />
+                                                </Button>
+                                                <Button Style="{StaticResource MItemBtn}"
+                                                        Margin="4,0,0,0"
+                                                        Command="{Binding DataContext.DeleteDocumentCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                        CommandParameter="{Binding Id}">
+                                                    <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                          Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                          StrokeThickness="1.2" Stretch="Uniform"
+                                                          Width="12" Height="12" />
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <!-- Row 2: Tag chips -->
+                                        <ItemsControl ItemsSource="{Binding Tags}"
+                                                      Margin="0,3,0,0"
+                                                      Visibility="{Binding HasTags, Converter={StaticResource BoolToVis}}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate><WrapPanel /></ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="{DynamicResource WidgetTagBrush}"
+                                                            CornerRadius="10" Padding="5,1" Margin="0,0,3,2">
+                                                        <TextBlock Text="{Binding StringFormat='#{0}'}"
+                                                                   Foreground="{DynamicResource WidgetAccentBrush}"
+                                                                   FontSize="10" />
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <!-- File not found warning -->
+                                        <TextBlock Text="{Binding DataContext.DocFileNotFoundLabel,
+                                                   RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                   Foreground="{DynamicResource WidgetErrorBrush}"
+                                                   FontSize="11" Margin="0,3,0,0"
+                                                   Visibility="{Binding FileNotFound, Converter={StaticResource BoolToVis}}" />
+
+                                        <!-- Notes -->
+                                        <TextBlock Text="{Binding Notes}"
+                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                   FontSize="12.5" Margin="0,5,0,0"
+                                                   TextWrapping="Wrap"
+                                                   Visibility="{Binding HasNotes, Converter={StaticResource BoolToVis}}" />
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
+            </Border>
+
         </StackPanel>
     </ScrollViewer>
 </UserControl>

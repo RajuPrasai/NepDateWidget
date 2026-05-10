@@ -6,6 +6,9 @@ using System.Windows.Input;
 
 namespace NepDateWidget.ViewModels;
 
+/// <summary>Header item for the day-of-week row in the calendar grid.</summary>
+public sealed record DayOfWeekHeader(string Label, bool IsSaturday, bool IsSunday);
+
 /// <summary>
 /// View model for the expanded calendar panel.
 /// Owns the currently displayed BS month, navigation commands,
@@ -18,6 +21,7 @@ public sealed class CalendarViewModel : ViewModelBase
     private readonly IReadOnlyList<string> _highlightedDays;
     private readonly INepaliDateAdapter _adapter;
     private readonly IReminderService? _reminderService;
+    private readonly INotesService? _notesService;
     private readonly IHolidayLookupService? _holidayLookup;
     private readonly IClipboardService _clipboard;
 
@@ -87,7 +91,7 @@ public sealed class CalendarViewModel : ViewModelBase
 
     public IReadOnlyList<string> NepaliMonthNames { get; private set; } = Array.Empty<string>();
 
-    // ── Year dropdown (2000–2100 BS) ──────────────────────────────────────────
+    // ── Year dropdown (2000-2100 BS) ──────────────────────────────────────────
 
     private const int YearRangeStart = 2000;
     private const int YearRangeEnd = 2100;
@@ -122,7 +126,10 @@ public sealed class CalendarViewModel : ViewModelBase
 
     // ── Day-of-week headers (7 items, Sunday first) ───────────────────────────
 
-    public IReadOnlyList<string> DayOfWeekHeaders { get; private set; } = Array.Empty<string>();
+    public IReadOnlyList<DayOfWeekHeader> DayOfWeekHeaders { get; private set; } = Array.Empty<DayOfWeekHeader>();
+
+    public bool HighlightSaturdays => _highlightSaturdays;
+    public bool HighlightSundays   => _highlightSundays;
 
     // ── Grid cells ────────────────────────────────────────────────────────────
 
@@ -283,7 +290,7 @@ public sealed class CalendarViewModel : ViewModelBase
     public double EventFontSize      { get; private set; } =  10;
     public double TithiFontSize      { get; private set; } =  10;
     public double AdBadgeFontSize    { get; private set; } =  10;
-    public double HeaderFontSize     { get; private set; } = 13.5;  // fixed — does not scale with cell size
+    public double HeaderFontSize     { get; private set; } = 13.5;  // fixed - does not scale with cell size
     public double SubHeaderFontSize  { get; private set; } = 12.0;  // fixed
     public double DowFontSize        { get; private set; } = 12.0;
 
@@ -312,9 +319,9 @@ public sealed class CalendarViewModel : ViewModelBase
         // Visible-event count: use capped reference heights so that as the day-number
         // font grows (making the cell taller and wider) the event rows don't shrink.
         // Caps here must match the hard maxima above so the formula is monotone.
-        const double EventRowCapPx  = 13.0 * 1.5;   // 19.5px — fixed once font hits max
-        const double DayRowCapPx    = 20.0 * 1.6;   // 32px — conservative cap for day row
-        const double TithiRowCapPx  = 12.0 * 1.6;   // 19.2px — cap for tithi row
+        const double EventRowCapPx  = 13.0 * 1.5;   // 19.5px - fixed once font hits max
+        const double DayRowCapPx    = 20.0 * 1.6;   // 32px - conservative cap for day row
+        const double TithiRowCapPx  = 12.0 * 1.6;   // 19.2px - cap for tithi row
         double eventRowH = Math.Min(newEventFont * 1.5, EventRowCapPx);
         double dayRowH   = Math.Min(newDayFont   * 1.6, DayRowCapPx);
         double tithiRowH = Math.Min(newTithiFont * 1.6, TithiRowCapPx);
@@ -380,6 +387,7 @@ public sealed class CalendarViewModel : ViewModelBase
         INepaliDateAdapter? adapter = null,
         string selectedTimezoneId = "",
         IReminderService? reminderService = null,
+        INotesService? notesService = null,
         bool showTithi = true,
         bool showEvents = true,
         bool highlightPublicHolidays = true,
@@ -397,6 +405,7 @@ public sealed class CalendarViewModel : ViewModelBase
         _highlightSundays = highlightSundays;
         _adapter = adapter ?? new NepaliDateAdapter();
         _reminderService = reminderService;
+        _notesService = notesService;
         _showTithi = showTithi;
         _showEvents = showEvents;
         _highlightPublicHolidays = highlightPublicHolidays;
@@ -427,6 +436,9 @@ public sealed class CalendarViewModel : ViewModelBase
             _reminderService.RemindersChanged += (_, _) => RefreshReminderDots();
             RefreshMissedBadge();
         }
+
+        if (_notesService is not null)
+            _notesService.NotesChanged += (_, _) => RefreshNoteDots();
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -509,6 +521,8 @@ public sealed class CalendarViewModel : ViewModelBase
         _showTithi = showTithi;
         _showEvents = showEvents;
         _highlightPublicHolidays = highlightPublicHolidays;
+        OnPropertyChanged(nameof(HighlightSaturdays));
+        OnPropertyChanged(nameof(HighlightSundays));
         RefreshGrid();
     }
 
@@ -551,6 +565,8 @@ public sealed class CalendarViewModel : ViewModelBase
                 _adapter, _loc);
             if (_reminderService is not null && day.IsCurrentMonth)
                 vm.HasReminders = _reminderService.HasRemindersForDateExpanded(day.Year, day.Month, day.Day);
+            if (_notesService is not null && day.IsCurrentMonth)
+                vm.HasNote = _notesService.GetNote($"{day.Year:D4}-{day.Month:D2}-{day.Day:D2}") is not null;
             Days.Add(vm);
         }
 
@@ -571,7 +587,7 @@ public sealed class CalendarViewModel : ViewModelBase
 
         // Re-apply the current visible-event count to all newly created VMs.
         // RefreshGrid is called after popup close (OnLanguageChanged), navigation,
-        // and settings changes — all of which rebuild the Days collection. Without
+        // and settings changes - all of which rebuild the Days collection. Without
         // this, cells revert to 1 event row until the next SizeChanged fires.
         if (_visibleEventCount > 1)
             foreach (var dayVm in Days)
@@ -586,9 +602,13 @@ public sealed class CalendarViewModel : ViewModelBase
 
         DayOfWeekHeaders = new[]
         {
-            _loc.Get("dow.sun"), _loc.Get("dow.mon"), _loc.Get("dow.tue"),
-            _loc.Get("dow.wed"), _loc.Get("dow.thu"), _loc.Get("dow.fri"),
-            _loc.Get("dow.sat"),
+            new DayOfWeekHeader(_loc.Get("dow.sun"), false, true),
+            new DayOfWeekHeader(_loc.Get("dow.mon"), false, false),
+            new DayOfWeekHeader(_loc.Get("dow.tue"), false, false),
+            new DayOfWeekHeader(_loc.Get("dow.wed"), false, false),
+            new DayOfWeekHeader(_loc.Get("dow.thu"), false, false),
+            new DayOfWeekHeader(_loc.Get("dow.fri"), false, false),
+            new DayOfWeekHeader(_loc.Get("dow.sat"), true, false),
         };
         OnPropertyChanged(nameof(DayOfWeekHeaders));
 
@@ -800,6 +820,16 @@ public sealed class CalendarViewModel : ViewModelBase
         if (option is null || string.IsNullOrEmpty(option.Value)) return;
         bool ok = _clipboard.SetText(option.Value);
         Log.Action($"cal copy {option.Key} {(ok ? "ok" : "failed")}");
+    }
+
+    private void RefreshNoteDots()
+    {
+        if (_notesService is null) return;
+        foreach (var dayVm in Days)
+        {
+            if (dayVm.IsCurrentMonth)
+                dayVm.HasNote = _notesService.GetNote($"{dayVm.BsYear:D4}-{dayVm.BsMonth:D2}-{dayVm.Day:D2}") is not null;
+        }
     }
 
     private void RefreshReminderDots()

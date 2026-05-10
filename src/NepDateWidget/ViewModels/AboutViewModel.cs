@@ -9,7 +9,7 @@ namespace NepDateWidget.ViewModels;
 /// <summary>
 /// View model for the About tab.
 /// Exposes localized labels, the app version, and link-open commands.
-/// No mutable state beyond labels — all bindings are one-way.
+/// No mutable state beyond labels - all bindings are one-way.
 /// </summary>
 public sealed class AboutViewModel : ViewModelBase
 {
@@ -122,6 +122,6 @@ public sealed class AboutViewModel : ViewModelBase
         {
             Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
-        catch { /* non-fatal — user can copy the URL manually */ }
+        catch { /* non-fatal - user can copy the URL manually */ }
     }
 }

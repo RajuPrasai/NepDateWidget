@@ -110,7 +110,7 @@ public sealed class VelopackUpdateService : IUpdateService
     /// </summary>
     private static IUpdateSource BuildSource(string feed)
     {
-        // file:// URL — convert to a local path and use SimpleFileSource.
+        // file:// URL - convert to a local path and use SimpleFileSource.
         if (Uri.TryCreate(feed, UriKind.Absolute, out var uri) && uri.IsFile)
         {
             var dir = new DirectoryInfo(uri.LocalPath);
@@ -118,7 +118,7 @@ public sealed class VelopackUpdateService : IUpdateService
             return new SimpleFileSource(dir);
         }
 
-        // Bare local path (drive-letter or UNC) — use SimpleFileSource.
+        // Bare local path (drive-letter or UNC) - use SimpleFileSource.
         if (Path.IsPathRooted(feed) && !feed.StartsWith("http", StringComparison.OrdinalIgnoreCase))
         {
             var dir = new DirectoryInfo(feed);
@@ -126,7 +126,7 @@ public sealed class VelopackUpdateService : IUpdateService
             return new SimpleFileSource(dir);
         }
 
-        // Anything else — assume GitHub repo URL.
+        // Anything else - assume GitHub repo URL.
         Log.Info($"Update feed: GitHub {feed}");
         return new GithubSource(feed, accessToken: null, prerelease: false);
     }

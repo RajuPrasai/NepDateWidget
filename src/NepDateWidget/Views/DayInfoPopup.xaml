@@ -21,27 +21,33 @@
         <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
         <conv:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True" />
 
+        <!-- Primary accent button -->
         <Style x:Key="DBtn" TargetType="Button">
-            <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
-            <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
             <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="12,5" />
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Padding"         Value="12,8" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="FontSize"        Value="13" />
+            <Setter Property="FontWeight"      Value="SemiBold" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
+                        <Grid x:Name="Root">
+                            <Border x:Name="BgLayer" Background="{TemplateBinding Background}" CornerRadius="7" />
+                            <Border Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.85" />
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Opacity" Value="0.4" />
+                                <Setter TargetName="Root" Property="Opacity" Value="0.35" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -49,210 +55,345 @@
             </Setter>
         </Style>
 
+        <!-- Secondary ghost button: muted accent surface -->
         <Style x:Key="DBtnSecondary" TargetType="Button" BasedOn="{StaticResource DBtn}">
-            <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
-            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+            <Setter Property="Foreground" Value="{DynamicResource WidgetAccentBrush}" />
         </Style>
 
+        <!-- Inline icon button (edit / delete) -->
         <Style x:Key="DBtnIcon" TargetType="Button" BasedOn="{StaticResource DBtn}">
             <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
             <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="Padding" Value="4,4" />
-            <Setter Property="Width" Value="28" />
-            <Setter Property="Height" Value="28" />
+            <Setter Property="Padding"    Value="5,5" />
+            <Setter Property="Width"      Value="26" />
+            <Setter Property="Height"     Value="26" />
         </Style>
 
-        <Style x:Key="DLabel" TargetType="TextBlock">
+        <!--
+            Dismiss button: invisible at rest, hover reveals background tint.
+            Keeps the header clean — the X stroke is the only affordance at rest.
+        -->
+        <Style x:Key="DBtnClose" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Padding"         Value="5,5" />
+            <Setter Property="Width"           Value="26" />
+            <Setter Property="Height"          Value="26" />
+            <Setter Property="Opacity"         Value="0.48" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background"
+                                        Value="{DynamicResource WidgetHoverBrush}" />
+                                <Setter Property="Opacity" Value="1.0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Small category section label -->
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="Opacity" Value="0.6" />
-            <Setter Property="Margin" Value="0,4,0,2" />
+            <Setter Property="FontSize"   Value="10.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Opacity"    Value="0.45" />
+            <Setter Property="Margin"     Value="0,0,0,6" />
         </Style>
     </Window.Resources>
 
     <Border Background="{DynamicResource WidgetBackgroundBrush}"
             BorderBrush="{DynamicResource WidgetBorderBrush}"
             BorderThickness="0.7"
-            CornerRadius="10"
-            ClipToBounds="True"
-            Padding="18,16">
+            CornerRadius="12"
+            ClipToBounds="True">
         <Border.Effect>
-            <DropShadowEffect BlurRadius="16" Opacity="0.25" ShadowDepth="2" Direction="270" />
+            <DropShadowEffect BlurRadius="28" Opacity="0.30" ShadowDepth="3" Direction="270" />
         </Border.Effect>
 
         <StackPanel>
 
-            <!-- ── Header ──────────────────────────────────────────────── -->
-            <Grid Margin="0,0,0,4">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="{Binding BsDateLong}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="16" FontWeight="SemiBold" />
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding DayOfWeekLabel}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="12" Opacity="0.55" />
-                        <TextBlock Text=" • "
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="12" Opacity="0.55"
-                                   Visibility="{Binding AdDateLong, Converter={StaticResource BoolToVis}}" />
-                        <TextBlock Text="{Binding AdDateLong}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="12" Opacity="0.55" />
-                    </StackPanel>
-                </StackPanel>
-                <Button Grid.Column="1" Command="{Binding CloseCommand}"
-                        Style="{StaticResource DBtnIcon}"
-                        VerticalAlignment="Top">
-                    <Path Data="M18 6L6 18M6 6l12 12"
-                          Stroke="{DynamicResource WidgetForegroundBrush}"
-                          StrokeThickness="1.5" Stretch="Uniform"
-                          Width="12" Height="12" />
-                </Button>
-            </Grid>
+            <!-- ── Header ─────────────────────────────────────────────────── -->
+            <Border Padding="18,16,14,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-            <!-- public holiday badge -->
-            <Border CornerRadius="4" Padding="6,2" Margin="0,0,0,4"
-                    Background="{DynamicResource WidgetDaySaturdayBrush}"
-                    HorizontalAlignment="Left"
-                    Visibility="{Binding IsHoliday, Converter={StaticResource BoolToVis}}">
-                <TextBlock Text="{Binding HolidayBadgeLabel}"
-                           Foreground="White"
-                           FontSize="12" FontWeight="SemiBold" />
+                    <!--
+                        Right margin ensures long BS date strings never clip into
+                        the close button column, even on narrow themes.
+                    -->
+                    <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                        <!-- Primary BS date -->
+                        <TextBlock Text="{Binding BsDateLong}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   FontSize="20" FontWeight="Bold"
+                                   TextTrimming="CharacterEllipsis" />
+                        <!-- Day of week · AD date -->
+                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                            <TextBlock Text="{Binding DayOfWeekLabel}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="12" Opacity="0.50" />
+                            <TextBlock Text=" · "
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="12" Opacity="0.50" />
+                            <TextBlock Text="{Binding AdDateLong}"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       FontSize="12" Opacity="0.50" />
+                        </StackPanel>
+                        <!--
+                            Pills wrapper collapses entirely when neither holiday
+                            nor tithi applies, preventing a phantom 9px gap.
+                        -->
+                        <Grid Margin="0,9,0,0">
+                            <Grid.Style>
+                                <Style TargetType="Grid">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsHoliday}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding HasTithi}" Value="True">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Grid.Style>
+                            <StackPanel Orientation="Horizontal">
+                                <Border CornerRadius="5" Padding="8,3" Margin="0,0,6,0"
+                                        Background="{DynamicResource WidgetDaySaturdayBrush}"
+                                        Visibility="{Binding IsHoliday, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="{Binding HolidayBadgeLabel}"
+                                               Foreground="White"
+                                               FontSize="11" FontWeight="SemiBold" />
+                                </Border>
+                                <Border CornerRadius="5" Padding="8,3"
+                                        Background="{DynamicResource WidgetHoverBrush}"
+                                        Visibility="{Binding HasTithi, Converter={StaticResource BoolToVis}}">
+                                    <TextBlock Text="{Binding TithiText}"
+                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                               FontSize="11" FontWeight="SemiBold" />
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+
+                    <!-- Close: no visible background at rest; tint on hover -->
+                    <Button Grid.Column="1" Command="{Binding CloseCommand}"
+                            Style="{StaticResource DBtnClose}"
+                            VerticalAlignment="Top">
+                        <Path Data="M18 6L6 18M6 6l12 12"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.5" Stretch="Uniform"
+                              Width="11" Height="11" />
+                    </Button>
+                </Grid>
             </Border>
 
-            <Border Height="0.7"
-                    Background="{DynamicResource WidgetDividerBrush}"
-                    Margin="0,0,0,6" />
+            <Border Height="0.6" Background="{DynamicResource WidgetDividerBrush}" />
 
-            <!-- ── Calendar info ─────────────────────────────────────── -->
+            <!-- ── Events ──────────────────────────────────────────────────── -->
+            <Border Padding="18,12,18,12">
+                <StackPanel>
+                    <TextBlock Text="{Binding EventsLabel}" Style="{StaticResource SectionLabel}" />
+                    <TextBlock Text="{Binding NoEventsLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               Opacity="0.38" FontSize="12.5"
+                               Visibility="{Binding HasEvents, Converter={StaticResource InverseBoolToVis}}" />
+                    <ItemsControl ItemsSource="{Binding Events}"
+                                  Visibility="{Binding HasEvents, Converter={StaticResource BoolToVis}}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="0,3">
+                                    <Border Width="3" CornerRadius="2"
+                                            Background="{DynamicResource WidgetAccentBrush}"
+                                            Margin="0,1,9,1" />
+                                    <TextBlock Text="{Binding}"
+                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                               FontSize="12.5"
+                                               TextWrapping="Wrap"
+                                               MaxWidth="300"
+                                               VerticalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
 
-            <!-- Tithi row -->
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,4"
-                        Visibility="{Binding HasTithi, Converter={StaticResource BoolToVis}}">
-                <TextBlock Text="{Binding TithiLabel}"
-                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                           FontSize="13" Opacity="0.6" Margin="0,0,6,0" />
-                <TextBlock Text="{Binding TithiText}"
-                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                           FontSize="13" FontWeight="SemiBold" />
-            </StackPanel>
+            <Border Height="0.6" Background="{DynamicResource WidgetDividerBrush}" />
 
-            <!-- Events section -->
-            <TextBlock Text="{Binding EventsLabel}" Style="{StaticResource DLabel}" />
-            <TextBlock Text="{Binding NoEventsLabel}"
-                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                       Opacity="0.45" FontSize="13" Margin="0,0,0,6"
-                       Visibility="{Binding HasEvents, Converter={StaticResource InverseBoolToVis}}" />
-            <ItemsControl ItemsSource="{Binding Events}"
-                          Margin="0,0,0,6"
-                          Visibility="{Binding HasEvents, Converter={StaticResource BoolToVis}}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="0,1">
-                            <Ellipse Width="6" Height="6"
-                                     Fill="{DynamicResource WidgetAccentBrush}"
-                                     VerticalAlignment="Center"
-                                     Margin="0,0,6,0" />
-                            <TextBlock Text="{Binding}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="13"
-                                       TextWrapping="Wrap"
-                                       MaxWidth="300" />
+            <!-- ── Note ───────────────────────────────────────────────────── -->
+            <Border Padding="18,12,18,12">
+                <StackPanel>
+                    <Grid Margin="0,0,0,6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding NoteLabel}"
+                                   Style="{StaticResource SectionLabel}"
+                                   Margin="0" VerticalAlignment="Center" />
+                        <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                    Visibility="{Binding HasExistingNote, Converter={StaticResource BoolToVis}}">
+                            <Button Style="{StaticResource DBtnIcon}"
+                                    Command="{Binding EditNoteCommand}"
+                                    ToolTip="{Binding EditNoteLabel}">
+                                <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.5"
+                                      Stretch="Uniform" Width="12" Height="12" Fill="Transparent" />
+                            </Button>
+                            <Button Style="{StaticResource DBtnIcon}"
+                                    Command="{Binding DeleteNoteCommand}"
+                                    ToolTip="{Binding DeleteLabel}"
+                                    Margin="4,0,0,0">
+                                <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                      Stroke="{DynamicResource WidgetErrorBrush}" StrokeThickness="1.5"
+                                      Stretch="Uniform" Width="12" Height="12" Fill="Transparent" />
+                            </Button>
                         </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                    </Grid>
+                    <!--
+                        Note body gets a card surface when content exists (consistent
+                        with reminder items). Empty state renders inline without a card.
+                    -->
+                    <Border CornerRadius="7">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Padding"    Value="0,2,0,0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasExistingNote}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+                                        <Setter Property="Padding"    Value="10,8" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   FontSize="12.5" TextWrapping="Wrap">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="{Binding NoteText}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasExistingNote}" Value="False">
+                                            <Setter Property="Text"    Value="{Binding NoNoteLabel}" />
+                                            <Setter Property="Opacity" Value="0.38" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+                </StackPanel>
+            </Border>
 
-            <Border Height="0.7"
-                    Background="{DynamicResource WidgetDividerBrush}"
-                    Margin="0,0,0,6" />
+            <Border Height="0.6" Background="{DynamicResource WidgetDividerBrush}" />
 
-            <!-- ── Note section ──────────────────────────────────────── -->
-            <TextBlock Text="{Binding NoteLabel}" Style="{StaticResource DLabel}" Margin="0,0,0,4" />
+            <!-- ── Reminders ──────────────────────────────────────────────── -->
+            <Border Padding="18,12,18,12">
+                <StackPanel>
+                    <TextBlock Text="{Binding RemindersLabel}" Style="{StaticResource SectionLabel}" />
+                    <TextBlock Text="{Binding NoRemindersLabel}"
+                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                               Opacity="0.38" FontSize="12.5"
+                               Visibility="{Binding HasReminders, Converter={StaticResource InverseBoolToVis}}" />
+                    <ItemsControl ItemsSource="{Binding Reminders}"
+                                  Visibility="{Binding HasReminders, Converter={StaticResource BoolToVis}}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10,7" Margin="0,3" CornerRadius="7"
+                                        Background="{DynamicResource WidgetInputBrush}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal"
+                                                    VerticalAlignment="Center">
+                                            <Ellipse Width="6" Height="6"
+                                                     Fill="{DynamicResource WidgetErrorBrush}"
+                                                     VerticalAlignment="Center"
+                                                     Margin="0,0,8,0" />
+                                            <TextBlock Text="{Binding Title}"
+                                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                       FontSize="12.5"
+                                                       TextTrimming="CharacterEllipsis" />
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                                    VerticalAlignment="Center">
+                                            <Button Style="{StaticResource DBtnIcon}"
+                                                    Command="{Binding DataContext.EditReminderCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    ToolTip="{Binding DataContext.EditNoteLabel, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
+                                                <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                                      Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.5"
+                                                      Stretch="Uniform" Width="12" Height="12" Fill="Transparent" />
+                                            </Button>
+                                            <Button Style="{StaticResource DBtnIcon}"
+                                                    Margin="4,0,0,0"
+                                                    Command="{Binding DataContext.DeleteReminderCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding Id}"
+                                                    ToolTip="{Binding DataContext.DeleteLabel, RelativeSource={RelativeSource AncestorType=ItemsControl}}">
+                                                <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                      Stroke="{DynamicResource WidgetErrorBrush}" StrokeThickness="1.5"
+                                                      Stretch="Uniform" Width="12" Height="12" Fill="Transparent" />
+                                            </Button>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
 
-            <!-- Existing note display -->
-            <TextBlock Text="{Binding NoteText}"
-                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                       FontSize="13" TextWrapping="Wrap"
-                       Margin="0,0,0,4"
-                       Visibility="{Binding IsNotEditingNote, Converter={StaticResource BoolToVis}}">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasExistingNote}" Value="False">
-                                <Setter Property="Text" Value="{Binding NoNoteLabel}" />
-                                <Setter Property="Opacity" Value="0.45" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
-
-            <!-- Note edit box -->
-            <TextBox Text="{Binding NoteEditBuffer, UpdateSourceTrigger=PropertyChanged}"
-                     Style="{StaticResource MultilineInputStyle}"
-                     Height="60" MaxLength="500"
-                     Margin="0,0,0,4"
-                     x:Name="NoteBox"
-                     AcceptsReturn="True" TextWrapping="Wrap"
-                     Visibility="{Binding IsEditingNote, Converter={StaticResource BoolToVis}}" />
-
-            <!-- Note action buttons -->
-            <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
-                <Button Content="{Binding NoteEditButtonLabel}"
-                        Style="{StaticResource DBtnSecondary}"
-                        Command="{Binding ToggleNoteEditCommand}"
-                        Padding="8,4" />
-                <Button Content="{Binding CancelLabel}"
-                        Style="{StaticResource DBtnSecondary}"
-                        Command="{Binding CancelNoteCommand}"
-                        Padding="8,4" Margin="4,0,0,0"
-                        Visibility="{Binding IsEditingNote, Converter={StaticResource BoolToVis}}" />
-            </StackPanel>
-
-            <Border Height="0.7"
-                    Background="{DynamicResource WidgetDividerBrush}"
-                    Margin="0,0,0,6" />
-
-            <!-- ── Reminders summary ─────────────────────────────────── -->
-            <TextBlock Text="{Binding RemindersLabel}" Style="{StaticResource DLabel}" Margin="0,0,0,4" />
-            <TextBlock Text="{Binding NoRemindersLabel}"
-                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                       Opacity="0.45" FontSize="13" Margin="0,0,0,6"
-                       Visibility="{Binding HasReminders, Converter={StaticResource InverseBoolToVis}}" />
-            <ItemsControl ItemsSource="{Binding ReminderTitles}"
-                          Margin="0,0,0,6"
-                          Visibility="{Binding HasReminders, Converter={StaticResource BoolToVis}}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal" Margin="0,1">
-                            <Ellipse Width="6" Height="6"
-                                     Fill="{DynamicResource WidgetAccentBrush}"
-                                     VerticalAlignment="Center"
-                                     Margin="0,0,6,0" />
-                            <TextBlock Text="{Binding}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="13"
-                                       TextTrimming="CharacterEllipsis"
-                                       MaxWidth="300" />
+            <!-- ── Footer ─────────────────────────────────────────────────── -->
+            <Border Padding="18,12,18,16"
+                    BorderBrush="{DynamicResource WidgetDividerBrush}"
+                    BorderThickness="0,0.6,0,0">
+                <StackPanel>
+                    <Button Style="{StaticResource DBtnSecondary}"
+                            Command="{Binding AddNoteCommand}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,6"
+                            Visibility="{Binding HasExistingNote, Converter={StaticResource InverseBoolToVis}}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconNote}"
+                                  Stroke="{DynamicResource WidgetAccentBrush}" StrokeThickness="1.4"
+                                  Fill="Transparent" Stretch="Uniform"
+                                  Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,7,0" />
+                            <TextBlock Text="{Binding AddNoteLabel}" VerticalAlignment="Center" />
                         </StackPanel>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-            <!-- ── Footer buttons ────────────────────────────────────── -->
-            <Grid Margin="0,2,0,0">
-                <Button Content="{Binding AddReminderLabel}"
-                        Style="{StaticResource DBtn}"
-                        Command="{Binding AddReminderCommand}"
-                        HorizontalAlignment="Stretch" />
-            </Grid>
+                    </Button>
+                    <Button Style="{StaticResource DBtn}"
+                            Command="{Binding AddReminderCommand}"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconBell}"
+                                  Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                  Fill="Transparent" Stretch="Uniform"
+                                  Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,7,0" />
+                            <TextBlock Text="{Binding AddReminderLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
 
         </StackPanel>
     </Border>
 </Window>
+

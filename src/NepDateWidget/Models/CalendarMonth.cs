@@ -10,7 +10,7 @@ public sealed class CalendarMonth
     /// <summary>BS year of the displayed month.</summary>
     public int BsYear { get; init; }
 
-    /// <summary>BS month number (1–12).</summary>
+    /// <summary>BS month number (1-12).</summary>
     public int BsMonth { get; init; }
 
     /// <summary>English name of the BS month (e.g. "Baisakh").</summary>

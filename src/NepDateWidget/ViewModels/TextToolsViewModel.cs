@@ -415,7 +415,7 @@ public sealed class TextToolsViewModel : ViewModelBase
         _ => string.Empty
     };
 
-    // A value 0–100 that drives a ProgressBar or Width binding.
+    // A value 0-100 that drives a ProgressBar or Width binding.
     public double StrengthBarWidth => _strengthLevel switch { 1 => 33, 2 => 66, 3 => 100, _ => 0 };
 
     public bool HasStrengthInput => !string.IsNullOrEmpty(_strengthInput);
@@ -900,7 +900,7 @@ public sealed class TextToolsViewModel : ViewModelBase
             bool p2u       = _unicodeFilePreetiToUnicode;
 
             // P2U: only convert runs whose font is a known legacy Nepali font,
-            //      OR where font is null (e.g. plain .txt — convert everything).
+            //      OR where font is null (e.g. plain .txt - convert everything).
             // U2P: convert all runs regardless of font.
             Func<string, string?, string> fn = p2u
                 ? (text, font) => font is null || DocumentConverterService.IsLegacyNepaliFont(font)
@@ -908,7 +908,7 @@ public sealed class TextToolsViewModel : ViewModelBase
                 : (text, _) => FontConverter.ConvertToPreeti(text);
 
             // After text is converted, update the run font so the document renders correctly:
-            // P2U: remove the explicit legacy font — Word will apply Unicode/Devanagari fallback.
+            // P2U: remove the explicit legacy font - Word will apply Unicode/Devanagari fallback.
             // U2P: set "Preeti" so Preeti-encoded characters display through the Preeti glyph table.
             Func<string?, string?> fontMapper = p2u
                 ? (_ => string.Empty)
@@ -954,7 +954,7 @@ public sealed class TextToolsViewModel : ViewModelBase
                 : (text, _) => NepaliScriptConverter.DevanagariToRoman(text);
 
             // R2D: remove the explicit run font so Word applies Devanagari-capable font fallback.
-            // D2R: leave fonts unchanged — Latin output is renderable by any standard font.
+            // D2R: leave fonts unchanged - Latin output is renderable by any standard font.
             Func<string?, string?>? fontMapper = r2d ? (_ => string.Empty) : null;
 
             var defaultPath = DocumentConverterService.BuildOutputPath(inputPath);

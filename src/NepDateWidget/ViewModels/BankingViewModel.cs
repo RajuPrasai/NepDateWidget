@@ -12,8 +12,8 @@ namespace NepDateWidget.ViewModels;
 
 /// <summary>
 /// View model for the Banking tab.
-/// Two modes: Interest (0) — simple interest with variable rate periods,
-///            EMI (1)      — equated monthly instalment on a reducing balance.
+/// Two modes: Interest (0) - simple interest with variable rate periods,
+///            EMI (1)      - equated monthly instalment on a reducing balance.
 /// </summary>
 public sealed class BankingViewModel : ViewModelBase
 {
@@ -86,6 +86,7 @@ public sealed class BankingViewModel : ViewModelBase
             {
                 OnPropertyChanged(nameof(InterestDatePlaceholder));
                 ClearInterestResult();
+                ConvertInterestDates(toBS: value);
                 Log.Action($"banking interest date mode → {(value ? "BS" : "AD")}");
             }
         }
@@ -120,7 +121,30 @@ public sealed class BankingViewModel : ViewModelBase
     // ═════════════════════════════════════════════════════════════════════════
     // MODE: EMI CALCULATOR
     // ═════════════════════════════════════════════════════════════════════════
-
+    private bool _emiUseBs = true;
+    public bool EmiUseBs
+    {
+        get => _emiUseBs;
+        set
+        {
+            if (SetProperty(ref _emiUseBs, value))
+            {
+                if (!string.IsNullOrWhiteSpace(_emiStartDate))
+                {
+                    string converted = value ? ConvertAdToBsStr(_emiStartDate) : ConvertBsToAdStr(_emiStartDate);
+                    _emiStartDate = !string.IsNullOrEmpty(converted) ? converted : string.Empty;
+                    OnPropertyChanged(nameof(EmiStartDate));
+                }
+                ClearEmiResult();
+                OnPropertyChanged(nameof(EmiDatePlaceholder));
+                OnPropertyChanged(nameof(EmiStartDateLabel));
+                Log.Action($"banking emi date mode → {(value ? "BS" : "AD")}");
+            }
+        }
+    }
+    public ICommand SetEmiBsCommand { get; }
+    public ICommand SetEmiAdCommand { get; }
+    public string EmiDatePlaceholder => _emiUseBs ? "2082/01/01" : "2026-04-01";
     private string _emiLoanAmount = string.Empty;
     public string EmiLoanAmount
     {
@@ -177,8 +201,6 @@ public sealed class BankingViewModel : ViewModelBase
     public ICommand ToggleEmiYearCommand  { get; }
 
     // ═════════════════════════════════════════════════════════════════════════
-    // LABELS
-    // ═════════════════════════════════════════════════════════════════════════
 
     public string ModeInterestLabel      { get; private set; } = string.Empty;
     public string ModeEmiLabel           { get; private set; } = string.Empty;
@@ -191,7 +213,7 @@ public sealed class BankingViewModel : ViewModelBase
     public string EmiLoanLabel           { get; private set; } = string.Empty;
     public string EmiRateLabel           { get; private set; } = string.Empty;
     public string EmiMonthsLabel         { get; private set; } = string.Empty;
-    public string EmiStartDateLabel      { get; private set; } = string.Empty;
+    public string EmiStartDateLabel      => _loc.Get(_emiUseBs ? "banking.emi_start_date_bs" : "banking.emi_start_date_ad");
     public string EmiCalcLabel           { get; private set; } = string.Empty;
     public string EmiMonthlyLabel        { get; private set; } = string.Empty;
     public string EmiTotalPaymentLabel   { get; private set; } = string.Empty;
@@ -225,6 +247,8 @@ public sealed class BankingViewModel : ViewModelBase
         SetInterestAdCommand     = new RelayCommand(() => InterestUseBs = false);
         CalculateEmiCommand      = new RelayCommand(DoCalculateEmi);
         ToggleEmiYearCommand     = new RelayCommand<EmiScheduleRow>(DoToggleEmiYear);
+        SetEmiBsCommand          = new RelayCommand(() => EmiUseBs = true);
+        SetEmiAdCommand          = new RelayCommand(() => EmiUseBs = false);
 
         // Seed one empty first row for interest.
         AddRowInternal(string.Empty, string.Empty, isFirstRow: true);
@@ -300,7 +324,10 @@ public sealed class BankingViewModel : ViewModelBase
             return;
         }
 
-        if (!TryParseInterestDate(_interestToDate, out _, out _, out _))
+        bool toDateValid = _interestUseBs
+            ? TryParseInterestDate(_interestToDate, out _, out _, out _)
+            : TryParseAdDate(_interestToDate, out _);
+        if (!toDateValid)
         {
             InterestHasError = true;
             InterestError    = _loc.Get("interest.error_to");
@@ -411,7 +438,7 @@ public sealed class BankingViewModel : ViewModelBase
             if (TryParseAdDate(dateStr, out DateTime dt))
             {
                 var next = new DateTime(dt.Year, dt.Month, 1).AddMonths(1);
-                return next.ToString("yyyy/MM/dd");
+                return next.ToString("yyyy-MM-dd");
             }
         }
         return string.Empty;
@@ -436,7 +463,7 @@ public sealed class BankingViewModel : ViewModelBase
         else
         {
             if (TryParseAdDate(dateStr, out DateTime dt))
-                return dt.AddDays(-1).ToString("yyyy/MM/dd");
+                return dt.AddDays(-1).ToString("yyyy-MM-dd");
         }
         return dateStr;
     }
@@ -525,17 +552,29 @@ public sealed class BankingViewModel : ViewModelBase
             return;
         }
 
-        // Parse start date (BS). If blank, use today.
+        // Parse start date. If blank, use today. Supports both BS and AD depending on EmiUseBs.
         DateTime startAd;
         if (string.IsNullOrWhiteSpace(_emiStartDate))
         {
             startAd = _adapter.GetTodayAd();
         }
-        else if (!TryParseBsDate(_emiStartDate, out startAd))
+        else if (_emiUseBs)
         {
-            EmiHasError = true;
-            EmiError    = _loc.Get("banking.emi_error_start_date");
-            return;
+            if (!TryParseBsDate(_emiStartDate, out startAd))
+            {
+                EmiHasError = true;
+                EmiError    = _loc.Get("banking.emi_error_start_date");
+                return;
+            }
+        }
+        else
+        {
+            if (!TryParseAdDate(_emiStartDate, out startAd))
+            {
+                EmiHasError = true;
+                EmiError    = _loc.Get("banking.emi_error_start_date_ad");
+                return;
+            }
         }
 
         // Reducing balance EMI: EMI = P * r * (1+r)^n / ((1+r)^n - 1)
@@ -665,6 +704,45 @@ public sealed class BankingViewModel : ViewModelBase
         EmiScheduleRows.Clear();
     }
 
+    // Converts all Interest date fields between BS and AD when the mode toggle changes.
+    private void ConvertInterestDates(bool toBS)
+    {
+        string newFrom = toBS ? ConvertAdToBsStr(_interestFromDate) : ConvertBsToAdStr(_interestFromDate);
+        if (!string.IsNullOrWhiteSpace(_interestFromDate))
+            InterestFromDate = newFrom; // also syncs InterestRows[0] via setter
+
+        string newTo = toBS ? ConvertAdToBsStr(_interestToDate) : ConvertBsToAdStr(_interestToDate);
+        if (!string.IsNullOrWhiteSpace(_interestToDate))
+            InterestToDate = newTo;
+
+        // Skip index 0: it is already synced from InterestFromDate above.
+        for (int i = 1; i < InterestRows.Count; i++)
+        {
+            if (string.IsNullOrWhiteSpace(InterestRows[i].FromDate)) continue;
+            InterestRows[i].FromDate = toBS
+                ? ConvertAdToBsStr(InterestRows[i].FromDate)
+                : ConvertBsToAdStr(InterestRows[i].FromDate);
+        }
+    }
+
+    // BS "YYYY/MM/DD" → AD "yyyy-MM-dd". Returns empty string on parse failure.
+    private string ConvertBsToAdStr(string bsDate)
+    {
+        if (string.IsNullOrWhiteSpace(bsDate)) return bsDate;
+        if (!TryParseInterestDate(bsDate, out int y, out int m, out int d)) return string.Empty;
+        var ad = _adapter.BsToAd(y, m, d);
+        return ad.HasValue ? ad.Value.ToString("yyyy-MM-dd") : string.Empty;
+    }
+
+    // AD "yyyy-MM-dd" → BS "YYYY/MM/DD". Returns empty string on parse failure.
+    private string ConvertAdToBsStr(string adDate)
+    {
+        if (string.IsNullOrWhiteSpace(adDate)) return adDate;
+        if (!TryParseAdDate(adDate, out DateTime dt)) return string.Empty;
+        var bs = _adapter.AdToBs(dt);
+        return bs.HasValue ? $"{bs.Value.Year:D4}/{bs.Value.Month:D2}/{bs.Value.Day:D2}" : string.Empty;
+    }
+
     // ═════════════════════════════════════════════════════════════════════════
     // PRIVATE: SHARED HELPERS
     // ═════════════════════════════════════════════════════════════════════════
@@ -692,7 +770,7 @@ public sealed class BankingViewModel : ViewModelBase
         EmiLoanLabel           = _loc.Get("banking.emi_loan");
         EmiRateLabel           = _loc.Get("banking.emi_rate");
         EmiMonthsLabel         = _loc.Get("banking.emi_months");
-        EmiStartDateLabel      = _loc.Get("banking.emi_start_date_bs");
+        // EmiStartDateLabel is a computed property - no assignment needed here.
         EmiCalcLabel           = _loc.Get("banking.emi_calculate");
         EmiMonthlyLabel        = _loc.Get("banking.emi_monthly");
         EmiTotalPaymentLabel   = _loc.Get("banking.emi_total_payment");

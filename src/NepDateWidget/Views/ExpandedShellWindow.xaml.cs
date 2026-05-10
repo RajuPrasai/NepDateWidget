@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace NepDateWidget.Views;
@@ -50,6 +51,8 @@ public partial class ExpandedShellWindow : Window
             _saveTimer.Stop();
             ViewModel.SaveSettings();
         };
+
+        IsVisibleChanged += (_, e) => { if (e.NewValue is true) PlayOpenAnimation(); };
 
         // Escape inside the run box should collapse the shell (same behaviour as pill).
         viewModel.RunBox.CollapseRequested += (_, _) =>
@@ -435,5 +438,54 @@ public partial class ExpandedShellWindow : Window
             ViewModel.ToggleExpandedCommand.Execute(null);
             e.Handled = true;
         }
+    }
+
+    // ── Open/close animations ────────────────────────────────────────────────
+
+    private void PlayOpenAnimation()
+    {
+        if (!ViewModel.AnimationEnabled) return;
+
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+
+        // Fade in
+        var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200)) { EasingFunction = ease };
+        ShellRoot.BeginAnimation(OpacityProperty, fadeIn);
+
+        // Slide down subtly
+        var translate = ShellRoot.RenderTransform as TranslateTransform ?? new TranslateTransform();
+        ShellRoot.RenderTransform = translate;
+        var slideDown = new DoubleAnimation(-8, 0, TimeSpan.FromMilliseconds(250)) { EasingFunction = ease };
+        translate.BeginAnimation(TranslateTransform.YProperty, slideDown);
+    }
+
+    /// <summary>
+    /// Plays a close animation then hides the window. If animations are disabled, hides immediately.
+    /// </summary>
+    public void AnimateAndHide()
+    {
+        if (!ViewModel.AnimationEnabled)
+        {
+            Hide();
+            return;
+        }
+
+        var ease = new CubicEase { EasingMode = EasingMode.EaseIn };
+
+        var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(150)) { EasingFunction = ease };
+        fadeOut.Completed += (_, _) =>
+        {
+            Hide();
+            // Reset for next show
+            ShellRoot.Opacity = 1;
+            var t = ShellRoot.RenderTransform as TranslateTransform;
+            if (t is not null) t.Y = 0;
+        };
+        ShellRoot.BeginAnimation(OpacityProperty, fadeOut);
+
+        var translate = ShellRoot.RenderTransform as TranslateTransform ?? new TranslateTransform();
+        ShellRoot.RenderTransform = translate;
+        var slideUp = new DoubleAnimation(0, -6, TimeSpan.FromMilliseconds(150)) { EasingFunction = ease };
+        translate.BeginAnimation(TranslateTransform.YProperty, slideUp);
     }
 }

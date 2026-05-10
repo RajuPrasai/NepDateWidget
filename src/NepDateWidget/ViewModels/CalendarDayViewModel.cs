@@ -29,6 +29,13 @@ public sealed class CalendarDayViewModel : ViewModelBase
         set => SetProperty(ref _hasReminders, value);
     }
 
+    private bool _hasNote;
+    public bool HasNote
+    {
+        get => _hasNote;
+        set => SetProperty(ref _hasNote, value);
+    }
+
     private string? _reminderTooltip;
     public string? ReminderTooltip
     {
@@ -62,6 +69,12 @@ public sealed class CalendarDayViewModel : ViewModelBase
 
     /// <summary>True when TithiText is non-empty and the ShowTithi setting is on.</summary>
     public bool ShowTithiText { get; }
+
+    /// <summary>True when this day is Purnima (full moon), including Kshaya Purnima.</summary>
+    public bool IsPurnima { get; }
+
+    /// <summary>True when this day is Aunsi (new moon / Amavasya).</summary>
+    public bool IsAunsi { get; }
 
     /// <summary>
     /// Events visible in the cell (bounded by the count computed from available cell height).
@@ -126,6 +139,8 @@ public sealed class CalendarDayViewModel : ViewModelBase
         string rawTithi = isNepali ? day.TithiNp : day.TithiEn;
         TithiText = day.IsCurrentMonth ? rawTithi : string.Empty;
         ShowTithiText = day.IsCurrentMonth && showTithi && !string.IsNullOrEmpty(rawTithi);
+        IsPurnima = day.IsCurrentMonth && day.TithiEn.StartsWith("Purnima", StringComparison.Ordinal);
+        IsAunsi   = day.IsCurrentMonth && day.TithiEn == "Aunsi";
 
         // Multi-event: store all events and initialise with 1 visible row
         string[] events = isNepali ? day.EventsNp : day.EventsEn;

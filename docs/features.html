@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
   <title>Features - NepDate Widget</title>
-  <meta name="description" content="A deep tour of every NepDate Widget tab: calendar, date conversion, timezone, EMI, interest, password, network, units, notes, reminders, and settings." />
+  <meta name="description" content="A deep tour of every NepDate Widget tab: calendar, date conversion, timezone, EMI, interest, password, network, units, notes, reminders, documents, RunBox launcher, and settings." />
   <link rel="canonical" href="https://rajuprasai.github.io/NepDateWidget/features.html" />
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" href="assets/logo.png?v=2" />
@@ -92,6 +92,8 @@
           <p class="lede" style="margin: 0 auto;">
             NepDate Widget is organized into seven tabs. Each one focuses on a single workflow so the UI
             stays uncluttered. Right-clicking the widget anywhere opens a quick-access menu to any tool.
+            RunBox is a separate global launcher &mdash; press the configurable hotkey from anywhere in
+            Windows to run a command without opening the widget at all.
           </p>
         </div>
       </div>
@@ -130,11 +132,41 @@
               <li>One-click <strong>Today</strong> jumps back to the current month</li>
               <li>Upcoming holiday countdown right in the header (toggleable, hover for the next year of holidays)</li>
               <li>Right-click any cell to copy the date in four formats (BS, BS long, AD, AD long)</li>
+              <li>Days with a note show a colored dot; days with a reminder show a red dot &mdash; both appear when a day has both</li>
+              <li>Click any day to open a popup showing its note and reminders &mdash; edit or delete each item inline without opening the More tab</li>
               <li>Daily events notification on the first launch of each day, listing today's festivals and observances</li>
               <li>Tithi and festival data sourced from authoritative BS calendars</li>
             </ul>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-calander.png" data-caption="Calendar tab with month grid, holidays, and fiscal quarter"><img src="assets/screenshots/tab-calander.png" alt="Calendar tab with month grid, holidays, and fiscal quarter" loading="lazy" /></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RunBox -->
+    <section class="section" id="runbox">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">RunBox</div>
+          <h2 class="section-title">Run anything without leaving the keyboard.</h2>
+        </div>
+
+        <div class="feat-block">
+          <div class="body">
+            <span class="eyebrow">Launcher</span>
+            <h3>Global hotkey command launcher with history</h3>
+            <p>Press the configurable hotkey (default <kbd>Ctrl+Shift+Space</kbd>) from anywhere in
+              Windows to summon a compact run bar. Type a program name, file path, URL, or just a
+              search term and press Enter.</p>
+            <ul>
+              <li>Runs commands exactly like the Windows native Run dialog</li>
+              <li>Detects URLs and opens them in your default browser</li>
+              <li>Falls back to a Google search for anything that doesn&rsquo;t match a command or URL</li>
+              <li>Remembers the last 50 entries; navigate with arrow keys, filter by typing,
+                Tab-complete from history</li>
+              <li>Hotkey is fully configurable from Settings</li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -342,25 +374,43 @@
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">More tab</div>
-          <h2 class="section-title">Notes and reminders, pinned to BS dates.</h2>
+          <h2 class="section-title">Documents, notes, and reminders.</h2>
         </div>
 
         <div class="feat-block">
           <div class="body">
-            <span class="eyebrow">Notes</span>
-            <h3>Quick local notes</h3>
-            <p>Keep short notes alongside your calendar. Stored locally next to the widget, no sync, no
-              account.</p>
+            <span class="eyebrow">Documents</span>
+            <h3>Attach and organize files locally</h3>
+            <p>Store references to frequently used files (PDFs, images, Word, Excel) directly in the
+              widget. Add a title, tags, and optional notes to each entry. Search by title or tag to
+              find files instantly.</p>
+            <ul>
+              <li>Open the file in its default app with one click</li>
+              <li>Jump directly to the containing folder in Explorer</li>
+              <li>Files are copied into the app&rsquo;s data directory and organized automatically</li>
+              <li>The Documents folder is pinned to Windows Explorer Quick Access on startup, so it
+                appears in every file-upload dialog sidebar</li>
+            </ul>
           </div>
-          <div class="shot" data-lightbox="assets/screenshots/tab-more-notes.png" data-caption="Notes tool"><img src="assets/screenshots/tab-more-notes.png" alt="Notes tool" loading="lazy" /></div>
         </div>
 
         <div class="feat-block reverse">
           <div class="body">
+            <span class="eyebrow">Notes</span>
+            <h3>Quick local notes, pinned to BS dates</h3>
+            <p>Keep short notes alongside your calendar. Each note is tied to a BS date and shows
+              as a dot on the calendar grid. Stored locally, no sync, no account.</p>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-more-notes.png" data-caption="Notes tool"><img src="assets/screenshots/tab-more-notes.png" alt="Notes tool" loading="lazy" /></div>
+        </div>
+
+        <div class="feat-block">
+          <div class="body">
             <span class="eyebrow">Reminders</span>
             <h3>One-shot or recurring</h3>
-            <p>Pin reminders to BS dates with optional time and recurrence (daily, weekly, monthly, yearly).
-              Edit or delete inline. They survive app restarts.</p>
+            <p>Pin reminders to BS dates with optional time and recurrence (daily, weekly, monthly,
+              yearly). Edit or delete inline from the More tab or directly from the calendar day
+              popup. They survive app restarts.</p>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-more-reminder.png" data-caption="Reminders tool"><img src="assets/screenshots/tab-more-reminder.png" alt="Reminders tool" loading="lazy" /></div>
         </div>
@@ -401,6 +451,16 @@
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
             <h3>Start with Windows</h3>
             <p>One toggle to launch on login. No registry editing, no scheduled tasks to babysit.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+            <h3>RunBox hotkey</h3>
+            <p>Configure the global shortcut that summons the RunBox launcher. Default is Ctrl+Shift+Space. Record any combination from the Settings panel.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+            <h3>Notification settings</h3>
+            <p>Set how long reminder notifications stay on screen (5&ndash;60 seconds) and toggle the notification sound on or off.</p>
           </div>
         </div>
       </div>

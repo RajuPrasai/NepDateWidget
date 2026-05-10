@@ -3,10 +3,12 @@ using NepDateWidget.Helpers;
 using NepDateWidget.Services;
 using NepDateWidget.ViewModels;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace NepDateWidget.Views;
@@ -33,7 +35,9 @@ public partial class MainWindow : Window
 
     // ── Fullscreen + topmost recovery ────────────────────────────────────────
     private readonly DispatcherTimer _topmostTimer;
+    private readonly DispatcherTimer _fullscreenTimer;
     private bool _hiddenForFullscreen;
+    private bool _intentionalHide;
     private IntPtr _winEventHook;
     private Win32Interop.WinEventDelegate? _winEventProc;
 
@@ -75,6 +79,12 @@ public partial class MainWindow : Window
             });
         };
 
+        // Bring the shell to the foreground when navigating to an already-open tab.
+        viewModel.ShellBringToFrontRequested += (_, _) =>
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Input, () => _shell?.Activate());
+        };
+
         // Re-register hotkey when settings change.
         viewModel.Settings.SettingsApplied += (_, _) =>
         {
@@ -109,6 +119,15 @@ public partial class MainWindow : Window
             RelocateToTopmost();
         };
         _topmostTimer.Start();
+
+        // Dedicated faster poll for fullscreen detection - catches browser F11
+        // and other cases where the foreground window does not change.
+        _fullscreenTimer = new DispatcherTimer(DispatcherPriority.Background)
+        {
+            Interval = TimeSpan.FromMilliseconds(600)
+        };
+        _fullscreenTimer.Tick += (_, _) => FullScreenCheck();
+        _fullscreenTimer.Start();
 
         SystemEvents.PowerModeChanged += OnPowerModeChanged;
         SystemEvents.TimeChanged += OnSystemTimeChanged;
@@ -180,6 +199,7 @@ public partial class MainWindow : Window
             SystemEvents.TimeChanged -= OnSystemTimeChanged;
 
             _saveTimer.Stop();
+            _fullscreenTimer.Stop();
             ViewModel.SaveSettings();
 
             // Tear down the shell so we don't leak a hidden top-level window.
@@ -243,24 +263,50 @@ public partial class MainWindow : Window
     {
         if (ViewModel.IsExpanded)
         {
-            // Lazy creation: the shell is allocated on first expand and reused thereafter.
             _shell ??= CreateShell();
             _shell.Show();
             _shell.Activate();
-            // The mini bar stays visible while the shell is open so the user can
-            // still see the live clock / date and use it to collapse back.
+
+            if (ViewModel.AnimationEnabled)
+                PlayPillBounce();
         }
         else
         {
             if (_shell is not null)
-                _shell.Hide();
+                _shell.AnimateAndHide();
 
-            // Re-assert topmost / shell owner so Win+D still works after a shell session.
+            if (ViewModel.AnimationEnabled)
+                PlayPillBounce();
+            else
+            {
+                PillScale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, null);
+                PillScale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, null);
+            }
+
             EnsureShellOwner();
             if (ViewModel.AlwaysOnTop && _hwnd != IntPtr.Zero)
                 Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
                     Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
         }
+    }
+
+    /// <summary>
+    /// Subtle bounce played on the pill whenever the widget is opened or closed.
+    /// Quickly expands slightly then settles back, giving tactile feedback without
+    /// a disruptive scale-down/scale-up transition.
+    /// </summary>
+    private void PlayPillBounce()
+    {
+        var anim = new DoubleAnimationUsingKeyFrames();
+        anim.KeyFrames.Add(new EasingDoubleKeyFrame(1.0, KeyTime.FromTimeSpan(TimeSpan.Zero)));
+        anim.KeyFrames.Add(new EasingDoubleKeyFrame(1.06,
+            KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(80)),
+            new CubicEase { EasingMode = EasingMode.EaseOut }));
+        anim.KeyFrames.Add(new EasingDoubleKeyFrame(1.0,
+            KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(280)),
+            new BackEase { EasingMode = EasingMode.EaseOut, Amplitude = 0.2 }));
+        PillScale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, anim);
+        PillScale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleYProperty, anim);
     }
 
     private ExpandedShellWindow CreateShell()
@@ -281,6 +327,19 @@ public partial class MainWindow : Window
 
     private IntPtr WndProcHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        // Prevent Win+D and other system-initiated hides from removing the pill.
+        // WPF-initiated hides (fullscreen detection) are allowed via _intentionalHide.
+        if (msg == Win32Interop.WM_WINDOWPOSCHANGING && !_intentionalHide)
+        {
+            var wp = Marshal.PtrToStructure<Win32Interop.WINDOWPOS>(lParam);
+            if ((wp.flags & Win32Interop.SWP_HIDEWINDOW) != 0)
+            {
+                wp.flags &= ~Win32Interop.SWP_HIDEWINDOW;
+                Marshal.StructureToPtr(wp, lParam, true);
+            }
+            return IntPtr.Zero;
+        }
+
         if (msg == Win32Interop.WM_HOTKEY && wParam.ToInt32() == HOTKEY_ID_RUNBOX)
         {
             handled = true;
@@ -388,16 +447,19 @@ public partial class MainWindow : Window
         if (_hwnd == IntPtr.Zero) return;
         if (!ViewModel.HideOnFullscreen) return;
 
-        // The shell is a normal opaque window; the OS already manages it. Only
-        // the pill needs the hide-for-fullscreen treatment and only when visible.
-        if (ViewModel.IsExpanded) return;
+        // Only the pill needs explicit hide-for-fullscreen treatment.
+        // The shell is a normal (non-topmost) window and goes behind fullscreen
+        // apps naturally. The pill, however, is topmost and must be hidden explicitly
+        // regardless of whether the shell is currently open.
 
         if (Win32Interop.IsForegroundFullscreen())
         {
             if (!_hiddenForFullscreen)
             {
                 _hiddenForFullscreen = true;
+                _intentionalHide = true;
                 Hide();
+                _intentionalHide = false;
             }
         }
         else if (_hiddenForFullscreen)
@@ -475,7 +537,19 @@ public partial class MainWindow : Window
     {
         if (!_hasDragged)
         {
-            ViewModel.ToggleExpandedCommand.Execute(null);
+            if (ViewModel.IsExpanded && _shell is { IsVisible: true })
+            {
+                // Shell is open: bring to front if not foreground, collapse if already foreground
+                var shellHwnd = new WindowInteropHelper(_shell).Handle;
+                if (shellHwnd != IntPtr.Zero && Win32Interop.GetForegroundWindow() != shellHwnd)
+                    _shell.Activate();
+                else
+                    ViewModel.ToggleExpandedCommand.Execute(null);
+            }
+            else
+            {
+                ViewModel.ToggleExpandedCommand.Execute(null);
+            }
         }
         _hasDragged = false;
     }
@@ -484,6 +558,10 @@ public partial class MainWindow : Window
     {
         ViewModel.RefreshCopyLabels();
     }
+
+    private void WidgetBorder_MouseEnter(object sender, MouseEventArgs e) { }
+
+    private void WidgetBorder_MouseLeave(object sender, MouseEventArgs e) { }
 
     // ── Reminder integration ─────────────────────────────────────────────────
 
@@ -505,20 +583,50 @@ public partial class MainWindow : Window
         // first paint of the widget pill.
         Dispatcher.BeginInvoke(DispatcherPriority.Background, MaybeShowDailyEventsNotification);
 
-        ViewModel.More.EditReminderRequested += OnMoreEditReminderRequested;
+        ViewModel.Settings.TestNotificationRequested += (_, _) => ShowTestNotification();
     }
 
-    private void OnMoreEditReminderRequested(string reminderId)
+    private void ShowTestNotification()
     {
-        if (_reminderService is null || _localizationService is null || _nepaliDateAdapter is null) return;
-        var entry = _reminderService.GetAll().FirstOrDefault(r => r.Id == reminderId);
-        if (entry is null) return;
-        var parsed = Models.ReminderEntry.ParseDate(entry.BsDate);
-        if (parsed is null) return;
-        var (y, m, d) = parsed.Value;
-        OpenReminderPopup(y, m, d);
-        if (_currentReminderPopup?.DataContext is ReminderViewModel rvm)
-            rvm.EditCommand.Execute(reminderId);
+        if (_localizationService is null) return;
+        var header  = _localizationService.Get("settings.notification");
+        var title   = _localizationService.Get("settings.test_notification");
+        var body    = "This is a test reminder notification.";
+        var dismiss = _localizationService.Get("reminder.dismiss");
+        bool sound  = ViewModel.Settings.NotificationSound;
+        int  dur    = ViewModel.Settings.NotificationDurationSeconds;
+        _activeNotifications.RemoveAll(n => !n.IsLoaded);
+        var popup = new NotificationPopup(header, title, body, dismiss, _activeNotifications.Count, sound, dur);
+        popup.Closed += (s, _) => { if (s is NotificationPopup n) _activeNotifications.Remove(n); };
+        _activeNotifications.Add(popup);
+        popup.Show();
+    }
+
+    private void OnMoreNavigateToMore(int mode, string dateKey)
+    {
+        ViewModel.OpenMoreCommand.Execute(null);
+        if (mode == 0)
+        {
+            ViewModel.More.OpenNoteForm(dateKey); // dateKey is "YYYY-MM-DD"
+        }
+        else
+        {
+            // dateKey is "YYYY-MM-DD"; OpenReminderForm wants y, m, d
+            var parts = dateKey.Split('-');
+            if (parts.Length == 3
+                && int.TryParse(parts[0], out int y)
+                && int.TryParse(parts[1], out int m)
+                && int.TryParse(parts[2], out int d))
+            {
+                ViewModel.More.OpenReminderForm(y, m, d);
+            }
+        }
+    }
+
+    private void OnMoreEditReminder(string reminderId)
+    {
+        ViewModel.OpenMoreCommand.Execute(null);
+        ViewModel.More.OpenEditReminderForm(reminderId);
     }
 
     /// <summary>
@@ -582,10 +690,8 @@ public partial class MainWindow : Window
         popup.Topmost = true;
         _currentDayInfoPopup = popup;
 
-        vm.AddReminderRequested += (y, m, d) =>
-        {
-            OpenReminderPopup(y, m, d);
-        };
+        vm.NavigateToMoreRequested += OnMoreNavigateToMore;
+        vm.EditReminderRequested   += OnMoreEditReminder;
 
         popup.Closed += (_, _) =>
         {

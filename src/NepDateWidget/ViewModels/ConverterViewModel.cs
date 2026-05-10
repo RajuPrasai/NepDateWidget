@@ -377,8 +377,8 @@ public sealed class ConverterViewModel : ViewModelBase
             DaysInput1 = $"{bs.Year}/{bs.Month:D2}/{bs.Day:D2}";
             IsDaysDiff = true;
 
-            // Time: default to current local time
-            TimeInput = DateTime.Now.ToString("h:mm tt");
+            // Time: default to current local time in 24h format
+            TimeInput = DateTime.Now.ToString("h:mm");
             _timeIsAm = DateTime.Now.Hour < 12;
             OnPropertyChanged(nameof(TimeIsAm));
             OnPropertyChanged(nameof(TimeAmPmLabel));

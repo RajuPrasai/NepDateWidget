@@ -68,7 +68,7 @@ public class CalendarViewModelTests
     public void Constructor_DayOfWeekHeaders_AllNonEmpty()
     {
         var vm = Create();
-        Assert.All(vm.DayOfWeekHeaders, h => Assert.NotEmpty(h));
+        Assert.All(vm.DayOfWeekHeaders, h => Assert.NotEmpty(h.Label));
     }
 
     // ── Navigation via commands ───────────────────────────────────────────────
@@ -211,7 +211,7 @@ public class CalendarViewModelTests
         loc.SetLanguage("ne");
         vm.OnLanguageChanged();
 
-        Assert.NotEqual(enHeaders[0], vm.DayOfWeekHeaders[0]);
+        Assert.NotEqual(enHeaders[0].Label, vm.DayOfWeekHeaders[0].Label);
     }
 
     // ── Today marking in grid ─────────────────────────────────────────────────

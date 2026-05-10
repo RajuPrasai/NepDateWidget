@@ -38,10 +38,13 @@ public static class AppPaths
     public static bool IsPortable => _isPortable.Value;
     public static string DataDirectory => _dataDir.Value;
 
-    public static string SettingsPath  => Path.Combine(DataDirectory, "settings.json");
-    public static string RemindersPath => Path.Combine(DataDirectory, "reminders.json");
-    public static string NotesPath     => Path.Combine(DataDirectory, "notes.json");
-    public static string LogPath       => Path.Combine(DataDirectory, "nepdate.log");
+    public static string SettingsPath   => Path.Combine(DataDirectory, "settings.json");
+    public static string RemindersPath  => Path.Combine(DataDirectory, "reminders.json");
+    public static string NotesPath      => Path.Combine(DataDirectory, "notes.json");
+    public static string DocumentsPath  => Path.Combine(DataDirectory, "documents.json");
+    public static string DocSearchHistoryPath => Path.Combine(DataDirectory, "doc-search-history.json");
+    public static string DocumentsFilesDirectory => Path.Combine(DataDirectory, "Documents");
+    public static string LogPath        => Path.Combine(DataDirectory, "nepdate.log");
 
     private static string ResolveExeDir()
     {

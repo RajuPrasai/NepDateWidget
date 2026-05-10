@@ -314,21 +314,19 @@ public sealed class MoreViewModelTests
         Assert.Null(ex);
     }
 
-    // ── EditReminderRequested event ───────────────────────────────────────────
+    // ── EditReminderCommand opens inline form ─────────────────────────────────
 
     [Fact]
-    public void EditReminderCommand_RaisesEditReminderRequested()
+    public void EditReminderCommand_OpensInlineForm()
     {
         var rs = new FakeReminderService();
-        rs.Add(MakeReminder("r1"));
+        rs.Add(MakeReminder("r1", title: "My Meeting"));
         var vm = Create(rs);
-
-        string? receivedId = null;
-        vm.EditReminderRequested += id => receivedId = id;
 
         vm.EditReminderCommand.Execute("r1");
 
-        Assert.Equal("r1", receivedId);
+        Assert.True(vm.IsReminderFormOpen);
+        Assert.Equal("My Meeting", vm.ReminderFormTitle);
     }
 
     // ── Labels ────────────────────────────────────────────────────────────────

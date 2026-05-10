@@ -3,6 +3,8 @@ using NepDateWidget.Services;
 using NepDateWidget.ViewModels;
 using NepDateWidget.Views;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using Velopack;
 
 namespace NepDateWidget;
@@ -47,6 +49,16 @@ public partial class App : Application
 
     private void OnStartup(object sender, StartupEventArgs e)
     {
+        // ── Global TextBox caret-to-end on focus ────────────────────────────
+        EventManager.RegisterClassHandler(
+            typeof(TextBox),
+            UIElement.GotKeyboardFocusEvent,
+            new KeyboardFocusChangedEventHandler((s, _) =>
+            {
+                if (s is TextBox tb && !tb.IsReadOnly)
+                    tb.CaretIndex = tb.Text.Length;
+            }));
+
         // ── Global crash handler ─────────────────────────────────────────────
         // Must be registered before any other code so startup exceptions are
         // caught and shown rather than killing the process silently.
@@ -73,7 +85,7 @@ public partial class App : Application
         }
         catch (Exception logEx)
         {
-            // Logging unavailable — nothing more we can do; continue startup.
+            // Logging unavailable - nothing more we can do; continue startup.
             System.Diagnostics.Debug.WriteLine($"Log init failed: {logEx}");
         }
 
@@ -140,9 +152,21 @@ public partial class App : Application
             settingsService.Save();
         }
 
+        // Documents service: documents.json in the resolved data folder.
+        var documentService = new DocumentService(Helpers.AppPaths.DocumentsPath);
+        documentService.Load();
+
+        // Pin the managed documents folder to Windows Quick Access so users can
+        // reach it quickly from any file-upload dialog.
+        PinDocumentsFolderToQuickAccess();
+
+        // Document search history
+        var searchHistoryService = new SearchHistoryService(Helpers.AppPaths.DocSearchHistoryPath);
+        searchHistoryService.Load();
+
         var updateService = new VelopackUpdateService();
 
-        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: reminderService, notesService: notesService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter));
+        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: reminderService, notesService: notesService, documentService: documentService, searchHistoryService: searchHistoryService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter);
         var mainWindow = new MainWindow(mainViewModel, settingsService);
         mainWindow.SetupReminders(reminderService, localizationService, nepDateAdapter, notesService);
 
@@ -177,6 +201,37 @@ public partial class App : Application
                     Log.Warn($"Background update check failed: {ex.Message}");
                 }
             });
+        }
+    }
+
+    private static void PinDocumentsFolderToQuickAccess()
+    {
+        try
+        {
+            var folder = Helpers.AppPaths.DocumentsFilesDirectory;
+            System.IO.Directory.CreateDirectory(folder);
+
+            // Write desktop.ini so Explorer shows the widget icon on the folder.
+            var exePath = Environment.ProcessPath
+                       ?? System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName;
+            if (exePath is not null)
+            {
+                var iniPath = System.IO.Path.Combine(folder, "desktop.ini");
+                var iniContent = $"[.ShellClassInfo]\r\nIconResource={exePath},0\r\n";
+                System.IO.File.WriteAllText(iniPath, iniContent);
+                System.IO.File.SetAttributes(iniPath,
+                    System.IO.FileAttributes.Hidden | System.IO.FileAttributes.System);
+                System.IO.File.SetAttributes(folder,
+                    System.IO.File.GetAttributes(folder) | System.IO.FileAttributes.ReadOnly);
+            }
+
+            dynamic shell = Activator.CreateInstance(Type.GetTypeFromProgID("Shell.Application")!)!;
+            shell.Namespace(folder).Self.InvokeVerb("pintohome");
+            Log.Info($"Documents folder pinned to Quick Access: {folder}");
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to pin documents folder to Quick Access", ex);
         }
     }
 

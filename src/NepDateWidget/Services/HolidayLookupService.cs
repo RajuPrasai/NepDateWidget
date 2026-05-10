@@ -12,7 +12,7 @@ public sealed class HolidayLookupService : IHolidayLookupService
 {
     /// <summary>
     /// Hard cap on how far ahead we walk before giving up. NepDate calendar
-    /// metadata covers BS 2001–2089 (~88 years), and there is at least one
+    /// metadata covers BS 2001-2089 (~88 years), and there is at least one
     /// public holiday every few weeks across that span, so 5 years is a very
     /// safe upper bound that still terminates quickly if the user sits on a
     /// date past the supported metadata range.

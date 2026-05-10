@@ -31,6 +31,7 @@ internal static class Win32Interop
     internal const int WM_GETMINMAXINFO = 0x0024;
     internal const int WM_HOTKEY = 0x0312;
     internal const int WM_NCHITTEST = 0x0084;
+    internal const int WM_WINDOWPOSCHANGING = 0x0046;
 
     // ── Hit-test result codes ──────────────────────────────────────────────
     internal const int HTCLIENT = 1;
@@ -66,6 +67,15 @@ internal static class Win32Interop
         public POINT ptMaxPosition;
         public POINT ptMinTrackSize;
         public POINT ptMaxTrackSize;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct WINDOWPOS
+    {
+        public IntPtr hwnd;
+        public IntPtr hwndInsertAfter;
+        public int x, y, cx, cy;
+        public uint flags;
     }
 
     [StructLayout(LayoutKind.Sequential)]

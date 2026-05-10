@@ -14,8 +14,8 @@ public interface ICalendarService
     /// <summary>
     /// Builds the complete month grid for the given BS year and month.
     /// </summary>
-    /// <param name="bsYear">BS year (1901–2199).</param>
-    /// <param name="bsMonth">BS month (1–12).</param>
+    /// <param name="bsYear">BS year (1901-2199).</param>
+    /// <param name="bsMonth">BS month (1-12).</param>
     /// <param name="highlightedDays">
     /// Optional set of highlighted BS dates in "YYYY-MM-DD" format.
     /// Pass an empty collection if the user has no highlights.

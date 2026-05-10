@@ -9,6 +9,7 @@ public enum ReminderRecurrence
     Daily,
     Weekly,
     Monthly,
+    Yearly,
 }
 
 public sealed class ReminderEntry

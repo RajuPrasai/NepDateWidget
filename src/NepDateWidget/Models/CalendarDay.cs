@@ -38,7 +38,7 @@ public sealed class CalendarDay
     /// <summary>True when NepDate flags this date as a Nepal public holiday.</summary>
     public bool IsPublicHoliday { get; init; }
 
-    /// <summary>Lunar day (Tithi) name in English. Empty outside NepDate data range 2001–2089 BS.</summary>
+    /// <summary>Lunar day (Tithi) name in English. Empty outside NepDate data range 2001-2089 BS.</summary>
     public string TithiEn { get; init; } = string.Empty;
 
     /// <summary>Lunar day (Tithi) name in Nepali. Empty outside NepDate data range.</summary>

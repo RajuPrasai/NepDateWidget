@@ -101,7 +101,7 @@ public sealed class AutoStartService : IAutoStartService
     ///   - A quoted path:           <c>"C:\Program Files\App\app.exe"</c>
     ///   - A quoted path + args:    <c>"C:\path\app.exe" --silent</c>
     ///   - An unquoted path + args (legal only when the path has no spaces).
-    /// Splitting on space breaks paths with spaces — a real case for any
+    /// Splitting on space breaks paths with spaces - a real case for any
     /// install under <c>C:\Program Files</c> or <c>C:\My Apps</c>.
     /// </summary>
     internal static string ParseStoredExePath(string raw)

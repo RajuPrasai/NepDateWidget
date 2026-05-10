@@ -115,23 +115,24 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
+                        <Grid x:Name="Root">
+                            <Border x:Name="BgLayer" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6" />
+                            <Border Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.82" />
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.68" />
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.4" />
+                                <Setter TargetName="Root" Property="Opacity" Value="0.4" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -322,7 +323,7 @@
                             <TextBox Grid.Column="0"
                                      Text="{Binding FromDate, UpdateSourceTrigger=PropertyChanged}"
                                      IsReadOnly="{Binding IsFirstRow}"
-                                     Tag="{Binding DataContext.HintDateBs, RelativeSource={RelativeSource AncestorType=UserControl}}">
+                                     Tag="{Binding DataContext.InterestDatePlaceholder, RelativeSource={RelativeSource AncestorType=UserControl}}">
                                 <TextBox.Style>
                                     <Style TargetType="TextBox" BasedOn="{StaticResource InputBoxStyle}">
                                         <Style.Triggers>
@@ -355,8 +356,7 @@
             </ItemsControl>
 
             <!-- Add period button -->
-            <Button Content="{Binding InterestAddLabel}"
-                    Command="{Binding AddInterestRowCommand}"
+            <Button Command="{Binding AddInterestRowCommand}"
                     HorizontalAlignment="Left"
                     Margin="0,0,0,10">
                 <Button.Style>
@@ -364,14 +364,28 @@
                         <Setter Property="Opacity" Value="0.8" />
                     </Style>
                 </Button.Style>
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource IconPlus}"
+                          Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.5"
+                          Fill="Transparent" Stretch="Uniform"
+                          Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <TextBlock Text="{Binding InterestAddLabel}" VerticalAlignment="Center" />
+                </StackPanel>
             </Button>
 
             <!-- Calculate button -->
-            <Button Content="{Binding InterestCalcLabel}"
-                    Command="{Binding CalculateInterestCommand}"
+            <Button Command="{Binding CalculateInterestCommand}"
                     Height="36" HorizontalAlignment="Stretch"
                     Margin="0,0,0,6"
-                    Style="{StaticResource AccentButton}" />
+                    Style="{StaticResource AccentButton}">
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource IconCalculator}"
+                          Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                          Fill="Transparent" Stretch="Uniform"
+                          Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,7,0" />
+                    <TextBlock Text="{Binding InterestCalcLabel}" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
 
             <!-- Error -->
             <TextBlock Text="{Binding InterestError}"
@@ -422,29 +436,65 @@
         <StackPanel Visibility="{Binding IsModeEmi, Converter={StaticResource BoolToVis}}"
                     Margin="0,0,0,4">
 
-            <!-- Row 1: Loan Amount (left) + Start Date BS (right) -->
+            <!-- Row 1: Loan Amount | BS/AD toggle | Start Date -->
+            <Grid Margin="0,2,0,3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding EmiLoanLabel}"
+                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                           FontSize="11" Opacity="0.5" />
+                <TextBlock Grid.Column="2" Text="{Binding EmiStartDateLabel}"
+                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                           FontSize="11" Opacity="0.5" />
+            </Grid>
             <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="{Binding EmiLoanLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
-                    <TextBox Text="{Binding EmiLoanAmount, UpdateSourceTrigger=PropertyChanged}"
-                             Tag="{Binding HintLoan}"
-                             Style="{StaticResource InputBoxStyle}" />
+                <TextBox Grid.Column="0"
+                         Text="{Binding EmiLoanAmount, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="{Binding HintLoan}"
+                         Style="{StaticResource InputBoxStyle}" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Margin="4,0">
+                    <Button Content="BS" Command="{Binding SetEmiBsCommand}" Width="38"
+                            Margin="0,0,4,0">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding EmiUseBs}" Value="True">
+                                        <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"  Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <Button Content="AD" Command="{Binding SetEmiAdCommand}" Width="38">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding EmiUseBs}" Value="False">
+                                        <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"  Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </StackPanel>
-                <StackPanel Grid.Column="2">
-                    <TextBlock Text="{Binding EmiStartDateLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
-                    <TextBox Text="{Binding EmiStartDate, UpdateSourceTrigger=PropertyChanged}"
-                             Tag="{Binding HintDateBs}"
-                             Style="{StaticResource InputBoxStyle}" />
-                </StackPanel>
+                <TextBox Grid.Column="2"
+                         Text="{Binding EmiStartDate, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="{Binding EmiDatePlaceholder}"
+                         Style="{StaticResource InputBoxStyle}" />
             </Grid>
 
             <!-- Annual Rate % and Months on the same row -->
@@ -473,11 +523,18 @@
             </Grid>
 
             <!-- Calculate button -->
-            <Button Content="{Binding EmiCalcLabel}"
-                    Command="{Binding CalculateEmiCommand}"
+            <Button Command="{Binding CalculateEmiCommand}"
                     Height="36" HorizontalAlignment="Stretch"
                     Margin="0,0,0,6"
-                    Style="{StaticResource AccentButton}" />
+                    Style="{StaticResource AccentButton}">
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource IconCalculator}"
+                          Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                          Fill="Transparent" Stretch="Uniform"
+                          Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,7,0" />
+                    <TextBlock Text="{Binding EmiCalcLabel}" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
 
             <!-- Error -->
             <TextBlock Text="{Binding EmiError}"

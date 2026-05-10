@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using System.Windows;
 
 namespace NepDateWidget.Views;
 
@@ -7,6 +8,19 @@ namespace NepDateWidget.Views;
 /// </summary>
 public partial class MiniBarView : UserControl
 {
+    public static readonly DependencyProperty UseTransparentStylingProperty =
+        DependencyProperty.Register(
+            nameof(UseTransparentStyling),
+            typeof(bool),
+            typeof(MiniBarView),
+            new PropertyMetadata(true));
+
+    public bool UseTransparentStyling
+    {
+        get => (bool)GetValue(UseTransparentStylingProperty);
+        set => SetValue(UseTransparentStylingProperty, value);
+    }
+
     public MiniBarView()
     {
         InitializeComponent();

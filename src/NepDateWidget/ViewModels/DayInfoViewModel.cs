@@ -6,10 +6,12 @@ using System.Windows.Input;
 
 namespace NepDateWidget.ViewModels;
 
+/// <summary>Reminder row shown in the day-detail popup.</summary>
+public sealed record PopupReminderItem(string Id, string Title);
+
 /// <summary>
 /// ViewModel for the day-detail popup.
 /// Shows calendar metadata (tithi, public holiday, events), per-day note, and a reminder summary.
-/// The note is stored in WidgetSettings.DayNotes (keyed "YYYY-MM-DD" in BS).
 /// </summary>
 public sealed class DayInfoViewModel : ViewModelBase
 {
@@ -22,13 +24,19 @@ public sealed class DayInfoViewModel : ViewModelBase
     private readonly string _dateKey;  // "YYYY-MM-DD"
     private bool _isNepali;
 
-    // ── Event to signal the View ────────────────────────────────────────────
+    // ── Events ──────────────────────────────────────────────────────────────
 
     /// <summary>Raised when the popup should close.</summary>
     public event Action? RequestClose;
 
-    /// <summary>Raised when the user wants to open the reminder add form for this date.</summary>
-    public event Action<int, int, int>? AddReminderRequested;
+    /// <summary>
+    /// Raised when the user wants to add/edit a note or add a reminder.
+    /// mode=0 = Notes tab, mode=1 = Reminders tab.
+    /// </summary>
+    public event Action<int, string>? NavigateToMoreRequested;
+
+    /// <summary>Raised when the user wants to edit an existing reminder by ID.</summary>
+    public event Action<string>? EditReminderRequested;
 
     // ── Date header ─────────────────────────────────────────────────────────
 
@@ -46,43 +54,24 @@ public sealed class DayInfoViewModel : ViewModelBase
     public IReadOnlyList<string> Events { get; }
     public bool HasEvents => Events.Count > 0;
 
-    // ── Note ────────────────────────────────────────────────────────────────
+    // ── Note ─────────────────────────────────────────────────────────────────
 
     private string _noteText = string.Empty;
     public string NoteText
     {
         get => _noteText;
-        set => SetProperty(ref _noteText, value);
-    }
-
-    private bool _isEditingNote;
-    public bool IsEditingNote
-    {
-        get => _isEditingNote;
-        set
+        private set
         {
-            if (SetProperty(ref _isEditingNote, value))
-            {
-                OnPropertyChanged(nameof(IsNotEditingNote));
-                OnPropertyChanged(nameof(NoteEditButtonLabel));
-            }
+            if (SetProperty(ref _noteText, value))
+                OnPropertyChanged(nameof(HasExistingNote));
         }
     }
-    public bool IsNotEditingNote => !_isEditingNote;
-
-    private string _noteEditBuffer = string.Empty;
-    public string NoteEditBuffer
-    {
-        get => _noteEditBuffer;
-        set => SetProperty(ref _noteEditBuffer, value);
-    }
-
     public bool HasExistingNote => !string.IsNullOrEmpty(_noteText);
 
     // ── Reminders ────────────────────────────────────────────────────────────
 
-    public ObservableCollection<string> ReminderTitles { get; } = new();
-    public bool HasReminders => ReminderTitles.Count > 0;
+    public ObservableCollection<PopupReminderItem> Reminders { get; } = new();
+    public bool HasReminders => Reminders.Count > 0;
 
     // ── Labels ──────────────────────────────────────────────────────────────
 
@@ -90,20 +79,22 @@ public sealed class DayInfoViewModel : ViewModelBase
     public string EventsLabel { get; }
     public string NoEventsLabel { get; }
     public string NoteLabel { get; }
-    public string NoteEditButtonLabel => _isEditingNote
-        ? _loc.Get("dayinfo.save_note")
-        : (HasExistingNote ? _loc.Get("dayinfo.edit_note") : _loc.Get("dayinfo.add_note"));
-    public string CancelLabel { get; }
+    public string AddNoteLabel { get; }
+    public string EditNoteLabel { get; }
     public string AddReminderLabel { get; }
     public string RemindersLabel { get; }
     public string NoRemindersLabel { get; }
     public string NoNoteLabel { get; }
+    public string DeleteLabel { get; }
 
     // ── Commands ────────────────────────────────────────────────────────────
 
-    public ICommand ToggleNoteEditCommand { get; }
-    public ICommand CancelNoteCommand { get; }
+    public ICommand AddNoteCommand { get; }
+    public ICommand EditNoteCommand { get; }
+    public ICommand DeleteNoteCommand { get; }
     public ICommand AddReminderCommand { get; }
+    public ICommand EditReminderCommand { get; }
+    public ICommand DeleteReminderCommand { get; }
     public ICommand CloseCommand { get; }
 
     // ── Construction ────────────────────────────────────────────────────────
@@ -142,74 +133,86 @@ public sealed class DayInfoViewModel : ViewModelBase
         TithiText = _isNepali ? tithiNp : tithiEn;
         Events = (_isNepali ? eventsNp : eventsEn).ToList().AsReadOnly();
 
-        // Note from notes service (or fallback to settings for backward compat)
+        // Note
         _noteText = _notesService?.GetNote(_dateKey) ?? string.Empty;
 
         // Reminders
         LoadReminders();
 
         // Labels
-        TithiLabel = _loc.Get("dayinfo.tithi_label");
-        EventsLabel = _loc.Get("dayinfo.events_label");
-        NoEventsLabel = _loc.Get("dayinfo.no_events");
-        NoteLabel = _loc.Get("dayinfo.note_label");
-        CancelLabel = _loc.Get("dayinfo.cancel");
+        TithiLabel       = _loc.Get("dayinfo.tithi_label");
+        EventsLabel      = _loc.Get("dayinfo.events_label");
+        NoEventsLabel    = _loc.Get("dayinfo.no_events");
+        NoteLabel        = _loc.Get("dayinfo.note_label");
+        AddNoteLabel     = _loc.Get("dayinfo.add_note");
+        EditNoteLabel    = _loc.Get("dayinfo.edit_note");
         AddReminderLabel = _loc.Get("dayinfo.add_reminder");
-        RemindersLabel = _loc.Get("dayinfo.reminders_label");
+        RemindersLabel   = _loc.Get("dayinfo.reminders_label");
         NoRemindersLabel = _loc.Get("dayinfo.no_reminders");
-        NoNoteLabel = _loc.Get("dayinfo.no_note");
+        NoNoteLabel      = _loc.Get("dayinfo.no_note");
+        DeleteLabel      = _loc.Get("dayinfo.delete");
 
         // Commands
-        ToggleNoteEditCommand = new RelayCommand(ToggleNoteEdit);
-        CancelNoteCommand = new RelayCommand(CancelNote);
-        AddReminderCommand = new RelayCommand(DoAddReminder);
-        CloseCommand = new RelayCommand(() => RequestClose?.Invoke());
+        AddNoteCommand       = new RelayCommand(DoAddNote);
+        EditNoteCommand      = new RelayCommand(DoEditNote);
+        DeleteNoteCommand    = new RelayCommand(DoDeleteNote);
+        AddReminderCommand   = new RelayCommand(DoAddReminder);
+        EditReminderCommand  = new RelayCommand<string>(DoEditReminder);
+        DeleteReminderCommand = new RelayCommand<string>(DoDeleteReminder);
+        CloseCommand         = new RelayCommand(() => RequestClose?.Invoke());
     }
 
     // ── Private ─────────────────────────────────────────────────────────────
 
-    private void ToggleNoteEdit()
+    private void DoAddNote()
     {
-        if (_isEditingNote)
-        {
-            // Save
-            string trimmed = _noteEditBuffer.Trim();
-            NoteText = trimmed;
-            _notesService?.SetNote(_dateKey, string.IsNullOrEmpty(trimmed) ? null : trimmed);
-            IsEditingNote = false;
-            OnPropertyChanged(nameof(HasExistingNote));
-            OnPropertyChanged(nameof(NoteEditButtonLabel));
-        }
-        else
-        {
-            // Enter edit mode with current text pre-filled
-            NoteEditBuffer = _noteText;
-            IsEditingNote = true;
-        }
+        RequestClose?.Invoke();
+        NavigateToMoreRequested?.Invoke(0, _dateKey);
     }
 
-    private void CancelNote()
+    private void DoEditNote()
     {
-        NoteEditBuffer = string.Empty;
-        IsEditingNote = false;
+        RequestClose?.Invoke();
+        NavigateToMoreRequested?.Invoke(0, _dateKey);
+    }
+
+    private void DoDeleteNote()
+    {
+        if (_notesService is null) return;
+        _notesService.SetNote(_dateKey, null);
+        RequestClose?.Invoke();
     }
 
     private void DoAddReminder()
     {
         RequestClose?.Invoke();
-        AddReminderRequested?.Invoke(_bsYear, _bsMonth, _bsDay);
+        NavigateToMoreRequested?.Invoke(1, _dateKey);
+    }
+
+    private void DoEditReminder(string? id)
+    {
+        if (id is null) return;
+        RequestClose?.Invoke();
+        EditReminderRequested?.Invoke(id);
+    }
+
+    private void DoDeleteReminder(string? id)
+    {
+        if (id is null || _reminderService is null) return;
+        _reminderService.Delete(id);
+        RequestClose?.Invoke();
     }
 
     private void LoadReminders()
     {
-        ReminderTitles.Clear();
+        Reminders.Clear();
         if (_reminderService is null) return;
 
         foreach (var r in _reminderService.GetForDate(_bsYear, _bsMonth, _bsDay))
-            if (!r.IsCompleted) ReminderTitles.Add(r.Title);
+            if (!r.IsCompleted) Reminders.Add(new PopupReminderItem(r.Id, r.Title));
 
         foreach (var r in _reminderService.GetRecurringForDate(_bsYear, _bsMonth, _bsDay))
-            ReminderTitles.Add(r.Title);
+            Reminders.Add(new PopupReminderItem(r.Id, r.Title));
 
         OnPropertyChanged(nameof(HasReminders));
     }

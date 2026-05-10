@@ -5,7 +5,7 @@ namespace NepDateWidget.Converters;
 
 /// <summary>
 /// Multi-value converter for the password strength progress bar.
-/// Inputs: [0] percent (0–100 double), [1] total available width (double).
+/// Inputs: [0] percent (0-100 double), [1] total available width (double).
 /// Returns: (percent / 100) * totalWidth, clamped to [0, totalWidth].
 /// </summary>
 public sealed class StrengthBarWidthConverter : IMultiValueConverter

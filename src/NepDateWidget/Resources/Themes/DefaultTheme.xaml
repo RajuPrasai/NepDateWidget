@@ -46,6 +46,9 @@
     <!-- Muted foreground (toolbar icons, secondary text) -->
     <SolidColorBrush x:Key="WidgetMutedForegroundBrush" Color="#6C7086" />
 
+    <!-- Tag pill background (accent at ~20% opacity) -->
+    <SolidColorBrush x:Key="WidgetTagBrush" Color="#3389B4FA" />
+
     <!-- Calendar grid lines (subtle, theme-aware) -->
     <SolidColorBrush x:Key="WidgetGridLineBrush"       Color="#2A2A3C" />
 

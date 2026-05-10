@@ -273,6 +273,7 @@ public sealed class ReminderViewModel : ViewModelBase
             _loc.Get("reminder.recurrence_daily"),
             _loc.Get("reminder.recurrence_weekly"),
             _loc.Get("reminder.recurrence_monthly"),
+            _loc.Get("reminder.recurrence_yearly"),
         };
 
         StartAddCommand = new RelayCommand(StartAdd);
@@ -548,6 +549,7 @@ public sealed class ReminderEntryViewModel
             ReminderRecurrence.Daily => loc.Get("reminder.recurrence_daily"),
             ReminderRecurrence.Weekly => loc.Get("reminder.recurrence_weekly"),
             ReminderRecurrence.Monthly => loc.Get("reminder.recurrence_monthly"),
+            ReminderRecurrence.Yearly => loc.Get("reminder.recurrence_yearly"),
             _ => string.Empty,
         };
 

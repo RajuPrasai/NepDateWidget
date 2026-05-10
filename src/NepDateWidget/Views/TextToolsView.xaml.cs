@@ -42,8 +42,8 @@ public partial class TextToolsView : UserControl
     {
         var input = mode switch
         {
-            0 => UnicodeInputBox as UIElement,
-            1 => WordInputBox,
+            1 => WordInputBox as UIElement,
+            2 => UnicodeInputBox,
             3 => ScriptInputBox,
             _ => null,
         };
@@ -75,15 +75,11 @@ public partial class TextToolsView : UserControl
         }
     }
 
-    // Enter in Script input triggers Roman→Devnagari (primary direction)
+    // Enter in Script input prevents newline; live binding handles the conversion.
     private void ScriptInput_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.None
-            && DataContext is TextToolsViewModel vm)
-        {
-            vm.ScriptRomanToDevaCommand.Execute(null);
+        if (e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.None)
             e.Handled = true;
-        }
     }
 
     private void BrowseUnicodeFile_Click(object sender, RoutedEventArgs e)
