@@ -99,7 +99,7 @@
                            Foreground="{DynamicResource WidgetForegroundBrush}"
                            Opacity="0.35"
                            FontSize="{TemplateBinding FontSize}"
-                           Margin="2,0,0,0"
+                           Margin="6,0,0,0"
                            VerticalAlignment="Center"
                            IsHitTestVisible="False"
                            Visibility="Collapsed" />
@@ -129,7 +129,7 @@
                            Foreground="{DynamicResource WidgetForegroundBrush}"
                            Opacity="0.35"
                            FontSize="{TemplateBinding FontSize}"
-                           Margin="4,0,0,0"
+                           Margin="6,0,0,0"
                            VerticalAlignment="Top"
                            IsHitTestVisible="False"
                            Visibility="Collapsed"

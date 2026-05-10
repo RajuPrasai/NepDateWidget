@@ -32,16 +32,30 @@ public sealed class RunBoxViewModelTests
         public void SetLanguage(string languageCode) => CurrentLanguage = languageCode;
     }
 
+    private sealed class FakeShortcutsService : IShortcutsService
+    {
+        private static readonly (IReadOnlyDictionary<string, string> Prefixes, IReadOnlyDictionary<string, string> SiteNames) Defaults
+            = ShortcutsService.LoadDefaults();
+
+        public IReadOnlyDictionary<string, string> Prefixes        => Defaults.Prefixes;
+        public IReadOnlyDictionary<string, string> PrefixSiteNames => Defaults.SiteNames;
+        public event EventHandler? ShortcutsChanged { add { } remove { } }
+        public void Load() { }
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private static HistoryEntry H(string raw) => new(raw, null, raw);
 
     private static (RunBoxViewModel vm, FakeSettingsService settings) Create(
         List<string>? history = null)
     {
-        var settings = new FakeSettingsService();
+        var settings  = new FakeSettingsService();
         if (history is not null)
             settings.Current.RunHistory = new List<string>(history);
-        var loc = new FakeLocalizationService();
-        var vm = new RunBoxViewModel(settings, loc);
+        var loc       = new FakeLocalizationService();
+        var shortcuts = new FakeShortcutsService();
+        var vm = new RunBoxViewModel(settings, loc, shortcuts);
         return (vm, settings);
     }
 
@@ -132,7 +146,7 @@ public sealed class RunBoxViewModelTests
     {
         var (vm, settings) = Create(new List<string> { "alpha", "beta", "gamma" });
 
-        vm.RemoveHistoryItem("beta");
+        vm.RemoveHistoryItem(H("beta"));
 
         Assert.Equal(2, settings.Current.RunHistory.Count);
         Assert.DoesNotContain("beta", settings.Current.RunHistory);
@@ -144,7 +158,7 @@ public sealed class RunBoxViewModelTests
     {
         var (vm, settings) = Create(new List<string> { "Notepad", "calc" });
 
-        vm.RemoveHistoryItem("notepad");
+        vm.RemoveHistoryItem(H("notepad"));
 
         Assert.Single(settings.Current.RunHistory);
         Assert.Equal("calc", settings.Current.RunHistory[0]);
@@ -169,7 +183,7 @@ public sealed class RunBoxViewModelTests
         vm.MoveSelection(1);
         Assert.True(vm.IsHistoryOpen);
 
-        vm.RemoveHistoryItem("only");
+        vm.RemoveHistoryItem(H("only"));
         Assert.False(vm.IsHistoryOpen);
     }
 
@@ -308,8 +322,8 @@ public sealed class RunBoxViewModelTests
         vm.RunText = "note";
 
         Assert.Equal(2, vm.FilteredHistory.Count);
-        Assert.Contains("notepad", vm.FilteredHistory);
-        Assert.Contains("note", vm.FilteredHistory);
+        Assert.Contains(vm.FilteredHistory, e => e.Raw == "notepad");
+        Assert.Contains(vm.FilteredHistory, e => e.Raw == "note");
         Assert.True(vm.IsHistoryOpen); // auto-opens when typing matches
     }
 
@@ -321,7 +335,7 @@ public sealed class RunBoxViewModelTests
         vm.RunText = "notepad";
 
         Assert.Single(vm.FilteredHistory);
-        Assert.Equal("Notepad", vm.FilteredHistory[0]);
+        Assert.Equal("Notepad", vm.FilteredHistory[0].Raw);
     }
 
     [Fact]
@@ -387,7 +401,7 @@ public sealed class RunBoxViewModelTests
         vm.RunText = "note";
 
         Assert.True(vm.FilteredHistory.Count >= 2);
-        Assert.Equal("notepad", vm.FilteredHistory[0]);
+        Assert.Equal("notepad", vm.FilteredHistory[0].Raw);
         Assert.Equal(0, vm.SelectedHistoryIndex);
     }
 
@@ -537,13 +551,13 @@ public sealed class RunBoxViewModelTests
     // ── History max size ──────────────────────────────────────────────────────
 
     [Fact]
-    public void History_LimitedTo50()
+    public void History_LoadsAllEntriesOnConstruction()
     {
         var history = Enumerable.Range(1, 55).Select(i => $"item{i}").ToList();
         var (vm, settings) = Create(history);
 
-        // ViewModel constructor loads from settings, but doesn't truncate
-        // Truncation happens on AddToHistory. Verify the list is loaded.
+        // Constructor loads from settings without truncating.
+        // Truncation (cap 500) only happens inside AddToHistory on Execute.
         Assert.Equal(55, settings.Current.RunHistory.Count);
     }
 
@@ -583,7 +597,7 @@ public sealed class RunBoxViewModelTests
         vm.MoveSelection(1); // index 1
         vm.MoveSelection(1); // index 2
 
-        vm.RemoveHistoryItem("c"); // remove current selection
+        vm.RemoveHistoryItem(H("c")); // remove current selection
 
         // Index should clamp to last valid
         Assert.True(vm.SelectedHistoryIndex < vm.FilteredHistory.Count);
@@ -637,7 +651,7 @@ public sealed class RunBoxViewModelTests
     {
         var (vm, settings) = Create(new List<string> { "alpha", "beta" });
 
-        vm.RemoveHistoryItem("gamma");
+        vm.RemoveHistoryItem(H("gamma"));
 
         Assert.Equal(2, settings.Current.RunHistory.Count);
     }
@@ -704,7 +718,7 @@ public sealed class RunBoxViewModelTests
         Assert.Single(vm.FilteredHistory);
 
         // Remove with different case
-        vm.RemoveHistoryItem("notepad");
+        vm.RemoveHistoryItem(H("notepad"));
         Assert.Empty(vm.FilteredHistory);
     }
 

@@ -475,7 +475,8 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         ISearchHistoryService? searchHistoryService = null,
         IUpdateService? updateService = null,
         IHolidayLookupService? holidayLookupService = null,
-        INepaliDateAdapter? adapter = null)
+        INepaliDateAdapter? adapter = null,
+        IShortcutsService? shortcutsService = null)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
@@ -544,7 +545,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         Network = new NetworkToolsViewModel(localizationService);
         Banking = new BankingViewModel(localizationService);
         TextTools = new TextToolsViewModel(localizationService);
-        RunBox = new RunBoxViewModel(settingsService, localizationService);
+        RunBox = new RunBoxViewModel(settingsService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly());
         About = new AboutViewModel(localizationService);
         More = new MoreViewModel(localizationService, notesService, reminderService, documentService, searchHistoryService, adapter: adapter);
 

@@ -1,7 +1,10 @@
 ﻿using NepDateWidget.Helpers;
 using NepDateWidget.Services;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace NepDateWidget.ViewModels;
 
@@ -405,6 +408,15 @@ public sealed class SettingsViewModel : ViewModelBase
     }
     public bool HasUpdateStatus => !string.IsNullOrEmpty(_updateStatusText);
 
+    private DispatcherTimer? _dataFileMessageTimer;
+    private string _dataFileMessage = string.Empty;
+    public string DataFileMessage
+    {
+        get => _dataFileMessage;
+        private set { if (SetProperty(ref _dataFileMessage, value)) OnPropertyChanged(nameof(HasDataFileMessage)); }
+    }
+    public bool HasDataFileMessage => !string.IsNullOrEmpty(_dataFileMessage);
+
     private bool _isCheckingForUpdates;
     public bool IsCheckingForUpdates
     {
@@ -473,6 +485,11 @@ public sealed class SettingsViewModel : ViewModelBase
     public ICommand SetHighlightColorCommand { get; }
     public ICommand CheckForUpdatesNowCommand { get; private set; } = null!;
     public ICommand TestNotificationCommand   { get; }
+    public ICommand OpenSettingsFileCommand   { get; }
+    public ICommand OpenShortcutsFileCommand  { get; }
+    public ICommand OpenRemindersFileCommand  { get; }
+    public ICommand OpenNotesFileCommand      { get; }
+    public ICommand OpenLogFileCommand        { get; }
 
     // ── Callback to parent (MainViewModel) ───────────────────────────────────
     public event EventHandler? SettingsApplied;
@@ -582,6 +599,12 @@ public sealed class SettingsViewModel : ViewModelBase
             () => !_isCheckingForUpdates);
 
         TestNotificationCommand = new RelayCommand(() => TestNotificationRequested?.Invoke(this, EventArgs.Empty));
+
+        OpenSettingsFileCommand  = new RelayCommand(() => OpenFile(AppPaths.SettingsPath));
+        OpenShortcutsFileCommand = new RelayCommand(() => OpenFile(AppPaths.ShortcutsPath));
+        OpenRemindersFileCommand = new RelayCommand(() => OpenFile(AppPaths.RemindersPath));
+        OpenNotesFileCommand     = new RelayCommand(() => OpenFile(AppPaths.NotesPath));
+        OpenLogFileCommand       = new RelayCommand(() => OpenFile(AppPaths.LogPath));
 
         RefreshLabels();
     }
@@ -858,6 +881,35 @@ public sealed class SettingsViewModel : ViewModelBase
         {
             IsCheckingForUpdates = false;
         }
+    }
+
+    private void OpenFile(string path)
+    {
+        if (!File.Exists(path))
+        {
+            ShowDataFileMessage("File has not been created yet.");
+            return;
+        }
+        try
+        {
+            Process.Start(new ProcessStartInfo { FileName = path, UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"settings: failed to open '{path}': {ex.Message}");
+        }
+    }
+
+    private void ShowDataFileMessage(string message)
+    {
+        if (_dataFileMessageTimer is null)
+        {
+            _dataFileMessageTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
+            _dataFileMessageTimer.Tick += (_, _) => { _dataFileMessageTimer.Stop(); DataFileMessage = string.Empty; };
+        }
+        _dataFileMessageTimer.Stop();
+        DataFileMessage = message;
+        _dataFileMessageTimer.Start();
     }
 
     private void DoResetToDefaults()

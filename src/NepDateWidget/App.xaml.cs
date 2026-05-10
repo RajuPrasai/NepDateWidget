@@ -12,6 +12,7 @@ namespace NepDateWidget;
 public partial class App : Application
 {
     private static Mutex? _instanceMutex;
+    private ShortcutsService? _shortcutsService;
 
     /// <summary>
     /// Custom entry point. Runs Velopack's CLI hook (handles --veloapp-install,
@@ -166,7 +167,10 @@ public partial class App : Application
 
         var updateService = new VelopackUpdateService();
 
-        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: reminderService, notesService: notesService, documentService: documentService, searchHistoryService: searchHistoryService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter);
+        _shortcutsService = new ShortcutsService(Helpers.AppPaths.ShortcutsPath);
+        _shortcutsService.Load();
+
+        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: reminderService, notesService: notesService, documentService: documentService, searchHistoryService: searchHistoryService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService);
         var mainWindow = new MainWindow(mainViewModel, settingsService);
         mainWindow.SetupReminders(reminderService, localizationService, nepDateAdapter, notesService);
 
@@ -218,6 +222,17 @@ public partial class App : Application
             {
                 var iniPath = System.IO.Path.Combine(folder, "desktop.ini");
                 var iniContent = $"[.ShellClassInfo]\r\nIconResource={exePath},0\r\n";
+
+                // If desktop.ini already exists with Hidden|System, writing to it will
+                // throw UnauthorizedAccessException. Clear the attributes first.
+                if (System.IO.File.Exists(iniPath))
+                {
+                    var existing = System.IO.File.ReadAllText(iniPath);
+                    if (existing == iniContent)
+                        goto skipIni; // content identical — skip the write entirely
+                    System.IO.File.SetAttributes(iniPath, System.IO.FileAttributes.Normal);
+                }
+
                 System.IO.File.WriteAllText(iniPath, iniContent);
                 System.IO.File.SetAttributes(iniPath,
                     System.IO.FileAttributes.Hidden | System.IO.FileAttributes.System);
@@ -225,6 +240,7 @@ public partial class App : Application
                     System.IO.File.GetAttributes(folder) | System.IO.FileAttributes.ReadOnly);
             }
 
+            skipIni:
             dynamic shell = Activator.CreateInstance(Type.GetTypeFromProgID("Shell.Application")!)!;
             shell.Namespace(folder).Self.InvokeVerb("pintohome");
             Log.Info($"Documents folder pinned to Quick Access: {folder}");
@@ -238,6 +254,7 @@ public partial class App : Application
     protected override void OnExit(ExitEventArgs e)
     {
         Log.Info("App closed");
+        _shortcutsService?.Dispose();
         try
         {
             if (_instanceMutex is not null)

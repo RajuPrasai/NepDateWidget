@@ -1354,6 +1354,203 @@
                 </StackPanel>
             </Border>
 
+            <!-- Data files ───────────────────────────────────────── -->
+            <Border Style="{StaticResource CardPanel}">
+                <StackPanel>
+                    <TextBlock Text="Data Files"
+                               Style="{StaticResource SectionLabel}" />
+
+                    <!-- Individual file rows -->
+                    <!-- settings.json -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconSettings}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="settings.json"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="Preferences and widget configuration"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenSettingsFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
+                    <!-- shortcuts.json -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconScript}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="shortcuts.json"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="RunBox prefix shortcuts — add, edit, or disable"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenShortcutsFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
+                    <!-- reminders.json -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconBell}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="reminders.json"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="All reminders and their recurrence rules"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenRemindersFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
+                    <!-- notes.json -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconNote}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="notes.json"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="Calendar day notes"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenNotesFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
+                    <!-- nepdate.log -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconText}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="nepdate.log"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="Application activity and error log"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenLogFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
+                    <!-- Inline toast for missing files -->
+                    <TextBlock Text="{Binding DataFileMessage}"
+                               FontSize="11"
+                               Foreground="{DynamicResource WidgetAccentBrush}"
+                               Opacity="0.85"
+                               Margin="0,6,0,0"
+                               Visibility="{Binding HasDataFileMessage, Converter={StaticResource BoolToVisibilityConverter}}" />
+                </StackPanel>
+            </Border>
+
             <!-- Reset to defaults ───────────────────────────────── -->
             <Border Style="{StaticResource CardPanel}">
                 <Button Content="{Binding ResetToDefaultsLabel}"

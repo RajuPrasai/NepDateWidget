@@ -34,6 +34,12 @@ public partial class ExpandedShellWindow : Window
     private bool _initialized;
 
     /// <summary>
+    /// Raised when the shell wants the host (MainWindow) to open the spotlight.
+    /// Fired by clicking the RunBox strip or via the FocusRunBox() hotkey path.
+    /// </summary>
+    public event EventHandler? SpotlightRequested;
+
+    /// <summary>
     /// True when the shell is being closed by the application (collapse, exit) and
     /// the cancel-and-collapse logic in OnClosing should be bypassed.
     /// </summary>
@@ -53,13 +59,6 @@ public partial class ExpandedShellWindow : Window
         };
 
         IsVisibleChanged += (_, e) => { if (e.NewValue is true) PlayOpenAnimation(); };
-
-        // Escape inside the run box should collapse the shell (same behaviour as pill).
-        viewModel.RunBox.CollapseRequested += (_, _) =>
-        {
-            if (ViewModel.IsExpanded)
-                ViewModel.ToggleExpandedCommand.Execute(null);
-        };
 
         // React to the user toggling Rounded / Sharp at runtime.
         viewModel.PropertyChanged += (_, e) =>
@@ -172,7 +171,7 @@ public partial class ExpandedShellWindow : Window
         {
             var dpi = VisualTreeHelper.GetDpi(this);
             var info = Marshal.PtrToStructure<Win32Interop.MINMAXINFO>(lParam);
-            int minW = (int)Math.Ceiling(MinExpandedWidthDip  * dpi.DpiScaleX);
+            int minW = (int)Math.Ceiling(MinExpandedWidthDip * dpi.DpiScaleX);
             int minH = (int)Math.Ceiling(MinExpandedHeightDip * dpi.DpiScaleY);
             if (info.ptMinTrackSize.x < minW) info.ptMinTrackSize.x = minW;
             if (info.ptMinTrackSize.y < minH) info.ptMinTrackSize.y = minH;
@@ -231,10 +230,11 @@ public partial class ExpandedShellWindow : Window
         var s = _settingsService.Current;
         s.ExpandedWindowLeft = Left;
         s.ExpandedWindowTop  = Top;
-        if (ActualWidth  > 0) s.ExpandedWidth  = ActualWidth;
-        if (ActualHeight > 0) s.ExpandedHeight = ActualHeight;
-        // Keep ViewModel in sync so other consumers see latest values.
-        ViewModel.UpdateSize(ActualWidth, ActualHeight);
+        double persistWidth  = ActualWidth;
+        double persistHeight = ActualHeight;
+        if (persistWidth  > 0) s.ExpandedWidth  = persistWidth;
+        if (persistHeight > 0) s.ExpandedHeight = persistHeight;
+        ViewModel.UpdateSize(persistWidth, persistHeight);
     }
 
     private void RestartSaveTimer()
@@ -275,97 +275,17 @@ public partial class ExpandedShellWindow : Window
     // ── Run box ──────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Called by MainWindow after the global hotkey fires while the shell is open.
+    /// Called by MainWindow when the global hotkey fires while the shell is open.
+    /// Signals the host to open the spotlight instead of focusing a local input.
     /// </summary>
     public void FocusRunBox()
     {
-        Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
-        {
-            Activate();
-            RunBoxInput.Focus();
-            Keyboard.Focus(RunBoxInput);
-        });
+        SpotlightRequested?.Invoke(this, EventArgs.Empty);
     }
 
-    private void RunBoxInput_PreviewKeyDown(object sender, KeyEventArgs e)
+    private void RunBoxStrip_Click(object sender, RoutedEventArgs e)
     {
-        if (e.Key == Key.Enter)
-        {
-            ViewModel.RunBox.ExecuteCommand.Execute(null);
-            e.Handled = true;
-        }
-        else if (e.Key == Key.Tab)
-        {
-            if (ViewModel.RunBox.IsHistoryOpen)
-            {
-                ViewModel.RunBox.CommitSelection();
-                RunBoxInput.CaretIndex = RunBoxInput.Text.Length;
-                e.Handled = true;
-            }
-        }
-        else if (e.Key == Key.Up)
-        {
-            ViewModel.RunBox.MoveSelection(-1);
-            e.Handled = true;
-        }
-        else if (e.Key == Key.Down)
-        {
-            ViewModel.RunBox.MoveSelection(1);
-            e.Handled = true;
-        }
-    }
-
-    private void RunBoxInput_LostFocus(object sender, RoutedEventArgs e)
-    {
-        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, () =>
-        {
-            if (!RunBoxInput.IsFocused)
-                ViewModel.RunBox.IsHistoryOpen = false;
-        });
-    }
-
-    private void RunBoxHistoryItem_Click(object sender, MouseButtonEventArgs e)
-    {
-        if (sender is FrameworkElement fe && fe.DataContext is string item)
-        {
-            if (e.OriginalSource is DependencyObject source &&
-                FindParent<Button>(source) is { Name: "RemoveBtn" })
-            {
-                e.Handled = true;
-                ViewModel.RunBox.RemoveHistoryItemCommand.Execute(item);
-                RunBoxInput.Focus();
-                return;
-            }
-
-            e.Handled = true;
-            ViewModel.RunBox.SelectHistoryItemCommand.Execute(item);
-            RunBoxInput.Focus();
-        }
-    }
-
-    private void RunBoxHistoryRemove_Click(object sender, RoutedEventArgs e)
-    {
-        if (sender is DependencyObject dep)
-        {
-            var listBoxItem = FindParent<ListBoxItem>(dep);
-            if (listBoxItem?.DataContext is string item)
-            {
-                e.Handled = true;
-                ViewModel.RunBox.RemoveHistoryItemCommand.Execute(item);
-                RunBoxInput.Focus();
-            }
-        }
-    }
-
-    private static T? FindParent<T>(DependencyObject child) where T : DependencyObject
-    {
-        var current = child;
-        while (current != null)
-        {
-            if (current is T found) return found;
-            current = VisualTreeHelper.GetParent(current);
-        }
-        return null;
+        SpotlightRequested?.Invoke(this, EventArgs.Empty);
     }
 
     // ── Mouse wheel month nav (only on Calendar tab) ─────────────────────────
@@ -407,21 +327,13 @@ public partial class ExpandedShellWindow : Window
         }
     }
 
-    // ── Escape: close runbox dropdown → unfocus textbox → collapse ───────────
+    // ── Escape: unfocus textbox → collapse ───────────────────────────────────
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
         base.OnPreviewKeyDown(e);
 
         if (e.Key != Key.Escape) return;
-
-        if (ViewModel.RunBox.IsHistoryOpen)
-        {
-            ViewModel.RunBox.IsHistoryOpen = false;
-            ViewModel.RunBox.SelectedHistoryIndex = -1;
-            e.Handled = true;
-            return;
-        }
 
         var focused = Keyboard.FocusedElement;
         if (focused is TextBox or PasswordBox or System.Windows.Controls.Primitives.TextBoxBase)

@@ -57,6 +57,7 @@ public partial class MainWindow : Window
 
     // ── Shell window (lazy) ──────────────────────────────────────────────────
     private ExpandedShellWindow? _shell;
+    private RunBoxSpotlightWindow? _spotlight;
 
     private readonly ISettingsService _settingsService;
 
@@ -69,14 +70,10 @@ public partial class MainWindow : Window
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
         viewModel.ExitRequested += ViewModel_ExitRequested;
 
-        // RunBox focus request: route to the shell when it is open, else open the shell.
+        // RunBox focus request: open the spotlight (shell may or may not be visible).
         viewModel.RunBoxFocusRequested += (_, _) =>
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
-            {
-                if (_shell is { IsVisible: true } shell)
-                    shell.FocusRunBox();
-            });
+            Dispatcher.BeginInvoke(DispatcherPriority.Input, () => OpenSpotlight());
         };
 
         // Bring the shell to the foreground when navigating to an already-open tab.
@@ -202,11 +199,16 @@ public partial class MainWindow : Window
             _fullscreenTimer.Stop();
             ViewModel.SaveSettings();
 
-            // Tear down the shell so we don't leak a hidden top-level window.
+            // Tear down the shell and spotlight so we don't leak hidden top-level windows.
             if (_shell is not null)
             {
                 try { _shell.ForceClose(); } catch { }
                 _shell = null;
+            }
+            if (_spotlight is not null)
+            {
+                try { _spotlight.ForceClose(); } catch { }
+                _spotlight = null;
             }
 
             base.OnClosing(e);
@@ -312,9 +314,78 @@ public partial class MainWindow : Window
     private ExpandedShellWindow CreateShell()
     {
         var shell = new ExpandedShellWindow(ViewModel, _settingsService);
-        // Detach the shell from the pill as Owner: an owned window inherits hide/show
-        // with the owner, which we do not want here. The shell stands on its own.
+        shell.SpotlightRequested += (_, _) => OpenSpotlight();
         return shell;
+    }
+
+    // ── Spotlight ─────────────────────────────────────────────────────────────
+
+    private void OpenSpotlight()
+    {
+        // Already open: just re-activate.
+        if (_spotlight is { IsVisible: true } existing && !existing.IsClosing)
+        {
+            existing.Activate();
+            existing.FocusInput();
+            return;
+        }
+
+        // Collapse the shell if it is open so it does not overlap the spotlight.
+        if (ViewModel.IsExpanded)
+            ViewModel.ToggleExpandedCommand.Execute(null);
+
+        var monitor = GetTargetMonitor();
+
+        if (_spotlight is null)
+            _spotlight = CreateSpotlight();
+
+        _spotlight.PrepareForShow();
+        _spotlight.Show();
+        _spotlight.PositionOnMonitor(monitor);
+        _spotlight.Activate();
+        _spotlight.FocusInput();
+        _spotlight.PlayOpenAnimation();
+    }
+
+    private RunBoxSpotlightWindow CreateSpotlight()
+    {
+        return new RunBoxSpotlightWindow(ViewModel.RunBox, ViewModel);
+    }
+
+    private Win32Interop.MONITORINFO GetTargetMonitor()
+    {
+        // Use shell HWND when it has one; fall back to pill HWND.
+        IntPtr targetHwnd = _hwnd;
+        if (_shell is not null)
+        {
+            var shellInterop = new WindowInteropHelper(_shell);
+            if (shellInterop.Handle != IntPtr.Zero)
+                targetHwnd = shellInterop.Handle;
+        }
+
+        var hMon = Win32Interop.MonitorFromWindow(targetHwnd, Win32Interop.MONITOR_DEFAULTTONEAREST);
+        var info = new Win32Interop.MONITORINFO { cbSize = Marshal.SizeOf<Win32Interop.MONITORINFO>() };
+        Win32Interop.GetMonitorInfo(hMon, ref info);
+        return info;
+    }
+
+    private static string FormatHotkey(int modifiers, int virtualKey)
+    {
+        var parts = new System.Collections.Generic.List<string>();
+        if ((modifiers & 0x0002) != 0) parts.Add("Ctrl");
+        if ((modifiers & 0x0004) != 0) parts.Add("Shift");
+        if ((modifiers & 0x0001) != 0) parts.Add("Alt");
+        if ((modifiers & 0x0008) != 0) parts.Add("Win");
+        try
+        {
+            var key = KeyInterop.KeyFromVirtualKey(virtualKey);
+            parts.Add(key == Key.None ? $"0x{virtualKey:X2}" : key.ToString());
+        }
+        catch
+        {
+            parts.Add($"0x{virtualKey:X2}");
+        }
+        return string.Join("+", parts);
     }
 
     private void ViewModel_ExitRequested(object? sender, EventArgs e)
@@ -350,16 +421,7 @@ public partial class MainWindow : Window
                     _hiddenForFullscreen = false;
                     Show();
                 }
-
-                // Hotkey always activates the run box: open the shell if needed,
-                // then focus the input. ActivateRunBox sets IsExpanded=true which
-                // triggers OnExpandStateChanged → CreateShell → Show.
-                ViewModel.ActivateRunBox();
-
-                Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
-                {
-                    _shell?.FocusRunBox();
-                });
+                OpenSpotlight();
             });
             return IntPtr.Zero;
         }
@@ -388,6 +450,7 @@ public partial class MainWindow : Window
         {
             _hotkeyRegistered = true;
             Log.Info($"RunBox hotkey registered: mod=0x{mod:X2} key=0x{key:X2}");
+            ViewModel.RunBox.SetHotkeyHint(FormatHotkey(mod, key));
         }
         else
         {

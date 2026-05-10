@@ -39,6 +39,7 @@ public static class AppPaths
     public static string DataDirectory => _dataDir.Value;
 
     public static string SettingsPath   => Path.Combine(DataDirectory, "settings.json");
+    public static string ShortcutsPath  => Path.Combine(DataDirectory, "shortcuts.json");
     public static string RemindersPath  => Path.Combine(DataDirectory, "reminders.json");
     public static string NotesPath      => Path.Combine(DataDirectory, "notes.json");
     public static string DocumentsPath  => Path.Combine(DataDirectory, "documents.json");

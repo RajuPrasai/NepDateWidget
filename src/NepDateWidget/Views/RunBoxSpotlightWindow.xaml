@@ -1,0 +1,281 @@
+<Window x:Class="NepDateWidget.Views.RunBoxSpotlightWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:cvt="clr-namespace:NepDateWidget.Converters"
+        xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Topmost="True"
+        ResizeMode="NoResize"
+        Width="600"
+        SizeToContent="Height"
+        UseLayoutRounding="True"
+        SnapsToDevicePixels="True"
+        FontFamily="{DynamicResource WidgetFontFamily}"
+        d:DataContext="{d:DesignInstance vm:RunBoxViewModel}"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d">
+
+    <Window.Resources>
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis" Invert="False" />
+    </Window.Resources>
+
+    <!-- Outer margin absorbs the drop shadow so it is never clipped -->
+    <Grid Margin="20,20,20,20">
+        <Border x:Name="SpotlightCard"
+                Background="#E8181818"
+                CornerRadius="12"
+                BorderBrush="#18FFFFFF"
+                BorderThickness="0.8"
+                Padding="0,0,0,8">
+            <Border.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="32"
+                                  Color="Black" Opacity="0.70" />
+            </Border.Effect>
+            <Border.RenderTransform>
+                <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1" />
+            </Border.RenderTransform>
+            <Border.RenderTransformOrigin>0.5, 0.5</Border.RenderTransformOrigin>
+
+            <StackPanel>
+
+                <!-- ── Input row ─────────────────────────────────────────── -->
+                <Grid Height="50" Margin="16,0,16,-5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Magnifying-glass icon (reuses the existing IconScan geometry) -->
+                    <Path Grid.Column="0"
+                          Data="{StaticResource IconScan}"
+                          Stroke="#60FFFFFF"
+                          StrokeThickness="1.5"
+                          StrokeStartLineCap="Round"
+                          StrokeEndLineCap="Round"
+                          Stretch="Uniform"
+                          Width="16" Height="16"
+                          VerticalAlignment="Center"
+                          Margin="0,0,12,0" />
+
+                    <!-- Input + placeholder overlay -->
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Active prefix pill -->
+                        <Border Grid.Column="0"
+                                Background="#886496FF"
+                                CornerRadius="4"
+                                Padding="7,3"
+                                Margin="0,0,8,0"
+                                VerticalAlignment="Center"
+                                Visibility="{Binding HasActivePrefix, Converter={StaticResource BoolToVis}}">
+                            <TextBlock Text="{Binding ActivePrefix}"
+                                       Foreground="White"
+                                       FontSize="12"
+                                       FontWeight="SemiBold" />
+                        </Border>
+
+                        <!-- TextBox + placeholder -->
+                        <Grid Grid.Column="1">
+                            <TextBox x:Name="SpotlightInput"
+                                     Text="{Binding RunText, UpdateSourceTrigger=PropertyChanged}"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Padding="0"
+                                     Foreground="White"
+                                     CaretBrush="#B0FFFFFF"
+                                     SelectionBrush="#406496FF"
+                                     FontSize="16"
+                                     VerticalAlignment="Center"
+                                     FocusVisualStyle="{x:Null}"
+                                     ContextMenu="{x:Null}"
+                                     PreviewKeyDown="SpotlightInput_PreviewKeyDown" />
+                            <TextBlock Text="{Binding SearchHintLabel}"
+                                       Foreground="#40FFFFFF"
+                                       FontSize="16"
+                                       Margin="4,0,0,0"
+                                       VerticalAlignment="Center"
+                                       IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, ElementName=SpotlightInput}" Value="">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </Grid>
+
+                    <!-- Escape hint badge -->
+                    <Border Grid.Column="2"
+                            Background="#14FFFFFF"
+                            CornerRadius="4"
+                            Padding="7,2"
+                            VerticalAlignment="Center"
+                            Margin="12,0,0,0">
+                        <TextBlock Text="esc"
+                                   Foreground="#65FFFFFF"
+                                   FontSize="11" />
+                    </Border>
+                </Grid>
+
+                <!-- ── Calculator result ────────────────────────────────────────── -->
+                <Border Visibility="{Binding ShowCalcResult, Converter={StaticResource BoolToVis}}"
+                        Margin="16,10,16,8">
+                    <Grid>
+                        <TextBlock FontSize="20" FontWeight="Light" VerticalAlignment="Center">
+                            <Run Text="= " Foreground="#506496FF" />
+                            <Run Text="{Binding CalcResult, Mode=OneWay}" Foreground="#B06496FF" />
+                        </TextBlock>
+                        <TextBlock Text="Enter to copy"
+                                   Foreground="#406496FF"
+                                   FontSize="11"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center" />
+                    </Grid>
+                </Border>
+
+                <!-- ── Separator (shown only when history list is visible) ── -->
+                <Border x:Name="SpotlightSeparator"
+                        Height="0.7"
+                        Background="#18FFFFFF"
+                        Visibility="Collapsed" />
+
+                <!-- ── History / suggestion list ──────────────────────────── -->
+                <ListBox x:Name="HistoryList"
+                         ItemsSource="{Binding FilteredHistory}"
+                         SelectedIndex="{Binding SelectedHistoryIndex, Mode=OneWay}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Focusable="False"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                         Padding="6,4,6,4"
+                         MaxHeight="340"
+                         Visibility="Collapsed">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <EventSetter Event="PreviewMouseLeftButtonDown" Handler="HistoryItem_Click" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="#D0D0D0" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="Cursor" Value="Hand" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="ItemBd"
+                                                Background="Transparent"
+                                                CornerRadius="6"
+                                                Margin="0,1"
+                                                Padding="10,8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid VerticalAlignment="Center">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <Border Grid.Column="0"
+                                                            Background="#886496FF"
+                                                            CornerRadius="4"
+                                                            Padding="7,3"
+                                                            Margin="0,0,8,0"
+                                                            VerticalAlignment="Center"
+                                                            Visibility="{Binding HasPrefix, Converter={StaticResource BoolToVis}}">
+                                                        <TextBlock Text="{Binding Prefix}"
+                                                                   Foreground="White"
+                                                                   FontSize="12"
+                                                                   FontWeight="SemiBold" />
+                                                    </Border>
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="{Binding Query}"
+                                                               Foreground="#D0D0D0"
+                                                               FontSize="13"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               VerticalAlignment="Center" />
+                                                </Grid>
+                                                <Button Grid.Column="1"
+                                                        x:Name="RemoveBtn"
+                                                        Margin="6,0,0,0"
+                                                        Cursor="Hand"
+                                                        VerticalAlignment="Center"
+                                                        Visibility="Hidden"
+                                                        FocusVisualStyle="{x:Null}"
+                                                        Click="HistoryRemove_Click">
+                                                    <Button.Template>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border x:Name="RemoveBd"
+                                                                    Background="Transparent"
+                                                                    CornerRadius="4"
+                                                                    Padding="7,5">
+                                                                <Path Data="{StaticResource IconWindowClose}"
+                                                                      Stroke="#80FFFFFF"
+                                                                      StrokeThickness="1.2"
+                                                                      StrokeStartLineCap="Round"
+                                                                      StrokeEndLineCap="Round"
+                                                                      Stretch="Uniform"
+                                                                      Width="8" Height="8" />
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="RemoveBd" Property="Background" Value="#28FFFFFF" />
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter TargetName="RemoveBd" Property="Background" Value="#18FFFFFF" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Button.Template>
+                                                </Button>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="ItemBd" Property="Background" Value="#28FFFFFF" />
+                                                <Setter TargetName="RemoveBtn" Property="Visibility" Value="Visible" />
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="ItemBd" Property="Background" Value="#20FFFFFF" />
+                                                <Setter TargetName="RemoveBtn" Property="Visibility" Value="Visible" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+
+                <!-- ── Error toast ────────────────────────────────────────── -->
+                <Border x:Name="ErrorToast"
+                        Background="#CC2A2A2A"
+                        CornerRadius="6"
+                        Margin="12,4,12,0"
+                        Padding="10,7"
+                        Visibility="{Binding ShowError, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="{Binding ErrorText}"
+                               Foreground="#E0B0B0"
+                               FontSize="12"
+                               TextTrimming="CharacterEllipsis" />
+                </Border>
+
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

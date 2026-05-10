@@ -2,20 +2,29 @@ using NepDateWidget.Helpers;
 using NepDateWidget.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace NepDateWidget.ViewModels;
 
+public sealed record HistoryEntry(string Raw, string? Prefix, string Query)
+{
+    public bool HasPrefix => Prefix is not null;
+}
+
 public sealed class RunBoxViewModel : ViewModelBase
 {
     private readonly ISettingsService _settingsService;
     private readonly ILocalizationService _loc;
+    private readonly IShortcutsService _shortcuts;
     private readonly List<string> _history;
     private readonly DispatcherTimer _errorTimer;
+    private HashSet<string> _knownPrefixKeys;
 
     private string _runText = string.Empty;
     public string RunText
@@ -25,6 +34,31 @@ public sealed class RunBoxViewModel : ViewModelBase
         {
             if (SetProperty(ref _runText, value))
             {
+                // Detect prefix locking: user typed "{prefix} " with no active prefix yet.
+                if (_activePrefix is null && value.EndsWith(' '))
+                {
+                    var candidate = value.TrimEnd();
+                    if (candidate.Length > 0 && _shortcuts.Prefixes.ContainsKey(candidate))
+                    {
+                        SetActivePrefix(candidate);
+                        return;
+                    }
+                }
+
+                // Calculator mode: input starts with '='
+                if (value.StartsWith('='))
+                {
+                    var result = EvaluateExpression(value[1..].Trim());
+                    CalcResult = result ?? string.Empty;
+                    ShowCalcResult = result is not null;
+                    FilteredHistory.Clear();
+                    IsHistoryOpen = false;
+                    return;
+                }
+
+                ShowCalcResult = false;
+                CalcResult = string.Empty;
+
                 UpdateFilteredHistory();
                 // While the user is typing, auto-highlight the best match so Enter executes it.
                 // Clearing the filtered list above resets the ListBox's internal selection,
@@ -65,10 +99,39 @@ public sealed class RunBoxViewModel : ViewModelBase
         set => SetProperty(ref _selectedHistoryIndex, value);
     }
 
-    public ObservableCollection<string> FilteredHistory { get; } = new();
+    private string? _activePrefix;
+    public string? ActivePrefix
+    {
+        get => _activePrefix;
+        private set
+        {
+            if (SetProperty(ref _activePrefix, value))
+                OnPropertyChanged(nameof(HasActivePrefix));
+        }
+    }
+
+    public bool HasActivePrefix => _activePrefix is not null;
+
+    private string _calcResult = string.Empty;
+    public string CalcResult
+    {
+        get => _calcResult;
+        private set => SetProperty(ref _calcResult, value);
+    }
+
+    private bool _showCalcResult;
+    public bool ShowCalcResult
+    {
+        get => _showCalcResult;
+        private set => SetProperty(ref _showCalcResult, value);
+    }
+
+    public ObservableCollection<HistoryEntry> FilteredHistory { get; } = new();
 
     // Labels
-    public string PlaceholderLabel { get; private set; } = string.Empty;
+    public string PlaceholderLabel   { get; private set; } = string.Empty;
+    public string HotkeyHintLabel    { get; private set; } = string.Empty;
+    public string SearchHintLabel    { get; private set; } = string.Empty;
 
     // Commands
     public ICommand ExecuteCommand { get; }
@@ -80,19 +143,24 @@ public sealed class RunBoxViewModel : ViewModelBase
     /// Raised when the RunBox requests the widget to collapse (Escape key).
     /// </summary>
     public event EventHandler? CollapseRequested;
+    public event EventHandler? ExecutedSuccessfully;
 
-    public RunBoxViewModel(ISettingsService settingsService, ILocalizationService localizationService)
+    public RunBoxViewModel(ISettingsService settingsService, ILocalizationService localizationService, IShortcutsService shortcutsService)
     {
         _settingsService = settingsService;
         _loc = localizationService;
+        _shortcuts = shortcutsService;
         _history = _settingsService.Current.RunHistory ?? new List<string>();
+        _knownPrefixKeys = new HashSet<string>(_shortcuts.Prefixes.Keys, StringComparer.OrdinalIgnoreCase);
 
         _errorTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
         _errorTimer.Tick += (_, _) => DismissError();
 
+        _shortcuts.ShortcutsChanged += OnShortcutsChanged;
+
         ExecuteCommand = new RelayCommand(Execute);
-        SelectHistoryItemCommand = new RelayCommand<string>(SelectHistoryItem);
-        RemoveHistoryItemCommand = new RelayCommand<string>(RemoveHistoryItem);
+        SelectHistoryItemCommand = new RelayCommand<HistoryEntry>(SelectHistoryItem);
+        RemoveHistoryItemCommand = new RelayCommand<HistoryEntry>(RemoveHistoryItem);
         ClearErrorCommand = new RelayCommand(() => DismissError());
 
         RefreshLabels();
@@ -103,10 +171,31 @@ public sealed class RunBoxViewModel : ViewModelBase
         RefreshLabels();
     }
 
+    /// <summary>
+    /// Called by MainWindow after the hotkey is registered so the strip/spotlight
+    /// can display the actual bound key combination.
+    /// </summary>
+    public void SetHotkeyHint(string label)
+    {
+        HotkeyHintLabel = label;
+        OnPropertyChanged(nameof(HotkeyHintLabel));
+    }
+
+    /// <summary>
+    /// Populates FilteredHistory from recent history without modifying RunText or
+    /// selection. Called by the spotlight on first show so the list is pre-loaded.
+    /// </summary>
+    public void LoadInitialHistory() => UpdateFilteredHistory();
+
     private void RefreshLabels()
     {
         PlaceholderLabel = _loc.Get("runbox.placeholder");
         OnPropertyChanged(nameof(PlaceholderLabel));
+        if (_activePrefix is null)
+        {
+            SearchHintLabel = PlaceholderLabel;
+            OnPropertyChanged(nameof(SearchHintLabel));
+        }
     }
 
     // ── Arrow key navigation ─────────────────────────────────────────────────
@@ -122,7 +211,8 @@ public sealed class RunBoxViewModel : ViewModelBase
         {
             IsHistoryOpen = true;
             SelectedHistoryIndex = 0;
-            _runText = FilteredHistory[0];
+            var first = FilteredHistory[0];
+            _runText = _activePrefix is not null ? first.Query : first.Raw;
             OnPropertyChanged(nameof(RunText));
         }
     }
@@ -147,7 +237,8 @@ public sealed class RunBoxViewModel : ViewModelBase
         else if (next >= FilteredHistory.Count) next = 0;
 
         SelectedHistoryIndex = next;
-        _runText = FilteredHistory[next];
+        var entry = FilteredHistory[next];
+        _runText = _activePrefix is not null ? entry.Query : entry.Raw;
         OnPropertyChanged(nameof(RunText));
         return true;
     }
@@ -159,10 +250,32 @@ public sealed class RunBoxViewModel : ViewModelBase
     {
         if (_selectedHistoryIndex >= 0 && _selectedHistoryIndex < FilteredHistory.Count)
         {
-            _runText = FilteredHistory[_selectedHistoryIndex];
-            OnPropertyChanged(nameof(RunText));
-            IsHistoryOpen = false;
-            SelectedHistoryIndex = -1;
+            var entry = FilteredHistory[_selectedHistoryIndex];
+            if (entry.HasPrefix)
+            {
+                // Lock the prefix pill and place the query in the text box.
+                // Set _runText directly then call UpdateFilteredHistory once
+                // instead of going through SetActivePrefix (which resets to empty)
+                // then RunText = entry.Query (which filters again).
+                ActivePrefix = entry.Prefix!;
+        string site = _shortcuts.PrefixSiteNames.TryGetValue(entry.Prefix!, out var n) ? n : entry.Prefix!;
+                SearchHintLabel = $"Search {site}...";
+                OnPropertyChanged(nameof(SearchHintLabel));
+                ShowCalcResult = false;
+                CalcResult = string.Empty;
+                IsHistoryOpen = false;
+                SelectedHistoryIndex = -1;
+                _runText = entry.Query;
+                OnPropertyChanged(nameof(RunText));
+                UpdateFilteredHistory();
+            }
+            else
+            {
+                _runText = entry.Raw;
+                OnPropertyChanged(nameof(RunText));
+                IsHistoryOpen = false;
+                SelectedHistoryIndex = -1;
+            }
         }
     }
 
@@ -179,13 +292,39 @@ public sealed class RunBoxViewModel : ViewModelBase
             return;
         }
 
+        if (_showCalcResult)
+        {
+            RunText = string.Empty;
+            return;
+        }
+
+        if (_activePrefix is not null)
+        {
+            ClearPrefix();
+            return;
+        }
+
         RequestCollapse();
     }
 
     public void RequestCollapse()
     {
         IsHistoryOpen = false;
-        RunText = string.Empty;
+        // Reset prefix state directly — avoids UpdateFilteredHistory running
+        // inside ClearPrefix, since we're closing and the list is irrelevant.
+        if (_activePrefix is not null)
+        {
+            ActivePrefix = null;
+            SearchHintLabel = PlaceholderLabel;
+            OnPropertyChanged(nameof(SearchHintLabel));
+        }
+        // Reset RunText directly — avoids UpdateFilteredHistory running through
+        // the setter, since we're closing and the list is irrelevant.
+        _runText = string.Empty;
+        OnPropertyChanged(nameof(RunText));
+        ShowCalcResult = false;
+        CalcResult = string.Empty;
+        FilteredHistory.Clear();
         DismissError();
         CollapseRequested?.Invoke(this, EventArgs.Empty);
     }
@@ -212,6 +351,43 @@ public sealed class RunBoxViewModel : ViewModelBase
 
     private void Execute()
     {
+        // Calculator mode: copy result to clipboard and close.
+        if (_showCalcResult && !string.IsNullOrEmpty(_calcResult))
+        {
+            Clipboard.SetText(_calcResult);
+            ShowCalcResult = false;
+            CalcResult = string.Empty;
+            DismissError();
+            ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
+        // Prefix search mode
+        if (_activePrefix is not null)
+        {
+            var query = _runText?.Trim() ?? string.Empty;
+            if (string.IsNullOrEmpty(query)) return;
+
+            DismissError();
+            string url = BuildPrefixUrl(_activePrefix, Uri.EscapeDataString(query));
+            try
+            {
+                Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+                Log.Action($"runbox: prefix search [{_activePrefix}] \"{query}\"");
+                AddToHistory($"{_activePrefix} {query}");
+                _runText = string.Empty;
+                OnPropertyChanged(nameof(RunText));
+                ClearPrefix();
+                ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorToast($"{_loc.Get("runbox.error")}: {ex.Message}");
+                Log.Error($"runbox: prefix search failed [{_activePrefix}] \"{query}\": {ex.Message}");
+            }
+            return;
+        }
+
         // If the dropdown is open with a highlighted suggestion, run that suggestion
         // instead of whatever the user has partially typed. This lets Enter act on the
         // auto-selected best match while typing. Escape can be used to dismiss the
@@ -221,7 +397,7 @@ public sealed class RunBoxViewModel : ViewModelBase
             && _selectedHistoryIndex >= 0
             && _selectedHistoryIndex < FilteredHistory.Count)
         {
-            input = FilteredHistory[_selectedHistoryIndex]?.Trim();
+            input = FilteredHistory[_selectedHistoryIndex].Raw?.Trim();
         }
         else
         {
@@ -234,6 +410,33 @@ public sealed class RunBoxViewModel : ViewModelBase
         DismissError();
         IsHistoryOpen = false;
         SelectedHistoryIndex = -1;
+
+        // Re-execute a stored prefix search from history (e.g., "yt cats", "maps Kathmandu").
+        int spaceAt = input.IndexOf(' ');
+        if (spaceAt > 0)
+        {
+            string potentialPrefix = input[..spaceAt];
+            string potentialQuery  = input[(spaceAt + 1)..].Trim();
+            if (potentialQuery.Length > 0 && _shortcuts.Prefixes.ContainsKey(potentialPrefix))
+            {
+                string url = BuildPrefixUrl(potentialPrefix, Uri.EscapeDataString(potentialQuery));
+                try
+                {
+                    Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+                    Log.Action($"runbox: prefix re-run [{potentialPrefix}] \"{potentialQuery}\"");
+                    AddToHistory(input);
+                    _runText = string.Empty;
+                    OnPropertyChanged(nameof(RunText));
+                    ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
+                }
+                catch (Exception ex)
+                {
+                    ShowErrorToast($"{_loc.Get("runbox.error")}: {ex.Message}");
+                    Log.Error($"runbox: prefix re-run failed [{potentialPrefix}] \"{potentialQuery}\": {ex.Message}");
+                }
+                return;
+            }
+        }
 
         bool success = false;
 
@@ -263,7 +466,7 @@ public sealed class RunBoxViewModel : ViewModelBase
         {
             _runText = string.Empty;
             OnPropertyChanged(nameof(RunText));
-            CollapseRequested?.Invoke(this, EventArgs.Empty);
+            ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -380,22 +583,21 @@ public sealed class RunBoxViewModel : ViewModelBase
         _history.RemoveAll(h => string.Equals(h, entry, StringComparison.OrdinalIgnoreCase));
         _history.Insert(0, entry);
 
-        if (_history.Count > 50)
-            _history.RemoveRange(50, _history.Count - 50);
+        if (_history.Count > 500)
+            _history.RemoveRange(500, _history.Count - 500);
 
         _settingsService.Current.RunHistory = new List<string>(_history);
         _settingsService.Save();
     }
 
-    public void RemoveHistoryItem(string? item)
+    public void RemoveHistoryItem(HistoryEntry? item)
     {
         if (item is null) return;
-        _history.RemoveAll(h => string.Equals(h, item, StringComparison.OrdinalIgnoreCase));
+        _history.RemoveAll(h => string.Equals(h, item.Raw, StringComparison.OrdinalIgnoreCase));
         _settingsService.Current.RunHistory = new List<string>(_history);
         _settingsService.Save();
 
-        // Refresh the dropdown (case-insensitive to match _history removal)
-        var match = FilteredHistory.FirstOrDefault(h => string.Equals(h, item, StringComparison.OrdinalIgnoreCase));
+        var match = FilteredHistory.FirstOrDefault(h => string.Equals(h.Raw, item.Raw, StringComparison.OrdinalIgnoreCase));
         if (match is not null)
             FilteredHistory.Remove(match);
         if (FilteredHistory.Count == 0)
@@ -404,13 +606,35 @@ public sealed class RunBoxViewModel : ViewModelBase
             SelectedHistoryIndex = FilteredHistory.Count - 1;
     }
 
-    private void SelectHistoryItem(string? item)
+    private void SelectHistoryItem(HistoryEntry? item)
     {
         if (item is null) return;
-        _runText = item;
-        OnPropertyChanged(nameof(RunText));
         IsHistoryOpen = false;
         SelectedHistoryIndex = -1;
+
+        if (item.HasPrefix)
+        {
+            DismissError();
+            string url = BuildPrefixUrl(item.Prefix!, Uri.EscapeDataString(item.Query));
+            try
+            {
+                Process.Start(new ProcessStartInfo { FileName = url, UseShellExecute = true });
+                Log.Action($"runbox: prefix re-run [{item.Prefix}] \"{item.Query}\"");
+                AddToHistory(item.Raw);
+                _runText = string.Empty;
+                OnPropertyChanged(nameof(RunText));
+                ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorToast($"{_loc.Get("runbox.error")}: {ex.Message}");
+                Log.Error($"runbox: prefix re-run failed [{item.Prefix}] \"{item.Query}\": {ex.Message}");
+            }
+            return;
+        }
+
+        _runText = item.Raw;
+        OnPropertyChanged(nameof(RunText));
         Execute();
     }
 
@@ -424,22 +648,52 @@ public sealed class RunBoxViewModel : ViewModelBase
         }
 
         var filter = _runText?.Trim() ?? string.Empty;
-        IEnumerable<string> matches;
+
+        if (_activePrefix is not null)
+        {
+            // Prefix active: show only history for this prefix, matched against the query portion.
+            // Parse each entry once to avoid the double-parse of Where+Select.
+            var prefixMatches = _history
+                .Select(h => ParseHistoryEntry(h))
+                .Where(e => e.HasPrefix && string.Equals(e.Prefix, _activePrefix, StringComparison.OrdinalIgnoreCase))
+                .Select((e, i) =>
+                {
+                    int rank = string.IsNullOrEmpty(filter) ? 0 :
+                        e.Query.StartsWith(filter, StringComparison.OrdinalIgnoreCase) ? 0 :
+                        e.Query.Contains(filter, StringComparison.OrdinalIgnoreCase) ? 1 : -1;
+                    return (e, i, rank);
+                })
+                .Where(x => string.IsNullOrEmpty(filter) || x.rank >= 0)
+                .OrderBy(x => x.rank).ThenBy(x => x.i)
+                .Select(x => x.e)
+                .Take(10);
+
+            foreach (var m in prefixMatches)
+                FilteredHistory.Add(m);
+
+            IsHistoryOpen = FilteredHistory.Count > 0;
+            return;
+        }
+
+        // No prefix: parse once and filter to plain (non-prefix) items only.
+        var plainPool = _history
+            .Select(h => ParseHistoryEntry(h))
+            .Where(e => !e.HasPrefix);
+
+        IEnumerable<HistoryEntry> matches;
         if (string.IsNullOrEmpty(filter))
         {
-            matches = _history.Take(10);
+            matches = plainPool.Take(10);
         }
         else
         {
-            // Rank prefix matches above substring matches so the "most matched"
-            // entry surfaces first. Within the same rank, preserve MRU order.
-            matches = _history
-                .Select((h, i) => (h, i, rank:
-                    h.StartsWith(filter, StringComparison.OrdinalIgnoreCase) ? 0 :
-                    h.Contains(filter, StringComparison.OrdinalIgnoreCase) ? 1 : -1))
+            matches = plainPool
+                .Select((e, i) => (e, i, rank:
+                    e.Raw.StartsWith(filter, StringComparison.OrdinalIgnoreCase) ? 0 :
+                    e.Raw.Contains(filter, StringComparison.OrdinalIgnoreCase) ? 1 : -1))
                 .Where(x => x.rank >= 0)
                 .OrderBy(x => x.rank).ThenBy(x => x.i)
-                .Select(x => x.h)
+                .Select(x => x.e)
                 .Take(10);
         }
 
@@ -500,5 +754,103 @@ public sealed class RunBoxViewModel : ViewModelBase
         }
 
         return false;
+    }
+
+    // ── Prefix + Calculator ──────────────────────────────────────────────────
+
+    private void SetActivePrefix(string prefix)
+    {
+        ActivePrefix = prefix;
+        _runText = string.Empty;
+        OnPropertyChanged(nameof(RunText));
+        ShowCalcResult = false;
+        CalcResult = string.Empty;
+        FilteredHistory.Clear();
+        IsHistoryOpen = false;
+        SelectedHistoryIndex = -1;
+        string site = _shortcuts.PrefixSiteNames.TryGetValue(prefix, out var name) ? name : prefix;
+        SearchHintLabel = $"Search {site}...";
+        OnPropertyChanged(nameof(SearchHintLabel));
+        UpdateFilteredHistory();
+    }
+
+    public void ClearPrefix()
+    {
+        if (_activePrefix is null) return;
+        ActivePrefix = null;
+        SearchHintLabel = PlaceholderLabel;
+        OnPropertyChanged(nameof(SearchHintLabel));
+        UpdateFilteredHistory();
+    }
+
+    private string BuildPrefixUrl(string prefix, string encodedQuery) =>
+        string.Format(
+            _shortcuts.Prefixes[prefix].Replace("{year}", DateTime.Now.Year.ToString()),
+            encodedQuery);
+
+    private HistoryEntry ParseHistoryEntry(string raw)
+    {
+        int space = raw.IndexOf(' ');
+        if (space > 0)
+        {
+            string prefix = raw[..space];
+            string query  = raw[(space + 1)..].Trim();
+            if (query.Length > 0 && _shortcuts.Prefixes.ContainsKey(prefix))
+                return new HistoryEntry(raw, prefix, query);
+        }
+        return new HistoryEntry(raw, null, raw);
+    }
+
+    private void OnShortcutsChanged(object? sender, EventArgs e)
+    {
+        var newKeys = new HashSet<string>(_shortcuts.Prefixes.Keys, StringComparer.OrdinalIgnoreCase);
+        var removedKeys = _knownPrefixKeys
+            .Where(k => !newKeys.Contains(k))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        _knownPrefixKeys = newKeys;
+
+        if (removedKeys.Count > 0)
+        {
+            // Purge history entries whose prefix was removed.
+            // Use ParseHistoryEntry so the detection logic stays in one place.
+            int purged = _history.RemoveAll(h =>
+            {
+                var entry = ParseHistoryEntry(h);
+                return entry.HasPrefix && removedKeys.Contains(entry.Prefix!);
+            });
+
+            if (purged > 0)
+            {
+                _settingsService.Current.RunHistory = new List<string>(_history);
+                _settingsService.Save();
+            }
+
+            if (_activePrefix is not null && removedKeys.Contains(_activePrefix))
+            {
+                // Clear the active prefix directly — ClearPrefix() calls UpdateFilteredHistory(),
+                // so we return immediately to avoid the redundant call below.
+                ClearPrefix();
+                return;
+            }
+        }
+
+        UpdateFilteredHistory();
+    }
+
+    private static string? EvaluateExpression(string expr)
+    {
+        if (string.IsNullOrWhiteSpace(expr)) return null;
+        try
+        {
+            var result = new DataTable().Compute(expr, null);
+            double val = Convert.ToDouble(result);
+            return val == Math.Floor(val) && !double.IsInfinity(val) && !double.IsNaN(val)
+                ? ((long)val).ToString()
+                : val.ToString("G10");
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
