@@ -189,14 +189,14 @@ public sealed class SearchHistoryServiceTests : IDisposable
     }
 
     [Fact]
-    public void Load_FileAbsentWithDefaultResource_DoesNotPersistToDisk()
+    public void Load_FileAbsentWithDefaultResource_PersistsToDisk()
     {
         var path = TempPath();
         const string resource = "NepDateWidget.Resources.run-history.default.json";
         var svc = new SearchHistoryService(path, maxEntries: 500, defaultResourceName: resource);
         svc.Load();
-        // Seeding does not auto-save; file should not exist until Record() is called
-        Assert.False(File.Exists(path));
+        // Seeding now persists immediately so the file exists after Load().
+        Assert.True(File.Exists(path));
     }
 
     [Fact]
@@ -252,5 +252,38 @@ public sealed class SearchHistoryServiceTests : IDisposable
         Assert.Contains("powershell", entries, StringComparer.OrdinalIgnoreCase);
         Assert.Contains("taskmgr",    entries, StringComparer.OrdinalIgnoreCase);
         Assert.Contains("mstsc",      entries, StringComparer.OrdinalIgnoreCase);
+    }
+
+    // ── Case-insensitive matching ───────────────────────────────────────────────
+
+    [Fact]
+    public void GetMatching_CaseInsensitivePrefix_MatchesEntry()
+    {
+        var svc = new SearchHistoryService(TempPath());
+        svc.Record("notepad");
+        svc.Record("Notepad++");
+        var matches = svc.GetMatching("NOTE", int.MaxValue);
+        Assert.Equal(2, matches.Count);
+    }
+
+    [Fact]
+    public void Remove_CaseInsensitive_RemovesEntry()
+    {
+        var svc = new SearchHistoryService(TempPath());
+        svc.Record("notepad");
+        svc.Remove("NOTEPAD");
+        Assert.Empty(svc.GetMatching("", int.MaxValue));
+    }
+
+    [Fact]
+    public void Record_CaseInsensitive_Deduplicates()
+    {
+        // Recording "Notepad" after "notepad" must deduplicate (case-insensitive).
+        var svc = new SearchHistoryService(TempPath());
+        svc.Record("notepad");
+        svc.Record("Notepad");
+        var all = svc.GetMatching("", int.MaxValue);
+        Assert.Single(all);
+        Assert.Equal("Notepad", all[0]); // last-recorded casing wins
     }
 }

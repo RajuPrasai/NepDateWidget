@@ -27,6 +27,7 @@ public class FirstRunBootstrapTests
         public void Load() { /* no-op */ }
         public void Save() => SaveCount++;
         public void ResetToDefaults() { /* no-op */ }
+        public event EventHandler? SettingsChanged;
     }
 
     [Fact]

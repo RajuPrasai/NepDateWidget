@@ -63,7 +63,15 @@ public sealed class NotesService : INotesService, IDisposable
 
     public void Load()
     {
-        LoadFromDisk();
+        if (!File.Exists(_filePath))
+        {
+            _notes = new();
+            Save();
+        }
+        else
+        {
+            LoadFromDisk();
+        }
         _reloader ??= new DebouncedFileReloader(_filePath, debounceMs: 500, onReload: () =>
         {
             // Suppress reloads triggered by our own writes (self-induced FSW noise).

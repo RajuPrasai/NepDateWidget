@@ -1,7 +1,7 @@
 using NepDateWidget.Helpers;
+using NepDateWidget.Models;
 using NepDateWidget.Services;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
@@ -19,9 +19,12 @@ public sealed record HistoryEntry(string Raw, string? Prefix, string Query)
 
 public sealed class RunBoxViewModel : ViewModelBase
 {
+    private const string ScriptPrefix = "scr";
+
     private readonly ISearchHistoryService? _runHistoryService;
     private readonly ILocalizationService _loc;
     private readonly IShortcutsService _shortcuts;
+    private readonly IScriptService? _scriptService;
     private readonly DispatcherTimer _errorTimer;
     private HashSet<string> _knownPrefixKeys;
 
@@ -37,7 +40,9 @@ public sealed class RunBoxViewModel : ViewModelBase
                 if (_activePrefix is null && value.EndsWith(' '))
                 {
                     var candidate = value.TrimEnd();
-                    if (candidate.Length > 0 && _shortcuts.Prefixes.ContainsKey(candidate))
+                    if (candidate.Length > 0 &&
+                        (_shortcuts.Prefixes.ContainsKey(candidate) ||
+                         (_scriptService is not null && string.Equals(candidate, ScriptPrefix, StringComparison.OrdinalIgnoreCase))))
                     {
                         SetActivePrefix(candidate);
                         return;
@@ -145,17 +150,20 @@ public sealed class RunBoxViewModel : ViewModelBase
     public event EventHandler? CollapseRequested;
     public event EventHandler? ExecutedSuccessfully;
 
-    public RunBoxViewModel(ISearchHistoryService? runHistoryService, ILocalizationService localizationService, IShortcutsService shortcutsService)
+    public RunBoxViewModel(ISearchHistoryService? runHistoryService, ILocalizationService localizationService, IShortcutsService shortcutsService, IScriptService? scriptService = null)
     {
         _runHistoryService = runHistoryService;
         _loc = localizationService;
         _shortcuts = shortcutsService;
+        _scriptService = scriptService;
         _knownPrefixKeys = new HashSet<string>(_shortcuts.Prefixes.Keys, StringComparer.OrdinalIgnoreCase);
 
         _errorTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
         _errorTimer.Tick += (_, _) => DismissError();
 
         _shortcuts.ShortcutsChanged += OnShortcutsChanged;
+        if (_scriptService is not null)
+            _scriptService.ScriptsChanged += OnScriptsChanged;
 
         ExecuteCommand = new RelayCommand(Execute);
         SelectHistoryItemCommand = new RelayCommand<HistoryEntry>(SelectHistoryItem);
@@ -257,9 +265,7 @@ public sealed class RunBoxViewModel : ViewModelBase
                 // instead of going through SetActivePrefix (which resets to empty)
                 // then RunText = entry.Query (which filters again).
                 ActivePrefix = entry.Prefix!;
-                string site = _shortcuts.PrefixSiteNames.TryGetValue(entry.Prefix!, out var n) ? n : entry.Prefix!;
-                SearchHintLabel = $"Search {site}...";
-                OnPropertyChanged(nameof(SearchHintLabel));
+                ApplyPrefixHintLabel(entry.Prefix!);
                 ShowCalcResult = false;
                 CalcResult = string.Empty;
                 IsHistoryOpen = false;
@@ -276,6 +282,19 @@ public sealed class RunBoxViewModel : ViewModelBase
                 SelectedHistoryIndex = -1;
             }
         }
+    }
+
+    // Overload used by CommitSelection to set hint label consistently for all prefix types.
+    private void ApplyPrefixHintLabel(string prefix)
+    {
+        if (string.Equals(prefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
+            SearchHintLabel = _loc.Get("runbox.script_search_hint");
+        else
+        {
+            string site = _shortcuts.PrefixSiteNames.TryGetValue(prefix, out var n) ? n : prefix;
+            SearchHintLabel = $"Search {site}...";
+        }
+        OnPropertyChanged(nameof(SearchHintLabel));
     }
 
     /// <summary>
@@ -351,7 +370,9 @@ public sealed class RunBoxViewModel : ViewModelBase
     private void Execute()
     {
         // Calculator mode: copy result to clipboard and close.
-        if (_showCalcResult && !string.IsNullOrEmpty(_calcResult))
+        // Script results use the same ShowCalcResult flag for display, so exclude them.
+        if (_showCalcResult && !string.IsNullOrEmpty(_calcResult)
+            && !string.Equals(_activePrefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
         {
             Clipboard.SetText(_calcResult);
             ShowCalcResult = false;
@@ -361,7 +382,44 @@ public sealed class RunBoxViewModel : ViewModelBase
             return;
         }
 
-        // Prefix search mode
+        // If the dropdown is open and an item is highlighted, execute it directly.
+        // This is the uniform path for all modes: scr prefix, shortcut prefix, and plain history.
+        // The per-mode blocks below only run when the user presses Enter on their own typed text
+        // with no highlighted suggestion.
+        if (_isHistoryOpen && _selectedHistoryIndex >= 0 && _selectedHistoryIndex < FilteredHistory.Count)
+        {
+            SelectHistoryItem(FilteredHistory[_selectedHistoryIndex]);
+            return;
+        }
+
+        // Script execution mode
+        if (string.Equals(_activePrefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            var scriptInput = _runText?.Trim() ?? string.Empty;
+            if (string.IsNullOrEmpty(scriptInput)) return;
+
+            // First token is the script name; remainder are arguments.
+            var scriptSpaceAt = scriptInput.IndexOf(' ');
+            var scriptName    = scriptSpaceAt > 0 ? scriptInput[..scriptSpaceAt].Trim() : scriptInput;
+            var scriptArgs    = scriptSpaceAt > 0 ? scriptInput[(scriptSpaceAt + 1)..].Trim() : string.Empty;
+
+            var script = _scriptService?.Find(scriptName);
+            if (script is null)
+            {
+                ShowErrorToast(string.Format(_loc.Get("runbox.script_not_found"), scriptName));
+                return;
+            }
+
+            DismissError();
+            if (LaunchScript(script, scriptArgs))
+            {
+                ClearPrefix();
+                ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
+            }
+            return;
+        }
+
+        // Prefix search mode (shortcuts → URL)
         if (_activePrefix is not null)
         {
             var query = _runText?.Trim() ?? string.Empty;
@@ -387,21 +445,8 @@ public sealed class RunBoxViewModel : ViewModelBase
             return;
         }
 
-        // If the dropdown is open with a highlighted suggestion, run that suggestion
-        // instead of whatever the user has partially typed. This lets Enter act on the
-        // auto-selected best match while typing. Escape can be used to dismiss the
-        // suggestion and run the literal typed text.
-        string? input;
-        if (_isHistoryOpen
-            && _selectedHistoryIndex >= 0
-            && _selectedHistoryIndex < FilteredHistory.Count)
-        {
-            input = FilteredHistory[_selectedHistoryIndex].Raw?.Trim();
-        }
-        else
-        {
-            input = _runText?.Trim();
-        }
+        // No prefix: run the typed text directly through the detection pipeline.
+        var input = _runText?.Trim();
 
         if (string.IsNullOrEmpty(input))
             return;
@@ -585,6 +630,10 @@ public sealed class RunBoxViewModel : ViewModelBase
     public void RemoveHistoryItem(HistoryEntry? item)
     {
         if (item is null) return;
+        // Script entries exist only in the registry; they are never in run history.
+        // Removing them from the visible list is meaningless — they reappear on the
+        // next filter update. Treat as a no-op so the UX is not misleading.
+        if (string.Equals(item.Prefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase)) return;
         _runHistoryService?.Remove(item.Raw);
 
         var match = FilteredHistory.FirstOrDefault(h => string.Equals(h.Raw, item.Raw, StringComparison.OrdinalIgnoreCase));
@@ -604,6 +653,21 @@ public sealed class RunBoxViewModel : ViewModelBase
 
         if (item.HasPrefix)
         {
+            // Script entries: execute immediately without building a URL.
+            if (string.Equals(item.Prefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
+            {
+                DismissError();
+                var script = _scriptService?.Find(item.Query);
+                if (script is null)
+                {
+                    ShowErrorToast(string.Format(_loc.Get("runbox.script_not_found"), item.Query));
+                    return;
+                }
+                if (LaunchScript(script, string.Empty))
+                    ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
+                return;
+            }
+
             DismissError();
             string url = BuildPrefixUrl(item.Prefix!, Uri.EscapeDataString(item.Query));
             try
@@ -613,6 +677,7 @@ public sealed class RunBoxViewModel : ViewModelBase
                 AddToHistory(item.Raw);
                 _runText = string.Empty;
                 OnPropertyChanged(nameof(RunText));
+                ClearPrefix();
                 ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception ex)
@@ -634,6 +699,38 @@ public sealed class RunBoxViewModel : ViewModelBase
     private void UpdateFilteredHistory()
     {
         FilteredHistory.Clear();
+
+        // Script prefix: populated from the registry, never from run history.
+        // Must be checked before the history.Count == 0 early-exit guard so that
+        // the script list is shown even when run history is empty (fresh install).
+        if (string.Equals(_activePrefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            var scriptFilter = _runText?.Trim() ?? string.Empty;
+            var scripts = _scriptService?.GetAll() ?? (IReadOnlyList<ScriptEntry>)Array.Empty<ScriptEntry>();
+
+            IEnumerable<ScriptEntry> ranked;
+            if (string.IsNullOrEmpty(scriptFilter))
+            {
+                ranked = scripts;
+            }
+            else
+            {
+                ranked = scripts
+                    .Select((s, i) => (s, i, rank:
+                        s.Name.StartsWith(scriptFilter, StringComparison.OrdinalIgnoreCase) ? 0 :
+                        s.Name.Contains(scriptFilter, StringComparison.OrdinalIgnoreCase) ? 1 :
+                        s.Description.Contains(scriptFilter, StringComparison.OrdinalIgnoreCase) ? 2 : -1))
+                    .Where(x => x.rank >= 0)
+                    .OrderBy(x => x.rank).ThenBy(x => x.i)
+                    .Select(x => x.s);
+            }
+
+            foreach (var s in ranked.Take(10))
+                FilteredHistory.Add(new HistoryEntry($"{ScriptPrefix} {s.Name}", ScriptPrefix, s.Name));
+            IsHistoryOpen = FilteredHistory.Count > 0;
+            return;
+        }
+
         var history = GetHistory();
         if (history.Count == 0)
         {
@@ -762,9 +859,7 @@ public sealed class RunBoxViewModel : ViewModelBase
         FilteredHistory.Clear();
         IsHistoryOpen = false;
         SelectedHistoryIndex = -1;
-        string site = _shortcuts.PrefixSiteNames.TryGetValue(prefix, out var name) ? name : prefix;
-        SearchHintLabel = $"Search {site}...";
-        OnPropertyChanged(nameof(SearchHintLabel));
+        ApplyPrefixHintLabel(prefix);
         UpdateFilteredHistory();
     }
 
@@ -825,6 +920,12 @@ public sealed class RunBoxViewModel : ViewModelBase
         UpdateFilteredHistory();
     }
 
+    private void OnScriptsChanged(object? sender, EventArgs e)
+    {
+        if (string.Equals(_activePrefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
+            UpdateFilteredHistory();
+    }
+
     private static string? EvaluateExpression(string expr)
     {
         if (string.IsNullOrWhiteSpace(expr)) return null;
@@ -840,5 +941,86 @@ public sealed class RunBoxViewModel : ViewModelBase
         {
             return null;
         }
+    }
+
+    // Opens the script in a real interactive terminal window so the user can interact freely.
+    // The RunBox closes immediately on launch; all I/O happens in the spawned window.
+    // Returns true on successful launch, false on validation or launch error.
+    private bool LaunchScript(ScriptEntry script, string args)
+    {
+        string resolvedPath;
+        try
+        {
+            resolvedPath = Path.GetFullPath(script.Path);
+        }
+        catch
+        {
+            ShowErrorToast(string.Format(_loc.Get("runbox.script_not_found"), script.Name));
+            return false;
+        }
+        if (!Path.IsPathRooted(resolvedPath) || !File.Exists(resolvedPath))
+        {
+            ShowErrorToast(string.Format(_loc.Get("runbox.script_not_found"), script.Name));
+            return false;
+        }
+
+        var (fileName, arguments) = BuildInterpreterCommand(script, resolvedPath, args);
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName         = fileName,
+                Arguments        = arguments,
+                UseShellExecute  = true,
+                // Run in the script's own directory so relative paths inside scripts resolve correctly.
+                WorkingDirectory = Path.GetDirectoryName(resolvedPath) ?? string.Empty,
+            });
+            Log.Action($"runbox: script [{script.Name}] launched");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            ShowErrorToast(ex.Message);
+            Log.Error($"runbox: script [{script.Name}] launch failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    private static (string fileName, string arguments) BuildInterpreterCommand(ScriptEntry script, string resolvedPath, string args)
+    {
+        var quotedPath = $"\"{resolvedPath}\"";
+        var fullArgs   = string.IsNullOrEmpty(args) ? quotedPath : $"{quotedPath} {args}";
+
+        if (script.Interpreter.Equals("wsl", StringComparison.OrdinalIgnoreCase))
+        {
+            // bash inside WSL only understands POSIX paths; convert C:\foo\bar.sh → /mnt/c/foo/bar.sh.
+            // After the script runs, `exec bash` keeps the terminal open so the user can inspect output.
+            var wslPath = ToWslPath(resolvedPath);
+            // Escape single quotes so the path is safe inside a bash single-quoted string.
+            // POSIX pattern: replace each ' with '\'' (end quote, literal backslash-quote, reopen quote).
+            var escapedWslPath = wslPath.Replace("'", @"'\''");
+            var bashCmd = string.IsNullOrEmpty(args)
+                ? $"bash '{escapedWslPath}'; exec bash"
+                : $"bash '{escapedWslPath}' {args}; exec bash";
+            return ("wsl.exe", $"-- bash -c \"{bashCmd}\"");
+        }
+
+        return script.Interpreter.ToLowerInvariant() switch
+        {
+            "cmd"    => ("cmd.exe",        $"/k {fullArgs}"),
+            "python" => ("cmd.exe",        $"/k python.exe {fullArgs}"),
+            "pwsh"   => ("pwsh.exe",       $"-NoExit -ExecutionPolicy Bypass -File {fullArgs}"),
+            _        => ("powershell.exe", $"-NoExit -ExecutionPolicy Bypass -File {fullArgs}"),
+        };
+    }
+
+    // Converts a Windows absolute path to its WSL mount equivalent.
+    // C:\foo\bar.sh → /mnt/c/foo/bar.sh
+    // Paths that are already POSIX-style are returned with backslashes normalised.
+    private static string ToWslPath(string windowsPath)
+    {
+        if (windowsPath.Length >= 2 && char.IsLetter(windowsPath[0]) && windowsPath[1] == ':')
+            return $"/mnt/{char.ToLower(windowsPath[0])}{windowsPath[2..].Replace('\\', '/')}";
+        return windowsPath.Replace('\\', '/');
     }
 }

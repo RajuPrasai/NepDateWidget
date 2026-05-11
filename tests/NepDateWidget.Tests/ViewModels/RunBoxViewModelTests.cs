@@ -57,6 +57,8 @@ public sealed class RunBoxViewModelTests
             _ => key
         };
         public void SetLanguage(string languageCode) => CurrentLanguage = languageCode;
+        public void Load() { }
+        public event EventHandler? LocalizationChanged;
     }
 
     private sealed class FakeShortcutsService : IShortcutsService

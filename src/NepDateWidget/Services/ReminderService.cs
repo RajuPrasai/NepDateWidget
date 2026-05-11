@@ -124,7 +124,15 @@ public sealed class ReminderService : IReminderService, IDisposable
 
     public void Load()
     {
-        LoadFromDisk();
+        if (!File.Exists(_filePath))
+        {
+            _reminders = new List<ReminderEntry>();
+            Save();
+        }
+        else
+        {
+            LoadFromDisk();
+        }
         _reloader ??= new DebouncedFileReloader(_filePath, debounceMs: 500, onReload: () =>
         {
             var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));

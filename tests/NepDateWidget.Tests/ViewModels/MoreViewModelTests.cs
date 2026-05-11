@@ -660,4 +660,138 @@ public sealed class MoreViewModelTests
         Assert.Single(vm.FilteredReminders);
         Assert.Equal("r2", vm.FilteredReminders[0].Id);
     }
+
+    // ── Show / hide completed reminders ──────────────────────────────────────
+
+    [Fact]
+    public void CompletedReminders_HiddenByDefault()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Active"));
+        rs.Add(new ReminderEntry { Id = "r2", Title = "Done", BsDate = "2082/12/20", Time = "09:00", IsCompleted = true });
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        Assert.False(vm.ShowCompletedReminders);
+        Assert.Single(vm.FilteredReminders);
+        Assert.Equal("r1", vm.FilteredReminders[0].Id);
+    }
+
+    [Fact]
+    public void HasCompletedReminders_TrueWhenAnyCompleted()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(new ReminderEntry { Id = "r1", Title = "Done", BsDate = "2082/12/20", Time = "09:00", IsCompleted = true });
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        Assert.True(vm.HasCompletedReminders);
+        Assert.Equal(1, vm.CompletedRemindersCount);
+    }
+
+    [Fact]
+    public void HasCompletedReminders_FalseWhenNoneCompleted()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1"));
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        Assert.False(vm.HasCompletedReminders);
+        Assert.Equal(0, vm.CompletedRemindersCount);
+    }
+
+    [Fact]
+    public void ToggleShowCompletedCommand_ShowsCompletedReminders()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Active"));
+        rs.Add(new ReminderEntry { Id = "r2", Title = "Done", BsDate = "2082/12/20", Time = "09:00", IsCompleted = true });
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        vm.ToggleShowCompletedCommand.Execute(null);
+
+        Assert.True(vm.ShowCompletedReminders);
+        Assert.Equal(2, vm.FilteredReminders.Count);
+    }
+
+    [Fact]
+    public void ToggleShowCompletedCommand_HidesCompletedRemindersOnSecondToggle()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Active"));
+        rs.Add(new ReminderEntry { Id = "r2", Title = "Done", BsDate = "2082/12/20", Time = "09:00", IsCompleted = true });
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        vm.ToggleShowCompletedCommand.Execute(null); // show
+        vm.ToggleShowCompletedCommand.Execute(null); // hide again
+
+        Assert.False(vm.ShowCompletedReminders);
+        Assert.Single(vm.FilteredReminders);
+    }
+
+    [Fact]
+    public void ToggleCompletedLabel_ReflectsCurrentState()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(new ReminderEntry { Id = "r1", Title = "Done", BsDate = "2082/12/20", Time = "09:00", IsCompleted = true });
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        var showLabel = vm.ToggleCompletedLabel;   // before toggle — should say "Show completed"
+        vm.ToggleShowCompletedCommand.Execute(null);
+        var hideLabel = vm.ToggleCompletedLabel;   // after toggle — should say "Hide completed"
+
+        Assert.NotEqual(showLabel, hideLabel);
+        Assert.NotEmpty(showLabel);
+        Assert.NotEmpty(hideLabel);
+    }
+
+    [Fact]
+    public void Search_ExcludesCompletedReminders_WhenHidden()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Meeting"));
+        rs.Add(new ReminderEntry { Id = "r2", Title = "Meeting Done", BsDate = "2082/12/20", Time = "09:00", IsCompleted = true });
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        vm.ReminderSearchText = "meeting";
+
+        // only the active one should match — completed is hidden
+        Assert.Single(vm.FilteredReminders);
+        Assert.Equal("r1", vm.FilteredReminders[0].Id);
+    }
+
+    [Fact]
+    public void Search_IncludesCompletedReminders_WhenShown()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Meeting"));
+        rs.Add(new ReminderEntry { Id = "r2", Title = "Meeting Done", BsDate = "2082/12/20", Time = "09:00", IsCompleted = true });
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+        vm.ToggleShowCompletedCommand.Execute(null); // show completed
+
+        vm.ReminderSearchText = "meeting";
+
+        Assert.Equal(2, vm.FilteredReminders.Count);
+    }
+
+    [Fact]
+    public void AllRemindersCompleted_FilteredListEmpty_WhenHidden()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(new ReminderEntry { Id = "r1", Title = "Done1", BsDate = "2082/12/20", Time = "09:00", IsCompleted = true });
+        rs.Add(new ReminderEntry { Id = "r2", Title = "Done2", BsDate = "2082/12/20", Time = "09:00", IsCompleted = true });
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        Assert.True(vm.HasReminders);
+        Assert.Empty(vm.FilteredReminders);
+        Assert.True(vm.HasCompletedReminders);
+        Assert.Equal(2, vm.CompletedRemindersCount);
+    }
 }

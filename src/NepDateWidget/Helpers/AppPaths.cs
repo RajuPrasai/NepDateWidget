@@ -11,18 +11,20 @@ namespace NepDateWidget.Helpers;
 ///   2. Otherwise data lives in <c>%LOCALAPPDATA%\NepDateWidget\AppData\</c>
 ///      (installed mode). The <c>AppData</c> subfolder is mandatory because
 ///      Velopack installs the app itself into <c>%LOCALAPPDATA%\NepDateWidget\</c>
-///      (with <c>current\</c>, <c>packages\</c>, <c>Update.exe</c>) - we must
+///      (with <c>current\</c>, <c>packages\</c>, <c>Update.exe</c>) — we must
 ///      stay out of that folder so Velopack uninstall / update operations do not
 ///      touch user data.
 ///
 /// On first launch in installed mode, files from any prior beside-EXE
 /// <c>AppData\</c> folder are migrated automatically.
 ///
-/// File names produced:
-///   - settings.json
-///   - reminders.json
-///   - notes.json
-///   - nepdate.log
+/// Directory layout under <c>AppData\</c>:
+///   config/  — user-editable configuration files
+///     settings.json, localization.json, shortcuts.json, scripts.json
+///   data/    — user content
+///     notes.json, reminders.json, documents.json, run-history.json, Documents/
+///   (root)   — operational files
+///     runtime.json, nepdate.log
 /// </summary>
 public static class AppPaths
 {
@@ -38,16 +40,26 @@ public static class AppPaths
     public static bool IsPortable => _isPortable.Value;
     public static string DataDirectory => _dataDir.Value;
 
-    public static string SettingsPath   => Path.Combine(DataDirectory, "settings.json");
-    public static string ShortcutsPath  => Path.Combine(DataDirectory, "shortcuts.json");
-    public static string RemindersPath  => Path.Combine(DataDirectory, "reminders.json");
-    public static string NotesPath      => Path.Combine(DataDirectory, "notes.json");
-    public static string DocumentsPath  => Path.Combine(DataDirectory, "documents.json");
-    public static string DocSearchHistoryPath => Path.Combine(DataDirectory, "doc-search-history.json");
-    public static string RunHistoryPath => Path.Combine(DataDirectory, "run-history.json");
-    public static string AppStatePath   => Path.Combine(DataDirectory, "runtime.json");
-    public static string DocumentsFilesDirectory => Path.Combine(DataDirectory, "Documents");
-    public static string LogPath        => Path.Combine(DataDirectory, "nepdate.log");
+    // Subdirectories — created eagerly in ResolveDataDir.
+    private static string ConfigDir   => Path.Combine(DataDirectory, "config");
+    private static string UserDataDir => Path.Combine(DataDirectory, "data");
+
+    // config/: user-editable configuration files
+    public static string SettingsPath      => Path.Combine(ConfigDir, "settings.json");
+    public static string LocalizationPath  => Path.Combine(ConfigDir, "localization.json");
+    public static string ShortcutsPath     => Path.Combine(ConfigDir, "shortcuts.json");
+    public static string ScriptsPath       => Path.Combine(ConfigDir, "scripts.json");
+
+    // data/: user content
+    public static string NotesPath       => Path.Combine(UserDataDir, "notes.json");
+    public static string RemindersPath   => Path.Combine(UserDataDir, "reminders.json");
+    public static string DocumentsPath   => Path.Combine(UserDataDir, "documents.json");
+    public static string RunHistoryPath  => Path.Combine(UserDataDir, "run-history.json");
+    public static string DocumentsFilesDirectory => Path.Combine(UserDataDir, "Documents");
+
+    // root: operational files (not user-edited)
+    public static string AppStatePath => Path.Combine(DataDirectory, "runtime.json");
+    public static string LogPath      => Path.Combine(DataDirectory, "nepdate.log");
 
     private static string ResolveExeDir()
     {
@@ -67,6 +79,8 @@ public static class AppPaths
                 DataSubfolder);
 
         Directory.CreateDirectory(target);
+        Directory.CreateDirectory(Path.Combine(target, "config"));
+        Directory.CreateDirectory(Path.Combine(target, "data"));
         return target;
     }
 
@@ -124,6 +138,16 @@ public static class AppPaths
             TryMove(Path.Combine(_exeDir.Value, "widget.settings.json"),        SettingsPath);
             TryMove(Path.Combine(_exeDir.Value, "NepDateWidget.reminders.json"), RemindersPath);
             TryMove(Path.Combine(_exeDir.Value, "nepdate.log"),                  LogPath);
+
+            // 4. Migrate from flat AppData/ root to subdirectory layout.
+            foreach (var fn in new[] { "settings.json", "localization.json", "shortcuts.json", "scripts.json" })
+                TryMove(Path.Combine(target, fn), Path.Combine(target, "config", fn));
+            foreach (var fn in new[] { "notes.json", "reminders.json", "documents.json", "run-history.json" })
+                TryMove(Path.Combine(target, fn), Path.Combine(target, "data", fn));
+            TryMoveDir(Path.Combine(target, "Documents"), Path.Combine(target, "data", "Documents"));
+
+            // Remove doc-search-history.json — feature removed.
+            TryDelete(Path.Combine(target, "doc-search-history.json"));
         }
         catch
         {
@@ -140,5 +164,21 @@ public static class AppPaths
             File.Move(source, destination);
         }
         catch { /* best-effort */ }
+    }
+
+    private static void TryMoveDir(string source, string destination)
+    {
+        try
+        {
+            if (!Directory.Exists(source)) return;
+            if (Directory.Exists(destination)) return;
+            Directory.Move(source, destination);
+        }
+        catch { /* best-effort */ }
+    }
+
+    private static void TryDelete(string path)
+    {
+        try { File.Delete(path); } catch { /* best-effort */ }
     }
 }

@@ -247,4 +247,35 @@ public sealed class NotesServiceTests : IDisposable
         svc.MigrateFromSettings(new Dictionary<string, string>());
         Assert.Empty(svc.GetAll());
     }
+
+    // ── First-launch file creation ────────────────────────────────────────────
+
+    [Fact]
+    public void Load_FileAbsent_CreatesFile()
+    {
+        // Create() calls Load(); after that the file must exist on disk.
+        Create();
+        Assert.True(File.Exists(_filePath), "notes.json must be created on first Load()");
+    }
+
+    // ── Atomic write cleanup ──────────────────────────────────────────────────
+
+    [Fact]
+    public void SetNote_LeavesNoTmpOrBak()
+    {
+        var svc = Create();
+        svc.SetNote("2082/01/01", "Atomic test");
+        Assert.False(File.Exists(_filePath + ".tmp"), ".tmp must be cleaned up after Save");
+        Assert.False(File.Exists(_filePath + ".bak"), ".bak must be cleaned up after Save");
+    }
+
+    // ── FormatKey ─────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void FormatKey_ProducesExpectedPattern()
+    {
+        Assert.Equal("2082-01-05", NotesService.FormatKey(2082, 1, 5));
+        Assert.Equal("2082-12-31", NotesService.FormatKey(2082, 12, 31));
+        Assert.Equal("2000-07-04", NotesService.FormatKey(2000, 7, 4));
+    }
 }

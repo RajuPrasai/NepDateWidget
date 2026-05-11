@@ -2,10 +2,11 @@ using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 
 namespace NepDateWidget.Services;
 
-public sealed class DocumentService : IDocumentService
+public sealed class DocumentService : IDocumentService, IDisposable
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
@@ -14,13 +15,17 @@ public sealed class DocumentService : IDocumentService
     };
 
     private readonly string _filePath;
+    private readonly SynchronizationContext? _syncContext;
     private List<DocumentEntry> _documents = new();
+    private DebouncedFileReloader? _reloader;
+    private long _lastSelfWriteTicks;
 
     public event EventHandler? DocumentsChanged;
 
     public DocumentService(string filePath)
     {
         _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+        _syncContext = SynchronizationContext.Current;
     }
 
     public IReadOnlyList<DocumentEntry> GetAll() => _documents.AsReadOnly();
@@ -52,6 +57,47 @@ public sealed class DocumentService : IDocumentService
 
     public void Load()
     {
+        if (!File.Exists(_filePath))
+        {
+            _documents = new();
+            Save();
+        }
+        else
+        {
+            LoadFromDisk();
+        }
+
+        _reloader ??= new DebouncedFileReloader(_filePath, debounceMs: 500, onReload: () =>
+        {
+            var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));
+            if (elapsed.TotalSeconds < 1.0) return;
+            LoadFromDisk();
+            if (_syncContext is not null)
+                _syncContext.Post(_ => DocumentsChanged?.Invoke(this, EventArgs.Empty), null);
+            else
+                DocumentsChanged?.Invoke(this, EventArgs.Empty);
+        });
+    }
+
+    public void Save()
+    {
+        Interlocked.Exchange(ref _lastSelfWriteTicks, DateTime.UtcNow.Ticks);
+        try
+        {
+            var json = JsonSerializer.Serialize(_documents, SerializerOptions);
+            if (!AtomicFile.WriteAllText(_filePath, json))
+                Log.Error("Failed to save documents (atomic write returned false)");
+        }
+        catch (Exception ex)
+        {
+            Log.Error("Failed to save documents", ex);
+        }
+    }
+
+    public void Dispose() => _reloader?.Dispose();
+
+    private void LoadFromDisk()
+    {
         if (!File.Exists(_filePath)) return;
         try
         {
@@ -62,20 +108,6 @@ public sealed class DocumentService : IDocumentService
         {
             Log.Error("Failed to load documents", ex);
             _documents = new();
-        }
-    }
-
-    public void Save()
-    {
-        try
-        {
-            var json = JsonSerializer.Serialize(_documents, SerializerOptions);
-            if (!AtomicFile.WriteAllText(_filePath, json))
-                Log.Error("Failed to save documents (atomic write returned false)");
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Failed to save documents", ex);
         }
     }
 }

@@ -23,6 +23,7 @@ public class MainViewModelTests
         public void Load()  { LoadCount++;  }
         public void Save()  { SaveCount++;  Current = Current; /* no-op write */ }
         public void ResetToDefaults() { Current = new WidgetSettings(); Save(); }
+        public event EventHandler? SettingsChanged;
     }
     private sealed class FakeThemeService : IThemeService
     {

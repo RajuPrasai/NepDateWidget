@@ -2,6 +2,7 @@ using NepDateWidget.Models;
 using NepDateWidget.Services;
 using NepDateWidget.Tests.Services;
 using NepDateWidget.ViewModels;
+using System.IO;
 
 namespace NepDateWidget.Tests.ViewModels;
 
@@ -15,6 +16,7 @@ public class SettingsViewModelTests
         public void Load() { }
         public void Save() { SaveCount++; }
         public void ResetToDefaults() { Current = new WidgetSettings(); }
+        public event EventHandler? SettingsChanged;
     }
 
     private sealed class FakeThemeService : IThemeService
@@ -601,7 +603,7 @@ public class SettingsViewModelTests
     public void ResolveImportEntryPath_KnownFile_ReturnsPathInsideDataDir()
     {
         var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
-        var dest = SettingsViewModel.ResolveImportEntryPath("settings.json", dir);
+        var dest = SettingsViewModel.ResolveImportEntryPath("config/settings.json", dir);
         Assert.NotNull(dest);
         Assert.StartsWith(Path.GetFullPath(dir), dest, StringComparison.OrdinalIgnoreCase);
         Assert.EndsWith("settings.json", dest, StringComparison.OrdinalIgnoreCase);
@@ -644,12 +646,20 @@ public class SettingsViewModelTests
     [Fact]
     public void ResolveImportEntryPath_AllAllowedFiles_ReturnValidPaths()
     {
-        // Every filename in the whitelist must resolve correctly.
+        // Every entry in the allowlist must resolve to a path under the data directory.
         var dir = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
         string[] allowed =
         [
-            "settings.json", "reminders.json", "notes.json", "shortcuts.json",
-            "documents.json", "run-history.json", "doc-search-history.json", "runtime.json"
+            "config/settings.json",
+            "config/localization.json",
+            "config/shortcuts.json",
+            "config/scripts.json",
+            "data/notes.json",
+            "data/reminders.json",
+            "data/documents.json",
+            "data/run-history.json",
+            "runtime.json",
+            "nepdate.log"
         ];
         foreach (var name in allowed)
         {
@@ -664,9 +674,235 @@ public class SettingsViewModelTests
     [Fact]
     public void ResolveImportEntryPath_CaseInsensitiveName_Allowed()
     {
-        // The whitelist uses OrdinalIgnoreCase — "Settings.JSON" is valid.
+        // The allowlist uses OrdinalIgnoreCase — "config/Settings.JSON" is valid.
         var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
-        var dest = SettingsViewModel.ResolveImportEntryPath("Settings.JSON", dir);
+        var dest = SettingsViewModel.ResolveImportEntryPath("config/Settings.JSON", dir);
         Assert.NotNull(dest);
+    }
+
+    [Fact]
+    public void ResolveImportEntryPath_FlatFilenameNotOnAllowlist_ReturnsNull()
+    {
+        // Old-style flat backups (just filename, no subdir) must be rejected.
+        var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
+        Assert.Null(SettingsViewModel.ResolveImportEntryPath("settings.json", dir));
+    }
+
+    [Fact]
+    public void ResolveImportEntryPath_BackslashSeparator_IsAccepted()
+    {
+        // Windows-style backslash in entry name should be normalized and still resolve.
+        var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
+        var dest = SettingsViewModel.ResolveImportEntryPath("config\\settings.json", dir);
+        Assert.NotNull(dest);
+    }
+
+    // ── EnsureDataFile seed content ───────────────────────────────────────────
+
+    [Theory]
+    [InlineData("notes.json",        "{}")]  // string-keyed dictionary
+    [InlineData("runtime.json",      "{}")]  // plain object
+    [InlineData("settings.json",     "{}")]  // plain object
+    [InlineData("localization.json", "{}")]  // dict-of-dicts — must NOT be []
+    [InlineData("reminders.json",    "[]")]
+    [InlineData("documents.json",    "[]")]
+    [InlineData("shortcuts.json",    "[]")]
+    [InlineData("scripts.json",      "[]")]
+    [InlineData("run-history.json",  "[]")]
+    public void EnsureDataFile_CreatesCorrectSeedContent(string filename, string expected)
+    {
+        var dir = Path.Combine(Path.GetTempPath(), $"ensure_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(dir);
+        try
+        {
+            var path = Path.Combine(dir, filename);
+            SettingsViewModel.EnsureDataFile(path);
+            Assert.True(File.Exists(path));
+            Assert.Equal(expected, File.ReadAllText(path, System.Text.Encoding.UTF8).Trim());
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch { }
+        }
+    }
+
+    [Fact]
+    public void EnsureDataFile_LogFile_CreatesEmpty()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), $"ensure_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(dir);
+        try
+        {
+            var path = Path.Combine(dir, "nepdate.log");
+            SettingsViewModel.EnsureDataFile(path);
+            Assert.True(File.Exists(path));
+            Assert.Equal(string.Empty, File.ReadAllText(path));
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch { }
+        }
+    }
+
+    [Fact]
+    public void EnsureDataFile_ExistingFile_IsNotOverwritten()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), $"ensure_{Guid.NewGuid():N}");
+        Directory.CreateDirectory(dir);
+        try
+        {
+            var path = Path.Combine(dir, "settings.json");
+            File.WriteAllText(path, "sentinel");
+            SettingsViewModel.EnsureDataFile(path);
+            Assert.Equal("sentinel", File.ReadAllText(path));
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch { }
+        }
+    }
+
+    [Fact]
+    public void EnsureDataFile_MissingDirectory_IsCreated()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), $"ensure_{Guid.NewGuid():N}", "nested");
+        try
+        {
+            var path = Path.Combine(dir, "notes.json");
+            SettingsViewModel.EnsureDataFile(path);
+            Assert.True(File.Exists(path));
+        }
+        finally
+        {
+            try { Directory.Delete(Path.GetDirectoryName(dir)!, true); } catch { }
+        }
+    }
+
+    // ── New settings properties persistence ───────────────────────────────────
+
+    [Fact]
+    public void ShowSecondsInClock_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.ShowSecondsInClock = true;
+        Assert.True(svc.Current.ShowSecondsInClock);
+        vm.ShowSecondsInClock = false;
+        Assert.False(svc.Current.ShowSecondsInClock);
+    }
+
+    [Fact]
+    public void ShowFiscalYear_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.ShowFiscalYear = false;
+        Assert.False(svc.Current.ShowFiscalYear);
+    }
+
+    [Fact]
+    public void HideOnFullscreen_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.HideOnFullscreen = false;
+        Assert.False(svc.Current.HideOnFullscreen);
+    }
+
+    [Fact]
+    public void NotificationDurationSeconds_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.NotificationDurationSeconds = 30;
+        Assert.Equal(30, svc.Current.NotificationDurationSeconds);
+    }
+
+    [Fact]
+    public void NotificationDurationDisplay_FormattedCorrectly()
+    {
+        var (vm, _, _, _) = Create();
+        vm.NotificationDurationSeconds = 15;
+        Assert.Equal("15s", vm.NotificationDurationDisplay);
+    }
+
+    [Fact]
+    public void NotificationSound_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.NotificationSound = false;
+        Assert.False(svc.Current.NotificationSound);
+    }
+
+    [Fact]
+    public void AutoCheckForUpdates_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.AutoCheckForUpdates = false;
+        Assert.False(svc.Current.AutoCheckForUpdates);
+    }
+
+    [Fact]
+    public void ShowDailyEventsNotification_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.ShowDailyEventsNotification = true;
+        Assert.True(svc.Current.ShowDailyEventsNotification);
+    }
+
+    [Fact]
+    public void HighlightSundays_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.HighlightSundays = false;
+        Assert.False(svc.Current.HighlightSundays);
+    }
+
+    [Fact]
+    public void ShowTithi_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.ShowTithi = true;
+        Assert.True(svc.Current.ShowTithi);
+    }
+
+    [Fact]
+    public void ShowEvents_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.ShowEvents = false;
+        Assert.False(svc.Current.ShowEvents);
+    }
+
+    [Fact]
+    public void HighlightPublicHolidays_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.HighlightPublicHolidays = false;
+        Assert.False(svc.Current.HighlightPublicHolidays);
+    }
+
+    [Fact]
+    public void ShowHolidayCountdown_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.ShowHolidayCountdown = false;
+        Assert.False(svc.Current.ShowHolidayCountdown);
+    }
+
+    [Fact]
+    public void HighlightColor_PersistsToSettings()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.HighlightColor = "#E53935";
+        Assert.Equal("#E53935", svc.Current.HighlightColor);
+        Assert.True(vm.IsHighlightColorRed);
+        Assert.False(vm.IsHighlightColorDefault);
+    }
+
+    [Fact]
+    public void HighlightColor_SetEmpty_IsDefault()
+    {
+        var (vm, _, _, _) = Create();
+        vm.HighlightColor = "#E53935";
+        vm.SetHighlightColorDefaultCommand.Execute(null);
+        Assert.True(vm.IsHighlightColorDefault);
+        Assert.Equal(string.Empty, vm.HighlightColor);
     }
 }

@@ -61,6 +61,7 @@ public sealed class SearchHistoryService : ISearchHistoryService
         if (!File.Exists(_filePath))
         {
             if (_defaultResourceName is not null) SeedFromDefaults();
+            Save();
             return;
         }
         try

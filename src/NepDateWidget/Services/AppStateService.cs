@@ -36,7 +36,11 @@ public sealed class AppStateService : IAppStateService
     public void Load()
     {
         if (!File.Exists(_path))
+        {
+            _current = new();
+            Save();
             return;
+        }
 
         try
         {

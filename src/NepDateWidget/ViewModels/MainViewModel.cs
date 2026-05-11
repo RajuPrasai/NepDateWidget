@@ -472,13 +472,13 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         IReminderService? reminderService = null,
         INotesService? notesService = null,
         IDocumentService? documentService = null,
-        ISearchHistoryService? searchHistoryService = null,
         ISearchHistoryService? runHistoryService = null,
         IUpdateService? updateService = null,
         IHolidayLookupService? holidayLookupService = null,
         INepaliDateAdapter? adapter = null,
         IShortcutsService? shortcutsService = null,
-        IAppStateService? appStateService = null)
+        IAppStateService? appStateService = null,
+        IScriptService? scriptService = null)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
@@ -547,9 +547,9 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         Network = new NetworkToolsViewModel(localizationService);
         Banking = new BankingViewModel(localizationService);
         TextTools = new TextToolsViewModel(localizationService);
-        RunBox = new RunBoxViewModel(runHistoryService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly());
+        RunBox = new RunBoxViewModel(runHistoryService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly(), scriptService);
         About = new AboutViewModel(localizationService);
-        More = new MoreViewModel(localizationService, notesService, reminderService, documentService, searchHistoryService, adapter: adapter);
+        More = new MoreViewModel(localizationService, notesService, reminderService, documentService, adapter: adapter);
 
         // When settings are applied from the Settings tab, sync live state
         Settings.SettingsApplied += (_, _) => SyncFromSettings();

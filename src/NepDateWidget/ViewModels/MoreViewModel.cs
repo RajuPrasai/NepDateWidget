@@ -15,7 +15,6 @@ public sealed class MoreViewModel : ViewModelBase
     private readonly INotesService? _notesService;
     private readonly IReminderService? _reminderService;
     private readonly IDocumentService? _documentService;
-    private readonly ISearchHistoryService? _searchHistory;
 
     // ── Mode toggle (Documents | Notes | Reminders) ──────────────────────────
 
@@ -289,6 +288,23 @@ public sealed class MoreViewModel : ViewModelBase
     public bool IsReminderSearchActive    => !string.IsNullOrWhiteSpace(_reminderSearchText);
     public bool ReminderSearchClearVisible => IsReminderSearchActive;
 
+    private bool _showCompletedReminders;
+    public bool ShowCompletedReminders
+    {
+        get => _showCompletedReminders;
+        private set
+        {
+            if (SetProperty(ref _showCompletedReminders, value))
+            {
+                OnPropertyChanged(nameof(ToggleCompletedLabel));
+                UpdateFilteredReminders();
+            }
+        }
+    }
+    public int  CompletedRemindersCount => Reminders.Count(r => r.IsCompleted);
+    public bool HasCompletedReminders   => CompletedRemindersCount > 0;
+    public string ToggleCompletedLabel  => _showCompletedReminders ? HideCompletedLabel : ShowCompletedLabel;
+
     private IReadOnlyList<ReminderItemViewModel> _filteredReminders = Array.Empty<ReminderItemViewModel>();
     public  IReadOnlyList<ReminderItemViewModel> FilteredReminders => _filteredReminders;
     public bool HasFilteredReminders  => _filteredReminders.Count > 0;
@@ -454,6 +470,8 @@ public sealed class MoreViewModel : ViewModelBase
     public string AddReminderLabel          { get; private set; } = string.Empty;
     public string ReminderSearchHintLabel   { get; private set; } = string.Empty;
     public string NoReminderResultsLabel    { get; private set; } = string.Empty;
+    public string ShowCompletedLabel        { get; private set; } = string.Empty;
+    public string HideCompletedLabel        { get; private set; } = string.Empty;
     public string ReminderFieldTitleLabel   { get; private set; } = string.Empty;
     public string ReminderFieldDateLabel    { get; private set; } = string.Empty;
     public string ReminderFieldTimeLabel    { get; private set; } = string.Empty;
@@ -511,7 +529,8 @@ public sealed class MoreViewModel : ViewModelBase
     public ICommand DeleteReminderCommand    { get; }
     public ICommand EditReminderCommand      { get; }
     public ICommand AddNewReminderCommand    { get; }
-    public ICommand ClearReminderSearchCommand { get; }
+    public ICommand ClearReminderSearchCommand  { get; }
+    public ICommand ToggleShowCompletedCommand   { get; }
     public ICommand SaveReminderFormCommand  { get; }
     public ICommand CancelReminderFormCommand{ get; }
     public ICommand SetReminderAmCommand { get; }
@@ -549,14 +568,12 @@ public sealed class MoreViewModel : ViewModelBase
         INotesService? notesService = null,
         IReminderService? reminderService = null,
         IDocumentService? documentService = null,
-        ISearchHistoryService? searchHistoryService = null,
         INepaliDateAdapter? adapter = null)
     {
         _loc            = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _notesService   = notesService;
         _reminderService = reminderService;
         _documentService = documentService;
-        _searchHistory  = searchHistoryService;
         _adapter        = adapter;
 
         DeleteNoteCommand        = new RelayCommand<string>(DoDeleteNote);
@@ -570,7 +587,8 @@ public sealed class MoreViewModel : ViewModelBase
         DeleteReminderCommand    = new RelayCommand<string>(DoDeleteReminder);
         EditReminderCommand      = new RelayCommand<string>(DoShowEditReminderForm);
         AddNewReminderCommand    = new RelayCommand(DoShowAddReminderForm);
-        ClearReminderSearchCommand = new RelayCommand(() => ReminderSearchText = string.Empty);
+        ClearReminderSearchCommand       = new RelayCommand(() => ReminderSearchText = string.Empty);
+        ToggleShowCompletedCommand        = new RelayCommand(() => ShowCompletedReminders = !_showCompletedReminders);
         SaveReminderFormCommand  = new RelayCommand(DoSaveReminderForm);
         CancelReminderFormCommand= new RelayCommand(DoCancelReminderForm);
         SetReminderAmCommand      = new RelayCommand(() => ReminderFormIsAm = true);
@@ -711,6 +729,9 @@ public sealed class MoreViewModel : ViewModelBase
         AddReminderLabel          = _loc.Get("reminders.add");
         ReminderSearchHintLabel   = _loc.Get("reminders.search_hint");
         NoReminderResultsLabel    = _loc.Get("reminders.no_results");
+        ShowCompletedLabel        = _loc.Get("reminders.show_completed");
+        HideCompletedLabel        = _loc.Get("reminders.hide_completed");
+        OnPropertyChanged(nameof(ToggleCompletedLabel));
         ReminderFieldTitleLabel   = _loc.Get("reminder.title");
         ReminderFieldDateLabel    = _loc.Get("reminder.date");
         ReminderFieldTimeLabel    = _loc.Get("reminder.time");
@@ -927,15 +948,20 @@ public sealed class MoreViewModel : ViewModelBase
             Reminders.Add(new ReminderItemViewModel(r));
         OnPropertyChanged(nameof(HasReminders));
         OnPropertyChanged(nameof(ShowReminderEmpty));
+        OnPropertyChanged(nameof(CompletedRemindersCount));
+        OnPropertyChanged(nameof(HasCompletedReminders));
         UpdateFilteredReminders();
     }
 
     private void UpdateFilteredReminders()
     {
         var q = _reminderSearchText.Trim();
+        var source = _showCompletedReminders
+            ? Reminders
+            : (IEnumerable<ReminderItemViewModel>)Reminders.Where(r => !r.IsCompleted);
         _filteredReminders = string.IsNullOrEmpty(q)
-            ? Reminders.ToList()
-            : Reminders.Where(r =>
+            ? source.ToList()
+            : source.Where(r =>
                 r.Title.Contains(q, StringComparison.OrdinalIgnoreCase) ||
                 r.Notes.Contains(q, StringComparison.OrdinalIgnoreCase) ||
                 r.Date.Contains(q, StringComparison.OrdinalIgnoreCase))
@@ -943,6 +969,8 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(FilteredReminders));
         OnPropertyChanged(nameof(HasFilteredReminders));
         OnPropertyChanged(nameof(ShowReminderNoResults));
+        OnPropertyChanged(nameof(CompletedRemindersCount));
+        OnPropertyChanged(nameof(HasCompletedReminders));
     }
 
     // ── Reminder form operations ──────────────────────────────────────────────
@@ -1189,10 +1217,7 @@ public sealed class MoreViewModel : ViewModelBase
     private void UpdateSearchSuggestions()
     {
         DocSearchSuggestions.Clear();
-        if (_searchHistory is null) return;
-        foreach (var s in _searchHistory.GetMatching(DocSearchText, max: 8))
-            DocSearchSuggestions.Add(s);
-        IsDocSuggestionsOpen = _isSearchBoxFocused && DocSearchSuggestions.Count > 0;
+        IsDocSuggestionsOpen = false;
     }
 
     private void DoDocSearchGotFocus()
@@ -1213,13 +1238,10 @@ public sealed class MoreViewModel : ViewModelBase
         if (term is null) return;
         DocSearchText = term;
         IsDocSuggestionsOpen = false;
-        _searchHistory?.Record(term);
     }
 
     private void CommitDocSearch()
     {
-        if (!string.IsNullOrWhiteSpace(DocSearchText))
-            _searchHistory?.Record(DocSearchText.Trim());
     }
 
     private void DoClearDocSearch()

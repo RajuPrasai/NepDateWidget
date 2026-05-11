@@ -1541,7 +1541,7 @@
                                 Margin="8,0,0,0" />
                     </Grid>
 
-                    <!-- doc-search-history.json -->
+                    <!-- run-history.json -->
                     <Grid Margin="0,0,0,4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -1549,7 +1549,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Path Grid.Column="0"
-                              Data="{StaticResource IconNote}"
+                              Data="{StaticResource IconClock}"
                               Stroke="{DynamicResource WidgetForegroundBrush}"
                               StrokeThickness="1.2"
                               StrokeStartLineCap="Round"
@@ -1561,10 +1561,10 @@
                               VerticalAlignment="Center"
                               Margin="0,0,9,0" />
                         <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock Text="doc-search-history.json"
+                            <TextBlock Text="run-history.json"
                                        FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
                                        Foreground="{DynamicResource WidgetForegroundBrush}" />
-                            <TextBlock Text="Document search history"
+                            <TextBlock Text="RunBox command history"
                                        FontSize="10.5"
                                        Foreground="{DynamicResource WidgetForegroundBrush}"
                                        Opacity="0.45"
@@ -1572,7 +1572,115 @@
                         </StackPanel>
                         <Button Grid.Column="2"
                                 Content="Open"
-                                Command="{Binding OpenDocSearchHistoryFileCommand}"
+                                Command="{Binding OpenRunHistoryFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
+                    <!-- scripts.json -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconScript}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="scripts.json"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="User-defined script commands for RunBox"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenScriptsFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
+                    <!-- runtime.json -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconSettings}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="runtime.json"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="Internal app state (last update check, notifications)"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenRuntimeFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
+                    <!-- nepdate.log -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconText}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="localization.json"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="UI localization strings (en / ne)"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenLocalizationFileCommand}"
                                 Style="{StaticResource OptionButton}"
                                 Margin="8,0,0,0" />
                     </Grid>

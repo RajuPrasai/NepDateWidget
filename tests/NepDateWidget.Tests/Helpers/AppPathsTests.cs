@@ -30,26 +30,26 @@ public class AppPathsTests
     }
 
     [Fact]
-    public void SettingsPath_IsUnderDataDirectory_AndNamedSettingsJson()
+    public void SettingsPath_IsUnderConfigDirectory_AndNamedSettingsJson()
     {
         Assert.Equal(
-            Path.Combine(AppPaths.DataDirectory, "settings.json"),
+            Path.Combine(AppPaths.DataDirectory, "config", "settings.json"),
             AppPaths.SettingsPath);
     }
 
     [Fact]
-    public void RemindersPath_IsUnderDataDirectory_AndNamedRemindersJson()
+    public void RemindersPath_IsUnderDataSubdir_AndNamedRemindersJson()
     {
         Assert.Equal(
-            Path.Combine(AppPaths.DataDirectory, "reminders.json"),
+            Path.Combine(AppPaths.DataDirectory, "data", "reminders.json"),
             AppPaths.RemindersPath);
     }
 
     [Fact]
-    public void NotesPath_IsUnderDataDirectory_AndNamedNotesJson()
+    public void NotesPath_IsUnderDataSubdir_AndNamedNotesJson()
     {
         Assert.Equal(
-            Path.Combine(AppPaths.DataDirectory, "notes.json"),
+            Path.Combine(AppPaths.DataDirectory, "data", "notes.json"),
             AppPaths.NotesPath);
     }
 
@@ -90,5 +90,53 @@ public class AppPathsTests
             AppPaths.MigrateLegacyData();
         });
         Assert.Null(ex);
+    }
+
+    [Fact]
+    public void ShortcutsPath_IsUnderConfigDirectory_AndNamedShortcutsJson()
+    {
+        Assert.Equal(
+            Path.Combine(AppPaths.DataDirectory, "config", "shortcuts.json"),
+            AppPaths.ShortcutsPath);
+    }
+
+    [Fact]
+    public void DocumentsPath_IsUnderDataSubdir_AndNamedDocumentsJson()
+    {
+        Assert.Equal(
+            Path.Combine(AppPaths.DataDirectory, "data", "documents.json"),
+            AppPaths.DocumentsPath);
+    }
+
+    [Fact]
+    public void RunHistoryPath_IsUnderDataSubdir_AndNamedRunHistoryJson()
+    {
+        Assert.Equal(
+            Path.Combine(AppPaths.DataDirectory, "data", "run-history.json"),
+            AppPaths.RunHistoryPath);
+    }
+
+    [Fact]
+    public void ScriptsPath_IsUnderConfigDirectory_AndNamedScriptsJson()
+    {
+        Assert.Equal(
+            Path.Combine(AppPaths.DataDirectory, "config", "scripts.json"),
+            AppPaths.ScriptsPath);
+    }
+
+    [Fact]
+    public void AppStatePath_IsUnderDataDirectory_AndNamedRuntimeJson()
+    {
+        Assert.Equal(
+            Path.Combine(AppPaths.DataDirectory, "runtime.json"),
+            AppPaths.AppStatePath);
+    }
+
+    [Fact]
+    public void LocalizationPath_IsUnderConfigDirectory_AndNamedLocalizationJson()
+    {
+        Assert.Equal(
+            Path.Combine(AppPaths.DataDirectory, "config", "localization.json"),
+            AppPaths.LocalizationPath);
     }
 }

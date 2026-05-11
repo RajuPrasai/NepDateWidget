@@ -332,4 +332,35 @@ public class SettingsServiceTests : IDisposable
 
         Assert.Equal(SettingsValidator.CurrentSchemaVersion, svc.Current.SchemaVersion);
     }
+
+    // ── First-launch behavior ─────────────────────────────────────────────────
+
+    [Fact]
+    public void Load_FileAbsent_SetsIsFirstLaunch()
+    {
+        var svc = ServiceAt(TempPath());
+        svc.Load();
+        Assert.True(svc.IsFirstLaunch);
+    }
+
+    [Fact]
+    public void Load_FileAbsent_CreatesFileOnDisk()
+    {
+        var path = TempPath();
+        var svc  = ServiceAt(path);
+        svc.Load();
+        Assert.True(File.Exists(path));
+    }
+
+    [Fact]
+    public void Load_FilePresent_IsFirstLaunchFalse()
+    {
+        var path = TempPath();
+        var svc  = ServiceAt(path);
+        svc.Load(); // creates the file (first launch)
+
+        var svc2 = ServiceAt(path);
+        svc2.Load(); // file exists now
+        Assert.False(svc2.IsFirstLaunch);
+    }
 }

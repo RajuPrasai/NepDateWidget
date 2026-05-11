@@ -20,4 +20,16 @@ public interface ILocalizationService
     /// Changes the active language. All subsequent Get() calls reflect the new language.
     /// </summary>
     void SetLanguage(string languageCode);
+
+    /// <summary>
+    /// Loads strings from disk. Seeds the file from the embedded resource if absent.
+    /// Sets up hot-reload so external edits to localization.json are picked up automatically.
+    /// </summary>
+    void Load();
+
+    /// <summary>
+    /// Raised when localization.json is reloaded from disk (external edit or first load).
+    /// Subscribers should refresh all localized text.
+    /// </summary>
+    event EventHandler? LocalizationChanged;
 }

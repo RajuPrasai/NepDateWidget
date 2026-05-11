@@ -13,6 +13,7 @@ public partial class App : Application
 {
     private static Mutex? _instanceMutex;
     private ShortcutsService? _shortcutsService;
+    private ScriptService?    _scriptService;
     private AppStateService? _appStateService;
     private NotesService? _notesService;
     private ReminderService? _reminderService;
@@ -127,7 +128,8 @@ public partial class App : Application
         var nepDateAdapter = new NepaliDateAdapter();
         var calendarService = new CalendarService(nepDateAdapter);
         var conversionService = new ConversionService(nepDateAdapter);
-        var localizationService = new LocalizationService();
+        var localizationService = new LocalizationService(Helpers.AppPaths.LocalizationPath);
+        localizationService.Load();
         var themeService = new ThemeService();
         var autoStartService = new AutoStartService();
         // After install / move, the registry value may still point at the old EXE path.
@@ -161,9 +163,7 @@ public partial class App : Application
         // reach it quickly from any file-upload dialog.
         PinDocumentsFolderToQuickAccess();
 
-        // Document search history and run history
-        var searchHistoryService = new SearchHistoryService(Helpers.AppPaths.DocSearchHistoryPath);
-        searchHistoryService.Load();
+        // Run box command history
         var runHistoryService = new SearchHistoryService(Helpers.AppPaths.RunHistoryPath, maxEntries: 500, defaultResourceName: "NepDateWidget.Resources.run-history.default.json");
         runHistoryService.Load();
 
@@ -172,7 +172,10 @@ public partial class App : Application
         _shortcutsService = new ShortcutsService(Helpers.AppPaths.ShortcutsPath);
         _shortcutsService.Load();
 
-        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, searchHistoryService: searchHistoryService, runHistoryService: runHistoryService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!);
+        _scriptService = new ScriptService(Helpers.AppPaths.ScriptsPath);
+        _scriptService.Load();
+
+        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, runHistoryService: runHistoryService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!, scriptService: _scriptService);
         var mainWindow = new MainWindow(mainViewModel, settingsService, _appStateService!);
         mainWindow.SetupReminders(_reminderService, localizationService, nepDateAdapter, _notesService);
 
@@ -257,6 +260,7 @@ public partial class App : Application
     {
         Log.Info("App closed");
         _shortcutsService?.Dispose();
+        _scriptService?.Dispose();
         _notesService?.Dispose();
         _reminderService?.Dispose();
         Log.Shutdown();

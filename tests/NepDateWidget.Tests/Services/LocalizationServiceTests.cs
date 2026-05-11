@@ -233,5 +233,110 @@ public class LocalizationServiceTests
         Assert.NotEmpty(Create("en").Get("tab.network"));
         Assert.NotEmpty(Create("ne").Get("tab.network"));
     }
+
+    // ── Disk-based path (Load + seed) ─────────────────────────────────────────
+
+    [Fact]
+    public void Load_FileAbsent_SeedsFileFromEmbedded()
+    {
+        var dir  = Path.Combine(Path.GetTempPath(), $"NepDateWidget_LocTest_{Guid.NewGuid():N}");
+        var path = Path.Combine(dir, "localization.json");
+        try
+        {
+            using var svc = new LocalizationService(path);
+            svc.Load();
+            Assert.True(File.Exists(path), "localization.json should be created on first Load()");
+            Assert.True(new FileInfo(path).Length > 0, "seeded file must not be empty");
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch { }
+        }
+    }
+
+    [Fact]
+    public void Load_FileAbsent_ThenGetKey_ReturnsEnglishText()
+    {
+        var dir  = Path.Combine(Path.GetTempPath(), $"NepDateWidget_LocTest_{Guid.NewGuid():N}");
+        var path = Path.Combine(dir, "localization.json");
+        try
+        {
+            using var svc = new LocalizationService(path);
+            svc.Load();
+            Assert.Equal("Exit", svc.Get("app.exit"));
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch { }
+        }
+    }
+
+    [Fact]
+    public void Load_FilePresent_ReadsFromDisk()
+    {
+        var dir  = Path.Combine(Path.GetTempPath(), $"NepDateWidget_LocTest_{Guid.NewGuid():N}");
+        var path = Path.Combine(dir, "localization.json");
+        try
+        {
+            Directory.CreateDirectory(dir);
+            File.WriteAllText(path, """{"custom.key":{"en":"hello","ne":"नमस्ते"}}""");
+            using var svc = new LocalizationService(path);
+            svc.Load();
+            Assert.Equal("hello", svc.Get("custom.key"));
+            // Embedded fallback is not merged — disk file is the sole source.
+            Assert.Equal("[app.exit]", svc.Get("app.exit"));
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch { }
+        }
+    }
+
+    [Fact]
+    public void Load_EmptyPath_EmbeddedConstructor_IsNoOp()
+    {
+        // Calling Load() on the embedded-only (no-arg) constructor must not throw
+        // or log warnings about missing paths — it is a documented no-op.
+        using var svc = new LocalizationService();
+        svc.Load(); // must not throw
+        Assert.Equal("Exit", svc.Get("app.exit")); // data still intact
+    }
+
+    [Fact]
+    public void Load_CorruptedDiskFile_DoesNotThrow_FallsBackToEmpty()
+    {
+        var dir  = Path.Combine(Path.GetTempPath(), $"NepDateWidget_LocTest_{Guid.NewGuid():N}");
+        var path = Path.Combine(dir, "localization.json");
+        try
+        {
+            Directory.CreateDirectory(dir);
+            File.WriteAllText(path, "NOT VALID JSON {{{{");
+            using var svc = new LocalizationService(path);
+            var ex = Record.Exception(() => svc.Load());
+            Assert.Null(ex);
+            // keys fall back to bracket notation when _strings is empty
+            Assert.Equal("[app.exit]", svc.Get("app.exit"));
+        }
+        finally
+        {
+            try { Directory.Delete(dir, true); } catch { }
+        }
+    }
+
+    [Fact]
+    public void SetLanguage_EmptyString_DoesNotChangeLanguage()
+    {
+        var svc = Create("en");
+        svc.SetLanguage("");
+        Assert.Equal("en", svc.CurrentLanguage);
+    }
+
+    [Fact]
+    public void SetLanguage_WhitespaceOnly_DoesNotChangeLanguage()
+    {
+        var svc = Create("ne");
+        svc.SetLanguage("   ");
+        Assert.Equal("ne", svc.CurrentLanguage);
+    }
 }
 

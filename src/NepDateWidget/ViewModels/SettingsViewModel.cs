@@ -495,7 +495,10 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     public ICommand OpenRemindersFileCommand         { get; }
     public ICommand OpenNotesFileCommand             { get; }
     public ICommand OpenDocumentsFileCommand         { get; }
-    public ICommand OpenDocSearchHistoryFileCommand  { get; }
+    public ICommand OpenRunHistoryFileCommand        { get; }
+    public ICommand OpenScriptsFileCommand           { get; }
+    public ICommand OpenRuntimeFileCommand           { get; }
+    public ICommand OpenLocalizationFileCommand      { get; }
     public ICommand OpenLogFileCommand               { get; }
     public ICommand ExportBackupCommand              { get; }
     public ICommand ImportBackupCommand              { get; }
@@ -616,7 +619,10 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         OpenRemindersFileCommand        = new RelayCommand(() => OpenFile(AppPaths.RemindersPath));
         OpenNotesFileCommand            = new RelayCommand(() => OpenFile(AppPaths.NotesPath));
         OpenDocumentsFileCommand        = new RelayCommand(() => OpenFile(AppPaths.DocumentsPath));
-        OpenDocSearchHistoryFileCommand = new RelayCommand(() => OpenFile(AppPaths.DocSearchHistoryPath));
+        OpenRunHistoryFileCommand       = new RelayCommand(() => OpenFile(AppPaths.RunHistoryPath));
+        OpenScriptsFileCommand          = new RelayCommand(() => OpenFile(AppPaths.ScriptsPath));
+        OpenRuntimeFileCommand          = new RelayCommand(() => OpenFile(AppPaths.AppStatePath));
+        OpenLocalizationFileCommand     = new RelayCommand(() => OpenFile(AppPaths.LocalizationPath));
         OpenLogFileCommand              = new RelayCommand(() => OpenFile(AppPaths.LogPath));
         ExportBackupCommand             = new RelayCommand(ExportBackup);
         ImportBackupCommand             = new RelayCommand(ImportBackup);
@@ -905,26 +911,38 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         }
     }
 
-    private static readonly HashSet<string> AllowedBackupFileNames = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> AllowedBackupEntries = new(StringComparer.OrdinalIgnoreCase)
     {
-        "settings.json", "reminders.json", "notes.json", "shortcuts.json",
-        "documents.json", "run-history.json", "doc-search-history.json", "runtime.json"
+        "config/settings.json",
+        "config/localization.json",
+        "config/shortcuts.json",
+        "config/scripts.json",
+        "data/notes.json",
+        "data/reminders.json",
+        "data/documents.json",
+        "data/run-history.json",
+        "runtime.json",
+        "nepdate.log"
     };
 
     /// <summary>
-    /// Validates a ZIP entry for import: name must be on the allowlist and the resolved
-    /// destination path must remain inside <paramref name="dataDirectory"/> (path-traversal
-    /// guard). Returns the full destination path when safe, or <c>null</c> when the entry
+    /// Validates a ZIP entry for import: the entry’s relative path must be on the
+    /// allowlist and the resolved destination must remain inside
+    /// <paramref name="dataDirectory"/> (path-traversal guard).
+    /// Returns the full destination path when safe, or <c>null</c> when the entry
     /// should be skipped.
     /// </summary>
     internal static string? ResolveImportEntryPath(string entryName, string dataDirectory)
     {
         if (string.IsNullOrEmpty(entryName)) return null;
-        if (!AllowedBackupFileNames.Contains(entryName)) return null;
-        var dest = Path.GetFullPath(Path.Combine(dataDirectory, entryName));
-        if (!dest.StartsWith(Path.GetFullPath(dataDirectory) + Path.DirectorySeparatorChar,
-                             StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(dest, Path.GetFullPath(dataDirectory), StringComparison.OrdinalIgnoreCase))
+        // Normalize to forward-slash form for allowlist lookup, then to OS separator for path ops.
+        var forwardSlash = entryName.Replace('\\', '/');
+        if (!AllowedBackupEntries.Contains(forwardSlash)) return null;
+        var relative = forwardSlash.Replace('/', Path.DirectorySeparatorChar);
+        var dest = Path.GetFullPath(Path.Combine(dataDirectory, relative));
+        var root = Path.GetFullPath(dataDirectory);
+        if (!dest.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(dest, root, StringComparison.OrdinalIgnoreCase))
             return null;
         return dest;
     }
@@ -949,10 +967,11 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
             [
                 AppPaths.SettingsPath, AppPaths.RemindersPath, AppPaths.NotesPath,
                 AppPaths.ShortcutsPath, AppPaths.DocumentsPath, AppPaths.RunHistoryPath,
-                AppPaths.DocSearchHistoryPath, AppPaths.AppStatePath
+                AppPaths.AppStatePath, AppPaths.ScriptsPath, AppPaths.LocalizationPath, AppPaths.LogPath
             ];
             foreach (var p in paths)
-                if (File.Exists(p)) archive.CreateEntryFromFile(p, Path.GetFileName(p));
+                if (File.Exists(p))
+                    archive.CreateEntryFromFile(p, Path.GetRelativePath(AppPaths.DataDirectory, p).Replace('\\', '/'));
             ShowDataFileMessage(_loc.Get("settings.data_export_ok"));
             Log.Action($"backup exported: {target}");
         }
@@ -983,10 +1002,11 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
                 // Skip directory entries
                 if (string.IsNullOrEmpty(entry.Name)) continue;
 
-                // Whitelist + path-traversal guard (centralised in ResolveImportEntryPath)
-                var dest = ResolveImportEntryPath(entry.Name, dataDir);
+                // Allowlist + path-traversal guard (entry.FullName is the relative path in the ZIP)
+                var dest = ResolveImportEntryPath(entry.FullName, dataDir);
                 if (dest is null) continue;
 
+                Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
                 entry.ExtractToFile(dest, overwrite: true);
             }
             ShowDataFileMessage(_loc.Get("settings.data_import_ok"));
@@ -1001,11 +1021,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
 
     private void OpenFile(string path)
     {
-        if (!File.Exists(path))
-        {
-            ShowDataFileMessage("File has not been created yet.");
-            return;
-        }
+        EnsureDataFile(path);
         try
         {
             Process.Start(new ProcessStartInfo { FileName = path, UseShellExecute = true });
@@ -1014,6 +1030,33 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         {
             Log.Warn($"settings: failed to open '{path}': {ex.Message}");
         }
+    }
+
+    // Creates a data file with minimal valid content if it does not exist.
+    // Called before opening a file so the editor always has something to show.
+    // internal for unit tests
+    internal static void EnsureDataFile(string path)
+    {
+        if (File.Exists(path)) return;
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            var name = Path.GetFileName(path);
+            string content;
+            // JSON-object files (“{}”): notes.json is a string dict, settings.json and
+            // runtime.json are plain objects, localization.json is a dict-of-dicts.
+            if (name.Equals("notes.json",        StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("runtime.json",      StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("settings.json",     StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("localization.json", StringComparison.OrdinalIgnoreCase))
+                content = "{}";
+            else if (name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                content = "[]";
+            else
+                content = string.Empty;
+            File.WriteAllText(path, content, System.Text.Encoding.UTF8);
+        }
+        catch { /* best-effort — the editor will show an error if the file is still missing */ }
     }
 
     private void ShowDataFileMessage(string message)

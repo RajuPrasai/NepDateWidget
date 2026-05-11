@@ -611,6 +611,15 @@
                         </Button>
                     </Grid>
 
+                    <!-- Toggle show/hide completed reminders -->
+                    <Button HorizontalAlignment="Right"
+                            Margin="0,0,0,10"
+                            Command="{Binding ToggleShowCompletedCommand}"
+                            Style="{StaticResource MItemBtnSecondary}"
+                            Visibility="{Binding HasCompletedReminders, Converter={StaticResource BoolToVis}}">
+                        <TextBlock Text="{Binding ToggleCompletedLabel}" FontSize="11" />
+                    </Button>
+
                     <!-- Add / Edit inline form -->
                     <Border Visibility="{Binding IsReminderFormOpen, Converter={StaticResource BoolToVis}}"
                             Background="{DynamicResource WidgetInputBrush}"

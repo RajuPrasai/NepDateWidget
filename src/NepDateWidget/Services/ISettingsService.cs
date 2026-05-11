@@ -31,4 +31,10 @@ public interface ISettingsService
     /// Resets all settings to factory defaults and saves immediately.
     /// </summary>
     void ResetToDefaults();
+
+    /// <summary>
+    /// Raised when settings.json is reloaded from disk due to an external edit.
+    /// Subscribers should re-read <see cref="Current"/> and refresh any derived state.
+    /// </summary>
+    event EventHandler? SettingsChanged;
 }

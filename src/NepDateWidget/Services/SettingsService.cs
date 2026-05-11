@@ -3,6 +3,7 @@ using NepDateWidget.Models;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 
 namespace NepDateWidget.Services;
 
@@ -16,7 +17,7 @@ namespace NepDateWidget.Services;
 ///   • Schema version mismatch triggers migration, not failure.
 ///   • All field-level validation is delegated to <see cref="SettingsValidator"/>.
 /// </summary>
-public sealed class SettingsService : ISettingsService
+public sealed class SettingsService : ISettingsService, IDisposable
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
@@ -28,8 +29,13 @@ public sealed class SettingsService : ISettingsService
     };
 
     private readonly string _settingsPath;
+    private readonly SynchronizationContext? _syncContext;
+    private DebouncedFileReloader? _reloader;
+    private long _lastSelfWriteTicks;
     private WidgetSettings _current = new();
     private bool _isFirstLaunch;
+
+    public event EventHandler? SettingsChanged;
 
     // ── Construction ─────────────────────────────────────────────────────────
 
@@ -48,6 +54,7 @@ public sealed class SettingsService : ISettingsService
             throw new ArgumentException("Settings file path must not be empty.", nameof(settingsFilePath));
 
         _settingsPath = settingsFilePath;
+        _syncContext = SynchronizationContext.Current;
     }
 
     // ── ISettingsService ──────────────────────────────────────────────────────
@@ -65,33 +72,40 @@ public sealed class SettingsService : ISettingsService
         {
             _isFirstLaunch = true;
             _current = CreateDefaults();
-            return;
+            try { Save(); } catch { /* best-effort: startup proceeds with in-memory defaults */ }
         }
-
-        try
+        else
         {
-            var json = File.ReadAllText(_settingsPath);
-            var loaded = JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
-
-            if (loaded is null)
+            try
             {
-                _current = CreateDefaults();
-                return;
-            }
+                var json = File.ReadAllText(_settingsPath);
+                var loaded = JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
 
-            loaded = Migrate(loaded, json);
-            SettingsValidator.Validate(loaded);
-            _current = loaded;
+                if (loaded is null)
+                {
+                    _current = CreateDefaults();
+                }
+                else
+                {
+                    loaded = Migrate(loaded, json);
+                    SettingsValidator.Validate(loaded);
+                    _current = loaded;
+                }
+            }
+            catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+            {
+                Helpers.Log.Warn($"Settings load failed: {ex.GetType().Name}: {ex.Message}. Reverting to defaults.");
+                TryBackupCorrupted();
+                _current = CreateDefaults();
+            }
         }
-        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+
+        _reloader ??= new DebouncedFileReloader(_settingsPath, debounceMs: 500, onReload: () =>
         {
-            // Corrupted or unreadable file. Preserve the bad file for support
-            // diagnostics, log the cause, and revert to defaults so the app
-            // still starts. The next successful Save() will replace the file.
-            Helpers.Log.Warn($"Settings load failed: {ex.GetType().Name}: {ex.Message}. Reverting to defaults.");
-            TryBackupCorrupted();
-            _current = CreateDefaults();
-        }
+            var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));
+            if (elapsed.TotalSeconds < 1.0) return;
+            ReloadFromDisk();
+        });
     }
 
     private void TryBackupCorrupted()
@@ -120,6 +134,7 @@ public sealed class SettingsService : ISettingsService
     /// </summary>
     public void Save()
     {
+        Interlocked.Exchange(ref _lastSelfWriteTicks, DateTime.UtcNow.Ticks);
         try
         {
             SettingsValidator.Validate(_current);
@@ -156,6 +171,32 @@ public sealed class SettingsService : ISettingsService
     {
         _current = CreateDefaults();
         Save();
+    }
+
+    public void Dispose() => _reloader?.Dispose();
+
+    // ── Hot-reload ────────────────────────────────────────────────────────────
+
+    private void ReloadFromDisk()
+    {
+        if (!File.Exists(_settingsPath)) return;
+        try
+        {
+            var json = File.ReadAllText(_settingsPath);
+            var loaded = JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
+            if (loaded is null) return;
+            loaded = Migrate(loaded, json);
+            SettingsValidator.Validate(loaded);
+            _current = loaded;
+            if (_syncContext is not null)
+                _syncContext.Post(_ => SettingsChanged?.Invoke(this, EventArgs.Empty), null);
+            else
+                SettingsChanged?.Invoke(this, EventArgs.Empty);
+        }
+        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+        {
+            Helpers.Log.Warn($"Settings hot-reload failed: {ex.GetType().Name}: {ex.Message}. Keeping current settings.");
+        }
     }
 
     // ── Migration ─────────────────────────────────────────────────────────────
