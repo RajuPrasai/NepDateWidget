@@ -802,6 +802,7 @@ public sealed class NetworkToolsViewModel : ViewModelBase
 
     public ICommand DnsCommand { get; }
     public ICommand CopyDnsCommand { get; }
+    public ICommand OpenHelpCommand { get; }
 
     private async Task RunDnsAsync()
     {
@@ -984,6 +985,14 @@ public sealed class NetworkToolsViewModel : ViewModelBase
         CopyDnsCommand = new RelayCommand(
             () => System.Windows.Clipboard.SetText(_dnsResult),
             () => !string.IsNullOrEmpty(_dnsResult));
+        OpenHelpCommand = new RelayCommand<string>(key =>
+        {
+            var shell = System.Windows.Application.Current.Windows
+                .OfType<NepDateWidget.Views.ExpandedShellWindow>()
+                .FirstOrDefault(w => w.IsVisible)
+                ?? (System.Windows.Window)System.Windows.Application.Current.MainWindow!;
+            NepDateWidget.Views.HelpPopup.ShowFor(key!, _loc, shell);
+        });
 
         RefreshLabels();
     }

@@ -83,10 +83,12 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
             SeedFile();
 
         LoadFromDisk();
+        MergeMissingFromEmbedded();
 
         _reloader ??= new DebouncedFileReloader(_filePath, debounceMs: 500, onReload: () =>
         {
             LoadFromDisk();
+            MergeMissingFromEmbedded();
             if (_syncContext is not null)
                 _syncContext.Post(_ => LocalizationChanged?.Invoke(this, EventArgs.Empty), null);
             else
@@ -130,6 +132,32 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
         catch (Exception ex)
         {
             Log.Error("LocalizationService: failed to load localization.json", ex);
+        }
+    }
+
+    /// <summary>
+    /// Adds any keys present in the embedded strings.json but missing from the loaded
+    /// in-memory dictionary. Ensures new keys introduced in app updates are always
+    /// available without requiring the user to delete their localization.json.
+    /// Does not write back to disk — purely an in-memory merge.
+    /// </summary>
+    private void MergeMissingFromEmbedded()
+    {
+        try
+        {
+            var json = ReadEmbeddedJson();
+            if (json is null) return;
+            var embedded = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json, SerializerOptions);
+            if (embedded is null) return;
+            foreach (var kvp in embedded)
+            {
+                if (!_strings.ContainsKey(kvp.Key))
+                    _strings[kvp.Key] = kvp.Value;
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error("LocalizationService: failed to merge embedded strings", ex);
         }
     }
 

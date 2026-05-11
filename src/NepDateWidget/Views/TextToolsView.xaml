@@ -290,98 +290,130 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="2" Command="{Binding SetModeUnicodeCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeUnicode}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconUnicode}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding ModeUnicodeLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="1" Command="{Binding SetModeWordCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeWord}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconWordCount}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding ModeWordLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="0" Command="{Binding SetModePasswordCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModePassword}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconLock}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding ModePasswordLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Grid.Column="3" Command="{Binding SetModeScriptCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeScript}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconScript}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding ModeScriptLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+                <Grid Grid.Column="2">
+                    <Button Command="{Binding SetModeUnicodeCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeUnicode}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconUnicode}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeUnicodeLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeUnicode, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.text.unicode" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Button Command="{Binding SetModeWordCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeWord}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconWordCount}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeWordLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeWord, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.text.word" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="0">
+                    <Button Command="{Binding SetModePasswordCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModePassword}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconLock}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModePasswordLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModePassword, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.text.password" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="3">
+                    <Button Command="{Binding SetModeScriptCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeScript}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconScript}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeScriptLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeScript, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.text.script" />
+                    </Grid>
+                </Grid>
             </Grid>
         </Border>
 
@@ -389,8 +421,8 @@
         <Grid Grid.Row="1" Margin="8,8,8,0">
 
                 <!-- ── UNICODE CONVERTER MODE ──────────────────────────────── -->
-                <Border Visibility="{Binding IsModeUnicode, Converter={StaticResource BoolToVis}}"
-                        BorderBrush="{DynamicResource WidgetBorderBrush}"
+                <Grid Visibility="{Binding IsModeUnicode, Converter={StaticResource BoolToVis}}">
+                <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                         BorderThickness="0.7"
                         CornerRadius="8"
                         Padding="12,10">
@@ -567,10 +599,11 @@
                     </Grid>
                     </ScrollViewer>
                 </Border>
+                </Grid>
 
                 <!-- ── WORD TOOLS MODE ──────────────────────────────────────── -->
-                <Border Visibility="{Binding IsModeWord, Converter={StaticResource BoolToVis}}"
-                        BorderBrush="{DynamicResource WidgetBorderBrush}"
+                <Grid Visibility="{Binding IsModeWord, Converter={StaticResource BoolToVis}}">
+                <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                         BorderThickness="0.7"
                         CornerRadius="8"
                         Padding="12,10">
@@ -648,10 +681,11 @@
                                  PreviewMouseDown="OutputBox_PreviewMouseDown" />
                     </Grid>
                 </Border>
+                </Grid>
 
                 <!-- ── PASSWORD TOOLS MODE ──────────────────────────────────── -->
-                <Border Visibility="{Binding IsModePassword, Converter={StaticResource BoolToVis}}"
-                        BorderBrush="{DynamicResource WidgetBorderBrush}"
+                <Grid Visibility="{Binding IsModePassword, Converter={StaticResource BoolToVis}}">
+                <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                         BorderThickness="0.7"
                         CornerRadius="8"
                         Padding="12,10">
@@ -868,10 +902,11 @@
                     </StackPanel>
                     </ScrollViewer>
                 </Border>
+                </Grid>
 
                 <!-- ── SCRIPT CONVERTER MODE ────────────────────────────────────── -->
-                <Border Visibility="{Binding IsModeScript, Converter={StaticResource BoolToVis}}"
-                        BorderBrush="{DynamicResource WidgetBorderBrush}"
+                <Grid Visibility="{Binding IsModeScript, Converter={StaticResource BoolToVis}}">
+                <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                         BorderThickness="0.7"
                         CornerRadius="8"
                         Padding="12,10">
@@ -1045,6 +1080,7 @@
                         </Border>
                     </Grid>
                 </Border>
+                </Grid>
 
         </Grid>
 

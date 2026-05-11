@@ -281,4 +281,80 @@
         </Setter>
     </Style>
 
+    <!-- ══════════════════════════════════════════════════════════════════
+         Hover gate — applied directly to each badge wrapper Grid (direct child
+         of the column wrapper Grid). Handles both conditions in one place:
+           1. ShowHelpBadges: default Setter uses DynamicResource HelpBadgeVisibility.
+              DynamicResource in a Style Setter is reactive — updates when the resource changes.
+           2. Hover: DataTrigger collapses the Grid when the column wrapper (AncestorLevel=1)
+              is not hovered. Trigger overrides the Setter while active.
+         Collapsed rather than Opacity=0 so invisible badges never intercept clicks.
+         ════════════════════════════════════════════════════════════════ -->
+    <Style x:Key="HoverGateStyle" TargetType="Grid">
+        <Setter Property="Visibility" Value="{DynamicResource HelpBadgeVisibility}" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Grid, AncestorLevel=1}}" Value="False">
+                <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Info badge — 20×20 circle overlaid on active mode-selector pills.
+         Shows the cursive "i" glyph; visible only when ShowHelpBadges=True.
+         ════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="InfoPillBadgeStyle" TargetType="Button">
+        <Setter Property="Width"           Value="20" />
+        <Setter Property="Height"          Value="20" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor"          Value="Hand" />
+        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+        <Setter Property="ToolTip"         Value="Help" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="Root" Width="20" Height="20" Opacity="0.50"
+                          ClipToBounds="True">
+                        <Border CornerRadius="99"
+                                BorderBrush="{TemplateBinding Foreground}"
+                                BorderThickness="1"
+                                Background="Transparent" />
+                        <TextBlock Text="𝑖"
+                                   FontFamily="Monotype Corsiva,Palatino Linotype,Georgia"
+                                   FontSize="16"
+                                   LineHeight="16"
+                                   LineStackingStrategy="BlockLineHeight"
+                                   Foreground="{TemplateBinding Foreground}"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="0,2,0,0" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1.0" Duration="0:0:0.10" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Root"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.50" Duration="0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

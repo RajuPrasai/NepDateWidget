@@ -160,57 +160,72 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Command="{Binding SetModeInterestCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeInterest}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconCalculator}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding ModeInterestLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+                <Grid Grid.Column="0">
+                    <Button Command="{Binding SetModeInterestCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeInterest}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconCalculator}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeInterestLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeInterest, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.banking.interest" />
+                    </Grid>
+                </Grid>
 
-                <Button Grid.Column="1" Command="{Binding SetModeEmiCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeEmi}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconCalculator}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding ModeEmiLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+                <Grid Grid.Column="1">
+                    <Button Command="{Binding SetModeEmiCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeEmi}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconCalculator}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeEmiLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeEmi, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.banking.emi" />
+                    </Grid>
+                </Grid>
             </Grid>
         </Border>
 
-        <!-- Card border -->
         <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                 BorderThickness="0.7"
                 CornerRadius="8"

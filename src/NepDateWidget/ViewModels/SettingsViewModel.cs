@@ -112,17 +112,11 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     /// </summary>
     public static IReadOnlyList<string> FontFamilyNames { get; } = new[]
     {
-        // Windows system fonts (ClearType collection)
-        "Segoe UI Variable",
+        // Windows system fonts — guaranteed on Windows 10+
         "Segoe UI",
         "Calibri",
-        "Candara",
-        "Corbel",
-        "Cambria",
-        "Constantia",
         "Verdana",
-        "Tahoma",
-        // Embedded sans
+        // Embedded sans — static weights
         "Inter",
         "Source Sans 3",
         "IBM Plex Sans",
@@ -130,11 +124,18 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         "Noto Sans",
         // Embedded monospace
         "Cascadia Code",
-        "JetBrains Mono",
-        "Fira Code",
-        "Source Code Pro",
-        "IBM Plex Mono",
-        "Roboto Mono",
+        // Embedded sans — variable + display
+        "Poppins",
+        "Lato",
+        "Montserrat",
+        "Open Sans",
+        "Raleway",
+        "Nunito",
+        "Rubik",
+        "DM Sans",
+        "Work Sans",
+        "Quicksand",
+        "Imprima",
     };
 
     private string _fontFamily;
@@ -150,9 +151,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
             }
         }
     }
-
-    private bool _alwaysOnTop;
-    public bool AlwaysOnTop { get => _alwaysOnTop; set { if (SetProperty(ref _alwaysOnTop, value)) { Log.Action($"setting: always-on-top {value}"); Apply(); } } }
 
     private bool _animationEnabled;
     public bool AnimationEnabled { get => _animationEnabled; set { if (SetProperty(ref _animationEnabled, value)) { Log.Action($"setting: animation {value}"); Apply(); } } }
@@ -265,7 +263,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     public string ThemeLabel { get; private set; } = string.Empty;
     public string BackgroundLabel { get; private set; } = string.Empty;
     public string CornerStyleLabel { get; private set; } = string.Empty;
-    public string AlwaysOnTopLabel { get; private set; } = string.Empty;
     public string TransparentWhenCollapsedLabel { get; private set; } = string.Empty;
     public string AnimationLabel { get; private set; } = string.Empty;
     public string AutoStartLabel { get; private set; } = string.Empty;
@@ -395,11 +392,12 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     public bool ShowFiscalYear { get => _showFiscalYear; set { if (SetProperty(ref _showFiscalYear, value)) { Log.Action($"setting: show-fiscal-year {value}"); Apply(); } } }
     public string ShowFiscalYearLabel { get; private set; } = string.Empty;
 
-    // ── Fullscreen ───────────────────────────────────────────────────────────
+    // ── Help badges ─────────────────────────────────────────────────────────
 
-    private bool _hideOnFullscreen = true;
-    public bool HideOnFullscreen { get => _hideOnFullscreen; set { if (SetProperty(ref _hideOnFullscreen, value)) { Log.Action($"setting: hide-fullscreen {value}"); Apply(); } } }
-    public string HideFullscreenLabel { get; private set; } = string.Empty;
+    private bool _showHelpBadges = true;
+    public bool ShowHelpBadges { get => _showHelpBadges; set { if (SetProperty(ref _showHelpBadges, value)) { Log.Action($"setting: show-help-badges {value}"); Apply(); } } }
+    public string ShowHelpBadgesLabel { get; private set; } = string.Empty;
+
     // ── Updates ─────────────────────────────────────────────────────────────
 
     private bool _autoCheckForUpdates = true;
@@ -527,10 +525,10 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         _theme = s.Theme;
         _backgroundPreset = s.BackgroundPreset;
         _cornerStyle = s.CornerStyle;
-        // Migrate retired font choices (Gilroy / General Sans / Poppins) to the
-        // new default so the dropdown shows a valid selection.
-        _fontFamily = FontFamilyNames.Contains(s.FontFamily) ? s.FontFamily : "Segoe UI Variable";
-        _alwaysOnTop = s.AlwaysOnTop;
+        // Migrate retired font choices to the new default so the dropdown shows a valid selection.
+        // Retired: Gilroy, General Sans, Segoe UI Variable, Consolas, Georgia, Arial, Trebuchet MS,
+        // Palatino Linotype, JetBrains Mono, Fira Code, Source Code Pro, IBM Plex Mono, Roboto Mono.
+        _fontFamily = FontFamilyNames.Contains(s.FontFamily) ? s.FontFamily : "Open Sans";
         _animationEnabled = s.AnimationEnabled;
         _autoStart = _autoStartService.IsEnabled;
         _transparentWhenCollapsed = s.TransparentWhenCollapsed;
@@ -605,8 +603,8 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         _notificationSound = s.NotificationSound;
         _showSecondsInClock = s.ShowSecondsInClock;
         _showFiscalYear = s.ShowFiscalYear;
-        _hideOnFullscreen = s.HideOnFullscreen;
         _autoCheckForUpdates = s.AutoCheckForUpdates;
+        _showHelpBadges = s.ShowHelpBadges;
 
         CheckForUpdatesNowCommand = new RelayCommand(
             async () => await CheckForUpdatesNowAsync(),
@@ -687,7 +685,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         s.BackgroundPreset = _backgroundPreset;
         s.CornerStyle = _cornerStyle;
         s.FontFamily = _fontFamily;
-        s.AlwaysOnTop = _alwaysOnTop;
         s.AnimationEnabled = _animationEnabled;
         s.AutoStart = _autoStart;
         s.TransparentWhenCollapsed = _transparentWhenCollapsed;
@@ -725,8 +722,8 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         s.NotificationSound = _notificationSound;
         s.ShowSecondsInClock = _showSecondsInClock;
         s.ShowFiscalYear = _showFiscalYear;
-        s.HideOnFullscreen = _hideOnFullscreen;
         s.AutoCheckForUpdates = _autoCheckForUpdates;
+        s.ShowHelpBadges = _showHelpBadges;
 
         _autoStartService.SetEnabled(_autoStart);
         _themeService.Apply(_theme, _backgroundPreset);
@@ -741,7 +738,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         ThemeLabel = _loc.Get("settings.theme");
         BackgroundLabel = _loc.Get("settings.background");
         CornerStyleLabel = _loc.Get("settings.corner_style");
-        AlwaysOnTopLabel = _loc.Get("settings.always_on_top");
         TransparentWhenCollapsedLabel = _loc.Get("settings.transparent_collapsed");
         AnimationLabel = _loc.Get("settings.animation");
         AutoStartLabel = _loc.Get("settings.auto_start");
@@ -778,7 +774,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         TestNotificationLabel = _loc.Get("settings.test_notification");
         ShowSecondsLabel = _loc.Get("settings.show_seconds");
         ShowFiscalYearLabel = _loc.Get("settings.show_fiscal_year");
-        HideFullscreenLabel = _loc.Get("settings.hide_fullscreen");
+        ShowHelpBadgesLabel = _loc.Get("settings.show_help_badges");
         UpdateSectionLabel  = _loc.Get("settings.updates");
         AutoUpdateLabel     = _loc.Get("settings.auto_update");
         CheckUpdateNowLabel = _loc.Get("settings.check_update_now");
@@ -802,7 +798,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(ThemeLabel));
         OnPropertyChanged(nameof(BackgroundLabel));
         OnPropertyChanged(nameof(CornerStyleLabel));
-        OnPropertyChanged(nameof(AlwaysOnTopLabel));
         OnPropertyChanged(nameof(TransparentWhenCollapsedLabel));
         OnPropertyChanged(nameof(AnimationLabel));
         OnPropertyChanged(nameof(AutoStartLabel));
@@ -838,7 +833,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(TestNotificationLabel));
         OnPropertyChanged(nameof(ShowSecondsLabel));
         OnPropertyChanged(nameof(ShowFiscalYearLabel));
-        OnPropertyChanged(nameof(HideFullscreenLabel));
         OnPropertyChanged(nameof(UpdateSectionLabel));
         OnPropertyChanged(nameof(AutoUpdateLabel));
         OnPropertyChanged(nameof(CheckUpdateNowLabel));
@@ -963,6 +957,8 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
             var target = dialog.FileName;
             if (File.Exists(target)) File.Delete(target);
             using var archive = ZipFile.Open(target, ZipArchiveMode.Create);
+            using (var w = new StreamWriter(archive.CreateEntry("nepdate-backup.manifest").Open(), System.Text.Encoding.UTF8))
+                w.Write("NepDateWidget");
             string[] paths =
             [
                 AppPaths.SettingsPath, AppPaths.RemindersPath, AppPaths.NotesPath,
@@ -996,6 +992,23 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
             using var archive = ZipFile.OpenRead(dialog.FileName);
             var dataDir = AppPaths.DataDirectory;
             Directory.CreateDirectory(dataDir);
+
+            var manifest = archive.GetEntry("nepdate-backup.manifest");
+            if (manifest is null)
+            {
+                ShowDataFileMessage(_loc.Get("settings.data_import_invalid"));
+                Log.Warn($"backup restore rejected (no manifest): {dialog.FileName}");
+                return;
+            }
+            using (var sr = new StreamReader(manifest.Open(), System.Text.Encoding.UTF8))
+            {
+                if (sr.ReadToEnd() != "NepDateWidget")
+                {
+                    ShowDataFileMessage(_loc.Get("settings.data_import_invalid"));
+                    Log.Warn($"backup restore rejected (invalid manifest): {dialog.FileName}");
+                    return;
+                }
+            }
 
             foreach (var entry in archive.Entries)
             {
@@ -1081,7 +1094,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         _backgroundPreset = s.BackgroundPreset;
         _fontFamily = s.FontFamily;
         _cornerStyle = s.CornerStyle;
-        _alwaysOnTop = s.AlwaysOnTop;
         _animationEnabled = s.AnimationEnabled;
         _autoStart = _autoStartService.IsEnabled;
         _transparentWhenCollapsed = s.TransparentWhenCollapsed;
@@ -1108,8 +1120,8 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         _notificationSound = s.NotificationSound;
         _showSecondsInClock = s.ShowSecondsInClock;
         _showFiscalYear = s.ShowFiscalYear;
-        _hideOnFullscreen = s.HideOnFullscreen;
         _autoCheckForUpdates = s.AutoCheckForUpdates;
+        _showHelpBadges = s.ShowHelpBadges;
 
         PopulateTimezones(s.SelectedTimezoneId);
 
@@ -1119,7 +1131,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         NotifyPresetSelection();
         OnPropertyChanged(nameof(CornerStyle)); OnPropertyChanged(nameof(IsCornerRounded)); OnPropertyChanged(nameof(IsCornerSharp));
         OnPropertyChanged(nameof(FontFamily));
-        OnPropertyChanged(nameof(AlwaysOnTop)); OnPropertyChanged(nameof(AnimationEnabled)); OnPropertyChanged(nameof(AutoStart));
+        OnPropertyChanged(nameof(AnimationEnabled)); OnPropertyChanged(nameof(AutoStart));
         OnPropertyChanged(nameof(TransparentWhenCollapsed));
         OnPropertyChanged(nameof(ShowEnglishDayNumbers)); OnPropertyChanged(nameof(HighlightSaturdays));
         OnPropertyChanged(nameof(HighlightSundays));
@@ -1134,8 +1146,8 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(NotificationDurationSeconds)); OnPropertyChanged(nameof(NotificationDurationDisplay));
         OnPropertyChanged(nameof(NotificationSound));
         OnPropertyChanged(nameof(ShowSecondsInClock)); OnPropertyChanged(nameof(ShowFiscalYear));
-        OnPropertyChanged(nameof(HideOnFullscreen));
         OnPropertyChanged(nameof(AutoCheckForUpdates));
+        OnPropertyChanged(nameof(ShowHelpBadges));
 
         Apply();
         Log.Action("settings: reset to defaults");

@@ -13,12 +13,19 @@ public static class SettingsValidator
     private static readonly IReadOnlySet<string> ValidLanguages = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "en", "ne" };
     private static readonly IReadOnlySet<string> ValidThemes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Dark", "Light" };
     private static readonly IReadOnlySet<string> ValidCorners = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "Rounded", "Sharp" };
-    private static readonly IReadOnlySet<string> ValidDirections = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "ADtoBS", "BStoAD" };
     private static readonly IReadOnlySet<string> ValidClockFormats = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "12h", "24h" };
     private static readonly IReadOnlySet<string> ValidPresets = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
     {
         "Default", "Ocean", "Forest", "Sunset", "Monochrome",
         "Aurora",  "Cherry", "Midnight", "Slate", "Ember"
+    };
+    private static readonly IReadOnlySet<string> ValidFonts = new HashSet<string>(StringComparer.Ordinal)
+    {
+        "Segoe UI", "Calibri", "Verdana",
+        "Inter", "Source Sans 3", "IBM Plex Sans", "Roboto", "Noto Sans",
+        "Cascadia Code",
+        "Poppins", "Lato", "Montserrat", "Open Sans", "Raleway", "Nunito",
+        "Rubik", "DM Sans", "Work Sans", "Quicksand", "Imprima",
     };
 
     // Window size bounds
@@ -48,10 +55,10 @@ public static class SettingsValidator
         // String enums
         s.Language = ValidOrDefault(s.Language, ValidLanguages, "en");
         s.Theme = ValidOrDefault(s.Theme, ValidThemes, "Light");
-        s.BackgroundPreset = ValidOrDefault(s.BackgroundPreset, ValidPresets, "Forest");
+        s.BackgroundPreset = ValidOrDefault(s.BackgroundPreset, ValidPresets, "Default");
         s.CornerStyle = ValidOrDefault(s.CornerStyle, ValidCorners, "Rounded");
         s.ClockFormat = ValidOrDefault(s.ClockFormat, ValidClockFormats, "12h");
-        s.ConverterDefaultDirection = ValidOrDefault(s.ConverterDefaultDirection, ValidDirections, "ADtoBS");
+        s.FontFamily = ValidOrDefault(s.FontFamily, ValidFonts, "Open Sans");
 
         // Log size: clamp to supported range
         if (s.LogMaxSizeMb < 5 || s.LogMaxSizeMb > 100)
@@ -73,8 +80,6 @@ public static class SettingsValidator
         if (s.LastExpandedTab < 0 || s.LastExpandedTab > MaxTabIndex)
             s.LastExpandedTab = 0;
 
-        // Null-safety for collection properties
-        s.HighlightedDays ??= new List<string>();
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────

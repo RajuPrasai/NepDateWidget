@@ -158,9 +158,8 @@ public partial class MainWindow : Window
         Left = left;
         Top = top;
 
-        if (ViewModel.AlwaysOnTop)
-            Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
-                Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
+        Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
+            Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
 
         EnsureShellOwner();
 
@@ -240,22 +239,6 @@ public partial class MainWindow : Window
             case nameof(MainViewModel.IsExpanded):
                 OnExpandStateChanged();
                 break;
-
-            case nameof(MainViewModel.AlwaysOnTop):
-                if (_hwnd == IntPtr.Zero) break;
-                if (ViewModel.AlwaysOnTop)
-                {
-                    EnsureShellOwner();
-                    Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
-                        Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
-                }
-                else
-                {
-                    new WindowInteropHelper(this).Owner = IntPtr.Zero;
-                    Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_NOTOPMOST, 0, 0, 0, 0,
-                        Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
-                }
-                break;
         }
     }
 
@@ -288,7 +271,7 @@ public partial class MainWindow : Window
             }
 
             EnsureShellOwner();
-            if (ViewModel.AlwaysOnTop && _hwnd != IntPtr.Zero)
+            if (_hwnd != IntPtr.Zero)
                 Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
                     Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
         }
@@ -464,7 +447,7 @@ public partial class MainWindow : Window
 
     private void EnsureShellOwner()
     {
-        if (!ViewModel.AlwaysOnTop || _hwnd == IntPtr.Zero) return;
+        if (_hwnd == IntPtr.Zero) return;
 
         IntPtr shellTray = Win32Interop.FindWindow("Shell_TrayWnd", null);
         if (shellTray == IntPtr.Zero) return;
@@ -476,7 +459,7 @@ public partial class MainWindow : Window
 
     private void RelocateToTopmost()
     {
-        if (!ViewModel.AlwaysOnTop || _hwnd == IntPtr.Zero) return;
+        if (_hwnd == IntPtr.Zero) return;
 
         IntPtr shellTray = Win32Interop.FindWindow("Shell_TrayWnd", null);
         if (shellTray == IntPtr.Zero) return;
@@ -510,7 +493,6 @@ public partial class MainWindow : Window
     private void FullScreenCheck()
     {
         if (_hwnd == IntPtr.Zero) return;
-        if (!ViewModel.HideOnFullscreen) return;
 
         // Only the pill needs explicit hide-for-fullscreen treatment.
         // The shell is a normal (non-topmost) window and goes behind fullscreen
@@ -531,9 +513,8 @@ public partial class MainWindow : Window
         {
             _hiddenForFullscreen = false;
             Show();
-            if (ViewModel.AlwaysOnTop)
-                Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
-                    Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
+            Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
+                Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
         }
     }
 

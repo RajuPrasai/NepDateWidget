@@ -11,16 +11,10 @@ public interface ICalendarService
     /// <summary>Returns today's date information in both BS and AD, pre-formatted for display.</summary>
     CurrentDateInfo GetCurrentDateInfo();
 
-    /// <summary>
-    /// Builds the complete month grid for the given BS year and month.
-    /// </summary>
+    /// <summary>Builds the complete month grid for the given BS year and month.</summary>
     /// <param name="bsYear">BS year (1901-2199).</param>
     /// <param name="bsMonth">BS month (1-12).</param>
-    /// <param name="highlightedDays">
-    /// Optional set of highlighted BS dates in "YYYY-MM-DD" format.
-    /// Pass an empty collection if the user has no highlights.
-    /// </param>
-    CalendarMonth GetMonth(int bsYear, int bsMonth, IReadOnlyCollection<string>? highlightedDays = null);
+    CalendarMonth GetMonth(int bsYear, int bsMonth);
 
     /// <summary>
     /// Returns the BS year/month that results from navigating

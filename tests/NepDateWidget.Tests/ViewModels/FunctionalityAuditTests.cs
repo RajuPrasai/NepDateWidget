@@ -52,13 +52,12 @@ public class FunctionalityAuditTests
             new FakeAutoStartService(false));
     }
 
-    private static ConverterViewModel CreateConverter(string dir = "ADtoBS")
+    private static ConverterViewModel CreateConverter()
     {
         var adapter = new FakeNepaliDateAdapter();
         return new ConverterViewModel(
             new ConversionService(adapter),
             new LocalizationService(),
-            dir,
             adapter);
     }
 

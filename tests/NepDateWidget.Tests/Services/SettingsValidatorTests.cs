@@ -58,16 +58,6 @@ public class SettingsValidatorTests
     }
 
     [Theory]
-    [InlineData("ADtoBS")]
-    [InlineData("BStoAD")]
-    public void ConverterDirection_ValidValue_IsPreserved(string dir)
-    {
-        var s = Valid(); s.ConverterDefaultDirection = dir;
-        SettingsValidator.Validate(s);
-        Assert.Equal(dir, s.ConverterDefaultDirection, ignoreCase: true);
-    }
-
-    [Theory]
     [InlineData("Default")]
     [InlineData("Ocean")]
     [InlineData("Forest")]
@@ -89,11 +79,11 @@ public class SettingsValidatorTests
     [InlineData("Neon")]
     [InlineData("")]
     [InlineData(null)]
-    public void BackgroundPreset_InvalidValue_FallsBackToForest(string? preset)
+    public void BackgroundPreset_InvalidValue_FallsBackToDefault(string? preset)
     {
         var s = Valid(); s.BackgroundPreset = preset!;
         SettingsValidator.Validate(s);
-        Assert.Equal("Forest", s.BackgroundPreset);
+        Assert.Equal("Default", s.BackgroundPreset);
     }
 
     [Theory]
@@ -150,15 +140,6 @@ public class SettingsValidatorTests
         Assert.Equal(497.33333, s.ExpandedHeight);
     }
 
-    // ── Null-safety ───────────────────────────────────────────────────────────
-
-    [Fact]
-    public void HighlightedDays_Null_ReplacedWithEmptyList()
-    {
-        var s = Valid(); s.HighlightedDays = null!;
-        SettingsValidator.Validate(s);
-        Assert.NotNull(s.HighlightedDays);
-    }
 
     // ── Valid defaults pass without mutation ──────────────────────────────────
 
@@ -171,7 +152,6 @@ public class SettingsValidatorTests
         Assert.Equal("en",          s.Language);
         Assert.Equal("Light",       s.Theme);
         Assert.Equal("Rounded",     s.CornerStyle);
-        Assert.Equal("BStoAD",      s.ConverterDefaultDirection);
         Assert.Equal(840,           s.ExpandedWidth);
         Assert.Equal(750,           s.ExpandedHeight);
         Assert.Equal(6,             s.RunBoxHotkeyModifiers);   // Ctrl+Shift
@@ -335,19 +315,6 @@ public class SettingsValidatorTests
         Assert.Equal(key, s.RunBoxHotkeyKey);
     }
 
-    // ── ConverterDefaultDirection ────────────────────────────────────────────
-
-    [Theory]
-    [InlineData("")]
-    [InlineData(null)]
-    [InlineData("XYtoZ")]
-    public void ConverterDirection_InvalidValue_FallsBackToADtoBS(string? dir)
-    {
-        var s = Valid(); s.ConverterDefaultDirection = dir!;
-        SettingsValidator.Validate(s);
-        Assert.Equal("ADtoBS", s.ConverterDefaultDirection);
-    }
-
     // ── CornerStyle ──────────────────────────────────────────────────────────
 
     [Theory]
@@ -375,7 +342,6 @@ public class SettingsValidatorTests
             LogMaxSizeMb = 999,
             RunBoxHotkeyModifiers = -5,
             RunBoxHotkeyKey = 999,
-            HighlightedDays = null!,
             SchemaVersion = -1
         };
 
@@ -415,13 +381,11 @@ public class SettingsValidatorTests
             BackgroundPreset = "Magenta",
             CornerStyle = "Beveled",
             ClockFormat = "6h",
-            ConverterDefaultDirection = "XYtoZ",
             ExpandedWidth = double.NaN,
             ExpandedHeight = double.NegativeInfinity,
             LogMaxSizeMb = 200,
             RunBoxHotkeyModifiers = -99,
-            RunBoxHotkeyKey = 999,
-            HighlightedDays = null!
+            RunBoxHotkeyKey = 999
         };
 
         SettingsValidator.Validate(s);
@@ -429,16 +393,14 @@ public class SettingsValidatorTests
         Assert.Equal(SettingsValidator.CurrentSchemaVersion, s.SchemaVersion);
         Assert.Equal("en", s.Language);
         Assert.Equal("Light", s.Theme);
-        Assert.Equal("Forest", s.BackgroundPreset);
+        Assert.Equal("Default", s.BackgroundPreset);
         Assert.Equal("Rounded", s.CornerStyle);
         Assert.Equal("12h", s.ClockFormat);
-        Assert.Equal("ADtoBS", s.ConverterDefaultDirection);
         Assert.Equal(600, s.ExpandedWidth);
         Assert.Equal(497.33333, s.ExpandedHeight);
         Assert.Equal(10, s.LogMaxSizeMb);
         Assert.Equal(6, s.RunBoxHotkeyModifiers);
         Assert.Equal(0x20, s.RunBoxHotkeyKey);
-        Assert.NotNull(s.HighlightedDays);
     }
 
     // ── NotificationDurationSeconds ──────────────────────────────────────────
@@ -502,8 +464,32 @@ public class SettingsValidatorTests
         Assert.Equal(10, s.NotificationDurationSeconds);
         Assert.True(s.NotificationSound);
         Assert.False(s.ShowSecondsInClock);
-        Assert.False(s.ShowFiscalYear);
-        Assert.Equal(0, s.LastExpandedTab);
-        Assert.True(s.HideOnFullscreen);
+        Assert.True(s.ShowFiscalYear);
+        Assert.Equal(8, s.LastExpandedTab);
+    }
+
+    // ── FontFamily ───────────────────────────────────────────────────────────
+
+    [Theory]
+    [InlineData("Open Sans")]
+    [InlineData("Segoe UI")]
+    [InlineData("Inter")]
+    [InlineData("Cascadia Code")]
+    public void FontFamily_ValidValue_IsPreserved(string font)
+    {
+        var s = Valid(); s.FontFamily = font;
+        SettingsValidator.Validate(s);
+        Assert.Equal(font, s.FontFamily);
+    }
+
+    [Theory]
+    [InlineData("Gilroy")]
+    [InlineData("")]
+    [InlineData(null)]
+    public void FontFamily_InvalidValue_FallsBackToOpenSans(string? font)
+    {
+        var s = Valid(); s.FontFamily = font!;
+        SettingsValidator.Validate(s);
+        Assert.Equal("Open Sans", s.FontFamily);
     }
 }

@@ -8,15 +8,14 @@ public class CalendarViewModelTests
 {
     private static CalendarViewModel Create(
         FakeNepaliDateAdapter? adapter = null,
-        string language = "en",
-        IReadOnlyList<string>? highlights = null)
+        string language = "en")
     {
         var a   = adapter ?? new FakeNepaliDateAdapter();
         var svc = new CalendarService(a);
         var loc = new LocalizationService();
         var conv = new ConversionService(a);
         loc.SetLanguage(language);
-        return new CalendarViewModel(svc, loc, conv, highlights);
+        return new CalendarViewModel(svc, loc, conv);
     }
 
     // ── Initial state ─────────────────────────────────────────────────────────
@@ -231,19 +230,6 @@ public class CalendarViewModelTests
         var vm = Create();
         var saturdays = vm.Days.Where(d => d.IsSaturday).ToList();
         Assert.NotEmpty(saturdays);
-    }
-
-    // ── Highlighted days ──────────────────────────────────────────────────────
-
-    [Fact]
-    public void Days_HighlightedDay_IsMarked()
-    {
-        var highlights = new List<string> { "2082-12-10" };
-        var vm = Create(highlights: highlights);
-
-        var day10 = vm.Days.FirstOrDefault(d => d.IsCurrentMonth && d.Day == 10);
-        Assert.NotNull(day10);
-        Assert.True(day10.IsHighlighted);
     }
 
     // ── DayText ───────────────────────────────────────────────────────────────

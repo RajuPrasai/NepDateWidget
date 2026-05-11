@@ -45,20 +45,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
 
     // ── Behaviour flags ──────────────────────────────────────────────────────
 
-    private bool _alwaysOnTop;
-    public bool AlwaysOnTop
-    {
-        get => _alwaysOnTop;
-        set
-        {
-            if (SetProperty(ref _alwaysOnTop, value))
-            {
-                _settingsService.Current.AlwaysOnTop = value;
-                _settingsService.Save();
-            }
-        }
-    }
-
     private bool _expandedPinned;
     public bool ExpandedPinned
     {
@@ -110,7 +96,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     public string MenuLanguageLabel { get; private set; } = string.Empty;
     public string MenuLanguageEnLabel => "English";
     public string MenuLanguageNeLabel => "नेपाली";
-    public string MenuAlwaysOnTopLabel { get; private set; } = string.Empty;
     public string MenuShowClockLabel { get; private set; } = string.Empty;
     public string MenuShowTimezoneLabel { get; private set; } = string.Empty;
     public string MenuThemeLabel { get; private set; } = string.Empty;
@@ -301,13 +286,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
 
     // ── Settings consumed by View layer ─────────────────────────────────────
 
-    private bool _hideOnFullscreen = true;
-    public bool HideOnFullscreen
-    {
-        get => _hideOnFullscreen;
-        set => SetProperty(ref _hideOnFullscreen, value);
-    }
-
     private bool _showSecondsInClock;
     public bool ShowSecondsInClock
     {
@@ -496,14 +474,12 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         // The runtime state (_isExpanded) is the source of truth at startup;
         // s.IsExpanded is brought back in sync when the user toggles state.
         _isExpanded = false;
-        _alwaysOnTop = s.AlwaysOnTop;
         _language = s.Language;
         _theme = s.Theme;
         _backgroundPreset = s.BackgroundPreset;
         _cornerStyle = s.CornerStyle;
         _animationEnabled = s.AnimationEnabled;
         _transparentWhenCollapsed = s.TransparentWhenCollapsed;
-        _hideOnFullscreen = s.HideOnFullscreen;
         _lastExpandedTabIndex = s.LastExpandedTab;
         _showSecondsInClock = s.ShowSecondsInClock;
         _showFiscalYear = s.ShowFiscalYear;
@@ -520,13 +496,13 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         _localizationService.SetLanguage(_language);
         _themeService.Apply(_theme, _backgroundPreset);
         ApplyFont(s.FontFamily);
+        ApplyHelpBadgeVisibility(s.ShowHelpBadges);
 
         MiniBar = new MiniBarViewModel(calendarService, localizationService,
                                        s.ShowTimezone, s.SelectedTimezoneId, s.ShowOffset,
                                        s.ShowDayOfWeek, s.ShowEnglishDate,
                                        s.ClockFormat, s.ShowSecondsInClock);
         Calendar = new CalendarViewModel(calendarService, localizationService, conversionService,
-                                         s.HighlightedDays, s.ConverterDefaultDirection,
                                          s.ShowEnglishDayNumbers, s.HighlightSaturdays,
                                          s.HighlightSundays,
                                          selectedTimezoneId: s.SelectedTimezoneId,
@@ -559,14 +535,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         {
             if (e.PropertyName == nameof(CalendarViewModel.MissedReminderCount))
                 RefreshCalendarTabLabel();
-        };
-
-        // Persist direction changes back to settings whenever the user toggles it
-        Calendar.Converter.PropertyChanged += (_, e) =>
-        {
-            if (e.PropertyName == nameof(ConverterViewModel.IsAdToBs))
-                _settingsService.Current.ConverterDefaultDirection =
-                    Calendar.Converter.IsAdToBs ? "ADtoBS" : "BStoAD";
         };
 
         ToggleExpandedCommand = new RelayCommand(ToggleExpanded);
@@ -819,28 +787,40 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         System.Windows.Media.FontFamily ff;
         var embeddedBase = fontName switch
         {
-            "Cascadia Code"   => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Cascadia/",
-            "Inter"           => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Inter/",
-            "JetBrains Mono"  => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/JetBrainsMono/",
-            "Fira Code"       => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/FiraCode/",
-            "Source Sans 3"   => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/SourceSans3/",
-            "Source Code Pro" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/SourceCodePro/",
-            "IBM Plex Sans"   => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/IBMPlexSans/",
-            "IBM Plex Mono"   => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/IBMPlexMono/",
-            "Roboto"          => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Roboto/",
-            "Roboto Mono"     => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/RobotoMono/",
-            "Noto Sans"       => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/NotoSans/",
+            "Cascadia Code"  => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Cascadia/",
+            "Inter"          => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Inter/",
+            "Source Sans 3"  => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/SourceSans3/",
+            "IBM Plex Sans"  => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/IBMPlexSans/",
+            "Roboto"         => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Roboto/",
+            "Noto Sans"      => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/NotoSans/",
+            "Poppins"        => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Poppins/",
+            "Imprima"        => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Imprima/",
+            "Lato"           => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Lato/",
+            "Nunito"         => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Nunito/",
+            "Raleway"        => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Raleway/",
+            "Open Sans"      => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/OpenSans/",
+            "Montserrat"     => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Montserrat/",
+            "Work Sans"      => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/WorkSans/",
+            "Quicksand"      => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Quicksand/",
+            "Rubik"          => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Rubik/",
+            "DM Sans"        => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/DMSans/",
             _ => null
         };
 
         if (embeddedBase is not null)
             ff = new System.Windows.Media.FontFamily(new Uri(embeddedBase), "./#" + fontName);
         else
-            // Fall back through Segoe UI then a generic sans for systems that
-            // lack the requested family.
+            // System font — fall back through Segoe UI then Tahoma.
             ff = new System.Windows.Media.FontFamily(fontName + ", Segoe UI, Tahoma");
 
         System.Windows.Application.Current.Resources["WidgetFontFamily"] = ff;
+    }
+
+    private static void ApplyHelpBadgeVisibility(bool show)
+    {
+        if (System.Windows.Application.Current is null) return;
+        System.Windows.Application.Current.Resources["HelpBadgeVisibility"] =
+            show ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
     }
 
     /// <summary>
@@ -851,7 +831,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     {
         var s = _settingsService.Current;
         Language = s.Language;
-        AlwaysOnTop = s.AlwaysOnTop;
         Theme = s.Theme;
         BackgroundPreset = s.BackgroundPreset;
         CornerStyle = s.CornerStyle;
@@ -859,6 +838,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         AutoStart = s.AutoStart;
         TransparentWhenCollapsed = s.TransparentWhenCollapsed;
         ApplyFont(s.FontFamily);
+        ApplyHelpBadgeVisibility(s.ShowHelpBadges);
 
         // Sync collapsed display toggles to mini bar
         MiniBar.ShowTimezone = s.ShowTimezone;
@@ -875,7 +855,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         _themeService.OverrideHighlightColor(s.HighlightColor);
 
         // Sync new settings
-        HideOnFullscreen = s.HideOnFullscreen;
         ShowSecondsInClock = s.ShowSecondsInClock;
         ShowFiscalYear = s.ShowFiscalYear;
         NotificationDurationSeconds = s.NotificationDurationSeconds;
@@ -927,7 +906,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     private void RefreshMenuLabels()
     {
         MenuLanguageLabel = _localizationService.Get("menu.language");
-        MenuAlwaysOnTopLabel = _localizationService.Get("menu.always_on_top");
         MenuShowClockLabel = _localizationService.Get("menu.show_clock");
         MenuShowTimezoneLabel = _localizationService.Get("menu.show_timezone");
         MenuThemeLabel = _localizationService.Get("menu.theme");
@@ -986,7 +964,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         TooltipSettings = _localizationService.Get("tooltip.settings");
 
         OnPropertyChanged(nameof(MenuLanguageLabel));
-        OnPropertyChanged(nameof(MenuAlwaysOnTopLabel));
         OnPropertyChanged(nameof(MenuShowClockLabel));
         OnPropertyChanged(nameof(MenuShowTimezoneLabel));
         OnPropertyChanged(nameof(MenuThemeLabel));

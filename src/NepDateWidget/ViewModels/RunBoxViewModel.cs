@@ -369,6 +369,30 @@ public sealed class RunBoxViewModel : ViewModelBase
 
     private void Execute()
     {
+        // "help" command: open the RunBox help window.
+        var rawInput = _runText?.Trim();
+        if (string.Equals(rawInput, "help", StringComparison.OrdinalIgnoreCase)
+            && _activePrefix is null)
+        {
+            var spotlight = System.Windows.Application.Current.Windows
+                .OfType<NepDateWidget.Views.RunBoxSpotlightWindow>()
+                .FirstOrDefault(w => w.IsVisible);
+            var shell = System.Windows.Application.Current.Windows
+                .OfType<NepDateWidget.Views.ExpandedShellWindow>()
+                .FirstOrDefault(w => w.IsVisible)
+                ?? (System.Windows.Window)System.Windows.Application.Current.MainWindow!;
+            var win = new NepDateWidget.Views.RunBoxHelpWindow(_loc, _shortcuts, _scriptService)
+            {
+                Owner = (System.Windows.Window?)spotlight ?? shell,
+                WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner
+            };
+            win.Show();
+            win.Activate();
+            RunText = string.Empty;
+            ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
         // Calculator mode: copy result to clipboard and close.
         // Script results use the same ShowCalcResult flag for display, so exclude them.
         if (_showCalcResult && !string.IsNullOrEmpty(_calcResult)

@@ -207,6 +207,7 @@ public sealed class UnitViewModel : ViewModelBase
 
     public ICommand SetModeWeightCommand { get; }
     public ICommand WeightCopyCommand { get; }
+    public ICommand OpenHelpCommand  { get; }
 
     // ═════════════════════════════════════════════════════════════════════════
     // LABELS
@@ -278,6 +279,14 @@ public sealed class UnitViewModel : ViewModelBase
             }
         });
 
+        OpenHelpCommand = new RelayCommand<string>(key =>
+        {
+            var shell = System.Windows.Application.Current.Windows
+                .OfType<NepDateWidget.Views.ExpandedShellWindow>()
+                .FirstOrDefault(w => w.IsVisible)
+                ?? (System.Windows.Window)System.Windows.Application.Current.MainWindow!;
+            NepDateWidget.Views.HelpPopup.ShowFor(key!, _loc, shell);
+        });
         RefreshLabels();
         _initializing = true;
         RecomputeArea();

@@ -318,7 +318,8 @@ public sealed class ConverterViewModel : ViewModelBase
     public ICommand SetAdToBsCommand { get; }
     public ICommand SetBsToAdCommand { get; }
     public ICommand SetDaysAddSubCommand { get; }
-    public ICommand SetDaysDiffCommand { get; }
+    public ICommand SetDaysDiffCommand     { get; }
+    public ICommand OpenHelpCommand        { get; }
 
     // ═════════════════════════════════════════════════════════════════════════
     // CONSTRUCTION
@@ -349,6 +350,14 @@ public sealed class ConverterViewModel : ViewModelBase
         SetDaysDiffCommand = new RelayCommand(() => IsDaysDiff = true);
         TimeSwapCommand = new RelayCommand(SwapTimeZones);
         TimeToggleAmPmCommand = new RelayCommand(() => TimeIsAm = !TimeIsAm);
+        OpenHelpCommand = new RelayCommand<string>(key =>
+        {
+            var shell = System.Windows.Application.Current.Windows
+                .OfType<NepDateWidget.Views.ExpandedShellWindow>()
+                .FirstOrDefault(w => w.IsVisible)
+                ?? (System.Windows.Window)System.Windows.Application.Current.MainWindow!;
+            NepDateWidget.Views.HelpPopup.ShowFor(key!, _loc, shell);
+        });
 
         PopulateTimezones();
         RefreshLabels();

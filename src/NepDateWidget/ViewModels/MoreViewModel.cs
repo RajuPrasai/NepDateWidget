@@ -454,8 +454,6 @@ public sealed class MoreViewModel : ViewModelBase
         set => SetProperty(ref _isDocSuggestionsOpen, value);
     }
 
-    private bool _isSearchBoxFocused;
-
     // ── Labels ───────────────────────────────────────────────────────────────
 
     public string NotesHeadingLabel    { get; private set; } = string.Empty;
@@ -555,6 +553,7 @@ public sealed class MoreViewModel : ViewModelBase
     public ICommand SelectDocSuggestionCommand  { get; }
     public ICommand CommitDocSearchCommand      { get; }
     public ICommand ClearDocSearchCommand       { get; }
+    public ICommand OpenHelpCommand              { get; }
 
     // No popup events — add/edit is now handled inline within this ViewModel.
 
@@ -617,6 +616,14 @@ public sealed class MoreViewModel : ViewModelBase
         SelectDocSuggestionCommand = new RelayCommand<string>(DoSelectDocSuggestion);
         CommitDocSearchCommand    = new RelayCommand(CommitDocSearch);
         ClearDocSearchCommand     = new RelayCommand(DoClearDocSearch);
+        OpenHelpCommand           = new RelayCommand<string>(key =>
+        {
+            var shell = System.Windows.Application.Current.Windows
+                .OfType<NepDateWidget.Views.ExpandedShellWindow>()
+                .FirstOrDefault(w => w.IsVisible)
+                ?? (System.Windows.Window)System.Windows.Application.Current.MainWindow!;
+            NepDateWidget.Views.HelpPopup.ShowFor(key!, _loc, shell);
+        });
 
         if (_notesService is not null)
             _notesService.NotesChanged += (_, _) => RefreshNotes();
@@ -1222,13 +1229,11 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoDocSearchGotFocus()
     {
-        _isSearchBoxFocused = true;
         UpdateSearchSuggestions();
     }
 
     private void DoDocSearchLostFocus()
     {
-        _isSearchBoxFocused = false;
         IsDocSuggestionsOpen = false;
         CommitDocSearch();
     }

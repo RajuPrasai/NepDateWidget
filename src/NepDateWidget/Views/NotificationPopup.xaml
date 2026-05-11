@@ -5,6 +5,7 @@
         AllowsTransparency="True"
         Background="Transparent"
         Foreground="{DynamicResource WidgetForegroundBrush}"
+        FontFamily="{DynamicResource WidgetFontFamily}"
         ShowInTaskbar="False"
         Topmost="True"
         ResizeMode="NoResize"

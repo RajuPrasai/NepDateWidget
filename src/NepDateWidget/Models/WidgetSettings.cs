@@ -22,12 +22,11 @@ public sealed class WidgetSettings
     // Display preferences
     public string Language { get; set; } = "en";
     public string Theme { get; set; } = "Light";
-    public string BackgroundPreset { get; set; } = "Forest";
+    public string BackgroundPreset { get; set; } = "Default";
     public string CornerStyle { get; set; } = "Rounded";
-    public string FontFamily { get; set; } = "Segoe UI Variable";
+    public string FontFamily { get; set; } = "Open Sans";
 
     // Behavior flags
-    public bool AlwaysOnTop { get; set; } = true;
     public bool AutoStart { get; set; } = true;
     public bool AnimationEnabled { get; set; } = true;
     public bool TransparentWhenCollapsed { get; set; } = true;
@@ -56,16 +55,6 @@ public sealed class WidgetSettings
     /// </summary>
     public bool ShowHolidayCountdown { get; set; } = true;
 
-    // Calendar
-    /// <summary>
-    /// User-highlighted BS dates in "YYYY-MM-DD" format.
-    /// Editing UI is deferred to a future milestone; the list is persisted from day one.
-    /// </summary>
-    public List<string> HighlightedDays { get; set; } = new();
-
-    // Converter
-    public string ConverterDefaultDirection { get; set; } = "BStoAD";
-
     // Logging
     /// <summary>Maximum size of nepdate.log before old entries are trimmed. Range: 5-100 MB.</summary>
     public int LogMaxSizeMb { get; set; } = 10;
@@ -87,7 +76,7 @@ public sealed class WidgetSettings
     public bool ShowSecondsInClock { get; set; } = false;
 
     // Calendar
-    public bool ShowFiscalYear { get; set; } = false;
+    public bool ShowFiscalYear { get; set; } = true;
 
     /// <summary>
     /// When true, the widget shows a one-time notification on the first launch
@@ -101,10 +90,9 @@ public sealed class WidgetSettings
     /// Tab index that was selected the last time the widget was expanded.
     /// Persisted so the widget always reopens on the user's last tab. Range: 0-8.
     /// </summary>
-    public int LastExpandedTab { get; set; } = 0;
+    public int LastExpandedTab { get; set; } = 8;
 
-    // Fullscreen
-    public bool HideOnFullscreen { get; set; } = true;
+    public bool ShowHelpBadges { get; set; } = true;
 
     /// <summary>
     /// Whether the app should periodically check for updates from the configured

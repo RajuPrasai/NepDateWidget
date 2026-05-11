@@ -51,9 +51,8 @@ public class SettingsViewModelTests
         var (vm, _, _, _) = Create();
         Assert.Equal("en", vm.Language);
         Assert.Equal("Light", vm.Theme);
-        Assert.Equal("Forest", vm.BackgroundPreset);
+        Assert.Equal("Default", vm.BackgroundPreset);
         Assert.Equal("Rounded", vm.CornerStyle);
-        Assert.True(vm.AlwaysOnTop);
         Assert.True(vm.AnimationEnabled);
         Assert.True(vm.TransparentWhenCollapsed);
     }
@@ -207,16 +206,7 @@ public class SettingsViewModelTests
     // ── Boolean toggles ──────────────────────────────────────────────────────
 
     [Fact]
-    public void AlwaysOnTop_PersistsToSettings()
-    {
-        var (vm, svc, _, _) = Create();
-        vm.AlwaysOnTop = false;
-        Assert.False(svc.Current.AlwaysOnTop);
-        vm.AlwaysOnTop = true;
-        Assert.True(svc.Current.AlwaysOnTop);
-    }
 
-    [Fact]
     public void AnimationEnabled_PersistsToSettings()
     {
         var (vm, svc, _, _) = Create();
@@ -349,10 +339,6 @@ public class SettingsViewModelTests
         before = svc.SaveCount;
         vm.CornerStyle = "Sharp";
         Assert.True(svc.SaveCount > before, "CornerStyle change should save");
-
-        before = svc.SaveCount;
-        vm.AlwaysOnTop = !vm.AlwaysOnTop;
-        Assert.True(svc.SaveCount > before, "AlwaysOnTop change should save");
     }
 
     // ── ResetToDefaults ──────────────────────────────────────────────────────
@@ -368,7 +354,7 @@ public class SettingsViewModelTests
         vm.ResetToDefaultsCommand.Execute(null);
 
         Assert.Equal("Light", vm.Theme);
-        Assert.Equal("Forest", vm.BackgroundPreset);
+        Assert.Equal("Default", vm.BackgroundPreset);
         Assert.Equal("Rounded", vm.CornerStyle);
         Assert.Equal("en", vm.Language);
     }
@@ -383,7 +369,6 @@ public class SettingsViewModelTests
         Assert.NotEmpty(vm.ThemeLabel);
         Assert.NotEmpty(vm.BackgroundLabel);
         Assert.NotEmpty(vm.CornerStyleLabel);
-        Assert.NotEmpty(vm.AlwaysOnTopLabel);
         Assert.NotEmpty(vm.AnimationLabel);
         Assert.NotEmpty(vm.AutoStartLabel);
         Assert.NotEmpty(vm.TransparentWhenCollapsedLabel);
@@ -799,11 +784,11 @@ public class SettingsViewModelTests
     }
 
     [Fact]
-    public void HideOnFullscreen_PersistsToSettings()
+    public void ShowHelpBadges_PersistsToSettings()
     {
         var (vm, svc, _, _) = Create();
-        vm.HideOnFullscreen = false;
-        Assert.False(svc.Current.HideOnFullscreen);
+        vm.ShowHelpBadges = false;
+        Assert.False(svc.Current.ShowHelpBadges);
     }
 
     [Fact]

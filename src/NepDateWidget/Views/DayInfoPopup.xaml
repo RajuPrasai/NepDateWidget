@@ -10,6 +10,7 @@
         AllowsTransparency="True"
         Background="Transparent"
         Foreground="{DynamicResource WidgetForegroundBrush}"
+        FontFamily="{DynamicResource WidgetFontFamily}"
         SizeToContent="Height"
         Width="380"
         d:DataContext="{d:DesignInstance vm:DayInfoViewModel}"

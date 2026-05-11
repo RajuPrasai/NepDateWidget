@@ -70,7 +70,10 @@
 	  <PackageReference Include="Velopack" Version="0.0.1298" />
 	</ItemGroup>
 
-	<!-- Embedded font families. All non-Microsoft fonts are bundled so they are available regardless of what the user has installed. SIL OFL licensed (Inter, JetBrains Mono, Fira Code, Source Sans 3, Source Code Pro, IBM Plex Sans/Mono, Roboto, Roboto Mono, Noto Sans, Cascadia Code). Three weights per family (Regular, Medium, Bold) — italic and other weights omitted to keep installer size down. -->
+	<!-- Embedded font families. All fonts are bundled (OFL licensed) so they work regardless of OS install state.
+	     Static TTFs (3 weights): Cascadia Code, Inter, Source Sans 3, IBM Plex Sans, Roboto, Noto Sans, Poppins, Lato.
+	     Variable TTFs (full weight range): Nunito, Raleway, Open Sans, Montserrat, Work Sans, Quicksand.
+	     Single-weight: Imprima (Regular only). -->
 	<ItemGroup>
 		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-Light.ttf" />
 		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-Regular.ttf" />
@@ -79,33 +82,32 @@
 		<Resource Include="Assets\Fonts\Inter\Inter-Regular.ttf" />
 		<Resource Include="Assets\Fonts\Inter\Inter-Medium.ttf" />
 		<Resource Include="Assets\Fonts\Inter\Inter-Bold.ttf" />
-		<Resource Include="Assets\Fonts\JetBrainsMono\JetBrainsMono-Regular.ttf" />
-		<Resource Include="Assets\Fonts\JetBrainsMono\JetBrainsMono-Medium.ttf" />
-		<Resource Include="Assets\Fonts\JetBrainsMono\JetBrainsMono-Bold.ttf" />
-		<Resource Include="Assets\Fonts\FiraCode\FiraCode-Regular.ttf" />
-		<Resource Include="Assets\Fonts\FiraCode\FiraCode-Medium.ttf" />
-		<Resource Include="Assets\Fonts\FiraCode\FiraCode-Bold.ttf" />
 		<Resource Include="Assets\Fonts\SourceSans3\SourceSans3-Regular.ttf" />
 		<Resource Include="Assets\Fonts\SourceSans3\SourceSans3-Medium.ttf" />
 		<Resource Include="Assets\Fonts\SourceSans3\SourceSans3-Bold.ttf" />
-		<Resource Include="Assets\Fonts\SourceCodePro\SourceCodePro-Regular.ttf" />
-		<Resource Include="Assets\Fonts\SourceCodePro\SourceCodePro-Medium.ttf" />
-		<Resource Include="Assets\Fonts\SourceCodePro\SourceCodePro-Bold.ttf" />
 		<Resource Include="Assets\Fonts\IBMPlexSans\IBMPlexSans-Regular.ttf" />
 		<Resource Include="Assets\Fonts\IBMPlexSans\IBMPlexSans-Medium.ttf" />
 		<Resource Include="Assets\Fonts\IBMPlexSans\IBMPlexSans-Bold.ttf" />
-		<Resource Include="Assets\Fonts\IBMPlexMono\IBMPlexMono-Regular.ttf" />
-		<Resource Include="Assets\Fonts\IBMPlexMono\IBMPlexMono-Medium.ttf" />
-		<Resource Include="Assets\Fonts\IBMPlexMono\IBMPlexMono-Bold.ttf" />
 		<Resource Include="Assets\Fonts\Roboto\Roboto-Regular.ttf" />
 		<Resource Include="Assets\Fonts\Roboto\Roboto-Medium.ttf" />
 		<Resource Include="Assets\Fonts\Roboto\Roboto-Bold.ttf" />
-		<Resource Include="Assets\Fonts\RobotoMono\RobotoMono-Regular.ttf" />
-		<Resource Include="Assets\Fonts\RobotoMono\RobotoMono-Medium.ttf" />
-		<Resource Include="Assets\Fonts\RobotoMono\RobotoMono-Bold.ttf" />
 		<Resource Include="Assets\Fonts\NotoSans\NotoSans-Regular.ttf" />
 		<Resource Include="Assets\Fonts\NotoSans\NotoSans-Medium.ttf" />
 		<Resource Include="Assets\Fonts\NotoSans\NotoSans-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Poppins\Poppins-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Poppins\Poppins-Medium.ttf" />
+		<Resource Include="Assets\Fonts\Poppins\Poppins-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Imprima\Imprima-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Lato\Lato-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Lato\Lato-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Nunito\Nunito.ttf" />
+		<Resource Include="Assets\Fonts\Raleway\Raleway.ttf" />
+		<Resource Include="Assets\Fonts\OpenSans\OpenSans.ttf" />
+		<Resource Include="Assets\Fonts\Montserrat\Montserrat.ttf" />
+		<Resource Include="Assets\Fonts\WorkSans\WorkSans.ttf" />
+		<Resource Include="Assets\Fonts\Quicksand\Quicksand.ttf" />
+		<Resource Include="Assets\Fonts\Rubik\Rubik.ttf" />
+		<Resource Include="Assets\Fonts\DMSans\DMSans.ttf" />
 	</ItemGroup>
 
 </Project>

@@ -234,56 +234,71 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="0" Command="{Binding SetModeAreaCommand}">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsModeArea}" Value="True">
-                                        <Setter Property="Opacity"         Value="1" />
-                                        <Setter Property="FontWeight"      Value="SemiBold" />
-                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                        <Setter Property="BorderThickness" Value="0.7" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource IconArea}"
-                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                                  VerticalAlignment="Center" Margin="0,0,5,0" />
-                            <TextBlock Text="{Binding ModeLabelArea}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
+                    <Grid Grid.Column="0">
+                        <Button Command="{Binding SetModeAreaCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsModeArea}" Value="True">
+                                            <Setter Property="Opacity"         Value="1" />
+                                            <Setter Property="FontWeight"      Value="SemiBold" />
+                                            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                            <Setter Property="BorderThickness" Value="0.7" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconArea}"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                      StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                      VerticalAlignment="Center" Margin="0,0,5,0" />
+                                <TextBlock Text="{Binding ModeLabelArea}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                              Style="{StaticResource HoverGateStyle}">
+                            <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                    Visibility="{Binding IsModeArea, Converter={StaticResource BoolToVis}}"
+                                    Command="{Binding OpenHelpCommand}" CommandParameter="help.unit.area" />
+                        </Grid>
+                    </Grid>
 
-                    <Button Grid.Column="1" Command="{Binding SetModeWeightCommand}">
-                        <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding IsModeWeight}" Value="True">
-                                        <Setter Property="Opacity"         Value="1" />
-                                        <Setter Property="FontWeight"      Value="SemiBold" />
-                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                        <Setter Property="BorderThickness" Value="0.7" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Button.Style>
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource IconWeight}"
-                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                                  VerticalAlignment="Center" Margin="0,0,5,0" />
-                            <TextBlock Text="{Binding ModeLabelWeight}" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
+                    <Grid Grid.Column="1">
+                        <Button Command="{Binding SetModeWeightCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsModeWeight}" Value="True">
+                                            <Setter Property="Opacity"         Value="1" />
+                                            <Setter Property="FontWeight"      Value="SemiBold" />
+                                            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                            <Setter Property="BorderThickness" Value="0.7" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconWeight}"
+                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                      StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                      VerticalAlignment="Center" Margin="0,0,5,0" />
+                                <TextBlock Text="{Binding ModeLabelWeight}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                              Style="{StaticResource HoverGateStyle}">
+                            <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                    Visibility="{Binding IsModeWeight, Converter={StaticResource BoolToVis}}"
+                                    Command="{Binding OpenHelpCommand}" CommandParameter="help.unit.weight" />
+                        </Grid>
+                    </Grid>
                 </Grid>
             </Border>
-
             <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                 BorderThickness="0.7"
                 CornerRadius="8"
@@ -296,7 +311,8 @@
                         <!-- From row label -->
                         <TextBlock Text="{Binding AreaFromLabel}"
                        Foreground="{DynamicResource WidgetForegroundBrush}"
-                       FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+                       FontSize="11" Opacity="0.5"
+                       Margin="0,0,0,3" />
 
                         <!-- From: value + unit -->
                         <Grid Margin="0,0,0,8">
@@ -355,7 +371,8 @@ MaxDropDownHeight="200" />
 
                         <TextBlock Text="{Binding WeightFromLabel}"
                        Foreground="{DynamicResource WidgetForegroundBrush}"
-                       FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+                       FontSize="11" Opacity="0.5"
+                       Margin="0,0,0,3" />
 
                         <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>

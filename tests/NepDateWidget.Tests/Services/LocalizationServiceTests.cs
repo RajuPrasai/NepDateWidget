@@ -283,8 +283,8 @@ public class LocalizationServiceTests
             using var svc = new LocalizationService(path);
             svc.Load();
             Assert.Equal("hello", svc.Get("custom.key"));
-            // Embedded fallback is not merged — disk file is the sole source.
-            Assert.Equal("[app.exit]", svc.Get("app.exit"));
+            // Missing embedded keys are merged in — disk values take precedence over embedded.
+            Assert.Equal("Exit", svc.Get("app.exit"));
         }
         finally
         {
@@ -314,8 +314,9 @@ public class LocalizationServiceTests
             using var svc = new LocalizationService(path);
             var ex = Record.Exception(() => svc.Load());
             Assert.Null(ex);
-            // keys fall back to bracket notation when _strings is empty
-            Assert.Equal("[app.exit]", svc.Get("app.exit"));
+            // corrupted disk file causes LoadFromDisk to no-op; MergeMissingFromEmbedded
+            // then fills all keys from embedded strings so the app remains usable.
+            Assert.Equal("Exit", svc.Get("app.exit"));
         }
         finally
         {

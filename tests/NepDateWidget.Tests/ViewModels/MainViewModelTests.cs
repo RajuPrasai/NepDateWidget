@@ -158,17 +158,6 @@ public class MainViewModelTests
         Assert.Equal(480, svc.Current.ExpandedHeight);
     }
 
-    // ── AlwaysOnTop ───────────────────────────────────────────────────────────
-
-    [Fact]
-    public void AlwaysOnTop_WhenSet_UpdatesSettings()
-    {
-        var (vm, svc, _) = Create();
-
-        vm.AlwaysOnTop = true;
-
-        Assert.True(svc.Current.AlwaysOnTop);
-    }
 
     // ── ExitRequested event ───────────────────────────────────────────────────
 
@@ -239,7 +228,6 @@ public class MainViewModelTests
         var (vm, _, _) = Create();
 
         Assert.NotEmpty(vm.MenuLanguageLabel);
-        Assert.NotEmpty(vm.MenuAlwaysOnTopLabel);
         Assert.NotEmpty(vm.MenuExitLabel);
     }
 

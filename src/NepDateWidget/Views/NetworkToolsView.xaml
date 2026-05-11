@@ -225,155 +225,210 @@
                 CornerRadius="7"
                 Padding="3"
                 Margin="8,4,8,0">
-            <UniformGrid Rows="1">
-                <Button Command="{Binding SetModeMyIpCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeMyIp}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconMyIp}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,4,0" />
-                        <TextBlock Text="{Binding ModeMyIpLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{Binding SetModePingCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModePing}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconPing}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,4,0" />
-                        <TextBlock Text="{Binding ModePingLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{Binding SetModeScanCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeScan}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconScan}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,4,0" />
-                        <TextBlock Text="{Binding ModeScanLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{Binding SetModeTraceCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeTrace}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconTrace}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,4,0" />
-                        <TextBlock Text="{Binding ModeTraceLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{Binding SetModeWhoisCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeWhois}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconWhois}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,4,0" />
-                        <TextBlock Text="{Binding ModeWhoisLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{Binding SetModeDnsCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeDns}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconDns}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,4,0" />
-                        <TextBlock Text="{Binding ModeDnsLabel}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-            </UniformGrid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Button Command="{Binding SetModeMyIpCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeMyIp}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconMyIp}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeMyIpLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeMyIp, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.myip" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Button Command="{Binding SetModePingCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModePing}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconPing}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModePingLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModePing, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.ping" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="2">
+                    <Button Command="{Binding SetModeScanCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeScan}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconScan}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeScanLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeScan, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.scan" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="3">
+                    <Button Command="{Binding SetModeTraceCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeTrace}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconTrace}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeTraceLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeTrace, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.trace" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="4">
+                    <Button Command="{Binding SetModeWhoisCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeWhois}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconWhois}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeWhoisLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeWhois, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.whois" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="5">
+                    <Button Command="{Binding SetModeDnsCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeDns}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconDns}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeDnsLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeDns, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.dns" />
+                    </Grid>
+                </Grid>
+            </Grid>
         </Border>
 
         <!-- ══ Content area ══════════════════════════════════════════════════ -->
-        <Border Grid.Row="1"
+        <Border Grid.Row="1" Margin="8,8,8,0"
                 BorderBrush="{DynamicResource WidgetBorderBrush}"
                 BorderThickness="0.7"
                 CornerRadius="8"
-                Padding="12,10"
-                Margin="8,8,8,0">
+                Padding="12,10">
             <Grid>
 
                         <!-- ── MODE 0: MY IP ─────────────────────────────── -->
@@ -577,7 +632,7 @@
                                                     <TextBlock Text="{Binding MacAddress}"
                                                                Foreground="{DynamicResource WidgetForegroundBrush}"
                                                                FontSize="10"
-                                                               FontFamily="Consolas, Courier New"
+                                                               FontFamily="Cascadia Code, Consolas, Courier New"
                                                                Opacity="0.60" />
                                                     <TextBlock Text=" · "
                                                                Foreground="{DynamicResource WidgetForegroundBrush}"

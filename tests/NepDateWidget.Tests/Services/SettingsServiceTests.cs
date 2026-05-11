@@ -57,11 +57,9 @@ public class SettingsServiceTests : IDisposable
 
         svc.Current.Language    = "ne";
         svc.Current.Theme       = "Light";
-        svc.Current.AlwaysOnTop = true;
         svc.Current.WindowLeft  = 250;
         svc.Current.WindowTop   = 180;
         svc.Current.IsExpanded  = true;
-        svc.Current.HighlightedDays.Add("2082-01-15");
 
         svc.Save();
 
@@ -70,11 +68,9 @@ public class SettingsServiceTests : IDisposable
 
         Assert.Equal("ne",         svc2.Current.Language);
         Assert.Equal("Light",      svc2.Current.Theme);
-        Assert.True(svc2.Current.AlwaysOnTop);
         Assert.Equal(250,          svc2.Current.WindowLeft);
         Assert.Equal(180,          svc2.Current.WindowTop);
         Assert.True(svc2.Current.IsExpanded);
-        Assert.Contains("2082-01-15", svc2.Current.HighlightedDays);
     }
 
     // ── Corrupted JSON ────────────────────────────────────────────────────────
@@ -169,17 +165,6 @@ public class SettingsServiceTests : IDisposable
         Assert.Equal("Light", svc.Current.Theme);
     }
 
-    [Fact]
-    public void Load_NullHighlightedDays_ReplacedWithEmptyList()
-    {
-        var path = TempPath();
-        File.WriteAllText(path, """{"HighlightedDays":null}""");
-
-        var svc = ServiceAt(path);
-        svc.Load();
-
-        Assert.NotNull(svc.Current.HighlightedDays);
-    }
 
     // ── Atomic write ──────────────────────────────────────────────────────────
 

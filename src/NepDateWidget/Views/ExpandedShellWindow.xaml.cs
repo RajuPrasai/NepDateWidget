@@ -96,21 +96,9 @@ public partial class ExpandedShellWindow : Window
         }
         else
         {
-            // First open: anchor near the pill's saved position, expanding downward.
-            double anchorLeft = _settingsService.Current.WindowLeft;
-            double anchorTop  = _settingsService.Current.WindowTop;
-            if (anchorLeft <= 0 && anchorTop <= 0)
-            {
-                anchorLeft = workArea.Right - Width - 24;
-                anchorTop  = workArea.Top + 24;
-            }
-
-            if (anchorLeft + Width > workArea.Right)
-                anchorLeft = workArea.Right - Width;
-            if (anchorTop + Height > workArea.Bottom)
-                anchorTop = workArea.Bottom - Height;
-            Left = Math.Max(workArea.Left, anchorLeft);
-            Top  = Math.Max(workArea.Top,  anchorTop);
+            // No saved position: center on the primary work area.
+            Left = workArea.Left + (workArea.Width  - Width)  / 2;
+            Top  = workArea.Top  + (workArea.Height - Height) / 2;
         }
 
         HwndSource.FromHwnd(_hwnd)!.AddHook(WndProcHook);

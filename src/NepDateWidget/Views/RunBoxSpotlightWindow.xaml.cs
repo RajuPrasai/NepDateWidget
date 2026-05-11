@@ -49,7 +49,14 @@ public partial class RunBoxSpotlightWindow : Window
         });
 
         // Lose focus to another app/window → close spotlight (shell stays hidden).
-        Deactivated += (_, _) => Dispatcher.BeginInvoke(DispatcherPriority.Input, () => AnimateAndClose());
+        // Guard: if the mouse is still inside the window the deactivation came from clicking
+        // an internal element (e.g. a history list item), not from switching to another app.
+        // In that case SpotlightInput.Focus() in the click handler will reclaim focus
+        // immediately, so we must not close.
+        Deactivated += (_, _) => Dispatcher.BeginInvoke(DispatcherPriority.Input, () =>
+        {
+            if (!IsMouseOver) AnimateAndClose();
+        });
     }
 
     // ── Show / hide ──────────────────────────────────────────────────────────

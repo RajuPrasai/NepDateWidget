@@ -25,8 +25,6 @@ public class CalendarViewModelHolidayCountdownTests
 
         var vm = new CalendarViewModel(
             calSvc, loc, convSvc,
-            highlightedDays: new List<string>(),
-            converterDefaultDirection: "BsToAd",
             showEnglishDayNumbers: false,
             highlightSaturdays: true,
             highlightSundays: false,
@@ -50,7 +48,7 @@ public class CalendarViewModelHolidayCountdownTests
         var loc     = new LocalizationService();
         var convSvc = new ConversionService(calAdapter);
         var vm = new CalendarViewModel(calSvc, loc, convSvc,
-            new List<string>(), showHolidayCountdown: true, holidayLookupService: null);
+            showHolidayCountdown: true, holidayLookupService: null);
 
         Assert.False(vm.HasHolidayCountdown);
         Assert.Empty(vm.HolidayCountdownLines);

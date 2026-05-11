@@ -529,6 +529,7 @@ public sealed class TextToolsViewModel : ViewModelBase
     public ICommand SetScriptFileDirR2DCommand { get; }
     public ICommand SetScriptFileDirD2RCommand { get; }
     public ICommand ConvertScriptFileCommand   { get; }
+    public ICommand OpenHelpCommand             { get; }
 
     // ─────────────────────────────────────────────────────────────────────────
     // CONSTRUCTION
@@ -575,6 +576,14 @@ public sealed class TextToolsViewModel : ViewModelBase
         ConvertScriptFileCommand   = new RelayCommand(
             async () => await ConvertScriptFileAsync(),
             () => ScriptFileCanConvert);
+        OpenHelpCommand = new RelayCommand<string>(key =>
+        {
+            var shell = System.Windows.Application.Current.Windows
+                .OfType<NepDateWidget.Views.ExpandedShellWindow>()
+                .FirstOrDefault(w => w.IsVisible)
+                ?? (System.Windows.Window)System.Windows.Application.Current.MainWindow!;
+            NepDateWidget.Views.HelpPopup.ShowFor(key!, _loc, shell);
+        });
 
         RefreshLabels();
         GeneratePassword();

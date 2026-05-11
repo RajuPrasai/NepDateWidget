@@ -18,7 +18,6 @@ public sealed class CalendarViewModel : ViewModelBase
 {
     private readonly ICalendarService _calendarService;
     private readonly ILocalizationService _loc;
-    private readonly IReadOnlyList<string> _highlightedDays;
     private readonly INepaliDateAdapter _adapter;
     private readonly IReminderService? _reminderService;
     private readonly INotesService? _notesService;
@@ -379,8 +378,6 @@ public sealed class CalendarViewModel : ViewModelBase
         ICalendarService calendarService,
         ILocalizationService localizationService,
         IConversionService conversionService,
-        IReadOnlyList<string>? highlightedDays = null,
-        string converterDefaultDirection = "ADtoBS",
         bool showEnglishDayNumbers = true,
         bool highlightSaturdays = true,
         bool highlightSundays = false,
@@ -399,7 +396,6 @@ public sealed class CalendarViewModel : ViewModelBase
         _calendarService = calendarService ?? throw new ArgumentNullException(nameof(calendarService));
         _loc = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _ = conversionService ?? throw new ArgumentNullException(nameof(conversionService));
-        _highlightedDays = highlightedDays ?? Array.Empty<string>();
         _showEnglishDayNumbers = showEnglishDayNumbers;
         _highlightSaturdays = highlightSaturdays;
         _highlightSundays = highlightSundays;
@@ -415,7 +411,7 @@ public sealed class CalendarViewModel : ViewModelBase
         _clipboard = clipboardService ?? new ClipboardService();
 
         Converter = new ConverterViewModel(conversionService, localizationService,
-            converterDefaultDirection, adapter, selectedTimezoneId);
+            adapter, selectedTimezoneId);
 
         PrevMonthCommand = new RelayCommand(() => NavigateMonths(-1));
         NextMonthCommand = new RelayCommand(() => NavigateMonths(+1));
@@ -553,7 +549,7 @@ public sealed class CalendarViewModel : ViewModelBase
 
     private void RefreshGrid()
     {
-        var month = _calendarService.GetMonth(_displayYear, _displayMonth, _highlightedDays);
+        var month = _calendarService.GetMonth(_displayYear, _displayMonth);
 
         bool isNepali = string.Equals(_loc.CurrentLanguage, "ne", StringComparison.OrdinalIgnoreCase);
 

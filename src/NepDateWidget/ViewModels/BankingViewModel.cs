@@ -199,6 +199,7 @@ public sealed class BankingViewModel : ViewModelBase
 
     public ICommand CalculateEmiCommand   { get; }
     public ICommand ToggleEmiYearCommand  { get; }
+    public ICommand OpenHelpCommand       { get; }
 
     // ═════════════════════════════════════════════════════════════════════════
 
@@ -249,6 +250,14 @@ public sealed class BankingViewModel : ViewModelBase
         ToggleEmiYearCommand     = new RelayCommand<EmiScheduleRow>(DoToggleEmiYear);
         SetEmiBsCommand          = new RelayCommand(() => EmiUseBs = true);
         SetEmiAdCommand          = new RelayCommand(() => EmiUseBs = false);
+        OpenHelpCommand          = new RelayCommand<string>(key =>
+        {
+            var shell = System.Windows.Application.Current.Windows
+                .OfType<NepDateWidget.Views.ExpandedShellWindow>()
+                .FirstOrDefault(w => w.IsVisible)
+                ?? (System.Windows.Window)System.Windows.Application.Current.MainWindow!;
+            NepDateWidget.Views.HelpPopup.ShowFor(key!, _loc, shell);
+        });
 
         // Seed one empty first row for interest.
         AddRowInternal(string.Empty, string.Empty, isFirstRow: true);

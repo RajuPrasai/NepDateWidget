@@ -17,7 +17,7 @@
         UseLayoutRounding="True"
         SnapsToDevicePixels="False"
         RenderOptions.ClearTypeHint="Enabled"
-        Topmost="{Binding AlwaysOnTop}"
+        Topmost="True"
         Foreground="{DynamicResource WidgetForegroundBrush}"
         FontFamily="{DynamicResource WidgetFontFamily}"
         TextOptions.TextFormattingMode="Display"

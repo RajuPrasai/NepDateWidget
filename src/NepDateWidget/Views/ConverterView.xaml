@@ -343,77 +343,101 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Command="{Binding SetModeConvertCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeConvert}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconConverter}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding ModeLabelConvert}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+                <Grid Grid.Column="0">
+                    <Button Command="{Binding SetModeConvertCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeConvert}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconConverter}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeLabelConvert}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeConvert, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.converter.convert" />
+                    </Grid>
+                </Grid>
 
-                <Button Grid.Column="1" Command="{Binding SetModeDaysCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeDays}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconDays}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding ModeLabelDays}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+                <Grid Grid.Column="1">
+                    <Button Command="{Binding SetModeDaysCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeDays}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconDays}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeLabelDays}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeDays, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.converter.days" />
+                    </Grid>
+                </Grid>
 
-                <Button Grid.Column="2" Command="{Binding SetModeTimeCommand}">
-                    <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsModeTime}" Value="True">
-                                    <Setter Property="Opacity"         Value="1" />
-                                    <Setter Property="FontWeight"      Value="SemiBold" />
-                                    <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                    <Setter Property="BorderThickness" Value="0.7" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconClock}"
-                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                              StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                              VerticalAlignment="Center" Margin="0,0,5,0" />
-                        <TextBlock Text="{Binding ModeLabelTime}" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+                <Grid Grid.Column="2">
+                    <Button Command="{Binding SetModeTimeCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeTime}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconClock}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeLabelTime}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeTime, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.converter.time" />
+                    </Grid>
+                </Grid>
 
             </Grid>
         </Border>
@@ -752,7 +776,7 @@
 
 
         </StackPanel>
-        </Border><!-- close main card -->
+        </Border>
 
     </StackPanel>
     </ScrollViewer>

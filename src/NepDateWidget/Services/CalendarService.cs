@@ -48,8 +48,7 @@ public sealed class CalendarService : ICalendarService
     }
 
     public CalendarMonth GetMonth(
-        int bsYear, int bsMonth,
-        IReadOnlyCollection<string>? highlightedDays = null)
+        int bsYear, int bsMonth)
     {
         bsYear = Math.Clamp(bsYear, MinBsYear, MaxBsYear);
         bsMonth = Math.Clamp(bsMonth, MinBsMonth, MaxBsMonth);
@@ -57,9 +56,6 @@ public sealed class CalendarService : ICalendarService
         var today = _adapter.GetTodayBs();
         int daysInMonth = _adapter.GetDaysInMonth(bsYear, bsMonth);
         var firstDow = _adapter.GetFirstDayOfMonth(bsYear, bsMonth);
-
-        // Build a fast lookup set from the highlighted-day strings
-        var highlightSet = BuildHighlightSet(highlightedDays);
 
         // Number of padding cells before day 1 (week starts on Sunday = 0)
         int leadingPad = (int)firstDow;   // Sunday=0, Monday=1, … Saturday=6
@@ -89,9 +85,6 @@ public sealed class CalendarService : ICalendarService
                               && bsMonth == today.Month
                               && dayNumber == today.Day;
 
-                string key = NotesService.FormatKey(bsYear, bsMonth, dayNumber);
-                bool isHighlit = highlightSet.Contains(key);
-
                 var (isHoliday, tithiEn, tithiNp, eventsEn, eventsNp) =
                     _adapter.GetCalendarInfo(bsYear, bsMonth, dayNumber);
 
@@ -104,7 +97,7 @@ public sealed class CalendarService : ICalendarService
                     DayOfWeek = dow,
                     IsCurrentMonth = true,
                     IsToday = isToday,
-                    IsHighlighted = isHighlit,
+                    IsHighlighted = false,
                     IsPublicHoliday = isHoliday,
                     TithiEn = tithiEn,
                     TithiNp = tithiNp,
@@ -160,12 +153,4 @@ public sealed class CalendarService : ICalendarService
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────
-
-    private static HashSet<string> BuildHighlightSet(IReadOnlyCollection<string>? highlights)
-    {
-        if (highlights is null || highlights.Count == 0)
-            return new HashSet<string>(0);
-
-        return new HashSet<string>(highlights, StringComparer.Ordinal);
-    }
 }

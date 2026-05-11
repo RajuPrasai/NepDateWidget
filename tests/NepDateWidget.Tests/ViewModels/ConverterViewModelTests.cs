@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Services;
+using NepDateWidget.Services;
 using NepDateWidget.Tests.Services;
 using NepDateWidget.ViewModels;
 
@@ -7,7 +7,7 @@ namespace NepDateWidget.Tests.ViewModels;
 public class ConverterViewModelTests
 {
     private static ConverterViewModel Create(
-        string defaultDirection = "ADtoBS",
+        bool isAdToBs = false,
         string language = "en",
         IConversionService? conversionService = null)
     {
@@ -15,21 +15,15 @@ public class ConverterViewModelTests
         loc.SetLanguage(language);
         var adapter = new FakeNepaliDateAdapter();
         var svc = conversionService ?? new ConversionService(adapter);
-        return new ConverterViewModel(svc, loc, defaultDirection, adapter);
+        var vm = new ConverterViewModel(svc, loc, adapter);
+        if (isAdToBs) vm.IsAdToBs = true;
+        return vm;
     }
 
     [Fact]
-    public void Constructor_DefaultDirection_AdToBs_Sets_IsAdToBs_True()
+    public void Constructor_DefaultDirection_IsBsToAd()
     {
-        var vm = Create("ADtoBS");
-        Assert.True(vm.IsAdToBs);
-        Assert.False(vm.IsBsToAd);
-    }
-
-    [Fact]
-    public void Constructor_DefaultDirection_BsToAd_Sets_IsBsToAd_True()
-    {
-        var vm = Create("BStoAD");
+        var vm = Create();
         Assert.False(vm.IsAdToBs);
         Assert.True(vm.IsBsToAd);
     }
@@ -68,7 +62,7 @@ public class ConverterViewModelTests
     [Fact]
     public void SetBsToAdCommand_Flips_Direction()
     {
-        var vm = Create("ADtoBS");
+        var vm = Create(isAdToBs: true);
         vm.SetBsToAdCommand.Execute(null);
         Assert.False(vm.IsAdToBs);
         Assert.True(vm.IsBsToAd);
@@ -77,7 +71,7 @@ public class ConverterViewModelTests
     [Fact]
     public void SetAdToBsCommand_Flips_Direction_Back()
     {
-        var vm = Create("BStoAD");
+        var vm = Create();
         vm.SetAdToBsCommand.Execute(null);
         Assert.True(vm.IsAdToBs);
         Assert.False(vm.IsBsToAd);
@@ -86,7 +80,7 @@ public class ConverterViewModelTests
     [Fact]
     public void InputText_BsToAd_ValidDate_AutoConverts()
     {
-        var vm = Create("BStoAD");
+        var vm = Create();
         vm.InputText = "2082-12-20";
         Assert.False(vm.HasError);
         Assert.NotEmpty(vm.OutputText);
@@ -95,7 +89,7 @@ public class ConverterViewModelTests
     [Fact]
     public void InputText_BsToAd_InvalidInput_NoOutput()
     {
-        var vm = Create("BStoAD");
+        var vm = Create();
         vm.InputText = "abc-4-3";
         Assert.Equal(string.Empty, vm.OutputText);
     }
@@ -103,7 +97,7 @@ public class ConverterViewModelTests
     [Fact]
     public void InputText_AdToBs_ValidDate_AutoConverts()
     {
-        var vm = Create("ADtoBS");
+        var vm = Create(isAdToBs: true);
         vm.InputText = "2026-4-3";
         Assert.False(vm.HasError);
         Assert.NotEmpty(vm.OutputText);
@@ -112,7 +106,7 @@ public class ConverterViewModelTests
     [Fact]
     public void InputText_AdToBs_InvalidInput_NoOutput()
     {
-        var vm = Create("ADtoBS");
+        var vm = Create(isAdToBs: true);
         vm.InputText = "abc-4-3";
         Assert.Equal(string.Empty, vm.OutputText);
     }
@@ -120,7 +114,7 @@ public class ConverterViewModelTests
     [Fact]
     public void ChangeInputText_ClearsOutput()
     {
-        var vm = Create("ADtoBS");
+        var vm = Create(isAdToBs: true);
         vm.InputText = "2026-4-3";
         Assert.NotEmpty(vm.OutputText);
         // Typing a partial / invalid string clears the previous output
@@ -131,7 +125,7 @@ public class ConverterViewModelTests
     [Fact]
     public void SwitchDirection_ChangesDirection()
     {
-        var vm = Create("ADtoBS");
+        var vm = Create(isAdToBs: true);
         Assert.True(vm.IsAdToBs);
         vm.SetBsToAdCommand.Execute(null);
         Assert.True(vm.IsBsToAd);
@@ -145,7 +139,7 @@ public class ConverterViewModelTests
         var enTitle = vm.TitleLabel;
         var loc = new LocalizationService();
         loc.SetLanguage("ne");
-        var vmNe = new ConverterViewModel(new ConversionService(new FakeNepaliDateAdapter()), loc, "ADtoBS");
+        var vmNe = new ConverterViewModel(new ConversionService(new FakeNepaliDateAdapter()), loc);
         Assert.NotEmpty(vmNe.TitleLabel);
         _ = enTitle;
     }
@@ -155,7 +149,7 @@ public class ConverterViewModelTests
     {
         var loc = new LocalizationService();
         loc.SetLanguage("en");
-        var vm = new ConverterViewModel(new ConversionService(new FakeNepaliDateAdapter()), loc, "ADtoBS");
+        var vm = new ConverterViewModel(new ConversionService(new FakeNepaliDateAdapter()), loc);
         var enTitle = vm.TitleLabel;
         loc.SetLanguage("ne");
         vm.OnLanguageChanged();
@@ -243,7 +237,7 @@ public class ConverterViewModelTests
     [InlineData("not-a-date")]
     public void InputText_Invalid_NoOutput(string input)
     {
-        var vm = Create("ADtoBS");
+        var vm = Create(isAdToBs: true);
         vm.InputText = input;
         Assert.Equal(string.Empty, vm.OutputText);
     }
@@ -253,7 +247,7 @@ public class ConverterViewModelTests
     [Fact]
     public void DirectionSwitch_ClearsExistingOutput()
     {
-        var vm = Create("ADtoBS");
+        var vm = Create(isAdToBs: true);
         vm.InputText = "2026-4-3";
         Assert.NotEmpty(vm.OutputText);
 
@@ -301,7 +295,7 @@ public class ConverterViewModelTests
     [Fact]
     public void OutputText_MirrorsConvertOutputShort()
     {
-        var vm = Create("BStoAD");
+        var vm = Create();
         vm.InputText = "2082-12-20";
         Assert.Equal(vm.ConvertOutputShort, vm.OutputText);
     }
@@ -323,18 +317,10 @@ public class ConverterViewModelTests
     // ── Default value initialization ─────────────────────────────────────────
 
     [Fact]
-    public void Constructor_ConvertInput_PrePopulatedWithTodayDate()
+    public void Constructor_DefaultDirection_IsBsToAd_And_InputPreFilledWithBsDate()
     {
-        var vm = Create("ADtoBS");
-        Assert.NotEmpty(vm.ConvertInput);
-        // FakeAdapter today AD = 2026-04-03
-        Assert.Contains("2026", vm.ConvertInput);
-    }
-
-    [Fact]
-    public void Constructor_BsToAd_ConvertInput_PrePopulatedWithTodayBs()
-    {
-        var vm = Create("BStoAD");
+        var vm = Create();
+        Assert.False(vm.IsAdToBs);
         Assert.NotEmpty(vm.ConvertInput);
         // FakeAdapter today BS = 2082-12-20
         Assert.Contains("2082", vm.ConvertInput);
@@ -387,3 +373,4 @@ public class ConverterViewModelTests
         Assert.Equal(toggledLabel, vm.TimeAmPmLabel);
     }
 }
+

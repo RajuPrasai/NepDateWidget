@@ -153,28 +153,6 @@ public class CalendarServiceTests
         Assert.All(saturdays, d => Assert.True(d.IsSaturday));
     }
 
-    // ── Highlighted days ──────────────────────────────────────────────────────
-
-    [Fact]
-    public void GetMonth_HighlightedDay_IsMarkedIsHighlighted()
-    {
-        var svc     = CreateService();
-        var hiDays  = new List<string> { "2082-12-05" };
-        var month   = svc.GetMonth(2082, 12, hiDays);
-
-        var day5 = month.Days.Single(d => d.IsCurrentMonth && d.Day == 5);
-        Assert.True(day5.IsHighlighted);
-    }
-
-    [Fact]
-    public void GetMonth_NoHighlights_NoCellsHighlighted()
-    {
-        var svc   = CreateService();
-        var month = svc.GetMonth(2082, 12);
-
-        Assert.All(month.Days, d => Assert.False(d.IsHighlighted));
-    }
-
     // ── NavigateMonth ─────────────────────────────────────────────────────────
 
     [Fact]

@@ -179,8 +179,8 @@ public class UiConsistencyTests
         var cal      = new CalendarService(adapter);
         var loc      = new LocalizationService();
         var conv     = new ConversionService(adapter);
-        var vm       = new CalendarViewModel(cal, loc, conv, new List<string>(),
-                                              "ADtoBS", true, true, selectedTimezoneId: null!);
+        var vm       = new CalendarViewModel(cal, loc, conv,
+                                              true, true, selectedTimezoneId: null!);
 
         Assert.NotNull(vm.PrevMonthCommand);
         Assert.NotNull(vm.NextMonthCommand);
@@ -341,14 +341,14 @@ public class UiConsistencyTests
         Assert.All(vm.DayOfWeekHeaders, h => Assert.NotEmpty(h.Label));
     }
 
-    // ── First expand opens Calendar (index 0) by default ─────────────────
+    // ── First expand restores last tab (index 8 by default) ──────────────────
 
     [Fact]
-    public void MainViewModel_FirstExpand_OpensCalendar()
+    public void MainViewModel_FirstExpand_OpensLastTab()
     {
         var vm = CreateMain();
         vm.ToggleExpandedCommand.Execute(null); // expand
-        Assert.Equal(0, vm.SelectedTabIndex);
+        Assert.Equal(8, vm.SelectedTabIndex);
     }
 
     // ── Tab label properties all non-empty ────────────────────────────────────
@@ -385,7 +385,6 @@ public class UiConsistencyTests
     {
         var vm = CreateMain();
         Assert.NotEmpty(vm.MenuLanguageLabel);
-        Assert.NotEmpty(vm.MenuAlwaysOnTopLabel);
         Assert.NotEmpty(vm.MenuShowClockLabel);
         Assert.NotEmpty(vm.MenuThemeLabel);
         Assert.NotEmpty(vm.MenuThemeDarkLabel);
@@ -454,7 +453,7 @@ public class UiConsistencyTests
         var adapter = new FakeNepaliDateAdapter();
         var loc     = new LocalizationService();
         var conv    = new ConversionService(adapter);
-        var vm      = new ConverterViewModel(conv, loc, "ADtoBS", adapter);
+        var vm      = new ConverterViewModel(conv, loc, adapter);
         vm.ActiveMode = 2; // Time
 
         int active = new[] { vm.IsModeConvert, vm.IsModeDays, vm.IsModeTime }
@@ -471,7 +470,7 @@ public class UiConsistencyTests
         var adapter = new FakeNepaliDateAdapter();
         var loc     = new LocalizationService();
         var conv    = new ConversionService(adapter);
-        var vm      = new ConverterViewModel(conv, loc, "ADtoBS", adapter);
+        var vm      = new ConverterViewModel(conv, loc, adapter);
         vm.ActiveMode = mode;
 
         int active = new[] { vm.IsModeConvert, vm.IsModeDays, vm.IsModeTime }
@@ -487,7 +486,8 @@ public class UiConsistencyTests
         var adapter = new FakeNepaliDateAdapter();
         var loc     = new LocalizationService();
         var conv    = new ConversionService(adapter);
-        var vm      = new ConverterViewModel(conv, loc, "ADtoBS", adapter);
+        var vm      = new ConverterViewModel(conv, loc, adapter);
+        vm.IsAdToBs = true;
 
         Assert.True(vm.IsAdToBs);
         Assert.False(vm.IsBsToAd);
@@ -499,7 +499,7 @@ public class UiConsistencyTests
         var adapter = new FakeNepaliDateAdapter();
         var loc     = new LocalizationService();
         var conv    = new ConversionService(adapter);
-        var vm      = new ConverterViewModel(conv, loc, "BStoAD", adapter);
+        var vm      = new ConverterViewModel(conv, loc, adapter);
 
         Assert.False(vm.IsAdToBs);
         Assert.True(vm.IsBsToAd);
@@ -531,13 +531,6 @@ public class UiConsistencyTests
     }
 
     // ── WidgetSettings defaults are sensible ──────────────────────────────────
-
-    [Fact]
-    public void WidgetSettings_Defaults_AlwaysOnTop_True()
-    {
-        var s = new WidgetSettings();
-        Assert.True(s.AlwaysOnTop);
-    }
 
     [Fact]
     public void WidgetSettings_Defaults_AnimationEnabled_True()
@@ -589,17 +582,17 @@ public class UiConsistencyTests
     }
 
     [Fact]
-    public void WidgetSettings_Defaults_LastExpandedTab_IsCalendar()
+    public void WidgetSettings_Defaults_LastExpandedTab_Is8()
     {
         var s = new WidgetSettings();
-        Assert.Equal(0, s.LastExpandedTab);
+        Assert.Equal(8, s.LastExpandedTab);
     }
 
     [Fact]
-    public void WidgetSettings_Defaults_HideOnFullscreen_True()
+    public void WidgetSettings_Defaults_ShowHelpBadges_True()
     {
         var s = new WidgetSettings();
-        Assert.True(s.HideOnFullscreen);
+        Assert.True(s.ShowHelpBadges);
     }
 
     // ── SettingsValidator clamps expanded dimensions ──────────────────────────
@@ -644,14 +637,6 @@ public class UiConsistencyTests
         var s = new WidgetSettings { Language = "fr" };
         SettingsValidator.Validate(s);
         Assert.Equal("en", s.Language);
-    }
-
-    [Fact]
-    public void SettingsValidator_NullCollections_RepairedToEmpty()
-    {
-        var s = new WidgetSettings { HighlightedDays = null! };
-        SettingsValidator.Validate(s);
-        Assert.NotNull(s.HighlightedDays);
     }
 
     // ── Tab index mapping contracts ───────────────────────────────────────────
