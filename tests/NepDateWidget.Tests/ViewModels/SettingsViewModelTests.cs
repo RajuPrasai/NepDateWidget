@@ -518,4 +518,155 @@ public class SettingsViewModelTests
 
         Assert.DoesNotContain(nameof(vm.Language), changed);
     }
+
+    // ── Export / Import backup commands (#11 / #12) ───────────────────────────
+
+    [Fact]
+    public void ExportBackupLabel_IsNonEmpty_InEnglish()
+    {
+        var (vm, _, _, _) = Create();
+        Assert.NotEmpty(vm.ExportBackupLabel);
+    }
+
+    [Fact]
+    public void ImportBackupLabel_IsNonEmpty_InEnglish()
+    {
+        var (vm, _, _, _) = Create();
+        Assert.NotEmpty(vm.ImportBackupLabel);
+    }
+
+    [Fact]
+    public void ExportBackupCommand_IsNotNull_AndCanExecute()
+    {
+        var (vm, _, _, _) = Create();
+        Assert.NotNull(vm.ExportBackupCommand);
+        Assert.True(vm.ExportBackupCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public void ImportBackupCommand_IsNotNull_AndCanExecute()
+    {
+        var (vm, _, _, _) = Create();
+        Assert.NotNull(vm.ImportBackupCommand);
+        Assert.True(vm.ImportBackupCommand.CanExecute(null));
+    }
+
+    [Fact]
+    public void ExportBackupLabel_ChangesOnLanguageSwitch()
+    {
+        var svc = new FakeSettingsService();
+        var loc = new LocalizationService();
+        loc.SetLanguage("en");
+        var vm = new SettingsViewModel(svc, loc, new FakeThemeService(), new FakeAutoStartService());
+        var en = vm.ExportBackupLabel;
+
+        loc.SetLanguage("ne");
+        vm.OnLanguageChanged();
+
+        Assert.NotEqual(en, vm.ExportBackupLabel);
+    }
+
+    [Fact]
+    public void ImportBackupLabel_ChangesOnLanguageSwitch()
+    {
+        var svc = new FakeSettingsService();
+        var loc = new LocalizationService();
+        loc.SetLanguage("en");
+        var vm = new SettingsViewModel(svc, loc, new FakeThemeService(), new FakeAutoStartService());
+        var en = vm.ImportBackupLabel;
+
+        loc.SetLanguage("ne");
+        vm.OnLanguageChanged();
+
+        Assert.NotEqual(en, vm.ImportBackupLabel);
+    }
+
+    [Fact]
+    public void Labels_AllNonEmpty_IncludesBackupLabels()
+    {
+        var (vm, _, _, _) = Create();
+        Assert.NotEmpty(vm.ExportBackupLabel);
+        Assert.NotEmpty(vm.ImportBackupLabel);
+        Assert.NotEmpty(vm.AppearanceSectionLabel);
+        Assert.NotEmpty(vm.BehaviorSectionLabel);
+        Assert.NotEmpty(vm.CalendarSectionLabel);
+        Assert.NotEmpty(vm.LogSizeLabel);
+        Assert.NotEmpty(vm.FontLabel);
+        Assert.NotEmpty(vm.ResetToDefaultsLabel);
+    }
+
+    // ── Import backup path-traversal guard (#12) ──────────────────────────────
+
+    [Fact]
+    public void ResolveImportEntryPath_KnownFile_ReturnsPathInsideDataDir()
+    {
+        var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
+        var dest = SettingsViewModel.ResolveImportEntryPath("settings.json", dir);
+        Assert.NotNull(dest);
+        Assert.StartsWith(Path.GetFullPath(dir), dest, StringComparison.OrdinalIgnoreCase);
+        Assert.EndsWith("settings.json", dest, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void ResolveImportEntryPath_UnknownFile_ReturnsNull()
+    {
+        var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
+        var dest = SettingsViewModel.ResolveImportEntryPath("evil.exe", dir);
+        Assert.Null(dest);
+    }
+
+    [Fact]
+    public void ResolveImportEntryPath_PathTraversal_ReturnsNull()
+    {
+        // An attacker could craft a ZIP entry named "../settings.json" to escape the
+        // target directory. The guard must reject it.
+        var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
+        var dest = SettingsViewModel.ResolveImportEntryPath("../settings.json", dir);
+        Assert.Null(dest);
+    }
+
+    [Fact]
+    public void ResolveImportEntryPath_AbsolutePath_ReturnsNull()
+    {
+        // A ZIP entry whose name is an absolute path must be rejected.
+        var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
+        var dest = SettingsViewModel.ResolveImportEntryPath(@"C:\Windows\System32\evil.dll", dir);
+        Assert.Null(dest);
+    }
+
+    [Fact]
+    public void ResolveImportEntryPath_EmptyName_ReturnsNull()
+    {
+        var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
+        Assert.Null(SettingsViewModel.ResolveImportEntryPath("", dir));
+    }
+
+    [Fact]
+    public void ResolveImportEntryPath_AllAllowedFiles_ReturnValidPaths()
+    {
+        // Every filename in the whitelist must resolve correctly.
+        var dir = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
+        string[] allowed =
+        [
+            "settings.json", "reminders.json", "notes.json", "shortcuts.json",
+            "documents.json", "run-history.json", "doc-search-history.json", "runtime.json"
+        ];
+        foreach (var name in allowed)
+        {
+            var dest = SettingsViewModel.ResolveImportEntryPath(name, dir);
+            Assert.NotNull(dest);
+            Assert.True(
+                dest!.StartsWith(Path.GetFullPath(dir), StringComparison.OrdinalIgnoreCase),
+                $"Path for '{name}' escapes data directory: {dest}");
+        }
+    }
+
+    [Fact]
+    public void ResolveImportEntryPath_CaseInsensitiveName_Allowed()
+    {
+        // The whitelist uses OrdinalIgnoreCase — "Settings.JSON" is valid.
+        var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
+        var dest = SettingsViewModel.ResolveImportEntryPath("Settings.JSON", dir);
+        Assert.NotNull(dest);
+    }
 }

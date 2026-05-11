@@ -174,11 +174,9 @@ public class SettingsValidatorTests
         Assert.Equal("BStoAD",      s.ConverterDefaultDirection);
         Assert.Equal(840,           s.ExpandedWidth);
         Assert.Equal(750,           s.ExpandedHeight);
-        Assert.Equal(42,            s.RunHistory.Count);
         Assert.Equal(6,             s.RunBoxHotkeyModifiers);   // Ctrl+Shift
         Assert.Equal(0x20,          s.RunBoxHotkeyKey);         // VK_SPACE
         Assert.True(s.AutoCheckForUpdates);
-        Assert.Null(s.LastUpdateCheckUtc);
     }
 
     // ── SchemaVersion ─────────────────────────────────────────────────────────
@@ -187,11 +185,11 @@ public class SettingsValidatorTests
     [InlineData(0)]
     [InlineData(-1)]
     [InlineData(-100)]
-    public void SchemaVersion_BelowOne_ClampsToOne(int version)
+    public void SchemaVersion_BelowOne_ClampsToCurrentVersion(int version)
     {
         var s = Valid(); s.SchemaVersion = version;
         SettingsValidator.Validate(s);
-        Assert.Equal(1, s.SchemaVersion);
+        Assert.Equal(SettingsValidator.CurrentSchemaVersion, s.SchemaVersion);
     }
 
     [Theory]
@@ -289,46 +287,6 @@ public class SettingsValidatorTests
         Assert.Equal(497.33333, s.ExpandedHeight);
     }
 
-    // ── RunHistory truncation ────────────────────────────────────────────────
-
-    [Fact]
-    public void RunHistory_Null_ReplacedWithEmptyList()
-    {
-        var s = Valid(); s.RunHistory = null!;
-        SettingsValidator.Validate(s);
-        Assert.NotNull(s.RunHistory);
-        Assert.Empty(s.RunHistory);
-    }
-
-    [Fact]
-    public void RunHistory_Over100_TruncatedTo100()
-    {
-        var s = Valid();
-        s.RunHistory = Enumerable.Range(0, 120).Select(i => $"cmd-{i}").ToList();
-        SettingsValidator.Validate(s);
-        Assert.Equal(100, s.RunHistory.Count);
-        Assert.Equal("cmd-0", s.RunHistory[0]);
-        Assert.Equal("cmd-99", s.RunHistory[99]);
-    }
-
-    [Fact]
-    public void RunHistory_Exactly100_Preserved()
-    {
-        var s = Valid();
-        s.RunHistory = Enumerable.Range(0, 100).Select(i => $"cmd-{i}").ToList();
-        SettingsValidator.Validate(s);
-        Assert.Equal(100, s.RunHistory.Count);
-    }
-
-    [Fact]
-    public void RunHistory_Under50_Preserved()
-    {
-        var s = Valid();
-        s.RunHistory = new List<string> { "a", "b", "c" };
-        SettingsValidator.Validate(s);
-        Assert.Equal(3, s.RunHistory.Count);
-    }
-
     // ── RunBoxHotkey bounds ──────────────────────────────────────────────────
 
     [Theory]
@@ -417,7 +375,6 @@ public class SettingsValidatorTests
             LogMaxSizeMb = 999,
             RunBoxHotkeyModifiers = -5,
             RunBoxHotkeyKey = 999,
-            RunHistory = null!,
             HighlightedDays = null!,
             SchemaVersion = -1
         };
@@ -464,13 +421,12 @@ public class SettingsValidatorTests
             LogMaxSizeMb = 200,
             RunBoxHotkeyModifiers = -99,
             RunBoxHotkeyKey = 999,
-            HighlightedDays = null!,
-            RunHistory = null!
+            HighlightedDays = null!
         };
 
         SettingsValidator.Validate(s);
 
-        Assert.Equal(1, s.SchemaVersion);
+        Assert.Equal(SettingsValidator.CurrentSchemaVersion, s.SchemaVersion);
         Assert.Equal("en", s.Language);
         Assert.Equal("Light", s.Theme);
         Assert.Equal("Forest", s.BackgroundPreset);
@@ -483,7 +439,6 @@ public class SettingsValidatorTests
         Assert.Equal(6, s.RunBoxHotkeyModifiers);
         Assert.Equal(0x20, s.RunBoxHotkeyKey);
         Assert.NotNull(s.HighlightedDays);
-        Assert.NotNull(s.RunHistory);
     }
 
     // ── NotificationDurationSeconds ──────────────────────────────────────────

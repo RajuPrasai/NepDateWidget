@@ -23,7 +23,12 @@ public sealed class NetworkToolsViewModel : ViewModelBase
 
     // ── HttpClient singleton (thread-safe, reusable) ──────────────────────────
     // One instance for the lifetime of the VM; disposed when the tab/app closes.
-    private static readonly HttpClient _http = new()
+    // SocketsHttpHandler with PooledConnectionLifetime prevents stale DNS entries
+    // from persisting indefinitely (the default static HttpClient never refreshes DNS).
+    private static readonly HttpClient _http = new(new SocketsHttpHandler
+    {
+        PooledConnectionLifetime = TimeSpan.FromMinutes(2)
+    })
     {
         Timeout = TimeSpan.FromSeconds(10)
     };

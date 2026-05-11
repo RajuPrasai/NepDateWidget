@@ -6,6 +6,7 @@ namespace NepDateWidget.Helpers;
 /// Static thin façade over <see cref="ILogService"/> so any class can call
 /// <c>Log.Action("...")</c> without constructor injection.
 /// Call <see cref="Initialize"/> once at startup before emitting any entries.
+/// Call <see cref="Shutdown"/> in <c>App.OnExit</c> to drain pending entries.
 /// </summary>
 public static class Log
 {
@@ -13,6 +14,12 @@ public static class Log
 
     /// <summary>Must be called once in App.OnStartup before any logging.</summary>
     public static void Initialize(ILogService service) => _svc = service;
+
+    /// <summary>
+    /// Drains the log queue and disposes the underlying service.
+    /// Must be called in App.OnExit before process terminates.
+    /// </summary>
+    public static void Shutdown() => (_svc as IDisposable)?.Dispose();
 
     public static void Info(string message) => _svc?.Info(message);
     public static void Action(string message) => _svc?.Action(message);

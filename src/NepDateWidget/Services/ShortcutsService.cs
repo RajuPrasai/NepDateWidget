@@ -80,10 +80,8 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
     // ── State ─────────────────────────────────────────────────────────────────
 
     private readonly string _path;
-    private readonly string _watchDir;
     private readonly SynchronizationContext? _syncContext;
-    private FileSystemWatcher? _watcher;
-    private Timer? _debounceTimer;
+    private DebouncedFileReloader? _reloader;
 
     private Dictionary<string, string> _prefixes;
     private Dictionary<string, string> _siteNames;
@@ -98,7 +96,6 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
     public ShortcutsService(string path)
     {
         _path     = path;
-        _watchDir = Path.GetDirectoryName(path)!;
         _syncContext = SynchronizationContext.Current;
 
         // Empty until Load() is called.
@@ -113,14 +110,21 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
         if (!File.Exists(_path))
             SeedFile();
         LoadFromFile();
-        SetupWatcher();
+        _reloader ??= new DebouncedFileReloader(_path, debounceMs: 500, onReload: () =>
+        {
+            LoadFromFile();
+            if (_syncContext is not null)
+                _syncContext.Post(_ => ShortcutsChanged?.Invoke(this, EventArgs.Empty), null);
+            else
+                ShortcutsChanged?.Invoke(this, EventArgs.Empty);
+        });
     }
 
     private void SeedFile()
     {
         try
         {
-            Directory.CreateDirectory(_watchDir);
+            Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
             File.WriteAllText(_path, ReadDefaultJson(), Encoding.UTF8);
         }
         catch (Exception ex)
@@ -223,44 +227,6 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
         return count;
     }
 
-    // ── FileSystemWatcher ─────────────────────────────────────────────────────
-
-    private void SetupWatcher()
-    {
-        if (!Directory.Exists(_watchDir))
-        {
-            Log.Warn($"shortcuts.json: data directory does not exist, file watching is disabled.");
-            return;
-        }
-
-        _debounceTimer = new Timer(_ => Reload(), null, Timeout.Infinite, Timeout.Infinite);
-
-        _watcher = new FileSystemWatcher(_watchDir, Path.GetFileName(_path))
-        {
-            NotifyFilter        = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime,
-            EnableRaisingEvents = true,
-        };
-
-        _watcher.Changed += (_, _) => ScheduleReload();
-        _watcher.Created += (_, _) => ScheduleReload();
-        _watcher.Deleted += (_, _) => ScheduleReload();
-        // Renamed covers editors that do atomic save via temp-file rename (VS Code, Notepad++).
-        _watcher.Renamed += (_, _) => ScheduleReload();
-    }
-
-    private void ScheduleReload() =>
-        _debounceTimer?.Change(500, Timeout.Infinite);
-
-    private void Reload()
-    {
-        LoadFromFile();
-
-        if (_syncContext is not null)
-            _syncContext.Post(_ => ShortcutsChanged?.Invoke(this, EventArgs.Empty), null);
-        else
-            ShortcutsChanged?.Invoke(this, EventArgs.Empty);
-    }
-
     // ── Built-in-only fallback ────────────────────────────────────────────────
 
     /// <summary>
@@ -289,7 +255,6 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
 
     public void Dispose()
     {
-        _watcher?.Dispose();
-        _debounceTimer?.Dispose();
+        _reloader?.Dispose();
     }
 }

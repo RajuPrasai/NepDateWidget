@@ -83,10 +83,10 @@ public sealed class ReminderViewModelTests : IDisposable
     }
 
     [Fact]
-    public void Constructor_RecurrenceOptionsHas4Items()
+    public void Constructor_RecurrenceOptionsHas5Items()
     {
         var vm = CreateVm();
-        Assert.Equal(4, vm.RecurrenceOptions.Count);
+        Assert.Equal(5, vm.RecurrenceOptions.Count);
     }
 
     // ── StartAddCommand ───────────────────────────────────────────────────────

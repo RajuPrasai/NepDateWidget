@@ -268,8 +268,8 @@ public sealed class ReminderServiceTests : IDisposable
         svc.CheckAndFireDueReminders(fireUtc.AddMinutes(1));
 
         var remaining = svc.GetAll()[0];
-        // AddMonths(2082, 11, 15, 1) in fake => (2082, 12, 1)
-        Assert.Equal("2082/12/01", remaining.BsDate);
+        // Monthly recurrence preserves the original day: 15th stays 15th each month.
+        Assert.Equal("2082/12/15", remaining.BsDate);
     }
 
     // ── Missed reminders ──────────────────────────────────────────────────────

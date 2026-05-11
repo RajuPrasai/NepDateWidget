@@ -196,7 +196,7 @@ public partial class ExpandedShellWindow : Window
         }
 
         e.Cancel = true;
-        if (ViewModel.IsExpanded)
+        if (ViewModel?.IsExpanded == true)
             ViewModel.ToggleExpandedCommand.Execute(null);
     }
 

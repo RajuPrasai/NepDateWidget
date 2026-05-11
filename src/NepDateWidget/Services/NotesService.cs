@@ -1,10 +1,11 @@
 using NepDateWidget.Helpers;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 
 namespace NepDateWidget.Services;
 
-public sealed class NotesService : INotesService
+public sealed class NotesService : INotesService, IDisposable
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
@@ -14,12 +15,17 @@ public sealed class NotesService : INotesService
 
     private readonly string _filePath;
     private Dictionary<string, string> _notes = new();
+    private DebouncedFileReloader? _reloader;
+    private long _lastSelfWriteTicks;
+
+    private readonly SynchronizationContext? _syncContext;
 
     public event EventHandler? NotesChanged;
 
     public NotesService(string filePath)
     {
         _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+        _syncContext = SynchronizationContext.Current;
     }
 
     public string? GetNote(string dateKey)
@@ -27,6 +33,8 @@ public sealed class NotesService : INotesService
         _notes.TryGetValue(dateKey, out string? value);
         return value;
     }
+
+    public static string FormatKey(int year, int month, int day) => $"{year:D4}-{month:D2}-{day:D2}";
 
     public void SetNote(string dateKey, string? text)
     {
@@ -55,6 +63,22 @@ public sealed class NotesService : INotesService
 
     public void Load()
     {
+        LoadFromDisk();
+        _reloader ??= new DebouncedFileReloader(_filePath, debounceMs: 500, onReload: () =>
+        {
+            // Suppress reloads triggered by our own writes (self-induced FSW noise).
+            var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));
+            if (elapsed.TotalSeconds < 1.0) return;
+            LoadFromDisk();
+            if (_syncContext is not null)
+                _syncContext.Post(_ => NotesChanged?.Invoke(this, EventArgs.Empty), null);
+            else
+                NotesChanged?.Invoke(this, EventArgs.Empty);
+        });
+    }
+
+    private void LoadFromDisk()
+    {
         if (!File.Exists(_filePath)) return;
         try
         {
@@ -71,6 +95,7 @@ public sealed class NotesService : INotesService
 
     public void Save()
     {
+        Interlocked.Exchange(ref _lastSelfWriteTicks, DateTime.UtcNow.Ticks);
         try
         {
             var json = JsonSerializer.Serialize(_notes, SerializerOptions);
@@ -83,6 +108,8 @@ public sealed class NotesService : INotesService
             Log.Error("Failed to save notes", ex);
         }
     }
+
+    public void Dispose() => _reloader?.Dispose();
 
     /// <summary>
     /// Migrates notes from WidgetSettings.DayNotes into this service.

@@ -393,4 +393,271 @@ public sealed class MoreViewModelTests
         Assert.True(item.HasNotes);
         Assert.False(item.IsCompleted);
     }
+
+    // ── ReminderFormNotes truncation (#27) ────────────────────────────────────
+
+    [Fact]
+    public void ReminderFormNotes_BelowLimit_StoresExact()
+    {
+        var vm = Create();
+
+        vm.ReminderFormNotes = "hello";
+
+        Assert.Equal("hello", vm.ReminderFormNotes);
+    }
+
+    [Fact]
+    public void ReminderFormNotes_ExactlyAtLimit_Stored()
+    {
+        var vm = Create();
+        var at500 = new string('a', 500);
+
+        vm.ReminderFormNotes = at500;
+
+        Assert.Equal(500, vm.ReminderFormNotes.Length);
+        Assert.Equal(500, vm.ReminderFormNotesLength);
+    }
+
+    [Fact]
+    public void ReminderFormNotes_ExceedsLimit_TruncatedAt500()
+    {
+        var vm = Create();
+        var over = new string('z', 600);
+
+        vm.ReminderFormNotes = over;
+
+        Assert.Equal(500, vm.ReminderFormNotes.Length);
+        Assert.Equal(500, vm.ReminderFormNotesLength);
+    }
+
+    [Fact]
+    public void ReminderFormNotes_NullAssigned_TreatedAsEmpty()
+    {
+        var vm = Create();
+        vm.ReminderFormNotes = "something";
+
+        vm.ReminderFormNotes = null!;
+
+        Assert.Equal(string.Empty, vm.ReminderFormNotes);
+        Assert.Equal(0, vm.ReminderFormNotesLength);
+    }
+
+    [Fact]
+    public void ReminderFormNotes_Empty_LengthIsZero()
+    {
+        var vm = Create();
+
+        vm.ReminderFormNotes = "";
+
+        Assert.Equal(0, vm.ReminderFormNotesLength);
+    }
+
+    // ── ReminderFormNotesLength counter raises PropertyChanged (#27) ──────────
+
+    [Fact]
+    public void ReminderFormNotes_Set_RaisesNotesLengthPropertyChanged()
+    {
+        var vm = Create();
+        var raised = new List<string>();
+        vm.PropertyChanged += (_, e) => raised.Add(e.PropertyName!);
+
+        vm.ReminderFormNotes = "hello";
+
+        Assert.Contains(nameof(vm.ReminderFormNotesLength), raised);
+    }
+
+    [Fact]
+    public void ReminderFormNotes_SetToSameValue_DoesNotRaiseLengthChanged()
+    {
+        var vm = Create();
+        vm.ReminderFormNotes = "abc";
+
+        var raised = new List<string>();
+        vm.PropertyChanged += (_, e) => raised.Add(e.PropertyName!);
+
+        vm.ReminderFormNotes = "abc"; // same value, SetProperty should short-circuit
+
+        Assert.DoesNotContain(nameof(vm.ReminderFormNotesLength), raised);
+    }
+
+    [Fact]
+    public void ReminderFormNotesLength_TracksTruncatedLength_NotInputLength()
+    {
+        var vm = Create();
+
+        vm.ReminderFormNotes = new string('x', 700);
+
+        // Length must reflect what's actually stored (500), not what was input (700)
+        Assert.Equal(500, vm.ReminderFormNotesLength);
+    }
+
+    // ── ShowReminderEndDate (#7) ──────────────────────────────────────────────
+
+    [Fact]
+    public void ShowReminderEndDate_DefaultFalse_WhenRecurrenceIsNone()
+    {
+        var vm = Create();
+
+        Assert.Equal(0, vm.ReminderFormRecurrenceIndex);
+        Assert.False(vm.ShowReminderEndDate);
+    }
+
+    [Fact]
+    public void ShowReminderEndDate_TrueWhenRecurrenceIndexAboveZero()
+    {
+        var vm = Create();
+
+        vm.ReminderFormRecurrenceIndex = 1;
+
+        Assert.True(vm.ShowReminderEndDate);
+    }
+
+    [Fact]
+    public void ShowReminderEndDate_BackToFalseWhenRecurrenceResetToZero()
+    {
+        var vm = Create();
+        vm.ReminderFormRecurrenceIndex = 2;
+        Assert.True(vm.ShowReminderEndDate);
+
+        vm.ReminderFormRecurrenceIndex = 0;
+
+        Assert.False(vm.ShowReminderEndDate);
+    }
+
+    [Fact]
+    public void ReminderFormRecurrenceIndex_Set_RaisesShowReminderEndDatePropertyChanged()
+    {
+        var vm = Create();
+        var raised = new List<string>();
+        vm.PropertyChanged += (_, e) => raised.Add(e.PropertyName!);
+
+        vm.ReminderFormRecurrenceIndex = 1;
+
+        Assert.Contains(nameof(vm.ShowReminderEndDate), raised);
+    }
+
+    // ── ReminderSearch / FilteredReminders (#8) ───────────────────────────────
+
+    [Fact]
+    public void ReminderSearchText_Empty_AllRemindersVisible()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Alpha Meeting"));
+        rs.Add(MakeReminder("r2", "Beta Review"));
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        vm.ReminderSearchText = "";
+
+        Assert.Equal(2, vm.FilteredReminders.Count);
+    }
+
+    [Fact]
+    public void ReminderSearchText_MatchingPrefix_FiltersCorrectly()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Alpha Meeting"));
+        rs.Add(MakeReminder("r2", "Beta Review"));
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        vm.ReminderSearchText = "alpha";
+
+        Assert.Single(vm.FilteredReminders);
+        Assert.Equal("r1", vm.FilteredReminders[0].Id);
+    }
+
+    [Fact]
+    public void ReminderSearchText_CaseInsensitive()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "ALPHA"));
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        vm.ReminderSearchText = "alpha";
+
+        Assert.Single(vm.FilteredReminders);
+    }
+
+    [Fact]
+    public void ReminderSearchText_NoMatch_FilteredRemindersEmpty()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Alpha"));
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        vm.ReminderSearchText = "zzz";
+
+        Assert.Empty(vm.FilteredReminders);
+        Assert.False(vm.HasFilteredReminders);
+    }
+
+    [Fact]
+    public void ReminderSearchText_NoMatch_ShowReminderNoResultsTrue()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Alpha"));
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        vm.ReminderSearchText = "zzz";
+
+        Assert.True(vm.ShowReminderNoResults);
+    }
+
+    [Fact]
+    public void IsReminderSearchActive_FalseWhenEmpty()
+    {
+        var vm = Create();
+
+        vm.ReminderSearchText = "";
+
+        Assert.False(vm.IsReminderSearchActive);
+    }
+
+    [Fact]
+    public void IsReminderSearchActive_TrueWhenNonEmpty()
+    {
+        var vm = Create();
+
+        vm.ReminderSearchText = "x";
+
+        Assert.True(vm.IsReminderSearchActive);
+        Assert.True(vm.ReminderSearchClearVisible);
+    }
+
+    [Fact]
+    public void ClearReminderSearchCommand_ResetsSearchText()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Alpha"));
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+        vm.ReminderSearchText = "alpha";
+
+        vm.ClearReminderSearchCommand.Execute(null);
+
+        Assert.Equal(string.Empty, vm.ReminderSearchText);
+        Assert.False(vm.IsReminderSearchActive);
+        Assert.Single(vm.FilteredReminders); // all back
+    }
+
+    [Fact]
+    public void ReminderSearchText_Set_UpdatesFilteredRemindersImmediately()
+    {
+        var rs = new FakeReminderService();
+        rs.Add(MakeReminder("r1", "Alpha"));
+        rs.Add(MakeReminder("r2", "Beta"));
+        var vm = Create(rs);
+        vm.SetModeRemindersCommand.Execute(null);
+
+        Assert.Equal(2, vm.FilteredReminders.Count);
+
+        vm.ReminderSearchText = "beta";
+
+        Assert.Single(vm.FilteredReminders);
+        Assert.Equal("r2", vm.FilteredReminders[0].Id);
+    }
 }

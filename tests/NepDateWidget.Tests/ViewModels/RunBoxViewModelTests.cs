@@ -8,16 +8,43 @@ public sealed class RunBoxViewModelTests
 {
     // ── Fakes ─────────────────────────────────────────────────────────────────
 
-    private sealed class FakeSettingsService : ISettingsService
+    private sealed class FakeSearchHistoryService : ISearchHistoryService
     {
-        public WidgetSettings Current { get; private set; } = new();
-        public bool IsFirstLaunch => false;
+        private readonly List<string> _entries;
         public int SaveCount { get; private set; }
-        public int LoadCount { get; private set; }
 
-        public void Load() { LoadCount++; }
+        public FakeSearchHistoryService(List<string>? initial = null)
+            => _entries = initial ?? new List<string>();
+
+        public IReadOnlyList<string> All => _entries.AsReadOnly();
+        public int Count => _entries.Count;
+
+        public IReadOnlyList<string> GetMatching(string prefix, int max = 10)
+        {
+            if (string.IsNullOrWhiteSpace(prefix))
+                return _entries.Take(max).ToList();
+            return _entries.Where(e => e.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)).Take(max).ToList();
+        }
+
+        public void Record(string term)
+        {
+            term = term.Trim();
+            if (string.IsNullOrEmpty(term)) return;
+            _entries.RemoveAll(e => string.Equals(e, term, StringComparison.OrdinalIgnoreCase));
+            _entries.Insert(0, term);
+            Save();
+        }
+
+        public void Remove(string term)
+        {
+            term = term.Trim();
+            if (string.IsNullOrEmpty(term)) return;
+            int removed = _entries.RemoveAll(e => string.Equals(e, term, StringComparison.OrdinalIgnoreCase));
+            if (removed > 0) Save();
+        }
+
+        public void Load() { }
         public void Save() { SaveCount++; }
-        public void ResetToDefaults() { Current = new WidgetSettings(); Save(); }
     }
 
     private sealed class FakeLocalizationService : ILocalizationService
@@ -47,16 +74,14 @@ public sealed class RunBoxViewModelTests
 
     private static HistoryEntry H(string raw) => new(raw, null, raw);
 
-    private static (RunBoxViewModel vm, FakeSettingsService settings) Create(
+    private static (RunBoxViewModel vm, FakeSearchHistoryService history) Create(
         List<string>? history = null)
     {
-        var settings  = new FakeSettingsService();
-        if (history is not null)
-            settings.Current.RunHistory = new List<string>(history);
+        var histSvc   = new FakeSearchHistoryService(history);
         var loc       = new FakeLocalizationService();
         var shortcuts = new FakeShortcutsService();
-        var vm = new RunBoxViewModel(settings, loc, shortcuts);
-        return (vm, settings);
+        var vm = new RunBoxViewModel(histSvc, loc, shortcuts);
+        return (vm, histSvc);
     }
 
     // ── URL detection ─────────────────────────────────────────────────────────
@@ -124,54 +149,54 @@ public sealed class RunBoxViewModelTests
     {
         // We can't actually run processes in tests, but we can test the history logic
         // by pre-populating and checking state after various operations.
-        var (vm, settings) = Create(new List<string> { "old entry" });
+        var (vm, history) = Create(new List<string> { "old entry" });
 
-        Assert.Single(settings.Current.RunHistory);
-        Assert.Equal("old entry", settings.Current.RunHistory[0]);
+        Assert.Single(history.All);
+        Assert.Equal("old entry", history.All[0]);
     }
 
     [Fact]
     public void History_DuplicateMovesToTop()
     {
-        var (vm, settings) = Create(new List<string> { "first", "second", "third" });
+        var (vm, history) = Create(new List<string> { "first", "second", "third" });
 
         // Simulate what AddToHistory does (private, but we test via the public API)
         // The ViewModel loads history from settings on construction
-        Assert.Equal(3, settings.Current.RunHistory.Count);
-        Assert.Equal("first", settings.Current.RunHistory[0]);
+        Assert.Equal(3, history.Count);
+        Assert.Equal("first", history.All[0]);
     }
 
     [Fact]
     public void RemoveHistoryItem_RemovesFromList()
     {
-        var (vm, settings) = Create(new List<string> { "alpha", "beta", "gamma" });
+        var (vm, history) = Create(new List<string> { "alpha", "beta", "gamma" });
 
         vm.RemoveHistoryItem(H("beta"));
 
-        Assert.Equal(2, settings.Current.RunHistory.Count);
-        Assert.DoesNotContain("beta", settings.Current.RunHistory);
-        Assert.True(settings.SaveCount > 0);
+        Assert.Equal(2, history.Count);
+        Assert.DoesNotContain("beta", history.All);
+        Assert.True(history.SaveCount > 0);
     }
 
     [Fact]
     public void RemoveHistoryItem_CaseInsensitive()
     {
-        var (vm, settings) = Create(new List<string> { "Notepad", "calc" });
+        var (vm, history) = Create(new List<string> { "Notepad", "calc" });
 
         vm.RemoveHistoryItem(H("notepad"));
 
-        Assert.Single(settings.Current.RunHistory);
-        Assert.Equal("calc", settings.Current.RunHistory[0]);
+        Assert.Single(history.All);
+        Assert.Equal("calc", history.All[0]);
     }
 
     [Fact]
     public void RemoveHistoryItem_Null_DoesNothing()
     {
-        var (vm, settings) = Create(new List<string> { "item" });
+        var (vm, history) = Create(new List<string> { "item" });
 
         vm.RemoveHistoryItem(null);
 
-        Assert.Single(settings.Current.RunHistory);
+        Assert.Single(history.All);
     }
 
     [Fact]
@@ -553,12 +578,12 @@ public sealed class RunBoxViewModelTests
     [Fact]
     public void History_LoadsAllEntriesOnConstruction()
     {
-        var history = Enumerable.Range(1, 55).Select(i => $"item{i}").ToList();
-        var (vm, settings) = Create(history);
+        var hist = Enumerable.Range(1, 55).Select(i => $"item{i}").ToList();
+        var (vm, history) = Create(hist);
 
-        // Constructor loads from settings without truncating.
+        // Constructor loads from the service without truncating.
         // Truncation (cap 500) only happens inside AddToHistory on Execute.
-        Assert.Equal(55, settings.Current.RunHistory.Count);
+        Assert.Equal(55, history.Count);
     }
 
     // ── Filter limits ─────────────────────────────────────────────────────────
@@ -649,11 +674,11 @@ public sealed class RunBoxViewModelTests
     [Fact]
     public void RemoveHistoryItem_NonExistentItem_DoesNothing()
     {
-        var (vm, settings) = Create(new List<string> { "alpha", "beta" });
+        var (vm, history) = Create(new List<string> { "alpha", "beta" });
 
         vm.RemoveHistoryItem(H("gamma"));
 
-        Assert.Equal(2, settings.Current.RunHistory.Count);
+        Assert.Equal(2, history.Count);
     }
 
     [Fact]
@@ -777,5 +802,97 @@ public sealed class RunBoxViewModelTests
         Assert.True(vm.IsHistoryOpen);
         Assert.Equal(1, vm.SelectedHistoryIndex);
         Assert.Equal("notes", vm.RunText);
+    }
+
+    // ── Calculator mode ───────────────────────────────────────────────────────
+
+    [Fact]
+    public void RunText_EqualPrefix_ActivatesCalcMode()
+    {
+        var (vm, _) = Create();
+        vm.RunText = "=2+3";
+        Assert.True(vm.ShowCalcResult);
+        Assert.Equal("5", vm.CalcResult);
+        Assert.Empty(vm.FilteredHistory);
+        Assert.False(vm.IsHistoryOpen);
+    }
+
+    [Fact]
+    public void RunText_EqualPrefix_WithActivePrefixLocked_DoesNotActivateCalcMode()
+    {
+        // If the user has locked a prefix pill (e.g., "yt") and types "=something"
+        // as a search query, calculator mode must NOT activate.
+        var (vm, _) = Create();
+
+        // Lock the "yt" prefix by typing "yt " (prefix + space).
+        vm.RunText = "yt ";          // triggers SetActivePrefix
+        Assert.True(vm.HasActivePrefix);
+        Assert.Equal("yt", vm.ActivePrefix);
+
+        // Now type a query that starts with '='.
+        vm.RunText = "=2+3";
+        Assert.False(vm.ShowCalcResult);
+        Assert.Equal(string.Empty, vm.CalcResult);
+    }
+
+    [Fact]
+    public void RunText_ClearingEqualPrefix_ExitsCalcMode()
+    {
+        var (vm, _) = Create();
+        vm.RunText = "=5*5";
+        Assert.True(vm.ShowCalcResult);
+
+        vm.RunText = "hello";
+        Assert.False(vm.ShowCalcResult);
+        Assert.Equal(string.Empty, vm.CalcResult);
+    }
+
+    [Fact]
+    public void RunText_EqualAlone_NoResult_CalcModeInactive()
+    {
+        // "=" with nothing after is an empty expression — evaluator returns null
+        var (vm, _) = Create();
+        vm.RunText = "=";
+        Assert.False(vm.ShowCalcResult);
+        Assert.Equal(string.Empty, vm.CalcResult);
+    }
+
+    [Fact]
+    public void RunText_InvalidExpression_CalcModeInactive()
+    {
+        // "=abc" cannot be evaluated — evaluator returns null, ShowCalcResult stays false
+        var (vm, _) = Create();
+        vm.RunText = "=abc";
+        Assert.False(vm.ShowCalcResult);
+        Assert.Equal(string.Empty, vm.CalcResult);
+    }
+
+    [Fact]
+    public void RunText_FloatResult_FormattedCorrectly()
+    {
+        // "=1/3" produces a non-integer — must be returned as a numeric string, not empty
+        var (vm, _) = Create();
+        vm.RunText = "=1/3";
+        Assert.True(vm.ShowCalcResult);
+        Assert.False(string.IsNullOrEmpty(vm.CalcResult));
+    }
+
+    [Fact]
+    public void RunText_ExpressionWithSpaces_Evaluated()
+    {
+        // "= 2 + 3" — the expression is trimmed before passing to DataTable.Compute
+        var (vm, _) = Create();
+        vm.RunText = "= 2 + 3";
+        Assert.True(vm.ShowCalcResult);
+        Assert.Equal("5", vm.CalcResult);
+    }
+
+    [Fact]
+    public void RunText_IntegerResult_NoDecimalPoint()
+    {
+        // Integer results must be formatted without trailing ".0"
+        var (vm, _) = Create();
+        vm.RunText = "=10*10";
+        Assert.Equal("100", vm.CalcResult);
     }
 }

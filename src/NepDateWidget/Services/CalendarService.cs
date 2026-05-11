@@ -1,4 +1,5 @@
 ﻿using NepDateWidget.Models;
+using NepDateWidget.Services;
 
 namespace NepDateWidget.Services;
 
@@ -88,7 +89,7 @@ public sealed class CalendarService : ICalendarService
                               && bsMonth == today.Month
                               && dayNumber == today.Day;
 
-                string key = $"{bsYear:D4}-{bsMonth:D2}-{dayNumber:D2}";
+                string key = NotesService.FormatKey(bsYear, bsMonth, dayNumber);
                 bool isHighlit = highlightSet.Contains(key);
 
                 var (isHoliday, tithiEn, tithiNp, eventsEn, eventsNp) =

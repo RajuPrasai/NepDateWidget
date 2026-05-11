@@ -13,6 +13,9 @@ public partial class App : Application
 {
     private static Mutex? _instanceMutex;
     private ShortcutsService? _shortcutsService;
+    private AppStateService? _appStateService;
+    private NotesService? _notesService;
+    private ReminderService? _reminderService;
 
     /// <summary>
     /// Custom entry point. Runs Velopack's CLI hook (handles --veloapp-install,
@@ -139,19 +142,16 @@ public partial class App : Application
             Log.Info($"AutoStart reconciled to persisted setting: {settingsService.Current.AutoStart}.");
 
         // Reminder service: reminders.json in the resolved data folder.
-        var reminderService = new ReminderService(Helpers.AppPaths.RemindersPath, nepDateAdapter);
-        reminderService.Load();
+        _reminderService = new ReminderService(Helpers.AppPaths.RemindersPath, nepDateAdapter);
+        _reminderService.Load();
 
         // Notes service: notes.json in the resolved data folder.
-        var notesService = new NotesService(Helpers.AppPaths.NotesPath);
-        notesService.Load();
-        // Migrate notes from settings if any exist (one-time migration)
-        if (settingsService.Current.DayNotes.Count > 0)
-        {
-            notesService.MigrateFromSettings(settingsService.Current.DayNotes);
-            settingsService.Current.DayNotes.Clear();
-            settingsService.Save();
-        }
+        _notesService = new NotesService(Helpers.AppPaths.NotesPath);
+        _notesService.Load();
+
+        // Runtime state (last update check, last daily events notification).
+        _appStateService = new AppStateService(Helpers.AppPaths.AppStatePath);
+        _appStateService.Load();
 
         // Documents service: documents.json in the resolved data folder.
         var documentService = new DocumentService(Helpers.AppPaths.DocumentsPath);
@@ -161,18 +161,20 @@ public partial class App : Application
         // reach it quickly from any file-upload dialog.
         PinDocumentsFolderToQuickAccess();
 
-        // Document search history
+        // Document search history and run history
         var searchHistoryService = new SearchHistoryService(Helpers.AppPaths.DocSearchHistoryPath);
         searchHistoryService.Load();
+        var runHistoryService = new SearchHistoryService(Helpers.AppPaths.RunHistoryPath, maxEntries: 500, defaultResourceName: "NepDateWidget.Resources.run-history.default.json");
+        runHistoryService.Load();
 
         var updateService = new VelopackUpdateService();
 
         _shortcutsService = new ShortcutsService(Helpers.AppPaths.ShortcutsPath);
         _shortcutsService.Load();
 
-        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: reminderService, notesService: notesService, documentService: documentService, searchHistoryService: searchHistoryService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService);
-        var mainWindow = new MainWindow(mainViewModel, settingsService);
-        mainWindow.SetupReminders(reminderService, localizationService, nepDateAdapter, notesService);
+        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, searchHistoryService: searchHistoryService, runHistoryService: runHistoryService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!);
+        var mainWindow = new MainWindow(mainViewModel, settingsService, _appStateService!);
+        mainWindow.SetupReminders(_reminderService, localizationService, nepDateAdapter, _notesService);
 
         mainWindow.Show();
 
@@ -183,18 +185,18 @@ public partial class App : Application
             {
                 try
                 {
-                    var last = settingsService.Current.LastUpdateCheckUtc;
+                    var last = _appStateService.Current.LastUpdateCheckUtc;
                     if (last is not null && (DateTime.UtcNow - last.Value).TotalHours < 24)
                         return;
 
                     var result = await updateService.CheckAsync().ConfigureAwait(false);
 
-                    // Settings is mutated and saved on the UI thread to avoid
+                    // AppState is mutated and saved on the UI thread to avoid
                     // racing the user toggling other settings concurrently.
                     await Dispatcher.InvokeAsync(() =>
                     {
-                        settingsService.Current.LastUpdateCheckUtc = DateTime.UtcNow;
-                        settingsService.Save();
+                        _appStateService.Current.LastUpdateCheckUtc = DateTime.UtcNow;
+                        _appStateService.Save();
                     });
 
                     if (result.UpdateAvailable)
@@ -255,6 +257,9 @@ public partial class App : Application
     {
         Log.Info("App closed");
         _shortcutsService?.Dispose();
+        _notesService?.Dispose();
+        _reminderService?.Dispose();
+        Log.Shutdown();
         try
         {
             if (_instanceMutex is not null)

@@ -648,10 +648,9 @@ public class UiConsistencyTests
     [Fact]
     public void SettingsValidator_NullCollections_RepairedToEmpty()
     {
-        var s = new WidgetSettings { HighlightedDays = null!, RunHistory = null! };
+        var s = new WidgetSettings { HighlightedDays = null! };
         SettingsValidator.Validate(s);
         Assert.NotNull(s.HighlightedDays);
-        Assert.NotNull(s.RunHistory);
     }
 
     // ── Tab index mapping contracts ───────────────────────────────────────────

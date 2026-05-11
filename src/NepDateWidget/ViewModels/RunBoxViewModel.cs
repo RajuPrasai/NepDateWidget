@@ -19,10 +19,9 @@ public sealed record HistoryEntry(string Raw, string? Prefix, string Query)
 
 public sealed class RunBoxViewModel : ViewModelBase
 {
-    private readonly ISettingsService _settingsService;
+    private readonly ISearchHistoryService? _runHistoryService;
     private readonly ILocalizationService _loc;
     private readonly IShortcutsService _shortcuts;
-    private readonly List<string> _history;
     private readonly DispatcherTimer _errorTimer;
     private HashSet<string> _knownPrefixKeys;
 
@@ -45,8 +44,9 @@ public sealed class RunBoxViewModel : ViewModelBase
                     }
                 }
 
-                // Calculator mode: input starts with '='
-                if (value.StartsWith('='))
+                // Calculator mode: input starts with '=' (only when no prefix is active).
+                // When a prefix is locked the text is a search query, not a formula.
+                if (_activePrefix is null && value.StartsWith('='))
                 {
                     var result = EvaluateExpression(value[1..].Trim());
                     CalcResult = result ?? string.Empty;
@@ -145,12 +145,11 @@ public sealed class RunBoxViewModel : ViewModelBase
     public event EventHandler? CollapseRequested;
     public event EventHandler? ExecutedSuccessfully;
 
-    public RunBoxViewModel(ISettingsService settingsService, ILocalizationService localizationService, IShortcutsService shortcutsService)
+    public RunBoxViewModel(ISearchHistoryService? runHistoryService, ILocalizationService localizationService, IShortcutsService shortcutsService)
     {
-        _settingsService = settingsService;
+        _runHistoryService = runHistoryService;
         _loc = localizationService;
         _shortcuts = shortcutsService;
-        _history = _settingsService.Current.RunHistory ?? new List<string>();
         _knownPrefixKeys = new HashSet<string>(_shortcuts.Prefixes.Keys, StringComparer.OrdinalIgnoreCase);
 
         _errorTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
@@ -258,7 +257,7 @@ public sealed class RunBoxViewModel : ViewModelBase
                 // instead of going through SetActivePrefix (which resets to empty)
                 // then RunText = entry.Query (which filters again).
                 ActivePrefix = entry.Prefix!;
-        string site = _shortcuts.PrefixSiteNames.TryGetValue(entry.Prefix!, out var n) ? n : entry.Prefix!;
+                string site = _shortcuts.PrefixSiteNames.TryGetValue(entry.Prefix!, out var n) ? n : entry.Prefix!;
                 SearchHintLabel = $"Search {site}...";
                 OnPropertyChanged(nameof(SearchHintLabel));
                 ShowCalcResult = false;
@@ -580,22 +579,13 @@ public sealed class RunBoxViewModel : ViewModelBase
 
     private void AddToHistory(string entry)
     {
-        _history.RemoveAll(h => string.Equals(h, entry, StringComparison.OrdinalIgnoreCase));
-        _history.Insert(0, entry);
-
-        if (_history.Count > 500)
-            _history.RemoveRange(500, _history.Count - 500);
-
-        _settingsService.Current.RunHistory = new List<string>(_history);
-        _settingsService.Save();
+        _runHistoryService?.Record(entry);
     }
 
     public void RemoveHistoryItem(HistoryEntry? item)
     {
         if (item is null) return;
-        _history.RemoveAll(h => string.Equals(h, item.Raw, StringComparison.OrdinalIgnoreCase));
-        _settingsService.Current.RunHistory = new List<string>(_history);
-        _settingsService.Save();
+        _runHistoryService?.Remove(item.Raw);
 
         var match = FilteredHistory.FirstOrDefault(h => string.Equals(h.Raw, item.Raw, StringComparison.OrdinalIgnoreCase));
         if (match is not null)
@@ -638,10 +628,14 @@ public sealed class RunBoxViewModel : ViewModelBase
         Execute();
     }
 
+    private IReadOnlyList<string> GetHistory() =>
+        _runHistoryService?.GetMatching("", 5000) ?? Array.Empty<string>();
+
     private void UpdateFilteredHistory()
     {
         FilteredHistory.Clear();
-        if (_history.Count == 0)
+        var history = GetHistory();
+        if (history.Count == 0)
         {
             IsHistoryOpen = false;
             return;
@@ -653,7 +647,7 @@ public sealed class RunBoxViewModel : ViewModelBase
         {
             // Prefix active: show only history for this prefix, matched against the query portion.
             // Parse each entry once to avoid the double-parse of Where+Select.
-            var prefixMatches = _history
+            var prefixMatches = history
                 .Select(h => ParseHistoryEntry(h))
                 .Where(e => e.HasPrefix && string.Equals(e.Prefix, _activePrefix, StringComparison.OrdinalIgnoreCase))
                 .Select((e, i) =>
@@ -676,7 +670,7 @@ public sealed class RunBoxViewModel : ViewModelBase
         }
 
         // No prefix: parse once and filter to plain (non-prefix) items only.
-        var plainPool = _history
+        var plainPool = history
             .Select(h => ParseHistoryEntry(h))
             .Where(e => !e.HasPrefix);
 
@@ -812,20 +806,14 @@ public sealed class RunBoxViewModel : ViewModelBase
         if (removedKeys.Count > 0)
         {
             // Purge history entries whose prefix was removed.
-            // Use ParseHistoryEntry so the detection logic stays in one place.
-            int purged = _history.RemoveAll(h =>
-            {
-                var entry = ParseHistoryEntry(h);
-                return entry.HasPrefix && removedKeys.Contains(entry.Prefix!);
-            });
+            var purgeList = GetHistory()
+                .Where(h => { var e = ParseHistoryEntry(h); return e.HasPrefix && removedKeys.Contains(e.Prefix!); })
+                .ToList();
 
-            if (purged > 0)
-            {
-                _settingsService.Current.RunHistory = new List<string>(_history);
-                _settingsService.Save();
-            }
+            foreach (var h in purgeList)
+                _runHistoryService?.Remove(h);
 
-            if (_activePrefix is not null && removedKeys.Contains(_activePrefix))
+            if (purgeList.Count > 0 && _activePrefix is not null && removedKeys.Contains(_activePrefix))
             {
                 // Clear the active prefix directly — ClearPrefix() calls UpdateFilteredHistory(),
                 // so we return immediately to avoid the redundant call below.

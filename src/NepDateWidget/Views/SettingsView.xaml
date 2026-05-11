@@ -1505,6 +1505,78 @@
                                 Margin="8,0,0,0" />
                     </Grid>
 
+                    <!-- documents.json -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconText}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="documents.json"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="Saved document library entries"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenDocumentsFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
+                    <!-- doc-search-history.json -->
+                    <Grid Margin="0,0,0,4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Path Grid.Column="0"
+                              Data="{StaticResource IconNote}"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.2"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              StrokeLineJoin="Round"
+                              Stretch="Uniform"
+                              Width="12" Height="12"
+                              Opacity="0.45"
+                              VerticalAlignment="Center"
+                              Margin="0,0,9,0" />
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock Text="doc-search-history.json"
+                                       FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                            <TextBlock Text="Document search history"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.45"
+                                       Margin="0,1,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="2"
+                                Content="Open"
+                                Command="{Binding OpenDocSearchHistoryFileCommand}"
+                                Style="{StaticResource OptionButton}"
+                                Margin="8,0,0,0" />
+                    </Grid>
+
                     <!-- nepdate.log -->
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -1541,13 +1613,32 @@
                                 Margin="8,0,0,0" />
                     </Grid>
 
+                    <!-- Backup / restore ────────────────────────────────── -->
+                    <Grid Margin="0,8,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="8" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0"
+                                Content="{Binding ExportBackupLabel}"
+                                Command="{Binding ExportBackupCommand}"
+                                Style="{StaticResource OptionButton}"
+                                HorizontalAlignment="Stretch" />
+                        <Button Grid.Column="2"
+                                Content="{Binding ImportBackupLabel}"
+                                Command="{Binding ImportBackupCommand}"
+                                Style="{StaticResource OptionButton}"
+                                HorizontalAlignment="Stretch" />
+                    </Grid>
+
                     <!-- Inline toast for missing files -->
                     <TextBlock Text="{Binding DataFileMessage}"
                                FontSize="11"
                                Foreground="{DynamicResource WidgetAccentBrush}"
                                Opacity="0.85"
                                Margin="0,6,0,0"
-                               Visibility="{Binding HasDataFileMessage, Converter={StaticResource BoolToVisibilityConverter}}" />
+                               Visibility="{Binding HasDataFileMessage, Converter={StaticResource BoolToVis}}" />
                 </StackPanel>
             </Border>
 

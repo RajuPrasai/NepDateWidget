@@ -24,6 +24,8 @@ public static class SettingsValidator
     // Window size bounds
     private const double MinWindowDim = 100.0;
     private const double MaxWindowDim = 3840.0;
+    public const int MaxTabIndex = 8;
+    public const int CurrentSchemaVersion = 2;
 
     /// <summary>
     /// Validates all fields of <paramref name="s"/>, replacing any invalid value with
@@ -31,9 +33,10 @@ public static class SettingsValidator
     /// </summary>
     public static void Validate(WidgetSettings s)
     {
-        // Schema version - clamp upward mutations
+        // Schema version - values below 1 are corrupt; reset to current.
+        // Values above CurrentSchemaVersion are from a future app version; preserve.
         if (s.SchemaVersion < 1)
-            s.SchemaVersion = 1;
+            s.SchemaVersion = CurrentSchemaVersion;
 
         // Window position - allow any value including negatives (multi-monitor);
         // off-screen recovery is handled by ScreenBoundsHelper at startup.
@@ -54,14 +57,6 @@ public static class SettingsValidator
         if (s.LogMaxSizeMb < 5 || s.LogMaxSizeMb > 100)
             s.LogMaxSizeMb = 10;
 
-        // Collections - null safety
-        s.HighlightedDays ??= new List<string>();
-        s.RunHistory ??= new List<string>();
-
-        // Limit run history to 100 entries
-        if (s.RunHistory.Count > 100)
-            s.RunHistory = s.RunHistory.GetRange(0, 100);
-
         // Hotkey modifiers: must be a valid combination (0 = disabled, or 1..15)
         if (s.RunBoxHotkeyModifiers < 0 || s.RunBoxHotkeyModifiers > 15)
             s.RunBoxHotkeyModifiers = 6; // Ctrl+Shift
@@ -74,9 +69,12 @@ public static class SettingsValidator
         if (s.NotificationDurationSeconds < 5 || s.NotificationDurationSeconds > 60)
             s.NotificationDurationSeconds = 10;
 
-        // Last expanded tab: 0-8
-        if (s.LastExpandedTab < 0 || s.LastExpandedTab > 8)
+        // Last expanded tab: 0-MaxTabIndex
+        if (s.LastExpandedTab < 0 || s.LastExpandedTab > MaxTabIndex)
             s.LastExpandedTab = 0;
+
+        // Null-safety for collection properties
+        s.HighlightedDays ??= new List<string>();
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────

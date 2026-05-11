@@ -105,7 +105,7 @@ public sealed class MoreViewModel : ViewModelBase
     public string NoteEditBuffer
     {
         get => _noteEditBuffer;
-        set => SetProperty(ref _noteEditBuffer, value);
+        set => SetProperty(ref _noteEditBuffer, value?.Length > 500 ? value[..500] : value ?? string.Empty);
     }
 
     private string _noteSearchText = string.Empty;
@@ -195,8 +195,13 @@ public sealed class MoreViewModel : ViewModelBase
     public string ReminderFormNotes
     {
         get => _reminderFormNotes;
-        set => SetProperty(ref _reminderFormNotes, value?.Length > 500 ? value[..500] : value ?? string.Empty);
+        set
+        {
+            if (SetProperty(ref _reminderFormNotes, value?.Length > 500 ? value[..500] : value ?? string.Empty))
+                OnPropertyChanged(nameof(ReminderFormNotesLength));
+        }
     }
+    public int ReminderFormNotesLength => _reminderFormNotes.Length;
 
     private int _reminderFormRecurrenceIndex;
     public int ReminderFormRecurrenceIndex
@@ -891,6 +896,11 @@ public sealed class MoreViewModel : ViewModelBase
         if (string.IsNullOrEmpty(text))
         {
             NoteFormError = _loc.Get("notes.text_required");
+            return;
+        }
+        if (text.Length > 500)
+        {
+            NoteFormError = _loc.Get("notes.text_too_long");
             return;
         }
 

@@ -18,6 +18,7 @@ public sealed class ConverterViewModel : ViewModelBase
     private readonly ILocalizationService _loc;
     private readonly INepaliDateAdapter _adapter;
     private readonly string _homeTimezoneId;
+    private bool _initializing;
 
     // ═════════════════════════════════════════════════════════════════════════
     // MODE SELECTION  (0 = Convert, 1 = Days, 2 = Time)
@@ -124,7 +125,7 @@ public sealed class ConverterViewModel : ViewModelBase
             if (SetProperty(ref _isDaysDiff, value))
             {
                 OnPropertyChanged(nameof(IsDaysAddSub));
-                Log.Action($"tools days sub-mode → {(value ? "Diff" : "AddSub")}");
+                if (!_initializing) Log.Action($"tools days sub-mode → {(value ? "Diff" : "AddSub")}");
                 if (value)
                 {
                     // Diff mode: pre-fill Input2 with today's BS date if it's currently empty
@@ -351,7 +352,9 @@ public sealed class ConverterViewModel : ViewModelBase
 
         PopulateTimezones();
         RefreshLabels();
+        _initializing = true;
         InitializeDefaults();
+        _initializing = false;
     }
 
     public void OnLanguageChanged() => RefreshLabels();
@@ -401,7 +404,7 @@ public sealed class ConverterViewModel : ViewModelBase
         {
             ConvertOutputShort = result.Result;
             ConvertOutputLong = result.ResultLong;
-            Log.Action($"convert {(_isAdToBs ? "AD→BS" : "BS→AD")} | {trimmed} → {result.Result}");
+            if (!_initializing) Log.Action($"convert {(_isAdToBs ? "AD→BS" : "BS→AD")} | {trimmed} → {result.Result}");
             return;
         }
 
@@ -486,7 +489,7 @@ public sealed class ConverterViewModel : ViewModelBase
             var (years, months, days) = breakdown.Value;
             DaysOutputBreakdown = $"{years} years, {months} months, {days} days";
             DaysOutputTotal = Math.Abs(total.Value).ToString();
-            Log.Action($"days diff | {_daysInput1}→{_daysInput2} | {DaysOutputBreakdown} | {DaysOutputTotal} days");
+            if (!_initializing) Log.Action($"days diff | {_daysInput1}→{_daysInput2} | {DaysOutputBreakdown} | {DaysOutputTotal} days");
         }
         else
         {
@@ -640,7 +643,7 @@ public sealed class ConverterViewModel : ViewModelBase
 
             TimeOutput = $"{timeStr}  (UTC{fromUtc} → UTC{toUtc})";
 
-            Log.Action($"time convert | {_timeInput} {_timeFromZone.Id} → {TimeOutput} {_timeToZone.Id}");
+            if (!_initializing) Log.Action($"time convert | {_timeInput} {_timeFromZone.Id} → {TimeOutput} {_timeToZone.Id}");
         }
         catch (Exception ex)
         {

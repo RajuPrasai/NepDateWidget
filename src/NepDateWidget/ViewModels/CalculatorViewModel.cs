@@ -13,6 +13,7 @@ namespace NepDateWidget.ViewModels;
 public sealed class UnitViewModel : ViewModelBase
 {
     private readonly ILocalizationService _loc;
+    private bool _initializing;
 
     // ═════════════════════════════════════════════════════════════════════════
     // CONVERSION CONSTANTS
@@ -278,8 +279,10 @@ public sealed class UnitViewModel : ViewModelBase
         });
 
         RefreshLabels();
+        _initializing = true;
         RecomputeArea();
         RecomputeWeight();
+        _initializing = false;
     }
 
     public void OnLanguageChanged() => RefreshLabels();
@@ -321,7 +324,7 @@ public sealed class UnitViewModel : ViewModelBase
         double result = sqMetres / AreaToSqM[to];
 
         AreaResult = FormatResult(result);
-        Log.Action($"calc area | {input} {AreaUnitNames[from]} → {AreaResult} {AreaUnitNames[to]}");
+        if (!_initializing) Log.Action($"calc area | {input} {AreaUnitNames[from]} → {AreaResult} {AreaUnitNames[to]}");
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -361,7 +364,7 @@ public sealed class UnitViewModel : ViewModelBase
         double result = kg / WeightToKg[to];
 
         WeightResult = FormatResult(result);
-        Log.Action($"calc weight | {input} {WeightUnitNames[from]} → {WeightResult} {WeightUnitNames[to]}");
+        if (!_initializing) Log.Action($"calc weight | {input} {WeightUnitNames[from]} → {WeightResult} {WeightUnitNames[to]}");
     }
 
     // ═════════════════════════════════════════════════════════════════════════

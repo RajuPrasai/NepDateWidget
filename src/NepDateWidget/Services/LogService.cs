@@ -1,20 +1,22 @@
 ﻿using System.IO;
 using System.Text;
+using System.Threading.Channels;
 
 namespace NepDateWidget.Services;
 
 /// <summary>
-/// Writes log entries to a single <c>nepdate.log</c> file beside the executable.
-/// When the file exceeds <see cref="UpdateMaxSize"/>, the oldest half is discarded so
-/// the most recent activity is always retained.
-/// All file operations are synchronous and protected by a lock; exceptions are silently
-/// swallowed so a logging failure can never crash the app.
+/// Writes log entries to a single <c>nepdate.log</c> file.
+/// All writes happen on a background consumer task via a bounded <see cref="Channel{T}"/>,
+/// so callers on the UI thread return immediately without blocking on I/O.
+/// When the file exceeds the configured cap the oldest half is discarded.
+/// Call <see cref="Dispose"/> on shutdown (drains pending entries for up to 2 s).
 /// </summary>
-public sealed class LogService : ILogService
+public sealed class LogService : ILogService, IDisposable
 {
     private readonly string _logPath;
     private long _maxBytes;
-    private readonly object _fileLock = new();
+    private readonly Channel<string> _channel;
+    private readonly Task _consumer;
 
     private const int MinMb = 5;
     private const int MaxMb = 100;
@@ -23,60 +25,82 @@ public sealed class LogService : ILogService
     {
         _logPath = logPath;
         _maxBytes = Clamp(maxSizeMb, MinMb, MaxMb) * 1024L * 1024L;
+        _channel = Channel.CreateBounded<string>(new BoundedChannelOptions(4096)
+        {
+            FullMode = BoundedChannelFullMode.DropOldest,
+            SingleReader = true
+        });
+        _consumer = Task.Run(ConsumeAsync);
     }
 
     public void UpdateMaxSize(int maxSizeMb) =>
-        _maxBytes = Clamp(maxSizeMb, MinMb, MaxMb) * 1024L * 1024L;
+        Interlocked.Exchange(ref _maxBytes, Clamp(maxSizeMb, MinMb, MaxMb) * 1024L * 1024L);
 
     // ── ILogService ───────────────────────────────────────────────────────────
 
-    public void Info(string message) => Write("INFO", message);
-    public void Action(string message) => Write("ACTION", message);
-    public void Warn(string message) => Write("WARN", message);
+    public void Info(string message)   => Enqueue("INFO  ", message);
+    public void Action(string message) => Enqueue("ACTION", message);
+    public void Warn(string message)   => Enqueue("WARN  ", message);
 
     public void Error(string message, Exception? ex = null) =>
-        Write("ERROR ", ex is null ? message : $"{message} | {ex}");
+        Enqueue("ERROR ", ex is null ? message : $"{message} | {ex}");
 
     public void Fatal(string message, Exception? ex = null) =>
-        Write("FATAL ", ex is null ? message : $"{message} | {ex}");
+        Enqueue("FATAL ", ex is null ? message : $"{message} | {ex}");
+
+    // ── IDisposable ───────────────────────────────────────────────────────────
+
+    public void Dispose()
+    {
+        _channel.Writer.TryComplete();
+        _consumer.Wait(TimeSpan.FromSeconds(2));
+    }
 
     // ── Private ───────────────────────────────────────────────────────────────
 
-    private void Write(string level, string message)
+    private void Enqueue(string level, string message)
     {
         try
         {
-            lock (_fileLock)
-            {
-                TrimIfNeeded();
-                // ISO 8601 with timezone offset so logs from any locale are unambiguous.
-                var line = $"{DateTimeOffset.Now:yyyy-MM-dd HH:mm:ss.fffzzz} [{level}] {message}{Environment.NewLine}";
-                File.AppendAllText(_logPath, line, Encoding.UTF8);
-            }
+            var line = $"{DateTimeOffset.Now:yyyy-MM-dd HH:mm:ss.fffzzz} [{level}] {message}{Environment.NewLine}";
+            _channel.Writer.TryWrite(line);
         }
-        catch { /* log failures must never propagate */ }
+        catch { /* enqueue failures must never propagate */ }
     }
 
-    /// <summary>
-    /// When the file exceeds the cap, truncates to the latest ~half of the content
-    /// starting at the first clean line boundary, then prepends a trim banner.
-    /// </summary>
+    private async Task ConsumeAsync()
+    {
+        try
+        {
+            await foreach (var line in _channel.Reader.ReadAllAsync().ConfigureAwait(false))
+            {
+                try
+                {
+                    TrimIfNeeded();
+                    File.AppendAllText(_logPath, line, Encoding.UTF8);
+                }
+                catch { }
+            }
+        }
+        catch { }
+    }
+
     private void TrimIfNeeded()
     {
         if (!File.Exists(_logPath)) return;
+        long maxBytes = Interlocked.Read(ref _maxBytes);
         var info = new FileInfo(_logPath);
-        if (info.Length < _maxBytes) return;
+        if (info.Length < maxBytes) return;
 
-        // Read raw bytes so we can find the line boundary precisely.
         byte[] bytes = File.ReadAllBytes(_logPath);
         int start = bytes.Length / 2;
         while (start < bytes.Length && bytes[start] != (byte)'\n')
             start++;
-        start++; // skip the newline
+        start++;
 
         byte[] banner = Encoding.UTF8.GetBytes(
             $"--- Log trimmed {DateTimeOffset.Now:yyyy-MM-dd HH:mm:ss.fffzzz}" +
-            $" (cap {_maxBytes / 1024 / 1024} MB, older entries removed) ---{Environment.NewLine}");
+            $" (cap {maxBytes / 1024 / 1024} MB, older entries removed) ---{Environment.NewLine}");
 
         using var fs = new FileStream(_logPath, FileMode.Create, FileAccess.Write, FileShare.None);
         fs.Write(banner, 0, banner.Length);

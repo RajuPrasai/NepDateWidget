@@ -6,7 +6,7 @@
 /// </summary>
 public sealed class WidgetSettings
 {
-    public int SchemaVersion { get; set; } = 1;
+    public int SchemaVersion { get; set; } = 2;
 
     // Window state. The collapsed pill auto-positions on first run via
     // ScreenBoundsHelper.GetFirstRunPosition; these defaults are only used if
@@ -24,7 +24,7 @@ public sealed class WidgetSettings
     public string Theme { get; set; } = "Light";
     public string BackgroundPreset { get; set; } = "Forest";
     public string CornerStyle { get; set; } = "Rounded";
-    public string FontFamily { get; set; } = "Segoe UI";
+    public string FontFamily { get; set; } = "Segoe UI Variable";
 
     // Behavior flags
     public bool AlwaysOnTop { get; set; } = true;
@@ -41,9 +41,6 @@ public sealed class WidgetSettings
     public bool ShowTithi { get; set; } = true;
     public bool ShowEvents { get; set; } = true;
     public bool HighlightPublicHolidays { get; set; } = true;
-
-    /// <summary>Per-day notes. Key is "YYYY-MM-DD" (BS date). Value is the note text.</summary>
-    public Dictionary<string, string> DayNotes { get; set; } = new();
 
     // Collapsed mini-bar element visibility
     public bool ShowTimezone { get; set; } = true;
@@ -73,53 +70,6 @@ public sealed class WidgetSettings
     /// <summary>Maximum size of nepdate.log before old entries are trimmed. Range: 5-100 MB.</summary>
     public int LogMaxSizeMb { get; set; } = 10;
 
-    // RunBox
-    public List<string> RunHistory { get; set; } =
-    [
-        "lusrmgr.msc",
-        "excel",
-        "cmd",
-        "powershell",
-        "wt",
-        "explorer",
-        "notepad",
-        "pbrush",
-        "winword",
-        "shutdown -h",
-        "control",
-        "appwiz.cpl",
-        "ncpa.cpl",
-        "%temp%",
-        "temp",
-        "devmgmt.msc",
-        "services.msc",
-        "eventvwr",
-        "regedit",
-        "sysdm.cpl",
-        "msconfig",
-        "cleanmgr",
-        "diskmgmt.msc",
-        "resmon",
-        "perfmon",
-        "taskschd.msc",
-        "wf.msc",
-        "inetcpl.cpl",
-        "optionalfeatures",
-        "compmgmt.msc",
-        "control printers",
-        "control userpasswords2",
-        "netplwiz",
-        "dxdiag",
-        "snippingtool",
-        "osk",
-        "magnify",
-        "winver",
-        "gpedit.msc",
-        "secpol.msc",
-        "fsmgmt.msc",
-        "mmsys.cpl",
-    ];
-
     // Global hotkey for RunBox (Win32 modifier flags and virtual key code)
     // Default: Ctrl+Shift+Space (MOD_CONTROL|MOD_SHIFT = 0x0006, VK_SPACE = 0x20)
     public int RunBoxHotkeyModifiers { get; set; } = 6;
@@ -142,16 +92,9 @@ public sealed class WidgetSettings
     /// <summary>
     /// When true, the widget shows a one-time notification on the first launch
     /// of each AD day listing today's calendar events (excluding tithis).
-    /// Tracked via <see cref="LastDailyEventsNotificationDate"/>.
+    /// The last-shown date is stored in <c>runtime.json</c> via <c>AppState</c>.
     /// </summary>
     public bool ShowDailyEventsNotification { get; set; } = true;
-
-    /// <summary>
-    /// AD date (yyyy-MM-dd) of the last day a daily events notification was
-    /// shown. Empty when never shown. Used to enforce the once-per-day rule
-    /// across app restarts.
-    /// </summary>
-    public string LastDailyEventsNotificationDate { get; set; } = string.Empty;
 
     // Expand behavior
     /// <summary>
@@ -166,12 +109,7 @@ public sealed class WidgetSettings
     /// <summary>
     /// Whether the app should periodically check for updates from the configured
     /// release feed (Velopack / GitHub Releases). User opt-in.
+    /// The last-check timestamp is stored in <c>runtime.json</c> via <c>AppState</c>.
     /// </summary>
     public bool AutoCheckForUpdates { get; set; } = true;
-
-    /// <summary>
-    /// Last successful update check (UTC). Used to throttle background checks
-    /// to once per UpdateCheckIntervalHours.
-    /// </summary>
-    public DateTime? LastUpdateCheckUtc { get; set; }
 }

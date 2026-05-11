@@ -3,10 +3,11 @@ using NepDateWidget.Models;
 using System.Globalization;
 using System.IO;
 using System.Text.Json;
+using System.Threading;
 
 namespace NepDateWidget.Services;
 
-public sealed class ReminderService : IReminderService
+public sealed class ReminderService : IReminderService, IDisposable
 {
     private static readonly JsonSerializerOptions SerializerOptions = new()
     {
@@ -17,6 +18,10 @@ public sealed class ReminderService : IReminderService
     private readonly string _filePath;
     private readonly INepaliDateAdapter _adapter;
     private List<ReminderEntry> _reminders = new();
+    private DebouncedFileReloader? _reloader;
+    private long _lastSelfWriteTicks;
+
+    private readonly SynchronizationContext? _syncContext;
 
     public event EventHandler? RemindersChanged;
 
@@ -24,6 +29,7 @@ public sealed class ReminderService : IReminderService
     {
         _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
         _adapter = adapter ?? throw new ArgumentNullException(nameof(adapter));
+        _syncContext = SynchronizationContext.Current;
     }
 
     public IReadOnlyList<ReminderEntry> GetAll() => _reminders.AsReadOnly();
@@ -118,6 +124,21 @@ public sealed class ReminderService : IReminderService
 
     public void Load()
     {
+        LoadFromDisk();
+        _reloader ??= new DebouncedFileReloader(_filePath, debounceMs: 500, onReload: () =>
+        {
+            var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));
+            if (elapsed.TotalSeconds < 1.0) return;
+            LoadFromDisk();
+            if (_syncContext is not null)
+                _syncContext.Post(_ => RemindersChanged?.Invoke(this, EventArgs.Empty), null);
+            else
+                RemindersChanged?.Invoke(this, EventArgs.Empty);
+        });
+    }
+
+    private void LoadFromDisk()
+    {
         if (!File.Exists(_filePath))
         {
             _reminders = new List<ReminderEntry>();
@@ -157,6 +178,7 @@ public sealed class ReminderService : IReminderService
 
     public void Save()
     {
+        Interlocked.Exchange(ref _lastSelfWriteTicks, DateTime.UtcNow.Ticks);
         try
         {
             var json = JsonSerializer.Serialize(_reminders, SerializerOptions);
@@ -171,6 +193,8 @@ public sealed class ReminderService : IReminderService
             Log.Warn($"Failed to serialize reminders: {ex.Message}");
         }
     }
+
+    public void Dispose() => _reloader?.Dispose();
 
     // Only fire a notification if the reminder is due within this window.
     // Anything older is silently completed or advanced without showing a popup.

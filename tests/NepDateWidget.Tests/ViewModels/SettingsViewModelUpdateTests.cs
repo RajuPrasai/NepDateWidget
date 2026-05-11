@@ -54,7 +54,14 @@ public class SettingsViewModelUpdateTests
         }
     }
 
-    private static (SettingsViewModel vm, FakeSettingsService svc, FakeUpdateService upd) Create(
+    private sealed class FakeAppStateService : IAppStateService
+    {
+        public NepDateWidget.Models.AppState Current { get; } = new();
+        public void Load() { }
+        public void Save() { }
+    }
+
+    private static (SettingsViewModel vm, FakeSettingsService svc, FakeUpdateService upd, FakeAppStateService appState) Create(
         IUpdateService? updateService = null)
     {
         var svc = new FakeSettingsService();
@@ -62,8 +69,9 @@ public class SettingsViewModelUpdateTests
         var theme = new FakeThemeService();
         var auto = new FakeAutoStartService();
         var upd = updateService as FakeUpdateService ?? new FakeUpdateService();
-        var vm = new SettingsViewModel(svc, loc, theme, auto, updateService ?? upd);
-        return (vm, svc, upd);
+        var appState = new FakeAppStateService();
+        var vm = new SettingsViewModel(svc, loc, theme, auto, updateService ?? upd, appState);
+        return (vm, svc, upd, appState);
     }
 
     [Fact]
@@ -80,14 +88,14 @@ public class SettingsViewModelUpdateTests
     [Fact]
     public void Constructor_LoadsAutoCheckForUpdates_FromSettings()
     {
-        var (vm, _, _) = Create();
+        var (vm, _, _, _) = Create();
         Assert.True(vm.AutoCheckForUpdates); // default
     }
 
     [Fact]
     public void AutoCheckForUpdates_Setter_PersistsToSettings()
     {
-        var (vm, svc, _) = Create();
+        var (vm, svc, _, _) = Create();
         vm.AutoCheckForUpdates = false;
         Assert.False(svc.Current.AutoCheckForUpdates);
         Assert.True(svc.SaveCount > 0);
@@ -96,7 +104,7 @@ public class SettingsViewModelUpdateTests
     [Fact]
     public void UpdateLabels_Populated_AfterConstruction()
     {
-        var (vm, _, _) = Create();
+        var (vm, _, _, _) = Create();
         Assert.False(string.IsNullOrEmpty(vm.UpdateSectionLabel));
         Assert.False(string.IsNullOrEmpty(vm.AutoUpdateLabel));
         Assert.False(string.IsNullOrEmpty(vm.CheckUpdateNowLabel));
@@ -105,7 +113,7 @@ public class SettingsViewModelUpdateTests
     [Fact]
     public void HasUpdateStatus_False_WhenStatusEmpty()
     {
-        var (vm, _, _) = Create();
+        var (vm, _, _, _) = Create();
         Assert.False(vm.HasUpdateStatus);
     }
 
@@ -132,13 +140,13 @@ public class SettingsViewModelUpdateTests
         {
             NextCheckResult = new UpdateCheckResult(false, null, "1.0.0", null)
         };
-        var (vm, svc, _) = Create(upd);
+        var (vm, _, _, appState) = Create(upd);
 
         await InvokeCheckAsync(vm);
 
         Assert.Equal(1, upd.CheckCount);
-        Assert.NotNull(svc.Current.LastUpdateCheckUtc);
-        Assert.True(svc.SaveCount >= 1);
+        Assert.NotNull(appState.Current.LastUpdateCheckUtc);
+        Assert.True(appState.Current.LastUpdateCheckUtc <= DateTime.UtcNow);
         Assert.Contains("1.0.0", vm.UpdateStatusText);
     }
 
@@ -149,7 +157,7 @@ public class SettingsViewModelUpdateTests
         {
             NextCheckResult = new UpdateCheckResult(false, null, null, "feed unreachable")
         };
-        var (vm, _, _) = Create(upd);
+        var (vm, _, _, _) = Create(upd);
 
         await InvokeCheckAsync(vm);
 
@@ -165,7 +173,7 @@ public class SettingsViewModelUpdateTests
             NextCheckResult = new UpdateCheckResult(true, "1.1.0", "1.0.0", null),
             NextDownloadResult = true
         };
-        var (vm, _, _) = Create(upd);
+        var (vm, _, _, _) = Create(upd);
 
         await InvokeCheckAsync(vm);
 
@@ -181,7 +189,7 @@ public class SettingsViewModelUpdateTests
             NextCheckResult = new UpdateCheckResult(true, "1.1.0", "1.0.0", null),
             NextDownloadResult = false
         };
-        var (vm, _, _) = Create(upd);
+        var (vm, _, _, _) = Create(upd);
         var loc = new LocalizationService();
 
         await InvokeCheckAsync(vm);
@@ -192,7 +200,7 @@ public class SettingsViewModelUpdateTests
     [Fact]
     public async Task CheckForUpdatesNow_ClearsIsCheckingFlag_AfterCompletion()
     {
-        var (vm, _, _) = Create();
+        var (vm, _, _, _) = Create();
         await InvokeCheckAsync(vm);
         Assert.False(vm.IsCheckingForUpdates);
     }
@@ -201,7 +209,7 @@ public class SettingsViewModelUpdateTests
     public void CheckForUpdatesNowCommand_CanExecute_FalseWhileChecking()
     {
         // Ensure the CanExecute predicate observes the IsCheckingForUpdates flag.
-        var (vm, _, _) = Create();
+        var (vm, _, _, _) = Create();
         Assert.True(vm.CheckForUpdatesNowCommand.CanExecute(null));
     }
 

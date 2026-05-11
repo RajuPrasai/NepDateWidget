@@ -473,10 +473,12 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         INotesService? notesService = null,
         IDocumentService? documentService = null,
         ISearchHistoryService? searchHistoryService = null,
+        ISearchHistoryService? runHistoryService = null,
         IUpdateService? updateService = null,
         IHolidayLookupService? holidayLookupService = null,
         INepaliDateAdapter? adapter = null,
-        IShortcutsService? shortcutsService = null)
+        IShortcutsService? shortcutsService = null,
+        IAppStateService? appStateService = null)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
@@ -540,12 +542,12 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         // Apply user-chosen highlight color override after theme is set
         _themeService.OverrideHighlightColor(s.HighlightColor);
 
-        Settings = new SettingsViewModel(settingsService, localizationService, themeService, autoStartService, updateService);
+        Settings = new SettingsViewModel(settingsService, localizationService, themeService, autoStartService, updateService, appStateService);
         Unit = new UnitViewModel(localizationService);
         Network = new NetworkToolsViewModel(localizationService);
         Banking = new BankingViewModel(localizationService);
         TextTools = new TextToolsViewModel(localizationService);
-        RunBox = new RunBoxViewModel(settingsService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly());
+        RunBox = new RunBoxViewModel(runHistoryService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly());
         About = new AboutViewModel(localizationService);
         More = new MoreViewModel(localizationService, notesService, reminderService, documentService, searchHistoryService, adapter: adapter);
 
@@ -1069,5 +1071,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     public void Dispose()
     {
         MiniBar.Dispose();
+        Settings.Dispose();
     }
 }

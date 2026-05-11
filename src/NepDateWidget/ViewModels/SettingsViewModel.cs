@@ -3,18 +3,20 @@ using NepDateWidget.Services;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace NepDateWidget.ViewModels;
 
-public sealed class SettingsViewModel : ViewModelBase
+public sealed class SettingsViewModel : ViewModelBase, IDisposable
 {
     private readonly ISettingsService _settingsService;
     private readonly ILocalizationService _loc;
     private readonly IThemeService _themeService;
     private readonly IAutoStartService _autoStartService;
     private readonly IUpdateService? _updateService;
+    private readonly IAppStateService? _appStateService;
 
     // ── Bound properties (two-way) ───────────────────────────────────────────
 
@@ -111,6 +113,7 @@ public sealed class SettingsViewModel : ViewModelBase
     public static IReadOnlyList<string> FontFamilyNames { get; } = new[]
     {
         // Windows system fonts (ClearType collection)
+        "Segoe UI Variable",
         "Segoe UI",
         "Calibri",
         "Candara",
@@ -306,6 +309,8 @@ public sealed class SettingsViewModel : ViewModelBase
     public string LogMaxSizeMbDisplay => $"{_logMaxSizeMb} MB";
     public string LogSizeLabel { get; private set; } = string.Empty;
     public string ResetToDefaultsLabel { get; private set; } = string.Empty;
+    public string ExportBackupLabel { get; private set; } = string.Empty;
+    public string ImportBackupLabel { get; private set; } = string.Empty;
     public string FontLabel { get; private set; } = string.Empty;
 
     // ── Hotkey configuration ────────────────────────────────────────────────
@@ -485,11 +490,15 @@ public sealed class SettingsViewModel : ViewModelBase
     public ICommand SetHighlightColorCommand { get; }
     public ICommand CheckForUpdatesNowCommand { get; private set; } = null!;
     public ICommand TestNotificationCommand   { get; }
-    public ICommand OpenSettingsFileCommand   { get; }
-    public ICommand OpenShortcutsFileCommand  { get; }
-    public ICommand OpenRemindersFileCommand  { get; }
-    public ICommand OpenNotesFileCommand      { get; }
-    public ICommand OpenLogFileCommand        { get; }
+    public ICommand OpenSettingsFileCommand          { get; }
+    public ICommand OpenShortcutsFileCommand         { get; }
+    public ICommand OpenRemindersFileCommand         { get; }
+    public ICommand OpenNotesFileCommand             { get; }
+    public ICommand OpenDocumentsFileCommand         { get; }
+    public ICommand OpenDocSearchHistoryFileCommand  { get; }
+    public ICommand OpenLogFileCommand               { get; }
+    public ICommand ExportBackupCommand              { get; }
+    public ICommand ImportBackupCommand              { get; }
 
     // ── Callback to parent (MainViewModel) ───────────────────────────────────
     public event EventHandler? SettingsApplied;
@@ -500,13 +509,15 @@ public sealed class SettingsViewModel : ViewModelBase
         ILocalizationService localizationService,
         IThemeService themeService,
         IAutoStartService autoStartService,
-        IUpdateService? updateService = null)
+        IUpdateService? updateService = null,
+        IAppStateService? appStateService = null)
     {
         _settingsService = settingsService;
         _loc = localizationService;
         _themeService = themeService;
         _autoStartService = autoStartService;
         _updateService = updateService;
+        _appStateService = appStateService;
 
         var s = _settingsService.Current;
         _language = s.Language;
@@ -600,11 +611,15 @@ public sealed class SettingsViewModel : ViewModelBase
 
         TestNotificationCommand = new RelayCommand(() => TestNotificationRequested?.Invoke(this, EventArgs.Empty));
 
-        OpenSettingsFileCommand  = new RelayCommand(() => OpenFile(AppPaths.SettingsPath));
-        OpenShortcutsFileCommand = new RelayCommand(() => OpenFile(AppPaths.ShortcutsPath));
-        OpenRemindersFileCommand = new RelayCommand(() => OpenFile(AppPaths.RemindersPath));
-        OpenNotesFileCommand     = new RelayCommand(() => OpenFile(AppPaths.NotesPath));
-        OpenLogFileCommand       = new RelayCommand(() => OpenFile(AppPaths.LogPath));
+        OpenSettingsFileCommand         = new RelayCommand(() => OpenFile(AppPaths.SettingsPath));
+        OpenShortcutsFileCommand        = new RelayCommand(() => OpenFile(AppPaths.ShortcutsPath));
+        OpenRemindersFileCommand        = new RelayCommand(() => OpenFile(AppPaths.RemindersPath));
+        OpenNotesFileCommand            = new RelayCommand(() => OpenFile(AppPaths.NotesPath));
+        OpenDocumentsFileCommand        = new RelayCommand(() => OpenFile(AppPaths.DocumentsPath));
+        OpenDocSearchHistoryFileCommand = new RelayCommand(() => OpenFile(AppPaths.DocSearchHistoryPath));
+        OpenLogFileCommand              = new RelayCommand(() => OpenFile(AppPaths.LogPath));
+        ExportBackupCommand             = new RelayCommand(ExportBackup);
+        ImportBackupCommand             = new RelayCommand(ImportBackup);
 
         RefreshLabels();
     }
@@ -746,6 +761,8 @@ public sealed class SettingsViewModel : ViewModelBase
 
         LogSizeLabel = _loc.Get("settings.log_size");
         ResetToDefaultsLabel = _loc.Get("settings.reset_defaults");
+        ExportBackupLabel = _loc.Get("settings.data_export");
+        ImportBackupLabel = _loc.Get("settings.data_import");
         FontLabel = _loc.Get("settings.font");
         HotkeyLabel = _loc.Get("settings.hotkey");
         HotkeyClearLabel = _loc.Get("settings.hotkey_clear");
@@ -804,6 +821,8 @@ public sealed class SettingsViewModel : ViewModelBase
         OnPropertyChanged(nameof(BehaviorSectionLabel));
         OnPropertyChanged(nameof(LogSizeLabel));
         OnPropertyChanged(nameof(ResetToDefaultsLabel));
+        OnPropertyChanged(nameof(ExportBackupLabel));
+        OnPropertyChanged(nameof(ImportBackupLabel));
         OnPropertyChanged(nameof(FontLabel));
         OnPropertyChanged(nameof(HotkeyLabel));
         OnPropertyChanged(nameof(HotkeyClearLabel));
@@ -847,8 +866,11 @@ public sealed class SettingsViewModel : ViewModelBase
             UpdateStatusText = _loc.Get("settings.update_checking");
             var result = await _updateService.CheckAsync().ConfigureAwait(true);
 
-            _settingsService.Current.LastUpdateCheckUtc = DateTime.UtcNow;
-            _settingsService.Save();
+            if (_appStateService is not null)
+            {
+                _appStateService.Current.LastUpdateCheckUtc = DateTime.UtcNow;
+                _appStateService.Save();
+            }
 
             if (!string.IsNullOrEmpty(result.ErrorMessage))
             {
@@ -880,6 +902,100 @@ public sealed class SettingsViewModel : ViewModelBase
         finally
         {
             IsCheckingForUpdates = false;
+        }
+    }
+
+    private static readonly HashSet<string> AllowedBackupFileNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "settings.json", "reminders.json", "notes.json", "shortcuts.json",
+        "documents.json", "run-history.json", "doc-search-history.json", "runtime.json"
+    };
+
+    /// <summary>
+    /// Validates a ZIP entry for import: name must be on the allowlist and the resolved
+    /// destination path must remain inside <paramref name="dataDirectory"/> (path-traversal
+    /// guard). Returns the full destination path when safe, or <c>null</c> when the entry
+    /// should be skipped.
+    /// </summary>
+    internal static string? ResolveImportEntryPath(string entryName, string dataDirectory)
+    {
+        if (string.IsNullOrEmpty(entryName)) return null;
+        if (!AllowedBackupFileNames.Contains(entryName)) return null;
+        var dest = Path.GetFullPath(Path.Combine(dataDirectory, entryName));
+        if (!dest.StartsWith(Path.GetFullPath(dataDirectory) + Path.DirectorySeparatorChar,
+                             StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(dest, Path.GetFullPath(dataDirectory), StringComparison.OrdinalIgnoreCase))
+            return null;
+        return dest;
+    }
+
+    private void ExportBackup()
+    {
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title       = _loc.Get("settings.data_export"),
+            Filter      = "ZIP archive (*.zip)|*.zip",
+            FileName    = $"NepDateWidget-backup-{DateTime.Now:yyyy-MM-dd}",
+            DefaultExt  = ".zip"
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        try
+        {
+            var target = dialog.FileName;
+            if (File.Exists(target)) File.Delete(target);
+            using var archive = ZipFile.Open(target, ZipArchiveMode.Create);
+            string[] paths =
+            [
+                AppPaths.SettingsPath, AppPaths.RemindersPath, AppPaths.NotesPath,
+                AppPaths.ShortcutsPath, AppPaths.DocumentsPath, AppPaths.RunHistoryPath,
+                AppPaths.DocSearchHistoryPath, AppPaths.AppStatePath
+            ];
+            foreach (var p in paths)
+                if (File.Exists(p)) archive.CreateEntryFromFile(p, Path.GetFileName(p));
+            ShowDataFileMessage(_loc.Get("settings.data_export_ok"));
+            Log.Action($"backup exported: {target}");
+        }
+        catch (Exception ex)
+        {
+            ShowDataFileMessage(_loc.Get("settings.data_export_failed"));
+            Log.Error($"backup export failed: {ex.Message}");
+        }
+    }
+
+    private void ImportBackup()
+    {
+        var dialog = new Microsoft.Win32.OpenFileDialog
+        {
+            Title  = _loc.Get("settings.data_import"),
+            Filter = "ZIP archive (*.zip)|*.zip"
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        try
+        {
+            using var archive = ZipFile.OpenRead(dialog.FileName);
+            var dataDir = AppPaths.DataDirectory;
+            Directory.CreateDirectory(dataDir);
+
+            foreach (var entry in archive.Entries)
+            {
+                // Skip directory entries
+                if (string.IsNullOrEmpty(entry.Name)) continue;
+
+                // Whitelist + path-traversal guard (centralised in ResolveImportEntryPath)
+                var dest = ResolveImportEntryPath(entry.Name, dataDir);
+                if (dest is null) continue;
+
+                entry.ExtractToFile(dest, overwrite: true);
+            }
+            ShowDataFileMessage(_loc.Get("settings.data_import_ok"));
+            Log.Action($"backup restored: {dialog.FileName}");
+        }
+        catch (Exception ex)
+        {
+            ShowDataFileMessage(_loc.Get("settings.data_import_failed"));
+            Log.Error($"backup restore failed: {ex.Message}");
         }
     }
 
@@ -1112,6 +1228,12 @@ public sealed class SettingsViewModel : ViewModelBase
         if (mod == MOD_ALT && vk == 0x09) return true;
 
         return false;
+    }
+
+    public void Dispose()
+    {
+        _dataFileMessageTimer?.Stop();
+        _dataFileMessageTimer = null;
     }
 }
 

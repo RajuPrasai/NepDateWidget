@@ -44,6 +44,8 @@ public static class AppPaths
     public static string NotesPath      => Path.Combine(DataDirectory, "notes.json");
     public static string DocumentsPath  => Path.Combine(DataDirectory, "documents.json");
     public static string DocSearchHistoryPath => Path.Combine(DataDirectory, "doc-search-history.json");
+    public static string RunHistoryPath => Path.Combine(DataDirectory, "run-history.json");
+    public static string AppStatePath   => Path.Combine(DataDirectory, "runtime.json");
     public static string DocumentsFilesDirectory => Path.Combine(DataDirectory, "Documents");
     public static string LogPath        => Path.Combine(DataDirectory, "nepdate.log");
 

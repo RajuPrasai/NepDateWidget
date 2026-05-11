@@ -60,12 +60,14 @@ public partial class MainWindow : Window
     private RunBoxSpotlightWindow? _spotlight;
 
     private readonly ISettingsService _settingsService;
+    private readonly IAppStateService _appStateService;
 
-    public MainWindow(MainViewModel viewModel, ISettingsService settingsService)
+    public MainWindow(MainViewModel viewModel, ISettingsService settingsService, IAppStateService appStateService)
     {
         InitializeComponent();
         DataContext = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+        _appStateService = appStateService ?? throw new ArgumentNullException(nameof(appStateService));
 
         viewModel.PropertyChanged += ViewModel_PropertyChanged;
         viewModel.ExitRequested += ViewModel_ExitRequested;
@@ -804,10 +806,10 @@ public partial class MainWindow : Window
     /// <summary>
     /// Once per AD day, on first widget launch of that day, surfaces a
     /// notification listing today's calendar events (excluding tithis). The
-    /// guard <see cref="DailyEventsAnnouncer.ShouldFire"/> + the persisted
-    /// <c>LastDailyEventsNotificationDate</c> setting ensures it never fires
+    /// guard <see cref="DailyEventsAnnouncer.ShouldFire"/> plus the persisted
+    /// <c>LastDailyEventsNotificationDate</c> in <c>AppState</c> (runtime.json) ensures it never fires
     /// twice for the same day even across restarts. Always best-effort: any
-    /// failure (out-of-range BS date, settings save error, popup error) is
+    /// failure (out-of-range BS date, state save error, popup error) is
     /// logged and swallowed so it cannot break startup.
     /// </summary>
     private void MaybeShowDailyEventsNotification()
@@ -829,7 +831,7 @@ public partial class MainWindow : Window
             var events = isNepali ? info.EventsNp : info.EventsEn;
 
             if (!Helpers.DailyEventsAnnouncer.ShouldFire(
-                    todayAd, settings.LastDailyEventsNotificationDate,
+                    todayAd, _appStateService.Current.LastDailyEventsNotificationDate,
                     settings.ShowDailyEventsNotification, events?.Length ?? 0))
                 return;
 
@@ -855,10 +857,10 @@ public partial class MainWindow : Window
 
             // Persist last-shown immediately so a crash before the next save
             // still prevents a double notification later in the day.
-            settings.LastDailyEventsNotificationDate = Helpers.DailyEventsAnnouncer.ToIsoDate(todayAd);
-            _settingsService.Save();
+            _appStateService.Current.LastDailyEventsNotificationDate = Helpers.DailyEventsAnnouncer.ToIsoDate(todayAd);
+            _appStateService.Save();
 
-            Log.Action($"daily events notification: shown {events!.Length} event(s) for {settings.LastDailyEventsNotificationDate}");
+            Log.Action($"daily events notification: shown {events!.Length} event(s) for {_appStateService.Current.LastDailyEventsNotificationDate}");
         }
         catch (Exception ex)
         {

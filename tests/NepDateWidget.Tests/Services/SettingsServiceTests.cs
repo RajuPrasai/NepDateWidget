@@ -236,4 +236,100 @@ public class SettingsServiceTests : IDisposable
         Assert.Equal("Light", svc.Current.Theme);
         Assert.True(File.Exists(path));
     }
+
+    // ── SchemaVersion default (#25) ───────────────────────────────────────────
+
+    [Fact]
+    public void WidgetSettings_DefaultSchemaVersion_MatchesCurrentSchemaVersion()
+    {
+        // Ensures the model default is always in sync with the validator constant.
+        var s = new WidgetSettings();
+        Assert.Equal(SettingsValidator.CurrentSchemaVersion, s.SchemaVersion);
+    }
+
+    // ── V1 → V2 migration: stale fields silently dropped (#25) ───────────────
+
+    [Fact]
+    public void Load_V1JsonWithDayNotes_DoesNotThrow_AndPreservesSchemaVersion()
+    {
+        // DayNotes was removed in V2 (moved to notes.json). UnmappedMemberHandling.Skip
+        // must silently discard it. SchemaVersion is preserved exactly as stored (1 < 2
+        // does not trigger re-clamping because the clamp only fires when < 1).
+        var path = TempPath();
+        var json = """
+            {
+                "SchemaVersion": 1,
+                "Language": "ne",
+                "Theme": "Light",
+                "DayNotes": { "2082-01-01": "test note" }
+            }
+            """;
+        File.WriteAllText(path, json);
+
+        var svc = ServiceAt(path);
+        var ex  = Record.Exception(() => svc.Load());
+
+        Assert.Null(ex);
+        Assert.Equal("ne",    svc.Current.Language);
+        Assert.Equal("Light", svc.Current.Theme);
+        Assert.Equal(1,       svc.Current.SchemaVersion);
+    }
+
+    [Fact]
+    public void Load_V1JsonWithLastUpdateCheckUtc_DoesNotThrow_AndIgnoresField()
+    {
+        // LastUpdateCheckUtc was moved to runtime.json (AppStateService) in V2.
+        // UnmappedMemberHandling.Skip must silently discard it.
+        var path = TempPath();
+        var json = """
+            {
+                "SchemaVersion": 1,
+                "Language": "en",
+                "LastUpdateCheckUtc": "2026-01-01T00:00:00Z"
+            }
+            """;
+        File.WriteAllText(path, json);
+
+        var svc = ServiceAt(path);
+        var ex  = Record.Exception(() => svc.Load());
+
+        Assert.Null(ex);
+        Assert.Equal("en", svc.Current.Language);
+    }
+
+    [Fact]
+    public void Load_V1Json_BothStaleFields_DoesNotThrow()
+    {
+        var path = TempPath();
+        var json = """
+            {
+                "SchemaVersion": 1,
+                "Language": "ne",
+                "DayNotes": {},
+                "LastUpdateCheckUtc": "2025-06-01T12:00:00Z"
+            }
+            """;
+        File.WriteAllText(path, json);
+
+        var svc = ServiceAt(path);
+        var ex  = Record.Exception(() => svc.Load());
+
+        Assert.Null(ex);
+        Assert.Equal("ne", svc.Current.Language);
+        Assert.Equal(1,    svc.Current.SchemaVersion);
+    }
+
+    [Fact]
+    public void Load_SchemaBelowOne_ClampsToCurrentVersion()
+    {
+        // SchemaVersion < 1 means the file is from an ancient unknown build.
+        // Migrate() must clamp it up to CurrentSchemaVersion.
+        var path = TempPath();
+        File.WriteAllText(path, """{"SchemaVersion":0,"Language":"en"}""");
+
+        var svc = ServiceAt(path);
+        svc.Load();
+
+        Assert.Equal(SettingsValidator.CurrentSchemaVersion, svc.Current.SchemaVersion);
+    }
 }

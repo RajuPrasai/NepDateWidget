@@ -721,7 +721,13 @@
                                      Style="{StaticResource MultilineInputStyle}"
                                      Tag="{Binding HintReminderNotes}"
                                      Height="50" AcceptsReturn="True" TextWrapping="Wrap"
-                                     Margin="0,0,0,8" />
+                                     Margin="0,0,0,2" />
+                            <TextBlock Text="{Binding ReminderFormNotesLength, StringFormat={}{0} / 500}"
+                                       HorizontalAlignment="Right"
+                                       FontSize="10.5"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}"
+                                       Opacity="0.4"
+                                       Margin="0,0,0,6" />
 
                             <!-- Form actions -->
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">

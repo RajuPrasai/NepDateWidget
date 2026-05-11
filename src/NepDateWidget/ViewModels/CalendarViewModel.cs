@@ -566,7 +566,7 @@ public sealed class CalendarViewModel : ViewModelBase
             if (_reminderService is not null && day.IsCurrentMonth)
                 vm.HasReminders = _reminderService.HasRemindersForDateExpanded(day.Year, day.Month, day.Day);
             if (_notesService is not null && day.IsCurrentMonth)
-                vm.HasNote = _notesService.GetNote($"{day.Year:D4}-{day.Month:D2}-{day.Day:D2}") is not null;
+                vm.HasNote = _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
             Days.Add(vm);
         }
 
@@ -828,7 +828,7 @@ public sealed class CalendarViewModel : ViewModelBase
         foreach (var dayVm in Days)
         {
             if (dayVm.IsCurrentMonth)
-                dayVm.HasNote = _notesService.GetNote($"{dayVm.BsYear:D4}-{dayVm.BsMonth:D2}-{dayVm.Day:D2}") is not null;
+                dayVm.HasNote = _notesService.GetNote(NotesService.FormatKey(dayVm.BsYear, dayVm.BsMonth, dayVm.Day)) is not null;
         }
     }
 

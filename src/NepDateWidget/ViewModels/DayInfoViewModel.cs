@@ -115,7 +115,7 @@ public sealed class DayInfoViewModel : ViewModelBase
         _loc = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _reminderService = reminderService;
         _notesService = notesService;
-        _dateKey = $"{bsYear:D4}-{bsMonth:D2}-{bsDay:D2}";
+        _dateKey = NotesService.FormatKey(bsYear, bsMonth, bsDay);
         _isNepali = string.Equals(_loc.CurrentLanguage, "ne", StringComparison.OrdinalIgnoreCase);
 
         // Build date header
