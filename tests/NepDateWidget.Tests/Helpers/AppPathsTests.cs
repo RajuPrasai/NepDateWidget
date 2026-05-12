@@ -71,9 +71,8 @@ public class AppPathsTests
     [Fact]
     public void Constants_HaveExpectedValues()
     {
-        // These are part of the published contract: portable detection looks
-        // for "portable.flag", and the installed folder name must match
-        // Velopack's pack id "NepDateWidget".
+        // PortableFlagFile and DataSubfolder are fixed strings.
+        // InstalledFolderName is channel-aware: "NepDateWidget" in unpackaged context (tests always run unpackaged).
         Assert.Equal("portable.flag", AppPaths.PortableFlagFile);
         Assert.Equal("NepDateWidget", AppPaths.InstalledFolderName);
         Assert.Equal("AppData", AppPaths.DataSubfolder);

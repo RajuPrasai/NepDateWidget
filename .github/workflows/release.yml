@@ -244,6 +244,35 @@ jobs:
           "PFX_PASSWORD=$env:WINDOWS_PFX_PASSWORD"  | Out-File -Append $env:GITHUB_ENV
           "SIGNTOOL_PATH=$signtool"                 | Out-File -Append $env:GITHUB_ENV
 
+      # ── 11d. Download previous full.nupkg for delta generation ──────────────
+      #  releases/ is gitignored, so CI always starts with an empty folder.
+      #  vpk needs the previous version's full.nupkg present in --outputDir to
+      #  produce a smaller delta package alongside the full one.
+      #  Without this, every update downloads the full package (~75 MB).
+      #  This step uses the GitHub CLI (pre-installed on windows-latest) to
+      #  pull the most recent published release's full.nupkg into releases/.
+      #  On the very first release there are no previous releases, so the
+      #  command exits cleanly and vpk produces a full package only.
+      - name: Download previous full.nupkg (for delta)
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          New-Item -ItemType Directory -Force releases | Out-Null
+          $currentTag = "${{ steps.tag.outputs.value }}"
+          # Find the most recent release that is not the current tag.
+          $prev = gh release list --json tagName,isDraft,isPrerelease --limit 20 |
+                  ConvertFrom-Json |
+                  Where-Object { -not $_.isDraft -and -not $_.isPrerelease -and $_.tagName -ne $currentTag } |
+                  Select-Object -First 1
+          if ($prev) {
+            Write-Host "Downloading previous full.nupkg from $($prev.tagName) for delta generation..."
+            gh release download $prev.tagName --pattern '*-full.nupkg' --dir releases --skip-existing 2>&1
+            Write-Host "Delta baseline: $(Get-ChildItem releases -Filter '*-full.nupkg' | Select-Object -ExpandProperty Name)"
+          } else {
+            Write-Host "No previous published release found. First release — full package only, no delta."
+          }
+
       - name: Velopack pack (win-x64)
         shell: pwsh
         run: |

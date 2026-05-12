@@ -1,30 +1,55 @@
 ﻿using Microsoft.Win32;
 using System.Diagnostics;
+using Windows.ApplicationModel;
 
 namespace NepDateWidget.Services;
 
 /// <summary>
-/// Manages the Windows "Start with Windows" registry entry.
-/// Key: HKCU\Software\Microsoft\Windows\CurrentVersion\Run
-/// Value name: "NepDateWidget"
-/// Value data: full path to this executable.
-///
-/// This key is the standard Windows mechanism and is visible in
-/// Task Manager → Startup Apps.
+/// Manages the Windows "Start with Windows" startup entry.
+/// Velopack / portable channel: HKCU\Software\Microsoft\Windows\CurrentVersion\Run, value "NepDateWidget".
+/// MSIX / Store channel: Windows.ApplicationModel.StartupTask with ID "NepDateWidgetStartupTask".
+/// The task ID must match the TaskId declared in Package.appxmanifest.
 /// </summary>
 public sealed class AutoStartService : IAutoStartService
 {
     private const string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string ValueName = "NepDateWidget";
+    private const string ValueName       = "NepDateWidget";
+    internal const string StartupTaskId  = "NepDateWidgetStartupTask";
+
+    // Cached at construction: StartupTask object for the MSIX channel.
+    // Null when running unpackaged or when the task is not declared in the manifest.
+    private readonly StartupTask? _startupTask;
 
     private static string? CurrentExePath =>
         Environment.ProcessPath
         ?? Process.GetCurrentProcess().MainModule?.FileName;
 
+    public AutoStartService()
+    {
+        if (!Helpers.AppEnvironment.IsPackaged) return;
+        try
+        {
+            // Run on a thread-pool thread to avoid deadlocking the UI thread
+            // when synchronously blocking on a WinRT async operation.
+            _startupTask = Task.Run(() =>
+                StartupTask.GetAsync(StartupTaskId).AsTask()).GetAwaiter().GetResult();
+        }
+        catch
+        {
+            _startupTask = null;
+        }
+    }
+
     public bool IsEnabled
     {
         get
         {
+            if (Helpers.AppEnvironment.IsPackaged)
+            {
+                return _startupTask?.State
+                    is StartupTaskState.Enabled
+                    or StartupTaskState.EnabledByPolicy;
+            }
             try
             {
                 using var key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath, writable: false);
@@ -47,6 +72,11 @@ public sealed class AutoStartService : IAutoStartService
 
     public void SetEnabled(bool enable)
     {
+        if (Helpers.AppEnvironment.IsPackaged)
+        {
+            SetPackagedStartupState(enable);
+            return;
+        }
         try
         {
             // CreateSubKey creates the key if it doesn't exist; OpenSubKey would
@@ -70,13 +100,34 @@ public sealed class AutoStartService : IAutoStartService
         }
     }
 
+    private void SetPackagedStartupState(bool enable)
+    {
+        if (_startupTask is null) return;
+        try
+        {
+            if (enable)
+                // RequestEnableAsync may prompt the user or be overridden by policy.
+                // Return value is informational; we treat all outcomes as best-effort.
+                Task.Run(() => _startupTask.RequestEnableAsync().AsTask()).GetAwaiter().GetResult();
+            else
+                _startupTask.Disable();
+        }
+        catch
+        {
+            // Best-effort.
+        }
+    }
+
     /// <summary>
     /// If the registry value exists but points to an old EXE path (because the
     /// app was moved or updated to a new install location), rewrite it with the
     /// current path. No-op if the value is missing or already correct.
+    /// In the MSIX channel Windows tracks the path automatically; this method is a no-op.
     /// </summary>
     public void RefreshIfStale()
     {
+        // Windows updates the StartupTask exe reference on every MSIX package update.
+        if (Helpers.AppEnvironment.IsPackaged) return;
         try
         {
             using var key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath, writable: true);

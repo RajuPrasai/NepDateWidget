@@ -16,7 +16,7 @@
         Topmost="{Binding ExpandedPinned}"
         ResizeMode="CanResize"
         UseLayoutRounding="True"
-        SnapsToDevicePixels="False"
+        SnapsToDevicePixels="True"
         RenderOptions.ClearTypeHint="Enabled"
         TextOptions.TextFormattingMode="Display"
         TextOptions.TextRenderingMode="ClearType"

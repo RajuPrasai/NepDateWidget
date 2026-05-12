@@ -83,6 +83,21 @@
 
   <main id="main">
 
+    <!-- Sticky feature section nav -->
+    <nav class="feat-nav" aria-label="Feature sections">
+      <div class="feat-nav-inner">
+        <a href="#mini-bar">Mini Bar</a>
+        <a href="#runbox">RunBox</a>
+        <a href="#date">Date</a>
+        <a href="#bank">Bank</a>
+        <a href="#text">Text</a>
+        <a href="#network">Network</a>
+        <a href="#unit">Unit</a>
+        <a href="#more">More</a>
+        <a href="#settings">Settings</a>
+      </div>
+    </nav>
+
     <!-- Page header -->
     <section class="hero" style="padding: 64px 0 32px;">
       <div class="container">
@@ -95,6 +110,12 @@
             RunBox is a separate global launcher &mdash; press the configurable hotkey from anywhere in
             Windows to run a command without opening the widget at all.
           </p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px;">
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>7 Tabs</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>25+ Tools</span>
+            <span class="chip chip-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>20 Color Presets</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h7"/></svg>20+ Font Choices</span>
+          </div>
         </div>
       </div>
     </section>
@@ -102,6 +123,12 @@
     <!-- Mini Bar -->
     <section class="section" id="mini-bar" style="padding-top: 48px;">
       <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">Always visible</div>
+          <h2 class="section-title">Two lines on the taskbar. Everything else one click away.</h2>
+          <p class="section-sub">The mini bar sits above or alongside the taskbar, always readable and never in the way. Click it to expand the full widget. Right-click from anywhere to jump directly to any tool without opening the full UI.</p>
+        </div>
+
         <div class="feat-block">
           <div class="body">
             <span class="eyebrow">Always on</span>
@@ -162,10 +189,15 @@
               <li>Runs commands exactly like the Windows native Run dialog</li>
               <li>Detects URLs and opens them in your default browser</li>
               <li>Falls back to a Google search for anything that doesn&rsquo;t match a command or URL</li>
-              <li>Remembers the last 50 entries; navigate with arrow keys, filter by typing,
-                Tab-complete from history</li>
+              <li>Remembers the last 50 entries; navigate with arrow keys, filter by typing, Tab-complete from history</li>
               <li>Hotkey is fully configurable from Settings</li>
             </ul>
+          </div>
+          <div class="shot">
+            <div class="img-placeholder" aria-label="RunBox launcher screenshot coming soon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Screenshot coming soon</span>
+            </div>
           </div>
         </div>
       </div>
@@ -177,12 +209,13 @@
         <div class="section-head">
           <div class="section-eyebrow">Date tab</div>
           <h2 class="section-title">Convert. Add. Compare. Across timezones.</h2>
+          <p class="section-sub">Three tools in one tab: instant BS &harr; AD conversion in both short and long formats, a days calculator for adding or finding the gap between BS dates, and a two-way timezone converter with labeled UTC offsets.</p>
         </div>
 
         <div class="feat-block">
           <div class="body">
             <span class="eyebrow">Convert</span>
-            <h3>BS ↔ AD conversion</h3>
+            <h3>BS &harr; AD conversion</h3>
             <p>Type a date in either calendar and the result appears immediately in both short and long
               formats. The widget remembers the last direction you used so you pick up where you left off.</p>
           </div>
@@ -218,6 +251,7 @@
         <div class="section-head">
           <div class="section-eyebrow">Bank tab</div>
           <h2 class="section-title">EMI and interest, in your calendar.</h2>
+          <p class="section-sub">Calculate monthly loan repayments with a full amortization schedule tagged to BS dates, or model interest across multiple rate periods for loans that changed rates mid-term.</p>
         </div>
 
         <div class="feat-block">
@@ -259,7 +293,8 @@
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">Text tab</div>
-          <h2 class="section-title">Password, word, Unicode, script.</h2>
+          <h2 class="section-title">Password, word count, Preeti &harr; Unicode, script.</h2>
+          <p class="section-sub">Four utilities in one tab. Generate strong passwords with live strength feedback, count words and characters in both Nepali and English, convert between Preeti legacy encoding and Unicode Devanagari, and switch between Devanagari and Romanized scripts &mdash; all with file support where it matters.</p>
         </div>
 
         <div class="feat-block">
@@ -285,21 +320,31 @@
         <div class="feat-block">
           <div class="body">
             <span class="eyebrow">Unicode</span>
-            <h3>Unicode helpers</h3>
-            <p>Inspect, encode, and convert characters between Unicode code points and Devanagari text.
-              Useful when copy-pasting Nepali content between systems with mismatched encodings.</p>
+            <h3>Preeti &rarr; Unicode conversion</h3>
+            <p>Converts text and entire documents between legacy <strong>Preeti font encoding</strong> and
+              proper Unicode Devanagari &mdash; the most practical Nepali encoding problem there is.</p>
+            <ul>
+              <li>Paste inline for instant conversion in either direction (Preeti &rarr; Unicode or Unicode &rarr; Preeti)</li>
+              <li><strong>File conversion:</strong> drop a .txt file, pick direction, convert and save &mdash; handles entire documents in one step</li>
+              <li>Essential for migrating old Preeti-encoded content to any Unicode-aware system</li>
+            </ul>
           </div>
-          <div class="shot" data-lightbox="assets/screenshots/tab-text-unicode.png" data-caption="Unicode tool"><img src="assets/screenshots/tab-text-unicode.png" alt="Unicode tool" loading="lazy" /></div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-text-unicode.png" data-caption="Preeti &#8596; Unicode conversion tool"><img src="assets/screenshots/tab-text-unicode.png" alt="Preeti to Unicode converter" loading="lazy" /></div>
         </div>
 
         <div class="feat-block reverse">
           <div class="body">
             <span class="eyebrow">Script</span>
-            <h3>Devanagari ↔ Romanized</h3>
-            <p>Convert text between Devanagari and Romanized Nepali script. Handy for posts, documents,
-              and form fields that only accept one script.</p>
+            <h3>Devanagari &#8596; Romanized</h3>
+            <p>Convert Nepali text between Devanagari and Romanized script in either direction.
+              Works inline for quick snippets or across an entire file.</p>
+            <ul>
+              <li>Roman &rarr; Devanagari and Devanagari &rarr; Roman, switchable mid-session</li>
+              <li><strong>File conversion:</strong> load a .txt file, convert, and save &mdash; no copy-paste marathon</li>
+              <li>Handy for posts, documents, and form fields that only accept one script</li>
+            </ul>
           </div>
-          <div class="shot" data-lightbox="assets/screenshots/tab-text-script.png" data-caption="Script converter"><img src="assets/screenshots/tab-text-script.png" alt="Script converter" loading="lazy" /></div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-text-script.png" data-caption="Devanagari &#8596; Romanized script converter"><img src="assets/screenshots/tab-text-script.png" alt="Script converter" loading="lazy" /></div>
         </div>
       </div>
     </section>
@@ -309,15 +354,20 @@
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">Network tab</div>
-          <h2 class="section-title">Quick network checks without leaving the widget.</h2>
+          <h2 class="section-title">Six network tools without leaving the widget.</h2>
+          <p class="section-sub">My IP, Ping, IP Scanner, Traceroute, Whois, and DNS Lookup. All baked in. No third-party installs needed.</p>
         </div>
 
         <div class="feat-block">
           <div class="body">
             <span class="eyebrow">My IP</span>
             <h3>Public and private addresses at a glance</h3>
-            <p>See your public IP, private IPs across interfaces, geolocation, and ISP, all on one screen.
-              No browser tab required.</p>
+            <p>See your public IPv4 and IPv6, private IPs across all active interfaces, and ISP info
+              &mdash; all on one screen. No browser tab required.</p>
+            <ul>
+              <li>Public IPv4 via ipify, public IPv6 where available</li>
+              <li>All active local interfaces listed with names</li>
+            </ul>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-network-myip.png" data-caption="My IP tool"><img src="assets/screenshots/tab-network-myip.png" alt="My IP tool" loading="lazy" /></div>
         </div>
@@ -326,7 +376,7 @@
           <div class="body">
             <span class="eyebrow">Ping</span>
             <h3>Ping any host</h3>
-            <p>Type a host, set the count, and ping. The widget prints each round trip with TTL, plus a
+            <p>Type a host, set the count, and ping. Each round trip prints with TTL, plus a
               clean Sent / Received / Lost summary and Min / Max / Avg RTT.</p>
             <ul>
               <li>Supports IPv4 and IPv6</li>
@@ -336,6 +386,64 @@
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-network-ping.png" data-caption="Ping tool"><img src="assets/screenshots/tab-network-ping.png" alt="Ping tool" loading="lazy" /></div>
         </div>
+
+        <div class="feat-block">
+          <div class="body">
+            <span class="eyebrow">IP Scanner</span>
+            <h3>Scan your whole subnet in seconds <span class="badge-new">New</span></h3>
+            <p>Parallel-pings every host on your local subnet (auto-detected, up to /24) and builds
+              a table of every device that responds. Hostname resolution uses DNS with NetBIOS fallback,
+              MAC address via ARP, and manufacturer from the OUI database.</p>
+            <ul>
+              <li>Up to 64 parallel pings &mdash; finishes a /24 in a few seconds</li>
+              <li>IP, hostname, MAC, manufacturer, inferred device type (Router, This PC, printer, etc.)</li>
+              <li>Marks your own machine and the gateway automatically</li>
+            </ul>
+          </div>
+          <div class="shot">
+            <div class="img-placeholder" aria-label="IP Scanner screenshot coming soon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Screenshot coming soon</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tool-cards">
+          <div class="tool-card">
+            <div class="tool-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
+            </div>
+            <h4>Traceroute <span class="badge-new">New</span></h4>
+            <p>Shows the network path to any host hop by hop. Each hop shows IP, hostname if resolvable, and round-trip time.</p>
+            <ul>
+              <li>Full per-hop breakdown</li>
+              <li>Identifies high-latency hops at a glance</li>
+            </ul>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <h4>Whois <span class="badge-new">New</span></h4>
+            <p>Look up registration and ownership records for any domain or IP block directly from the widget.</p>
+            <ul>
+              <li>Registrar, registration and expiry dates</li>
+              <li>Name servers and contact details</li>
+            </ul>
+          </div>
+          <div class="tool-card">
+            <div class="tool-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            </div>
+            <h4>DNS Lookup <span class="badge-new">New</span></h4>
+            <p>Resolve hostnames and inspect DNS records. Supports A, AAAA, MX, TXT, CNAME, and NS queries.</p>
+            <ul>
+              <li>Multiple record types in one query</li>
+              <li>Results displayed as a clean, readable table</li>
+            </ul>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -344,15 +452,17 @@
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">Unit tab</div>
-          <h2 class="section-title">Local Nepali units, side by side with metric.</h2>
+          <h2 class="section-title">Local Nepali units &mdash; area, weight, and script.</h2>
+          <p class="section-sub">Three modes in one tab: land area conversion with traditional Nepali units, weight and volume with standard Nepal Weights &amp; Measures Act values, and Devanagari &harr; Romanized script conversion.</p>
         </div>
 
         <div class="feat-block">
           <div class="body">
             <span class="eyebrow">Area</span>
-            <h3>Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam</h3>
-            <p>Convert between traditional Nepali land area units and Sq. Metres, Sq. Feet, Hectares, and
-              Acres. Pick From and To, type the value, get the result.</p>
+            <h3>Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri</h3>
+            <p>Convert between traditional Nepali land area units and Sq. Metres and Sq. Feet.
+              Includes <strong>Khetmuri</strong>, the Terai synonym for Kattha used across many districts.
+              Pick From and To, type the value, get the result.</p>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area unit conversion"><img src="assets/screenshots/tab-unit-area.png" alt="Area unit conversion" loading="lazy" /></div>
         </div>
@@ -360,11 +470,33 @@
         <div class="feat-block reverse">
           <div class="body">
             <span class="eyebrow">Weight</span>
-            <h3>Tola, Lal, Pau, Mana, and metric</h3>
-            <p>Same approach for traditional Nepali weight and volume units, with grams, kilograms,
-              milligrams, ounces, and pounds covered.</p>
+            <h3>Dharni, Pawa, Mana, Pathi, Muri &mdash; local &amp; metric</h3>
+            <p>Convert between traditional Nepali weight and volume units using standard
+              Nepal Weights &amp; Measures Act values. Dharni, Pawa, Mana, Pathi, and Muri
+              converted to and from kg, grams, and litres.</p>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-unit-weight.png" data-caption="Weight unit conversion"><img src="assets/screenshots/tab-unit-weight.png" alt="Weight unit conversion" loading="lazy" /></div>
+        </div>
+
+        <div class="feat-block">
+          <div class="body">
+            <span class="eyebrow">Script</span>
+            <h3>Devanagari &#8596; Romanized <span class="badge-new">Also in Text tab</span></h3>
+            <p>The same script converter available in the Text tab is also right here in the Unit tab
+              so you can stay in one place. Switch direction mid-session, convert inline.
+            </p>
+            <ul>
+              <li>Roman &rarr; Devanagari and Devanagari &rarr; Roman</li>
+              <li>Results update as you type</li>
+              <li>Copy output with one click</li>
+            </ul>
+          </div>
+          <div class="shot">
+            <div class="img-placeholder" aria-label="Unit script converter screenshot coming soon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Screenshot coming soon</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -375,6 +507,7 @@
         <div class="section-head">
           <div class="section-eyebrow">More tab</div>
           <h2 class="section-title">Documents, notes, and reminders.</h2>
+          <p class="section-sub">Everything that doesn&rsquo;t fit a single tool: attach and organize files with tags, write short notes tied to BS dates, and set recurring reminders that survive restarts. All stored locally on your machine.</p>
         </div>
 
         <div class="feat-block">
@@ -391,6 +524,12 @@
               <li>The Documents folder is pinned to Windows Explorer Quick Access on startup, so it
                 appears in every file-upload dialog sidebar</li>
             </ul>
+          </div>
+          <div class="shot">
+            <div class="img-placeholder" aria-label="Documents tab screenshot coming soon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span>Screenshot coming soon</span>
+            </div>
           </div>
         </div>
 
@@ -422,45 +561,59 @@
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">Settings</div>
-          <h2 class="section-title">Make it yours.</h2>
-          <p class="section-sub">Light or dark, ten color presets, two corner styles, English or नेपाली, and
-            independent toggles for every element on the mini bar.</p>
+          <h2 class="section-title">Deep customization, zero friction.</h2>
+          <p class="section-sub">Appearance, behavior, calendar display, font, timezone, mini bar toggles, and RunBox hotkey &mdash; every preference persists across restarts.</p>
         </div>
 
         <div class="hero-shot" style="max-width: 800px; margin: 0 auto 16px;">
           <img src="assets/screenshots/tab-settings.png" alt="Settings panel" />
         </div>
 
-        <div class="features" style="margin-top: 36px;">
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg></div>
-            <h3>20 color combos</h3>
-            <p>Forest, Ocean, Default, Sunset, Cherry, Aurora, Midnight, Slate, Monochrome, Ember, each in light and dark.</p>
+        <div class="settings-features">
+          <div class="settings-feature">
+            <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg></div>
+            <h3>20 color presets</h3>
+            <p>Forest, Ocean, Default, Sunset, Cherry, Aurora, Midnight, Slate, Monochrome, Ember &mdash; each available in light and dark. One click switches the full palette including accent, background, and surface tones.</p>
           </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/></svg></div>
-            <h3>Rounded or sharp</h3>
-            <p>Pick the corner style that matches your taskbar and Windows theme.</p>
+          <div class="settings-feature">
+            <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
+            <h3>Font selection <span class="badge-new">New</span></h3>
+            <p>20+ font choices. Segoe UI, Calibri, Verdana plus embedded fonts that work on any machine regardless of what&rsquo;s installed: Inter, IBM Plex Sans, Roboto, Noto Sans, Cascadia Code, Poppins, Montserrat, Lato, Nunito, Rubik, and more.</p>
           </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M9 4l-2 16M15 4l2 16"/></svg></div>
-            <h3>English / नेपाली</h3>
-            <p>Switch the entire UI between English and Nepali instantly. No restart needed.</p>
+          <div class="settings-feature">
+            <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+            <h3>Calendar display <span class="badge-new">New</span></h3>
+            <p>Toggle each calendar element independently: English day numbers, Saturday highlights, Sunday highlights, tithi, festival labels, and public holiday highlights. Pick a holiday accent color from 12 options (Red, Orange, Pink, Purple, Blue, Teal, Green, Yellow, Amber, Cyan, Indigo, Brown).</p>
           </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
-            <h3>Start with Windows</h3>
-            <p>One toggle to launch on login. No registry editing, no scheduled tasks to babysit.</p>
+          <div class="settings-feature">
+            <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M9 4l-2 16M15 4l2 16"/></svg></div>
+            <h3>English / &#x0928;&#x0947;&#x092a;&#x093e;&#x0932;&#x0940;</h3>
+            <p>Switch the entire UI between English and Nepali instantly. Labels, dates, tool names &mdash; everything switches in one click. No restart needed.</p>
           </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+          <div class="settings-feature">
+            <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
             <h3>RunBox hotkey</h3>
-            <p>Configure the global shortcut that summons the RunBox launcher. Default is Ctrl+Shift+Space. Record any combination from the Settings panel.</p>
+            <p>Configure the global shortcut that summons the RunBox launcher from anywhere in Windows. Default is <kbd>Ctrl+Shift+Space</kbd>. Record any combination from the Settings panel.</p>
           </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+          <div class="settings-feature">
+            <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
             <h3>Notification settings</h3>
             <p>Set how long reminder notifications stay on screen (5&ndash;60 seconds) and toggle the notification sound on or off.</p>
+          </div>
+          <div class="settings-feature">
+            <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/></svg></div>
+            <h3>Corner style &amp; transparency</h3>
+            <p>Rounded or sharp corners to match your taskbar and Windows theme. Optionally enable <strong>transparent when collapsed</strong> so the mini bar blends into the taskbar background.</p>
+          </div>
+          <div class="settings-feature">
+            <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+            <h3>Startup &amp; animations</h3>
+            <p>One toggle to launch with Windows. Animations can be disabled independently for a snappier feel on older hardware. Autostart is enabled by default on first launch and stays in sync with the registry.</p>
+          </div>
+          <div class="settings-feature">
+            <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+            <h3>Timezone &amp; mini bar display</h3>
+            <p>Choose which timezone to show on the mini bar. Toggle the timezone label, UTC offset, day of week, English date, and 12h / 24h clock format independently. The holiday countdown banner is also toggleable from here.</p>
           </div>
         </div>
       </div>
@@ -528,11 +681,8 @@
       </div>
       <div class="footer-bottom">
         <span>© 2025–2026 NepDate Widget. MIT License.</span>
-        <span>Built with care for the Nepali desktop.</span>
+        <span><a href="privacy.html">Privacy Policy</a> &middot; Built with care for the Nepali desktop.</span>
       </div>
-    </div>
-  </footer>
-
   <script src="js/main.js"></script>
 </body>
 </html>

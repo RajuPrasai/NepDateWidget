@@ -99,7 +99,7 @@ public partial class CalendarView : UserControl
             // Reset transform to incoming position, then animate in regardless
             transform.X = inX;
 
-            var opacityIn = new DoubleAnimation(0, 1, SlideIn) { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
+            var opacityIn = new DoubleAnimation(0, 1, SlideIn) { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }, FillBehavior = FillBehavior.Stop };
             var translateIn = new DoubleAnimation(inX, 0, SlideIn) { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
 
             DaysGrid.BeginAnimation(OpacityProperty, opacityIn);

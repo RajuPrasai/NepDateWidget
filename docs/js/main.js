@@ -513,6 +513,26 @@
     window.addEventListener('resize', update);
   }
 
+  /* ---------- Feat-nav scroll spy (features page) ---------- */
+  function initFeatNav() {
+    const nav = document.querySelector('.feat-nav');
+    if (!nav) return;
+    const links = Array.from(nav.querySelectorAll('a[href^="#"]'));
+    if (!links.length) return;
+    const sections = links.map(a => document.getElementById(a.getAttribute('href').slice(1))).filter(Boolean);
+    const setActive = (id) => {
+      links.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) setActive(e.target.id);
+      });
+    }, { rootMargin: '-90px 0px -50% 0px', threshold: 0 });
+    sections.forEach(s => observer.observe(s));
+  }
+
   /* ---------- Init ---------- */
   function init() {
     initTheme();
@@ -529,6 +549,7 @@
     initTocCollapse();
     initSearch();
     initScrollSpy();
+    initFeatNav();
     initAnchorClicks();
   }
   if (document.readyState === 'loading') {

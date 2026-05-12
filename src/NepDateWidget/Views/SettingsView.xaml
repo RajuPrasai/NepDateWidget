@@ -13,7 +13,8 @@
              d:Width="380">
 
     <UserControl.Resources>
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVis" Invert="False" />
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
+        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
         <CubicEase x:Key="SmoothEase" EasingMode="EaseInOut" />
         <!-- Toggle style for option buttons (radio-like) -->
         <Style x:Key="OptionButton" TargetType="Button">
@@ -1340,21 +1341,31 @@
                 <StackPanel>
                     <TextBlock Text="{Binding UpdateSectionLabel}"
                                Style="{StaticResource SectionLabel}" />
-                    <CheckBox Content="{Binding AutoUpdateLabel}"
-                              IsChecked="{Binding AutoCheckForUpdates}"
-                              Style="{StaticResource SettingsCheckBox}" />
-                    <Button Content="{Binding CheckUpdateNowLabel}"
-                            Command="{Binding CheckForUpdatesNowCommand}"
-                            Style="{StaticResource OptionButton}"
-                            HorizontalAlignment="Stretch"
-                            Margin="0,6,0,0" />
-                    <TextBlock Text="{Binding UpdateStatusText}"
+                    <!-- Velopack channel: auto-check toggle + manual check button + status -->
+                    <StackPanel Visibility="{Binding IsVelopackBuild, Converter={StaticResource BoolToVis}}">
+                        <CheckBox Content="{Binding AutoUpdateLabel}"
+                                  IsChecked="{Binding AutoCheckForUpdates}"
+                                  Style="{StaticResource SettingsCheckBox}" />
+                        <Button Content="{Binding CheckUpdateNowLabel}"
+                                Command="{Binding CheckForUpdatesNowCommand}"
+                                Style="{StaticResource OptionButton}"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,6,0,0" />
+                        <TextBlock Text="{Binding UpdateStatusText}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   Opacity="0.75"
+                                   FontSize="11"
+                                   TextWrapping="Wrap"
+                                   Margin="0,6,0,0"
+                                   Visibility="{Binding HasUpdateStatus, Converter={StaticResource BoolToVis}}" />
+                    </StackPanel>
+                    <!-- Store channel: updates are delivered by the Windows Store -->
+                    <TextBlock Text="{Binding StoreUpdateLabel}"
                                Foreground="{DynamicResource WidgetForegroundBrush}"
                                Opacity="0.75"
                                FontSize="11"
                                TextWrapping="Wrap"
-                               Margin="0,6,0,0"
-                               Visibility="{Binding HasUpdateStatus, Converter={StaticResource BoolToVis}}" />
+                               Visibility="{Binding IsVelopackBuild, Converter={StaticResource InverseBoolToVis}}" />
                 </StackPanel>
             </Border>
 

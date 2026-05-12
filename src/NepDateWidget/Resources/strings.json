@@ -57,7 +57,7 @@
   },
   "calendar.copy.title": {
     "en": "Copy",
-    "ne": "कपी"
+    "ne": "कपी गर्नुहोस्"
   },
   "dow.full.sun": {
     "en": "Sunday",
@@ -653,7 +653,7 @@
   },
   "dayinfo.edit_note": {
     "en": "Edit Note",
-    "ne": "नोट सम्पादन"
+    "ne": "नोट सम्पादन गर्नुहोस्"
   },
   "dayinfo.delete": {
     "en": "Delete",
@@ -661,11 +661,11 @@
   },
   "dayinfo.save_note": {
     "en": "Save",
-    "ne": "सेभ"
+    "ne": "सेभ गर्नुहोस्"
   },
   "dayinfo.cancel": {
     "en": "Cancel",
-    "ne": "रद्द"
+    "ne": "रद्द गर्नुहोस्"
   },
   "dayinfo.add_reminder": {
     "en": "Add Reminder",
@@ -717,7 +717,7 @@
   },
   "unit.copy": {
     "en": "Copy",
-    "ne": "कपी"
+    "ne": "कपी गर्नुहोस्"
   },
   "unit.script.roman_in": {
     "en": "Roman input",
@@ -929,7 +929,7 @@
   },
   "net.copy": {
     "en": "Copy",
-    "ne": "कपी"
+    "ne": "कपी गर्नुहोस्"
   },
   "net.host": {
     "en": "Host / IP",
@@ -1045,7 +1045,7 @@
   },
   "texttools.copy": {
     "en": "Copy",
-    "ne": "कपी"
+    "ne": "कपी गर्नुहोस्"
   },
   "texttools.word_output": {
     "en": "Output",
@@ -1169,11 +1169,11 @@
   },
   "texttools.file_browse": {
     "en": "Browse",
-    "ne": "ब्राउज"
+    "ne": "ब्राउज गर्नुहोस्"
   },
   "texttools.file_convert": {
     "en": "Convert & Save",
-    "ne": "रूपान्तरण गरेर सेभ"
+    "ne": "रूपान्तरण गरेर सेभ गर्नुहोस्"
   },
   "texttools.file_converting": {
     "en": "Converting...",
@@ -1209,7 +1209,7 @@
   },
   "reminder.edit": {
     "en": "Edit Reminder",
-    "ne": "रिमाइन्डर सम्पादन"
+    "ne": "रिमाइन्डर सम्पादन गर्नुहोस्"
   },
   "reminder.title": {
     "en": "Title",
@@ -1257,11 +1257,11 @@
   },
   "reminder.save": {
     "en": "Save",
-    "ne": "सेभ"
+    "ne": "सेभ गर्नुहोस्"
   },
   "reminder.cancel": {
     "en": "Cancel",
-    "ne": "रद्द"
+    "ne": "रद्द गर्नुहोस्"
   },
   "reminder.delete": {
     "en": "Delete",
@@ -1309,7 +1309,7 @@
   },
   "reminder.dismiss": {
     "en": "Dismiss",
-    "ne": "बन्द"
+    "ne": "बन्द गर्नुहोस्"
   },
   "daily_events.header": {
     "en": "Today's events",
@@ -1357,7 +1357,7 @@
   },
   "settings.hotkey_clear": {
     "en": "Clear",
-    "ne": "खाली"
+    "ne": "खाली गर्नुहोस्"
   },
   "tab.about": {
     "en": "About",
@@ -1453,15 +1453,15 @@
   },
   "more.edit": {
     "en": "Edit",
-    "ne": "सम्पादन"
+    "ne": "सम्पादन गर्नुहोस्"
   },
   "more.save": {
     "en": "Save",
-    "ne": "सेभ"
+    "ne": "सेभ गर्नुहोस्"
   },
   "more.cancel": {
     "en": "Cancel",
-    "ne": "रद्द"
+    "ne": "रद्द गर्नुहोस्"
   },
   "tooltip.about": {
     "en": "About",
@@ -1589,11 +1589,11 @@
   },
   "docs.form_title_edit": {
     "en": "Edit Document",
-    "ne": "कागजात सम्पादन"
+    "ne": "कागजात सम्पादन गर्नुहोस्"
   },
   "docs.browse": {
     "en": "Browse",
-    "ne": "ब्राउज"
+    "ne": "ब्राउज गर्नुहोस्"
   },
   "docs.open": {
     "en": "Open file",
@@ -1665,7 +1665,7 @@
   },
   "notes.form_title_edit": {
     "en": "Edit Note",
-    "ne": "नोट सम्पादन"
+    "ne": "नोट सम्पादन गर्नुहोस्"
   },
   "notes.field_date": {
     "en": "Date (BS)",
@@ -1717,15 +1717,15 @@
   },
   "reminders.form_title_edit": {
     "en": "Edit Reminder",
-    "ne": "रिमाइन्डर सम्पादन"
+    "ne": "रिमाइन्डर सम्पादन गर्नुहोस्"
   },
   "settings.data_export": {
     "en": "Export Backup...",
-    "ne": "ब्याकअप निर्यात..."
+    "ne": "ब्याकअप निर्यात गर्नुहोस्..."
   },
   "settings.data_import": {
     "en": "Restore Backup...",
-    "ne": "ब्याकअप पुनर्स्थापना..."
+    "ne": "ब्याकअप पुनर्स्थापना गर्नुहोस्..."
   },
   "settings.data_export_ok": {
     "en": "Backup exported successfully.",

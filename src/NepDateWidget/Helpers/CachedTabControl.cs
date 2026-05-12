@@ -36,7 +36,8 @@ public sealed class CachedTabControl : TabControl
 
     private static readonly DoubleAnimation FadeIn = new(0.0, 1.0, TimeSpan.FromMilliseconds(180))
     {
-        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut }
+        EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseOut },
+        FillBehavior = FillBehavior.Stop
     };
 
     private void ShowSelectedTab()

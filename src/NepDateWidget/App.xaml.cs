@@ -98,7 +98,7 @@ public partial class App : Application
         bool isDev = Environment.GetEnvironmentVariable("DOTNET_WATCH") == "1";
         _instanceMutex = new Mutex(
             initiallyOwned: true,
-            name: "NepDateWidget_SingleInstance_v1",
+            name: Helpers.AppEnvironment.SingleInstanceMutexName,
             createdNew: out bool isFirstInstance);
 
         if (!isDev && !isFirstInstance)
@@ -120,6 +120,7 @@ public partial class App : Application
         // Now that the user-configured log cap is known, push it down.
         Log.UpdateMaxSize(settingsService.Current.LogMaxSizeMb);
         Log.Info($"App started | v={System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}" +
+                 $" channel={( Helpers.AppEnvironment.IsPackaged ? "store" : "velopack")}" +
                  $" theme={settingsService.Current.Theme}/{settingsService.Current.BackgroundPreset}" +
                  $" lang={settingsService.Current.Language}" +
                  $" portable={Helpers.AppPaths.IsPortable}" +

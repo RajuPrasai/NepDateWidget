@@ -431,9 +431,17 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         }
     }
 
+    /// <summary>
+    /// True when running from a Velopack install (portable or GitHub Releases).
+    /// False when running inside an MSIX package (Microsoft Store or sideloaded).
+    /// Used to show/hide the Velopack update UI in the Settings view.
+    /// </summary>
+    public bool IsVelopackBuild => !AppEnvironment.IsPackaged;
+
     public string UpdateSectionLabel  { get; private set; } = string.Empty;
     public string AutoUpdateLabel     { get; private set; } = string.Empty;
     public string CheckUpdateNowLabel { get; private set; } = string.Empty;
+    public string StoreUpdateLabel    { get; private set; } = string.Empty;
     public string ThemeDarkLabel    { get; private set; } = string.Empty;
     public string ThemeLightLabel   { get; private set; } = string.Empty;
     public string CornerRoundedLabel { get; private set; } = string.Empty;
@@ -778,6 +786,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         UpdateSectionLabel  = _loc.Get("settings.updates");
         AutoUpdateLabel     = _loc.Get("settings.auto_update");
         CheckUpdateNowLabel = _loc.Get("settings.check_update_now");
+        StoreUpdateLabel    = _loc.Get("settings.update_store_managed");
 
         ThemeDarkLabel    = _loc.Get("settings.theme_dark");
         ThemeLightLabel   = _loc.Get("settings.theme_light");

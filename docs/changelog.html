@@ -95,59 +95,8 @@
             </p>
           </div>
 
-          <!-- Unreleased -->
-          <article class="release latest">
-            <header class="release-head">
-              <h2>Unreleased</h2>
-              <span class="tag">Next</span>
-              <span class="date">In development</span>
-            </header>
-
-            <div class="release-body">
-              <h4>Calendar</h4>
-              <ul>
-                <li><strong>Upcoming holiday countdown:</strong> the calendar header shows a live
-                  &ldquo;X days until &hellip;&rdquo; banner for the next public holiday. Hover to
-                  see upcoming holidays for the next year. Toggleable from Settings.</li>
-                <li><strong>Daily events notification:</strong> on the first launch of each day,
-                  a notification lists today&rsquo;s festivals and observances.
-                  Toggleable from Settings.</li>
-                <li><strong>Note and reminder dots:</strong> calendar days with a note show a
-                  colored dot; days with a reminder show a red dot. Both appear together
-                  when a day has both.</li>
-                <li><strong>Day info popup edit/delete:</strong> clicking a calendar day now shows
-                  a popup with the note and any reminders for that date. Edit or delete each item
-                  inline without opening the More tab.</li>
-              </ul>
-
-              <h4>Documents</h4>
-              <ul>
-                <li><strong>Documents tab:</strong> attach files (PDF, images, Word, Excel) to the
-                  widget with a title, tags, and optional notes. Search by title or tag. Open the
-                  file or jump to its folder directly from the widget. All files are stored locally
-                  under the app&rsquo;s data directory.</li>
-                <li><strong>Quick Access pinning:</strong> the Documents folder is automatically
-                  pinned to Windows Explorer Quick Access on every startup, so it appears in the
-                  sidebar of every file-upload dialog.</li>
-              </ul>
-
-              <h4>RunBox</h4>
-              <ul>
-                <li><strong>Proper command parsing:</strong> the RunBox now runs commands exactly
-                  like the Windows native Run dialog.</li>
-              </ul>
-
-              <h4>Startup</h4>
-              <ul>
-                <li><strong>First-run autostart:</strong> &ldquo;Start with Windows&rdquo; is
-                  enabled automatically on the first launch and stays in sync with the registry
-                  on every subsequent run. Disabling it from Settings is honored permanently.</li>
-              </ul>
-            </div>
-          </article>
-
           <!-- v1.0.0 -->
-          <article class="release">
+          <article class="release latest">
             <header class="release-head">
               <h2>v1.0.0</h2>
               <span class="tag">Stable</span>
@@ -165,6 +114,7 @@
                 <li>Time row: 12h / 24h clock, timezone label, UTC offset</li>
                 <li>Date row: day of week, Bikram Sambat date, Gregorian date</li>
                 <li>Each element toggles independently from Settings</li>
+                <li>Fades transparent when not hovered &mdash; toggleable from Settings</li>
               </ul>
 
               <h4>Calendar</h4>
@@ -175,6 +125,10 @@
                 <li>Mouse wheel and arrow navigation, one-click <strong>Today</strong> button</li>
                 <li>Right-click any cell to copy the date in BS or AD, short or long format</li>
                 <li>Footer shows current fiscal year and quarter</li>
+                <li><strong>Holiday countdown:</strong> the calendar header counts down to the next public holiday; hover to see upcoming holidays for the next year. Toggleable from Settings</li>
+                <li><strong>Daily events notification:</strong> on the first launch of each day, a notification lists today&rsquo;s festivals and observances. Toggleable from Settings</li>
+                <li><strong>Calendar dots:</strong> days with a note show a colored dot; days with a reminder show a red dot</li>
+                <li><strong>Day popup:</strong> click any calendar day to see its note and reminders, and edit or delete them inline without opening the More tab</li>
               </ul>
 
               <h4>Date tools</h4>
@@ -192,35 +146,38 @@
 
               <h4>Text tools</h4>
               <ul>
-                <li><strong>Password:</strong> generator with adjustable length, A–Z / a–z / 0–9 / symbols / Nepali toggles, and live strength meter</li>
+                <li><strong>Password:</strong> generator with adjustable length, A&ndash;Z / a&ndash;z / 0&ndash;9 / symbols / Nepali toggles, and live strength meter</li>
                 <li><strong>Word:</strong> word, character, sentence, and line counts</li>
-                <li><strong>Unicode:</strong> code-point inspection and conversion helpers</li>
-                <li><strong>Script:</strong> Devanagari ↔ Romanized Nepali conversion</li>
+                <li><strong>Preeti &harr; Unicode:</strong> convert Preeti-encoded text or entire files to Unicode Devanagari, or reverse</li>
+                <li><strong>Script:</strong> Devanagari &harr; Romanized Nepali conversion with file support</li>
               </ul>
 
               <h4>Network tools</h4>
               <ul>
                 <li><strong>My IP:</strong> public and private addresses with geolocation</li>
                 <li><strong>Ping:</strong> per-packet RTT plus Min / Max / Avg summary</li>
-                <li><strong>Scan, Trace, Whois, DNS:</strong> additional network diagnostics</li>
+                <li><strong>IP Scanner:</strong> scans the local subnet, parallel-pings every host, and maps each device with hostname, MAC address, and manufacturer</li>
+                <li><strong>Traceroute, Whois, DNS:</strong> additional network diagnostics</li>
               </ul>
 
               <h4>Unit tools</h4>
               <ul>
-                <li><strong>Area:</strong> Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, plus Sq. Metres, Sq. Feet, Hectares, Acres</li>
-                <li><strong>Weight:</strong> Tola, Lal, Pau, Mana, plus grams, kilograms, milligrams, ounces, pounds</li>
+                <li><strong>Area:</strong> Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri, plus Sq. Metres and Sq. Feet</li>
+                <li><strong>Weight:</strong> Dharni, Pawa, Mana, Pathi, Muri, plus kilograms, grams, and litres</li>
+                <li><strong>Script:</strong> Devanagari &harr; Romanized Nepali (same as Text tab, accessible from Unit tab directly)</li>
               </ul>
 
               <h4>More</h4>
               <ul>
-                <li><strong>Notes:</strong> quick local notes</li>
+                <li><strong>Documents:</strong> attach files (PDF, images, Word, Excel) with a title, tags, and optional notes. Open the file or jump to its folder directly from the widget. The Documents folder is automatically pinned to Windows Explorer Quick Access on startup so it appears in every file-upload dialog sidebar</li>
+                <li><strong>Notes:</strong> quick local notes pinned to BS dates</li>
                 <li><strong>Reminders:</strong> one-shot or recurring (daily, weekly, monthly, yearly), pinned to BS dates</li>
               </ul>
 
               <h4>RunBox</h4>
               <ul>
                 <li>Global hotkey (default Ctrl+Shift+Space) summons a compact command launcher from anywhere in Windows</li>
-                <li>Runs program names and shell commands, opens file paths, detects URLs and opens them in the default browser, falls back to a Google search for anything else</li>
+                <li>Runs commands exactly like the Windows native Run dialog; detects URLs and opens them in the default browser; falls back to a Google search for anything else</li>
                 <li>History of up to 50 entries with prefix-ranked filtering, arrow-key navigation, and Tab completion</li>
                 <li>Hotkey configurable from Settings</li>
               </ul>
@@ -228,11 +185,25 @@
               <h4>Appearance &amp; settings</h4>
               <ul>
                 <li>Light and Dark themes</li>
-                <li>10 color presets × 2 themes = 20 combinations (Forest, Ocean, Default, Sunset, Cherry, Aurora, Midnight, Slate, Monochrome, Ember)</li>
+                <li>10 color presets &times; 2 themes = 20 combinations (Forest, Ocean, Default, Sunset, Cherry, Aurora, Midnight, Slate, Monochrome, Ember)</li>
+                <li>Custom Saturday and holiday highlight color with 12 choices, independent of the theme accent</li>
                 <li>Rounded or sharp corners</li>
-                <li>English / नेपाली UI switch with no restart</li>
-                <li>Start with Windows toggle</li>                <li>RunBox hotkey configuration (record any key combination)</li>
-                <li>Notification display duration and sound toggle</li>              </ul>
+                <li>21 fonts embedded in the app &mdash; the font picker works regardless of what is installed on the machine</li>
+                <li>English / &#2344;&#2375;&#2346;&#2366;&#2354;&#2368; UI switch with no restart</li>
+                <li>Start with Windows, enabled automatically on first launch and kept in sync with the registry thereafter</li>
+                <li>RunBox hotkey configuration (record any key combination)</li>
+                <li>Notification display duration and sound toggle</li>
+                <li>Animations on/off for a fully static UI if preferred</li>
+                <li>Calendar display: tithi, events, English day numbers, public holiday highlighting, and Saturday/Sunday highlighting each toggle independently</li>
+                <li>Widget window remembers its last position on screen</li>
+                <li>Reset all settings to defaults with one click</li>
+              </ul>
+
+              <h4>Backup &amp; restore</h4>
+              <ul>
+                <li>Export all your data as a single ZIP &mdash; settings, notes, reminders, and documents included</li>
+                <li>Restore from a backup to move to a new machine or recover after a reinstall</li>
+              </ul>
 
               <h4>Distribution &amp; storage</h4>
               <ul>
@@ -301,12 +272,8 @@
       </div>
       <div class="footer-bottom">
         <span>© 2025–2026 NepDate Widget. MIT License.</span>
-        <span>Built with care for the Nepali desktop.</span>
+        <span><a href="privacy.html">Privacy Policy</a> &middot; Built with care for the Nepali desktop.</span>
       </div>
-    </div>
-  </footer>
-
-  <script src="js/main.js"></script>
 </body>
 </html>
 

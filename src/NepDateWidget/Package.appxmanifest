@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  MSIX package manifest — Microsoft Store channel.
+  Before running build-store.ps1, this file is used as a template.
+  The build script substitutes the four PLACEHOLDER_ tokens and VERSION_PLACEHOLDER
+  with real values from Partner Center and the csproj version.
+
+  HOW TO GET IDENTITY VALUES
+  ─────────────────────────────────────────────────────────────────────────────
+  1. Go to partner.microsoft.com/dashboard
+  2. Windows & Xbox → New product → MSIX or PWA app → reserve "NepDate Widget"
+  3. Product management → Product identity → copy:
+       Package/Identity/Name            → PackageName   parameter in build-store.ps1
+       Package/Identity/Publisher       → Publisher      parameter (the CN=... string)
+       Package/Properties/PublisherDisplayName → PublisherDisplayName parameter
+  4. Also note the Package Family Name for smoke-testing with Add-AppxPackage.
+
+  DESIGN NOTES
+  ─────────────────────────────────────────────────────────────────────────────
+  · EntryPoint="windows.fullTrustApplication" is used instead of the newer
+    uap10:RuntimeBehavior + uap10:TrustLevel pair, because the uap10 namespace
+    for activation was only introduced in Windows 10 version 2004 (build 19041).
+    Our MinVersion is 10.0.17763.0 (Windows 10 1809 / RS5), so any package
+    installed on 17763 would have incomplete activation info with the new pair
+    and would fail to launch. EntryPoint="windows.fullTrustApplication" is the
+    correct equivalent for our target range.
+
+  · StartupTask TaskId must stay in sync with AutoStartService.StartupTaskId
+    in Services/AutoStartService.cs.
+
+  · Store re-signs the package during certification. No local cert is needed
+    for submission. For local Add-AppxPackage testing, sign with a test cert
+    whose Subject matches Publisher and install the cert to Trusted People.
+-->
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  IgnorableNamespaces="uap uap5 rescap">
+
+  <!--
+    Identity: filled in by build-store.ps1 from Partner Center values.
+    Version must be 4-part (Major.Minor.Build.Revision) and must increase
+    with every Store submission.
+    ProcessorArchitecture must match the RID used in win-x64-store.pubxml.
+  -->
+  <Identity
+    Name="PLACEHOLDER_PACKAGE_NAME"
+    Version="VERSION_PLACEHOLDER"
+    Publisher="PLACEHOLDER_PUBLISHER_CN"
+    ProcessorArchitecture="x64" />
+
+  <Properties>
+    <DisplayName>NepDate Widget</DisplayName>
+    <PublisherDisplayName>PLACEHOLDER_PUBLISHER_DISPLAY_NAME</PublisherDisplayName>
+    <Description>A desktop widget for Nepali (BS) and English (AD) dates, calendar navigation, and date conversion.</Description>
+    <!--
+      StoreLogo is the 50×50 image shown in Windows Settings → Apps.
+      build-store.ps1 generates it by resizing Assets/icon.png.
+    -->
+    <Logo>Assets\Store\StoreLogo.png</Logo>
+  </Properties>
+
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+
+  <Dependencies>
+    <!--
+      MinVersion 10.0.17763.0 = Windows 10 version 1809 (RS5 / October 2018 Update).
+      This matches the TargetFramework qualifier net10.0-windows10.0.17763.0.
+      Windows 10 1809 is the minimum supported by Windows.ApplicationModel.StartupTask
+      via uap5:StartupTask, and is the LTSC 2019 baseline.
+      MaxVersionTested 10.0.26100.0 = Windows 11 24H2.
+    -->
+    <TargetDeviceFamily
+      Name="Windows.Desktop"
+      MinVersion="10.0.17763.0"
+      MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+
+  <Capabilities>
+    <!--
+      runFullTrust is required for any packaged app that runs as a standard
+      Win32/WPF process (medium integrity level, outside AppContainer).
+      It is a restricted capability; Store accepts it for desktop apps.
+    -->
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+
+  <Applications>
+    <Application
+      Id="App"
+      Executable="NepDateWidget.exe"
+      EntryPoint="windows.fullTrustApplication">
+
+      <uap:VisualElements
+        DisplayName="NepDate Widget"
+        Description="A desktop widget for Nepali (BS) and English (AD) dates, calendar navigation, and date conversion."
+        Square150x150Logo="Assets\Store\Square150x150Logo.png"
+        Square44x44Logo="Assets\Store\Square44x44Logo.png"
+        BackgroundColor="transparent">
+
+        <uap:DefaultTile
+          Wide310x150Logo="Assets\Store\Wide310x150Logo.png"
+          Square71x71Logo="Assets\Store\Square71x71Logo.png"
+          Square310x310Logo="Assets\Store\Square310x310Logo.png"
+          ShortName="NepDate Widget">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile>
+
+      </uap:VisualElements>
+
+      <Extensions>
+        <!--
+          StartupTask: enables Windows.ApplicationModel.StartupTask API used in
+          AutoStartService.cs. The TaskId must match AutoStartService.StartupTaskId.
+          Enabled="true" sets the default state; the user can disable it in
+          Windows Settings → Apps → Startup, and the app respects that via
+          StartupTask.State after the first launch.
+          EntryPoint is inherited from the parent Application element; repeating
+          it here is required for apps that use EntryPoint instead of uap10 attrs.
+        -->
+        <uap5:Extension
+          Category="windows.startupTask"
+          Executable="NepDateWidget.exe"
+          EntryPoint="windows.fullTrustApplication">
+          <uap5:StartupTask
+            TaskId="NepDateWidgetStartupTask"
+            Enabled="true"
+            DisplayName="NepDate Widget" />
+        </uap5:Extension>
+      </Extensions>
+
+    </Application>
+  </Applications>
+
+</Package>

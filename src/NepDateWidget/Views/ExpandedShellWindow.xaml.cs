@@ -349,7 +349,7 @@ public partial class ExpandedShellWindow : Window
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
 
         // Fade in
-        var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200)) { EasingFunction = ease };
+        var fadeIn = new DoubleAnimation(0, 1, TimeSpan.FromMilliseconds(200)) { EasingFunction = ease, FillBehavior = FillBehavior.Stop };
         ShellRoot.BeginAnimation(OpacityProperty, fadeIn);
 
         // Slide down subtly
@@ -372,7 +372,7 @@ public partial class ExpandedShellWindow : Window
 
         var ease = new CubicEase { EasingMode = EasingMode.EaseIn };
 
-        var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(150)) { EasingFunction = ease };
+        var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(150)) { EasingFunction = ease, FillBehavior = FillBehavior.Stop };
         fadeOut.Completed += (_, _) =>
         {
             Hide();

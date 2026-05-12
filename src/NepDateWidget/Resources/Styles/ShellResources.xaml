@@ -40,10 +40,6 @@
                             TextOptions.TextRenderingMode="ClearType"
                             TextOptions.TextHintingMode="Fixed"
                             RenderOptions.ClearTypeHint="Enabled">
-                        <Border.Effect>
-                            <DropShadowEffect ShadowDepth="2" BlurRadius="8"
-                                              Opacity="0.35" Color="Black" />
-                        </Border.Effect>
                         <ItemsPresenter SnapsToDevicePixels="True" />
                     </Border>
                 </ControlTemplate>
@@ -86,8 +82,7 @@
                                        Text="›"
                                        FontSize="14"
                                        FontWeight="SemiBold"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       Opacity="0.55"
+                                       Foreground="{DynamicResource WidgetMutedForegroundBrush}"
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Right"
                                        Visibility="Collapsed" />
@@ -96,20 +91,20 @@
                                    Placement="Right"
                                    HorizontalOffset="-8"
                                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                   AllowsTransparency="True"
+                                   AllowsTransparency="False"
                                    Focusable="False"
-                                   PopupAnimation="Fade">
+                                   PopupAnimation="None">
                                 <Border Background="{DynamicResource WidgetBackgroundBrush}"
                                         BorderBrush="{DynamicResource WidgetBorderBrush}"
                                         BorderThickness="0.7"
                                         CornerRadius="6"
                                         Padding="0,4"
                                         Margin="0,4,4,4"
-                                        SnapsToDevicePixels="True">
-                                    <Border.Effect>
-                                        <DropShadowEffect ShadowDepth="2" BlurRadius="8"
-                                                          Opacity="0.35" Color="Black" />
-                                    </Border.Effect>
+                                        SnapsToDevicePixels="True"
+                                        TextOptions.TextFormattingMode="Display"
+                                        TextOptions.TextRenderingMode="ClearType"
+                                        TextOptions.TextHintingMode="Fixed"
+                                        RenderOptions.ClearTypeHint="Enabled">
                                     <ItemsPresenter SnapsToDevicePixels="True" />
                                 </Border>
                             </Popup>
@@ -201,6 +196,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
         <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -216,7 +212,6 @@
                                 CornerRadius="4"
                                 Padding="6,5"
                                 Margin="0,1"
-                                Opacity="0.65"
                                 ClipToBounds="True">
                             <ContentPresenter ContentSource="Header"
                                               HorizontalAlignment="Center"
@@ -229,49 +224,12 @@
                                     Value="{DynamicResource WidgetAccentBrush}" />
                             <Setter Property="Foreground"
                                     Value="{DynamicResource WidgetAccentBrush}" />
-                            <Setter Property="FontWeight" Value="SemiBold" />
-                            <Trigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="TabBg"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" Duration="0:0:0.15" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.EnterActions>
-                            <Trigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="TabBg"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.65" Duration="0:0:0.15" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </Trigger.ExitActions>
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True" />
                                 <Condition Property="IsSelected" Value="False" />
                             </MultiTrigger.Conditions>
-                            <MultiTrigger.EnterActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="TabBg"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1" Duration="0:0:0.1" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiTrigger.EnterActions>
-                            <MultiTrigger.ExitActions>
-                                <BeginStoryboard>
-                                    <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="TabBg"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.65" Duration="0:0:0.15" />
-                                    </Storyboard>
-                                </BeginStoryboard>
-                            </MultiTrigger.ExitActions>
                             <Setter TargetName="TabBg" Property="Background"
                                     Value="{DynamicResource WidgetHoverBrush}" />
                         </MultiTrigger>
@@ -308,8 +266,7 @@
     <Style x:Key="FieldLabel" TargetType="TextBlock">
         <Setter Property="FontSize"   Value="12" />
         <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Opacity"    Value="0.7" />
-        <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource WidgetMutedForegroundBrush}" />
     </Style>
 
     <Style x:Key="InfoPillBadgeStyle" TargetType="Button">

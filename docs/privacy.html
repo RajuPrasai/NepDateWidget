@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#dc3f10" />
+  <title>Privacy Policy - NepDate Widget</title>
+  <meta name="description" content="Privacy policy for NepDate Widget. No personal data is collected. Update checks contact GitHub's public API only." />
+  <link rel="canonical" href="https://rajuprasai.github.io/NepDateWidget/privacy.html" />
+  <link rel="icon" href="assets/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" href="assets/logo.png?v=2" />
+  <link rel="apple-touch-icon" href="assets/logo.png?v=2" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .prose h2 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 10px; }
+    .prose p  { line-height: 1.7; margin-bottom: 14px; color: var(--text); }
+    .prose ul { padding-left: 20px; margin-bottom: 14px; }
+    .prose li { line-height: 1.7; margin-bottom: 6px; color: var(--text); }
+    .prose a  { color: var(--accent); }
+    .prose code { font-family: monospace; background: var(--surface-2, rgba(0,0,0,.06)); padding: 1px 5px; border-radius: 3px; font-size: .9em; }
+  </style>
+  <script>
+    (function () {
+      try {
+        var p = localStorage.getItem('nepdate-theme');
+        if (p !== 'light' && p !== 'dark' && p !== 'system') p = 'system';
+        var resolved = p === 'system'
+          ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          : p;
+        document.documentElement.setAttribute('data-theme', resolved);
+        document.documentElement.setAttribute('data-theme-pref', p);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+        document.documentElement.setAttribute('data-theme-pref', 'system');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="inner">
+      <a class="brand" href="index.html">
+        <img class="logo-img" src="assets/logo.png?v=2" alt="NepDate Widget logo" width="30" height="30" />
+        <span>NepDate Widget</span>
+      </a>
+      <nav class="nav-main" aria-label="Primary">
+        <a href="index.html">Home</a>
+        <a href="features.html">Features</a>
+        <a href="gallery.html">Screenshots</a>
+        <a href="download.html">Download</a>
+        <a href="changelog.html">Changelog</a>
+        <a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a>
+      </nav>
+      <div class="header-right">
+        <a class="github-btn" href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener" aria-label="GitHub repository">
+          <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span>GitHub</span>
+        </a>
+        <div class="theme-switch" role="group" aria-label="Theme">
+          <button type="button" data-theme-value="light" aria-label="Light theme" title="Light">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          </button>
+          <button type="button" data-theme-value="dark" aria-label="Dark theme" title="Dark">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn hamburger" aria-label="Open menu"><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="overlay"></div>
+  <nav class="mobile-nav" aria-label="Mobile">
+    <a href="index.html">Home</a>
+    <a href="features.html">Features</a>
+    <a href="gallery.html">Screenshots</a>
+    <a href="download.html">Download</a>
+    <a href="changelog.html">Changelog</a>
+    <a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a>
+    <a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener">GitHub</a>
+  </nav>
+
+  <main id="main">
+    <section style="padding: 64px 0 80px;">
+      <div class="container" style="max-width: 760px;">
+        <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 8px;">Privacy Policy</h1>
+        <p style="color: var(--text-muted); margin-bottom: 40px; font-size: 0.9rem;">Last updated: June 2025</p>
+
+        <div class="prose">
+          <h2>Summary</h2>
+          <p>NepDate Widget does not collect, store, or transmit any personal data. There are no analytics, no telemetry, no accounts, and no advertising. Everything the app does stays on your device.</p>
+
+          <h2>What the app does not do</h2>
+          <ul>
+            <li>Does not collect names, email addresses, or any personally identifiable information.</li>
+            <li>Does not track your usage, behavior, or device fingerprint.</li>
+            <li>Does not send any data to the developer or any third party.</li>
+            <li>Does not use analytics services, crash reporting services, or advertising networks.</li>
+          </ul>
+
+          <h2>Update checks (Velopack channel only)</h2>
+          <p>When installed via the portable installer or GitHub Releases (the Velopack channel), the app optionally checks for newer versions. This check makes an outbound HTTPS request to the <a href="https://github.com/RajuPrasai/NepDateWidget/releases" target="_blank" rel="noopener">GitHub Releases API</a> to read the public list of published releases. No user data is included in this request. The request is a standard authenticated-only read of a public endpoint, identical to visiting the releases page in a browser.</p>
+          <p>This check is enabled by default and can be turned off in Settings under the Updates section. It fires at most once per 24 hours per session.</p>
+          <p>When installed through the Microsoft Store, updates are delivered exclusively by the Store. The app performs no network call for update checking in that case.</p>
+
+          <h2>Local data</h2>
+          <p>All user data (notes, reminders, documents, settings, and logs) is stored locally in your user profile folder and never leaves your device. The exact location depends on the installation channel and is shown in Settings under Data Files.</p>
+
+          <h2>Log files</h2>
+          <p>The app writes a local log file (<code>nepdate.log</code>) for diagnostic purposes. This file is stored on your device only. It is never uploaded. If you contact support and choose to share it manually, that is your decision.</p>
+
+          <h2>Third-party libraries</h2>
+          <p>NepDate Widget uses open-source libraries listed in <a href="https://github.com/RajuPrasai/NepDateWidget/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener">THIRD_PARTY_NOTICES.md</a>. None of these libraries are configured to collect or transmit data.</p>
+
+          <h2>Contact</h2>
+          <p>If you have questions about this policy, open an issue on <a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="index.html" style="margin-bottom:12px;">
+            <img class="logo-img" src="assets/logo.png?v=2" alt="NepDate Widget logo" width="30" height="30" />
+            <span>NepDate Widget</span>
+          </a>
+          <p>A tiny Nepali calendar that lives on your Windows taskbar, with every Nepali tool you actually use.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="features.html">Features</a></li>
+            <li><a href="gallery.html">Screenshots</a></li>
+            <li><a href="download.html">Download</a></li>
+            <li><a href="changelog.html">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Project</h4>
+          <ul>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget/releases" target="_blank" rel="noopener">All Releases</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">Issues</a></li>
+            <li><a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">Sponsor</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>NepDate Family</h4>
+          <ul>
+            <li><a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a></li>
+            <li><a href="https://www.nuget.org/packages/NepDate/" target="_blank" rel="noopener">NepDate on NuGet</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDate" target="_blank" rel="noopener">NepDate on GitHub</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025–2026 NepDate Widget. MIT License.</span>
+        <span><a href="privacy.html">Privacy Policy</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
