@@ -126,129 +126,17 @@
                     <TextBlock Text="{Binding TaglineLabel}"
                                FontSize="12"
                                Opacity="0.65"
-                               Margin="0,2,0,6" />
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding VersionLabel}"
-                                   FontSize="11"
-                                   Opacity="0.4"
-                                   Margin="0,0,4,0" />
-                        <TextBlock Text="{Binding AppVersion}"
-                                   FontSize="11"
-                                   Opacity="0.4" />
-                    </StackPanel>
-                </StackPanel>
-            </Border>
-
-            <!-- ── Features ─────────────────────────────────────────────────── -->
-            <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.7"
-                    CornerRadius="8"
-                    Padding="14,12,14,12"
-                    Margin="0,0,0,8">
-                <StackPanel>
-                    <TextBlock Text="{Binding FeaturesHeading}"
-                               Style="{StaticResource SectionLabel}" />
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                        <Path Data="{StaticResource IconCalendar}"
-                              Stroke="{DynamicResource WidgetAccentBrush}"
-                              StrokeThickness="1.1"
-                              Stretch="Uniform"
-                              Width="12" Height="12"
-                              VerticalAlignment="Center"
-                              Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding FeatureCalendar}"
-                                   FontSize="12"
-                                   Opacity="0.8"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                        <Path Data="{StaticResource IconConverter}"
-                              Stroke="{DynamicResource WidgetAccentBrush}"
-                              StrokeThickness="1.1"
-                              Stretch="Uniform"
-                              Width="12" Height="12"
-                              VerticalAlignment="Center"
-                              Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding FeatureConverter}"
-                                   FontSize="12"
-                                   Opacity="0.8"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                        <Path Data="{StaticResource IconCalculator}"
-                              Stroke="{DynamicResource WidgetAccentBrush}"
-                              StrokeThickness="1.1"
-                              Stretch="Uniform"
-                              Width="12" Height="12"
-                              VerticalAlignment="Center"
-                              Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding FeatureBanking}"
-                                   FontSize="12"
-                                   Opacity="0.8"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                        <Path Data="{StaticResource IconText}"
-                              Stroke="{DynamicResource WidgetAccentBrush}"
-                              StrokeThickness="1.1"
-                              Stretch="Uniform"
-                              Width="12" Height="12"
-                              VerticalAlignment="Center"
-                              Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding FeatureText}"
-                                   FontSize="12"
-                                   Opacity="0.8"
-                                   VerticalAlignment="Center"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Path Data="{StaticResource IconNetwork}"
-                              Stroke="{DynamicResource WidgetAccentBrush}"
-                              StrokeThickness="1.1"
-                              Stretch="Uniform"
-                              Width="12" Height="12"
-                              VerticalAlignment="Center"
-                              Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding FeatureNetwork}"
-                                   FontSize="12"
-                                   Opacity="0.8"
-                                   VerticalAlignment="Center"
-                                   TextWrapping="Wrap" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <Path Data="{StaticResource IconBell}"
-                              Stroke="{DynamicResource WidgetAccentBrush}"
-                              StrokeThickness="1.1"
-                              Stretch="Uniform"
-                              Width="12" Height="12"
-                              VerticalAlignment="Center"
-                              Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding FeatureReminders}"
-                                   FontSize="12"
-                                   Opacity="0.8"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
-                        <Path Data="{StaticResource IconPalette}"
-                              Stroke="{DynamicResource WidgetAccentBrush}"
-                              StrokeThickness="1.1"
-                              Stretch="Uniform"
-                              Width="12" Height="12"
-                              VerticalAlignment="Center"
-                              Margin="0,0,8,0" />
-                        <TextBlock Text="{Binding FeatureThemes}"
-                                   FontSize="12"
-                                   Opacity="0.8"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
+                               Margin="0,2,0,8" />
+                    <Border Background="{DynamicResource WidgetHoverBrush}"
+                            BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                            BorderThickness="0.7"
+                            CornerRadius="10"
+                            Padding="8,2,8,2"
+                            HorizontalAlignment="Left">
+                        <TextBlock FontSize="10.5" Opacity="0.6">
+                            <Run Text="v" /><Run Text="{Binding AppVersion, Mode=OneWay}" />
+                        </TextBlock>
+                    </Border>
                 </StackPanel>
             </Border>
 
@@ -274,35 +162,85 @@
                                    Foreground="{DynamicResource WidgetSuccessBrush}"
                                    VerticalAlignment="Center" />
                     </StackPanel>
-
                     <TextBlock Text="{Binding SupportBody}"
                                FontSize="12"
                                Opacity="0.75"
                                TextWrapping="Wrap"
                                Margin="0,0,0,12" />
+                    <Button Style="{StaticResource AccentButton}"
+                            Command="{Binding OpenSupportCommand}"
+                            HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconHeart}"
+                                  Stroke="{DynamicResource WidgetDayTodayTextBrush}"
+                                  StrokeThickness="1.4"
+                                  Fill="Transparent"
+                                  Stretch="Uniform"
+                                  Width="13" Height="13"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,7,0" />
+                            <TextBlock Text="{Binding SupportButtonLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="8" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0"
-                                Style="{StaticResource AccentButton}"
-                                Command="{Binding OpenSupportCommand}"
-                                HorizontalAlignment="Stretch">
+            <!-- ── Links ─────────────────────────────────────────────────────── -->
+            <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                    BorderThickness="0.7"
+                    CornerRadius="8"
+                    Padding="14,12,14,12"
+                    Margin="0,0,0,8">
+                <StackPanel>
+                    <TextBlock Text="{Binding LinksHeading}"
+                               Style="{StaticResource SectionLabel}" />
+                    <UniformGrid Columns="2" Rows="2">
+                        <Button Style="{StaticResource SecondaryButton}"
+                                Command="{Binding OpenRepoCommand}"
+                                Margin="0,0,4,4">
                             <StackPanel Orientation="Horizontal">
-                                <Path Data="{StaticResource IconHeart}"
-                                      Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
-                                      Fill="Transparent" Stretch="Uniform"
-                                      Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,7,0" />
-                                <TextBlock Text="{Binding SupportButtonLabel}" VerticalAlignment="Center" />
+                                <Path Data="{StaticResource IconScript}"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}"
+                                      StrokeThickness="1.1"
+                                      Stretch="Uniform"
+                                      Width="11" Height="11"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding RepoButtonLabel}" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                        <Button Grid.Column="2"
-                                Style="{StaticResource SecondaryButton}"
-                                Command="{Binding OpenRepoCommand}"
-                                Height="32">
+                        <Button Style="{StaticResource SecondaryButton}"
+                                Command="{Binding OpenBugReportCommand}"
+                                Margin="0,0,0,4">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconNote}"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}"
+                                      StrokeThickness="1.1"
+                                      Stretch="Uniform"
+                                      Width="11" Height="11"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding BugButtonLabel}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource SecondaryButton}"
+                                Command="{Binding OpenChangelogCommand}"
+                                Margin="0,0,4,0">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Data="{StaticResource IconFiles}"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}"
+                                      StrokeThickness="1.1"
+                                      Stretch="Uniform"
+                                      Width="11" Height="11"
+                                      VerticalAlignment="Center"
+                                      Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding ChangelogButtonLabel}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource SecondaryButton}"
+                                Command="{Binding OpenWebsiteCommand}"
+                                Margin="0,0,0,0">
                             <StackPanel Orientation="Horizontal">
                                 <Path Data="{StaticResource IconExternalLink}"
                                       Stroke="{DynamicResource WidgetForegroundBrush}"
@@ -311,11 +249,10 @@
                                       Width="11" Height="11"
                                       VerticalAlignment="Center"
                                       Margin="0,0,6,0" />
-                                <TextBlock Text="{Binding RepoButtonLabel}"
-                                           VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding WebsiteButtonLabel}" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-                    </Grid>
+                    </UniformGrid>
                 </StackPanel>
             </Border>
 
