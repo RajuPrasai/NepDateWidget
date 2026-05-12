@@ -14,7 +14,7 @@
   { "Key": "tr",  "Url": "https://translate.google.com/?text={query}&sl=auto&tl=en", "Name": "Google Translate" },
   { "Key": "ig",  "Url": "https://www.instagram.com/explore/search/keyword/?q={query}", "Name": "Instagram" },
   { "Key": "dz",  "Url": "https://www.daraz.com.np/catalog/?q={query}", "Name": "Daraz" },
-  { "Key": "hb",  "Url": "https://hamrobazaar.com/search/product?q={query}", "Name": "HamroBazaar" },
+  { "Key": "hb",  "Url": "https://daraz.com/search/product?q={query}", "Name": "daraz" },
   { "Key": "ek",  "Url": "https://ekantipur.com/search/{year}/{query}", "Name": "eKantipur" },
   { "Key": "ok",  "Url": "https://www.onlinekhabar.com/?s={query}", "Name": "OnlineKhabar" },
   { "Key": "mj",  "Url": "https://merojob.com/search/?q={query}", "Name": "MeroJob" },
