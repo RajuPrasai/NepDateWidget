@@ -1,6 +1,9 @@
 <div align="center">
 
 <img alt="NepDate Widget" src="docs/assets/screenshots/website-hero.png" />
+
+<hr>
+
 The नेपाली calendar that lives on your taskbar. Two lines on screen at all times. Click to expand into 25+ tools.
 
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D4?style=flat-square&logo=windows)](https://github.com/RajuPrasai/NepDateWidget/releases)
@@ -25,7 +28,7 @@ NepDate Widget sits on your taskbar as a compact two-line bar showing the curren
 
 ---
 
-## Screenshots
+## Some Screenshots
 
 <div align="center">
 
@@ -39,7 +42,7 @@ NepDate Widget sits on your taskbar as a compact two-line bar showing the curren
 
 | Preeti ↔ Unicode | RunBox |
 |:---:|:---:|
-| <img src="docs/assets/screenshots/tab-text-unicode.png" width="280" alt="Preeti to Unicode conversion" /> | <img src="docs/assets/screenshots/runbox-run.png" width="280" alt="RunBox command launcher" /> |
+| <img src="docs/assets/screenshots/tab-text-unicode.png" width="280" alt="Preeti to Unicode conversion" /> | <img src="docs/assets/screenshots/runbox-daraz.png" width="280" alt="RunBox command launcher" /> |
 
 </div>
 
@@ -51,25 +54,25 @@ NepDate Widget sits on your taskbar as a compact two-line bar showing the curren
 
 Seven tabs, 25+ tools. The full tour is on the [website](https://rajuprasai.github.io/NepDateWidget/features.html). Here is what each tab does.
 
-**Mini Bar** — Two configurable lines pinned to the taskbar. Time row: 12h/24h clock, timezone label, UTC offset. Date row: day of week, BS date, AD date. Each element toggles independently. Fades when not hovered.
+**Mini Bar** - Two configurable lines pinned to the taskbar. Time row: 12h/24h clock, timezone label, UTC offset. Date row: day of week, BS date, AD date. Each element toggles independently. Fades when not hovered.
 
-**Calendar** — Full BS month grid with English day numbers alongside each cell, tithi, public holidays, and festival highlights. Today is marked with your accent color. A live countdown to the next public holiday appears in the header. On the first launch of each day, a notification lists today's festivals and observances. Right-click any day to copy the date in BS or AD, short or long format. Click any day to view and edit notes and reminders inline without opening the More tab.
+**Calendar** - Full BS month grid with English day numbers alongside each cell, tithi, public holidays, and festival highlights. Today is marked with your accent color. A live countdown to the next public holiday appears in the header. On the first launch of each day, a notification lists today's festivals and observances. Right-click any day to copy the date in BS or AD, short or long format. Click any day to view and edit notes and reminders inline without opening the More tab.
 
-**Date** — BS↔AD conversion that remembers your last direction. Day add/subtract and date difference broken down to years, months, and days. Timezone converter with compact labeled dropdowns (Nepal +05:45, Singapore +08:00) and one-click swap.
+**Date** - BS↔AD conversion that remembers your last direction. Day add/subtract and date difference broken down to years, months, and days. Timezone converter with compact labeled dropdowns (Nepal +05:45, Singapore +08:00) and one-click swap.
 
-**Unit** — Traditional Nepali land units: Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri, plus sq. metres and sq. feet. Weight units: Dharni, Pawa, Mana, Pathi, Muri, Tola, alongside kg, g, and litres.
+**Unit** - Traditional Nepali land units: Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri, plus sq. metres and sq. feet. Weight units: Dharni, Pawa, Mana, Pathi, Muri, Tola, alongside kg, g, and litres.
 
-**Text** — Preeti↔Unicode character conversion with batch file support (`.docx`, `.txt`). Devanagari↔Romanized Nepali script conversion. Word, character, sentence, and line count. Password generator with configurable charset (uppercase, lowercase, digits, symbols, Nepali characters) and live strength meter.
+**Text** - Preeti↔Unicode character conversion with batch file support (`.docx`, `.txt`). Devanagari↔Romanized Nepali script conversion. Word, character, sentence, and line count. Password generator with configurable charset (uppercase, lowercase, digits, symbols, Nepali characters) and live strength meter.
 
-**Bank** — Simple interest where each period carries its own annual rate, so rate changes over time are modeled accurately. BS or AD date input. Full per-period breakdown with a grand total. Loan EMI on the reducing balance method with a complete month-by-month amortization table.
+**Bank** - Simple interest where each period carries its own annual rate, so rate changes over time are modeled accurately. BS or AD date input. Full per-period breakdown with a grand total. Loan EMI on the reducing balance method with a complete month-by-month amortization table.
 
-**Network** — My IP (public and private with geolocation). Ping with per-packet RTT and Min/Max/Avg summary. LAN subnet scanner that parallel-pings every host and maps each device with hostname, MAC address, and manufacturer. Traceroute, WHOIS, and DNS lookup.
+**Network** - My IP (public and private with geolocation). Ping with per-packet RTT and Min/Max/Avg summary. LAN subnet scanner that parallel-pings every host and maps each device with hostname, MAC address, and manufacturer. Traceroute, WHOIS, and DNS lookup.
 
-**More** — Per-day notes tied to the BS calendar. One-shot and recurring reminders (daily, weekly, monthly, yearly) that survive app restarts. Document library: attach PDF, images, Word, and Excel files with tags and notes. The Documents folder is automatically pinned to Windows Explorer Quick Access so it appears in every file-upload dialog sidebar.
+**More** - Per-day notes tied to the BS calendar. One-shot and recurring reminders (daily, weekly, monthly, yearly) that survive app restarts. Document library: attach PDF, images, Word, and Excel files with tags and notes. The Documents folder is automatically pinned to Windows Explorer Quick Access so it appears in every file-upload dialog sidebar.
 
-**RunBox** — Global hotkey (default `Ctrl+Shift+Space`) launches a compact command bar from anywhere in Windows. Runs programs, opens files or URLs, falls back to a web search, and evaluates math inline (`= 2+3*4` copies the result). History of 500 entries with prefix-ranked filtering and Tab completion. Named user scripts, with a Desktop Organizer script included out of the box. 22 built-in search shortcuts (`yt`, `map`, `hb`, `gh`, and more), each editable from Settings.
+**RunBox** - Global hotkey (default `Ctrl+Shift+Space`) launches a compact command bar from anywhere in Windows. Runs programs, opens files or URLs, falls back to a web search, and evaluates math inline (`= 2+3*4` copies the result). History of 500 entries with prefix-ranked filtering and Tab completion. Named user scripts, with a Desktop Organizer script included out of the box. 22 built-in search shortcuts (`yt`, `map`, `hb`, `gh`, and more), each editable from Settings.
 
-**Appearance** — 20 color presets (10 palettes × light and dark). 20 fonts (3 system fonts + 17 bundled, so the font picker works regardless of what is installed). A dedicated Saturday and holiday highlight color, independent of the accent, controls calendar cell coloring separately from the theme. Rounded or sharp corners. English and नेपाली UI switch without a restart.
+**Appearance** - 20 color presets (10 palettes × light and dark). 20 fonts (3 system fonts + 17 bundled, so the font picker works regardless of what is installed). A dedicated Saturday and holiday highlight color, independent of the accent, controls calendar cell coloring separately from the theme. Rounded or sharp corners. English and नेपाली UI switch without a restart.
 
 ---
 
