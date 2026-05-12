@@ -113,6 +113,7 @@ public static class AppPaths
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     "NepDateWidget",
                     DataSubfolder);
+                if (Directory.Exists(priorData))
                 {
                     foreach (var subDir in new[] { "config", "data" })
                     {

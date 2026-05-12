@@ -253,7 +253,7 @@ public sealed class UnitViewModel : ViewModelBase
         {
             if (!string.IsNullOrEmpty(_areaResult))
             {
-                System.Windows.Clipboard.SetText(_areaResult);
+                TryCopyToClipboard(_areaResult);
                 Log.Action("calc area: result copied");
             }
         });
@@ -262,7 +262,7 @@ public sealed class UnitViewModel : ViewModelBase
         {
             if (!string.IsNullOrEmpty(_scriptDevaOutput))
             {
-                System.Windows.Clipboard.SetText(_scriptDevaOutput);
+                TryCopyToClipboard(_scriptDevaOutput);
                 Log.Action("calc script: deva output copied");
             }
         });
@@ -271,7 +271,7 @@ public sealed class UnitViewModel : ViewModelBase
         {
             if (!string.IsNullOrEmpty(_scriptRomanOutput))
             {
-                System.Windows.Clipboard.SetText(_scriptRomanOutput);
+                TryCopyToClipboard(_scriptRomanOutput);
                 Log.Action("calc script: roman output copied");
             }
         });
@@ -280,7 +280,7 @@ public sealed class UnitViewModel : ViewModelBase
         {
             if (!string.IsNullOrEmpty(_weightResult))
             {
-                System.Windows.Clipboard.SetText(_weightResult);
+                TryCopyToClipboard(_weightResult);
                 Log.Action("calc weight: result copied");
             }
         });
@@ -438,5 +438,11 @@ public sealed class UnitViewModel : ViewModelBase
         if (s.Contains('.'))
             s = s.TrimEnd('0').TrimEnd('.');
         return s;
+    }
+
+    private static void TryCopyToClipboard(string text)
+    {
+        try { System.Windows.Clipboard.SetText(text); }
+        catch (Exception ex) { Log.Error($"clipboard set failed: {ex.Message}"); }
     }
 }

@@ -398,7 +398,7 @@ public sealed class RunBoxViewModel : ViewModelBase
         if (_showCalcResult && !string.IsNullOrEmpty(_calcResult)
             && !string.Equals(_activePrefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
         {
-            Clipboard.SetText(_calcResult);
+            TryCopyToClipboard(_calcResult);
             ShowCalcResult = false;
             CalcResult = string.Empty;
             DismissError();
@@ -1047,5 +1047,11 @@ public sealed class RunBoxViewModel : ViewModelBase
         if (windowsPath.Length >= 2 && char.IsLetter(windowsPath[0]) && windowsPath[1] == ':')
             return $"/mnt/{char.ToLower(windowsPath[0])}{windowsPath[2..].Replace('\\', '/')}";
         return windowsPath.Replace('\\', '/');
+    }
+
+    private static void TryCopyToClipboard(string text)
+    {
+        try { System.Windows.Clipboard.SetText(text); }
+        catch (Exception ex) { Log.Error($"clipboard set failed: {ex.Message}"); }
     }
 }

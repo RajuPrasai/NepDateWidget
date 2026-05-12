@@ -61,10 +61,21 @@ public partial class App : Application
 
         // ── Single-instance guard (skipped under dotnet watch) ──────────────
         bool isDev = Environment.GetEnvironmentVariable("DOTNET_WATCH") == "1";
-        _instanceMutex = new Mutex(
-            initiallyOwned: true,
-            name: Helpers.AppEnvironment.SingleInstanceMutexName,
-            createdNew: out bool isFirstInstance);
+        bool isFirstInstance;
+        try
+        {
+            _instanceMutex = new Mutex(
+                initiallyOwned: true,
+                name: Helpers.AppEnvironment.SingleInstanceMutexName,
+                createdNew: out isFirstInstance);
+        }
+        catch (AbandonedMutexException)
+        {
+            // The previous process was killed without releasing the mutex (crash or Store
+            // force-kill during an update). The OS has already granted ownership to this
+            // instance. Treat it as a fresh first instance.
+            isFirstInstance = true;
+        }
 
         if (!isDev && !isFirstInstance)
         {

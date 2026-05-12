@@ -953,14 +953,14 @@ public sealed class NetworkToolsViewModel : ViewModelBase
 
         FetchMyIpCommand = new RelayCommand(() => _ = FetchMyIpAsync(), () => IsNotBusy);
         CopyMyIpCommand = new RelayCommand(
-            () => System.Windows.Clipboard.SetText(_myIpResult),
+            () => TryCopyToClipboard(_myIpResult),
             () => !string.IsNullOrEmpty(_myIpResult));
 
         PingCommand = new RelayCommand(
             () => _ = RunPingAsync(),
             () => IsNotBusy && !string.IsNullOrWhiteSpace(_pingHost));
         CopyPingCommand = new RelayCommand(
-            () => System.Windows.Clipboard.SetText(_pingResult),
+            () => TryCopyToClipboard(_pingResult),
             () => !string.IsNullOrEmpty(_pingResult));
 
         ScanCommand = new RelayCommand(() => _ = RunScanAsync(), () => IsNotBusy);
@@ -969,21 +969,21 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             () => _ = RunTraceAsync(),
             () => IsNotBusy && !string.IsNullOrWhiteSpace(_traceHost));
         CopyTraceCommand = new RelayCommand(
-            () => System.Windows.Clipboard.SetText(_traceResult),
+            () => TryCopyToClipboard(_traceResult),
             () => !string.IsNullOrEmpty(_traceResult));
 
         WhoisCommand = new RelayCommand(
             () => _ = RunWhoisAsync(),
             () => IsNotBusy && !string.IsNullOrWhiteSpace(_whoisDomain));
         CopyWhoisCommand = new RelayCommand(
-            () => System.Windows.Clipboard.SetText(_whoisResult),
+            () => TryCopyToClipboard(_whoisResult),
             () => !string.IsNullOrEmpty(_whoisResult));
 
         DnsCommand = new RelayCommand(
             () => _ = RunDnsAsync(),
             () => IsNotBusy && !string.IsNullOrWhiteSpace(_dnsHost));
         CopyDnsCommand = new RelayCommand(
-            () => System.Windows.Clipboard.SetText(_dnsResult),
+            () => TryCopyToClipboard(_dnsResult),
             () => !string.IsNullOrEmpty(_dnsResult));
         OpenHelpCommand = new RelayCommand<string>(key =>
         {
@@ -1008,5 +1008,11 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             dispatcher.Invoke(action);
         else
             action();
+    }
+
+    private static void TryCopyToClipboard(string text)
+    {
+        try { System.Windows.Clipboard.SetText(text); }
+        catch (Exception ex) { Log.Error($"clipboard set failed: {ex.Message}"); }
     }
 }

@@ -49,7 +49,7 @@
     Name="PLACEHOLDER_PACKAGE_NAME"
     Version="VERSION_PLACEHOLDER"
     Publisher="PLACEHOLDER_PUBLISHER_CN"
-    ProcessorArchitecture="x64" />
+    ProcessorArchitecture="ARCH_PLACEHOLDER" />
 
   <Properties>
     <DisplayName>NepDate Widget</DisplayName>
@@ -64,6 +64,7 @@
 
   <Resources>
     <Resource Language="en-us" />
+    <Resource Language="ne" />
   </Resources>
 
   <Dependencies>

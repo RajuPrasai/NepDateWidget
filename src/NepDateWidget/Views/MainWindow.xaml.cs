@@ -209,6 +209,7 @@ public partial class MainWindow : Window
             SystemEvents.PowerModeChanged -= OnPowerModeChanged;
             SystemEvents.TimeChanged -= OnSystemTimeChanged;
 
+            _topmostTimer.Stop();
             _saveTimer.Stop();
             _fullscreenTimer.Stop();
             ViewModel.SaveSettings();

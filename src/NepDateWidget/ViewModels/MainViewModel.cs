@@ -565,10 +565,10 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         SetCornerRoundedCommand = new RelayCommand(() => CornerStyle = "Rounded");
         SetCornerSharpCommand = new RelayCommand(() => CornerStyle = "Sharp");
 
-        CopyTodayBsShortCommand = new RelayCommand(() => System.Windows.Clipboard.SetText(CopyTodayBsShortLabel));
-        CopyTodayBsLongCommand = new RelayCommand(() => System.Windows.Clipboard.SetText(CopyTodayBsLongLabel));
-        CopyTodayAdShortCommand = new RelayCommand(() => System.Windows.Clipboard.SetText(CopyTodayAdShortLabel));
-        CopyTodayAdLongCommand = new RelayCommand(() => System.Windows.Clipboard.SetText(CopyTodayAdLongLabel));
+        CopyTodayBsShortCommand = new RelayCommand(() => TryCopyToClipboard(CopyTodayBsShortLabel));
+        CopyTodayBsLongCommand = new RelayCommand(() => TryCopyToClipboard(CopyTodayBsLongLabel));
+        CopyTodayAdShortCommand = new RelayCommand(() => TryCopyToClipboard(CopyTodayAdShortLabel));
+        CopyTodayAdLongCommand = new RelayCommand(() => TryCopyToClipboard(CopyTodayAdLongLabel));
 
         OpenToolsConvertCommand = new RelayCommand(() => OpenToolsMode(0));
         OpenToolsDaysCommand    = new RelayCommand(() => OpenToolsMode(1));
@@ -1057,5 +1057,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     {
         MiniBar.Dispose();
         Settings.Dispose();
+    }
+
+    private static void TryCopyToClipboard(string text)
+    {
+        try { System.Windows.Clipboard.SetText(text); }
+        catch (Exception ex) { Log.Error($"clipboard set failed: {ex.Message}"); }
     }
 }

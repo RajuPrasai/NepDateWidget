@@ -37,6 +37,9 @@ build.log
 # rotate the key, do NOT commit the new one - store it in CI secrets instead.
 #*.snk
 
+# ── Store identity (Partner Center values - never commit) ─────────────────────
+store-identity.ps1
+
 # ── Visual Studio ─────────────────────────────────────────────────────────────
 .vs/
 *.rsuser

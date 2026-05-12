@@ -108,7 +108,7 @@
                     BorderThickness="0.7"
                     CornerRadius="8"
                     Padding="16,14,16,14"
-                    Margin="0,0,0,8">
+                    Margin="0,0,0,18">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,2">
                         <Image Source="/Assets/icon.png"
@@ -124,17 +124,17 @@
                                    VerticalAlignment="Center" />
                     </StackPanel>
                     <TextBlock Text="{Binding TaglineLabel}"
-                               FontSize="12"
-                               Opacity="0.65"
-                               Margin="0,2,0,8" />
-                    <Border Background="{DynamicResource WidgetHoverBrush}"
-                            BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                            BorderThickness="0.7"
-                            CornerRadius="10"
+                               FontSize="13"
+                               Opacity="0.8"
+                               Margin="1,4,0,6" />
+          <Border Background="{DynamicResource WidgetDayTodayTextBrush}"
+                            BorderBrush="{DynamicResource WidgetInputBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6"
                             Padding="8,2,8,2"
                             HorizontalAlignment="Left">
-                        <TextBlock FontSize="10.5" Opacity="0.6">
-                            <Run Text="v" /><Run Text="{Binding AppVersion, Mode=OneWay}" />
+            <TextBlock FontSize="12" Opacity="0.8" Foreground="{DynamicResource WidgetSuccessBrush}">
+                            <Run Text="v" /><Run Text="{Binding AppVersion, Mode=OneWay}"/>
                         </TextBlock>
                     </Border>
                 </StackPanel>
@@ -146,7 +146,7 @@
                     BorderThickness="0.7"
                     CornerRadius="8"
                     Padding="14,12,14,14"
-                    Margin="0,0,0,8">
+                    Margin="0,0,0,18">
                 <StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
                         <Path Data="{StaticResource IconHeart}"
@@ -157,7 +157,7 @@
                               VerticalAlignment="Center"
                               Margin="0,0,7,0" />
                         <TextBlock Text="{Binding SupportHeading}"
-                                   FontSize="12"
+                                   FontSize="14"
                                    FontWeight="SemiBold"
                                    Foreground="{DynamicResource WidgetSuccessBrush}"
                                    VerticalAlignment="Center" />
