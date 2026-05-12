@@ -618,11 +618,7 @@ public partial class MainWindow : Window
         ViewModel.RefreshCopyLabels();
     }
 
-    private void WidgetBorder_MouseEnter(object sender, MouseEventArgs e) { }
-
-    private void WidgetBorder_MouseLeave(object sender, MouseEventArgs e) { }
-
-    // ── Reminder integration ─────────────────────────────────────────────────
+    // ── Reminder integration─────────────────────────────────────────────────
 
     public void SetupReminders(IReminderService reminderService, ILocalizationService localizationService, INepaliDateAdapter adapter, INotesService? notesService = null)
     {

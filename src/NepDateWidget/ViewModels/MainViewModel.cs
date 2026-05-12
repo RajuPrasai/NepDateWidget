@@ -49,7 +49,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     public bool ExpandedPinned
     {
         get => _expandedPinned;
-        set => SetProperty(ref _expandedPinned, value);
+        set
+        {
+            if (SetProperty(ref _expandedPinned, value))
+                OnPropertyChanged(nameof(TooltipPin));
+        }
     }
 
     private string _language = "en";
@@ -129,6 +133,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     public string TooltipAbout    { get; private set; } = string.Empty;
     public string TooltipMinimize { get; private set; } = string.Empty;
     public string TooltipSettings { get; private set; } = string.Empty;
+    public string TooltipPin      { get; private set; } = string.Empty;
     // ── Selected tab index (for programmatic tab switching) ────────────────
     private int _selectedTabIndex;
     /// <summary>
@@ -961,6 +966,9 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         TooltipAbout    = _localizationService.Get("tooltip.about");
         TooltipMinimize = _localizationService.Get("tooltip.minimize");
         TooltipSettings = _localizationService.Get("tooltip.settings");
+        TooltipPin      = ExpandedPinned
+            ? _localizationService.Get("tooltip.unpin")
+            : _localizationService.Get("tooltip.pin");
 
         OnPropertyChanged(nameof(MenuLanguageLabel));
         OnPropertyChanged(nameof(MenuShowClockLabel));
@@ -1018,6 +1026,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(TooltipAbout));
         OnPropertyChanged(nameof(TooltipMinimize));
         OnPropertyChanged(nameof(TooltipSettings));
+        OnPropertyChanged(nameof(TooltipPin));
     }
 
     private void NotifyPresetSelection()

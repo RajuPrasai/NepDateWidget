@@ -396,6 +396,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     private bool _showHelpBadges = true;
     public bool ShowHelpBadges { get => _showHelpBadges; set { if (SetProperty(ref _showHelpBadges, value)) { Log.Action($"setting: show-help-badges {value}"); Apply(); } } }
     public string ShowHelpBadgesLabel { get; private set; } = string.Empty;
+    public string DataFilesSectionLabel { get; private set; } = string.Empty;
 
     private DispatcherTimer? _dataFileMessageTimer;
     private string _dataFileMessage = string.Empty;
@@ -738,6 +739,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         ShowSecondsLabel = _loc.Get("settings.show_seconds");
         ShowFiscalYearLabel = _loc.Get("settings.show_fiscal_year");
         ShowHelpBadgesLabel = _loc.Get("settings.show_help_badges");
+        DataFilesSectionLabel = _loc.Get("settings.data_files");
 
         ThemeDarkLabel    = _loc.Get("settings.theme_dark");
         ThemeLightLabel   = _loc.Get("settings.theme_light");
@@ -793,6 +795,8 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(TestNotificationLabel));
         OnPropertyChanged(nameof(ShowSecondsLabel));
         OnPropertyChanged(nameof(ShowFiscalYearLabel));
+        OnPropertyChanged(nameof(ShowHelpBadgesLabel));
+        OnPropertyChanged(nameof(DataFilesSectionLabel));
         OnPropertyChanged(nameof(ThemeDarkLabel));
         OnPropertyChanged(nameof(ThemeLightLabel));
         OnPropertyChanged(nameof(CornerRoundedLabel));

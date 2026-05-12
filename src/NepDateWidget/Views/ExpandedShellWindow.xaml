@@ -237,7 +237,7 @@
 
                     <!-- Pin / Always on top -->
                     <Button Command="{Binding ToggleExpandedPinCommand}"
-                            ToolTip="Pin on top"
+                            ToolTip="{Binding TooltipPin}"
                             Cursor="Hand"
                             Margin="0,0,4,0">
                         <Button.Style>

@@ -1332,7 +1332,7 @@
             <!-- Data files ───────────────────────────────────────── -->
             <Border Style="{StaticResource CardPanel}">
                 <StackPanel>
-                    <TextBlock Text="Data Files"
+                    <TextBlock Text="{Binding DataFilesSectionLabel}"
                                Style="{StaticResource SectionLabel}" />
 
                     <!-- Individual file rows -->
@@ -1624,7 +1624,7 @@
                                 Margin="8,0,0,0" />
                     </Grid>
 
-                    <!-- nepdate.log -->
+                    <!-- localization.json -->
                     <Grid Margin="0,0,0,4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />

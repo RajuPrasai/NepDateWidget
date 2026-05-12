@@ -579,6 +579,10 @@
     "en": "Show help badges",
     "ne": "सहायता बैज देखाउने"
   },
+  "settings.data_files": {
+    "en": "Data Files",
+    "ne": "डेटा फाइलहरू"
+  },
   "settings.reminder_interval": {
     "en": "Reminder check interval",
     "ne": "रिमाइन्डर जाँच अन्तराल"
@@ -1327,45 +1331,9 @@
     "en": "About",
     "ne": "बारेमा"
   },
-  "about.version_label": {
-    "en": "Version",
-    "ne": "भर्सन"
-  },
   "about.tagline": {
     "en": "A Nepali calendar & tools widget for your desktop.",
     "ne": "तपाईंको डेस्कटपका लागि नेपाली पात्रो र उपकरणहरू।"
-  },
-  "about.features_heading": {
-    "en": "What's inside",
-    "ne": "भित्र के छ"
-  },
-  "about.feature_calendar": {
-    "en": "BS / AD calendar with reminders",
-    "ne": "BS / AD पात्रो र रिमाइन्डरहरू"
-  },
-  "about.feature_converter": {
-    "en": "Date & timezone converter",
-    "ne": "मिति र टाइमजोन रूपान्तरण"
-  },
-  "about.feature_banking": {
-    "en": "Interest & EMI calculator",
-    "ne": "ब्याज तथा EMI क्याल्कुलेटर"
-  },
-  "about.feature_text": {
-    "en": "Preeti ↔ Unicode, script tools & file conversion",
-    "ne": "प्रिती ↔ युनिकोड, लिपि उपकरणहरू र फाइल रूपान्तरण"
-  },
-  "about.feature_network": {
-    "en": "Network tools: ping, scan, trace, WHOIS, DNS",
-    "ne": "नेटवर्क उपकरणहरू: पिङ, स्क्यान, ट्रेस, WHOIS, DNS"
-  },
-  "about.feature_reminders": {
-    "en": "Reminders & day notes",
-    "ne": "रिमाइन्डर र नोटहरू"
-  },
-  "about.feature_themes": {
-    "en": "Themes & customization",
-    "ne": "थिम र कस्टमाइज"
   },
   "about.support_heading": {
     "en": "Support this project",
@@ -1384,8 +1352,20 @@
     "ne": "लिङ्कहरू"
   },
   "about.repo_button": {
-    "en": "View on GitHub",
-    "ne": "GitHub मा हेर्नुहोस्"
+    "en": "GitHub",
+    "ne": "GitHub"
+  },
+  "about.bug_button": {
+    "en": "Report a Bug",
+    "ne": "बग रिपोर्ट"
+  },
+  "about.changelog_button": {
+    "en": "Changelog",
+    "ne": "परिवर्तन सूची"
+  },
+  "about.website_button": {
+    "en": "Website",
+    "ne": "वेबसाइट"
   },
   "about.built_by": {
     "en": "Built by Raju Prasai",
