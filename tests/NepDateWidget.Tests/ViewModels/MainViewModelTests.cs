@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Models;
+using NepDateWidget.Models;
 using NepDateWidget.Services;
 using NepDateWidget.Tests.Services;
 using NepDateWidget.ViewModels;
@@ -53,7 +53,7 @@ public class MainViewModelTests
         var adapter             = new FakeNepaliDateAdapter();
         var calendarService     = new CalendarService(adapter);
         var conversionService   = new ConversionService(adapter);
-        var localizationService = new LocalizationService();
+        var localizationService = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var themeService        = new FakeThemeService();
         var autoStartService    = new FakeAutoStartService(autoStartEnabled);
 

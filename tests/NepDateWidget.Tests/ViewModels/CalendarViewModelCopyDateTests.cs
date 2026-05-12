@@ -22,7 +22,7 @@ public sealed class CalendarViewModelCopyDateTests
     private static (CalendarViewModel vm, FakeClipboardService clip) Create(string language = "en")
     {
         var adapter = new FakeNepaliDateAdapter();
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage(language);
         var clip = new FakeClipboardService();
         var vm   = new CalendarViewModel(
@@ -110,7 +110,7 @@ public sealed class CalendarViewModelCopyDateTests
 
         // The view model rebuilds Days on language change via OnLanguageChanged.
         // Drive that path through the localization service the VM holds.
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("ne");
         // Re-create VM under "ne" to mirror what RefreshGrid does after the
         // language toggle (the Days collection items get replaced).

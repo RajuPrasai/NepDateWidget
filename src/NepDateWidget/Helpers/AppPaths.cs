@@ -50,6 +50,16 @@ public static class AppPaths
     public static string ShortcutsPath     => Path.Combine(ConfigDir, "shortcuts.json");
     public static string ScriptsPath       => Path.Combine(ConfigDir, "scripts.json");
 
+    // Shipped default config files — located next to the EXE in Resources/configs/.
+    // These are read-only at runtime; the app copies from here to AppData on first launch
+    // and merges new keys/entries on subsequent launches.
+    public static string DefaultsDirectory      => Path.Combine(ExeDirectory, "Resources", "configs");
+    public static string DefaultLocalizationPath => Path.Combine(DefaultsDirectory, "localization.json");
+    public static string DefaultShortcutsPath    => Path.Combine(DefaultsDirectory, "shortcuts.json");
+    public static string DefaultRunHistoryPath   => Path.Combine(DefaultsDirectory, "run-history.json");
+    public static string DefaultSettingsPath     => Path.Combine(DefaultsDirectory, "settings.json");
+    public static string DefaultScriptsPath      => Path.Combine(DefaultsDirectory, "scripts.json");
+
     // data/: user content
     public static string NotesPath       => Path.Combine(UserDataDir, "notes.json");
     public static string RemindersPath   => Path.Combine(UserDataDir, "reminders.json");

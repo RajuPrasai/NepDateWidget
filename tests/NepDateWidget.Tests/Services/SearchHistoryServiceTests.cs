@@ -163,17 +163,15 @@ public sealed class SearchHistoryServiceTests : IDisposable
     [Fact]
     public void LoadDefaultEntries_RunHistoryResource_ReturnsNonEmptyList()
     {
-        const string resource = "NepDateWidget.Resources.run-history.default.json";
-        var entries = SearchHistoryService.LoadDefaultEntries(resource);
+        var entries = SearchHistoryService.LoadDefaultEntries(TestPaths.DefaultRunHistoryPath);
         Assert.NotEmpty(entries);
         Assert.All(entries, e => Assert.False(string.IsNullOrWhiteSpace(e)));
     }
 
     [Fact]
-    public void Load_FileAbsentWithDefaultResource_SeedsFromEmbedded()
+    public void Load_FileAbsentWithDefaultResource_SeedsFromFile()
     {
-        const string resource = "NepDateWidget.Resources.run-history.default.json";
-        var svc = new SearchHistoryService(TempPath(), maxEntries: 500, defaultResourceName: resource);
+        var svc = new SearchHistoryService(TempPath(), maxEntries: 500, defaultFilePath: TestPaths.DefaultRunHistoryPath);
         svc.Load();
         var all = svc.GetMatching("", int.MaxValue);
         Assert.NotEmpty(all);
@@ -183,7 +181,7 @@ public sealed class SearchHistoryServiceTests : IDisposable
     [Fact]
     public void Load_FileAbsentNoDefaultResource_HistoryStaysEmpty()
     {
-        var svc = new SearchHistoryService(TempPath(), maxEntries: 500, defaultResourceName: null);
+        var svc = new SearchHistoryService(TempPath(), maxEntries: 500, defaultFilePath: null);
         svc.Load();
         Assert.Empty(svc.GetMatching("", int.MaxValue));
     }
@@ -192,33 +190,33 @@ public sealed class SearchHistoryServiceTests : IDisposable
     public void Load_FileAbsentWithDefaultResource_PersistsToDisk()
     {
         var path = TempPath();
-        const string resource = "NepDateWidget.Resources.run-history.default.json";
-        var svc = new SearchHistoryService(path, maxEntries: 500, defaultResourceName: resource);
+        var svc = new SearchHistoryService(path, maxEntries: 500, defaultFilePath: TestPaths.DefaultRunHistoryPath);
         svc.Load();
         // Seeding now persists immediately so the file exists after Load().
         Assert.True(File.Exists(path));
     }
 
     [Fact]
-    public void LoadDefaultEntries_UnknownResource_ReturnsEmptyList()
+    public void LoadDefaultEntries_NonexistentFile_ReturnsEmptyList()
     {
-        var entries = SearchHistoryService.LoadDefaultEntries("NepDateWidget.Resources.nonexistent.json");
+        var entries = SearchHistoryService.LoadDefaultEntries(Path.Combine(Path.GetTempPath(), "nonexistent_nhtest_file.json"));
         Assert.Empty(entries);
     }
 
     [Fact]
-    public void Load_FilePresent_WithDefaultResource_DoesNotSeed()
+    public void Load_FilePresent_WithDefaultFilePath_MergesNewDefaults()
     {
-        // When the file already exists the service must load from disk and NOT overwrite
-        // with seed data — even if a defaultResourceName is set.
+        // When the file already exists the service merges any default entries not already present.
         var path = TempPath();
-        File.WriteAllText(path, JsonSerializer.Serialize(new[] { "mspaint" }));
-        const string resource = "NepDateWidget.Resources.run-history.default.json";
-        var svc = new SearchHistoryService(path, maxEntries: 500, defaultResourceName: resource);
+        File.WriteAllText(path, System.Text.Json.JsonSerializer.Serialize(new[] { "mspaint" }));
+        var svc = new SearchHistoryService(path, maxEntries: 500, defaultFilePath: TestPaths.DefaultRunHistoryPath);
         svc.Load();
         var all = svc.GetMatching("", int.MaxValue);
-        Assert.Single(all);
+        // mspaint (user entry) is preserved at index 0.
         Assert.Equal("mspaint", all[0]);
+        // notepad comes from defaults and should have been merged.
+        Assert.Contains("notepad", all, StringComparer.OrdinalIgnoreCase);
+        Assert.True(all.Count > 1);
     }
 
     [Fact]
@@ -226,8 +224,7 @@ public sealed class SearchHistoryServiceTests : IDisposable
     {
         // When maxEntries is smaller than the resource list, only up to maxEntries items
         // should be seeded in-memory.
-        const string resource = "NepDateWidget.Resources.run-history.default.json";
-        var svc = new SearchHistoryService(TempPath(), maxEntries: 5, defaultResourceName: resource);
+        var svc = new SearchHistoryService(TempPath(), maxEntries: 5, defaultFilePath: TestPaths.DefaultRunHistoryPath);
         svc.Load();
         var all = svc.GetMatching("", int.MaxValue);
         Assert.Equal(5, all.Count);
@@ -236,17 +233,15 @@ public sealed class SearchHistoryServiceTests : IDisposable
     [Fact]
     public void LoadDefaultEntries_RunHistoryResource_AllEntriesNonBlank()
     {
-        const string resource = "NepDateWidget.Resources.run-history.default.json";
-        var entries = SearchHistoryService.LoadDefaultEntries(resource);
+        var entries = SearchHistoryService.LoadDefaultEntries(TestPaths.DefaultRunHistoryPath);
         Assert.All(entries, e => Assert.False(string.IsNullOrWhiteSpace(e)));
     }
 
     [Fact]
     public void LoadDefaultEntries_RunHistoryResource_ContainsExpectedSeeds()
     {
-        const string resource = "NepDateWidget.Resources.run-history.default.json";
-        var entries = SearchHistoryService.LoadDefaultEntries(resource);
-        // Spot-check a representative sample from the embedded JSON
+        var entries = SearchHistoryService.LoadDefaultEntries(TestPaths.DefaultRunHistoryPath);
+        // Spot-check a representative sample from the default JSON
         Assert.Contains("notepad",    entries, StringComparer.OrdinalIgnoreCase);
         Assert.Contains("calc",       entries, StringComparer.OrdinalIgnoreCase);
         Assert.Contains("powershell", entries, StringComparer.OrdinalIgnoreCase);

@@ -8,7 +8,7 @@ public class BankingViewModelTests
 {
     private static BankingViewModel Create(string language = "en")
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage(language);
         return new BankingViewModel(loc, new FakeNepaliDateAdapter());
     }

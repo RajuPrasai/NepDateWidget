@@ -26,7 +26,7 @@ public class UiConsistencyTests
         var adapter             = new FakeNepaliDateAdapter();
         var calendarService     = new CalendarService(adapter);
         var conversionService   = new ConversionService(adapter);
-        var localizationService = new LocalizationService();
+        var localizationService = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var themeService        = new FakeThemeService();
         var autoStartService    = new FakeAutoStartService(false);
 
@@ -61,28 +61,28 @@ public class UiConsistencyTests
     [Fact]
     public void Network_IsBusy_StartsAsFalse()
     {
-        var vm = new NetworkToolsViewModel(new LocalizationService());
+        var vm = new NetworkToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         Assert.False(vm.IsBusy);
     }
 
     [Fact]
     public void Network_IsNotBusy_StartsAsTrue()
     {
-        var vm = new NetworkToolsViewModel(new LocalizationService());
+        var vm = new NetworkToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         Assert.True(vm.IsNotBusy);
     }
 
     [Fact]
     public void Network_FetchMyIpCommand_CanExecute_WhenNotBusy()
     {
-        var vm = new NetworkToolsViewModel(new LocalizationService());
+        var vm = new NetworkToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         Assert.True(vm.FetchMyIpCommand.CanExecute(null));
     }
 
     [Fact]
     public void Network_PingCommand_CannotExecute_WhenHostIsEmpty()
     {
-        var vm = new NetworkToolsViewModel(new LocalizationService());
+        var vm = new NetworkToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         vm.PingHost = string.Empty;
         Assert.False(vm.PingCommand.CanExecute(null));
     }
@@ -90,7 +90,7 @@ public class UiConsistencyTests
     [Fact]
     public void Network_PingCommand_CanExecute_WhenHostProvided()
     {
-        var vm = new NetworkToolsViewModel(new LocalizationService());
+        var vm = new NetworkToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         vm.PingHost = "8.8.8.8";
         Assert.True(vm.PingCommand.CanExecute(null));
     }
@@ -100,7 +100,7 @@ public class UiConsistencyTests
     [Fact]
     public void Network_ModeSelectors_OneActiveAtATime()
     {
-        var vm = new NetworkToolsViewModel(new LocalizationService());
+        var vm = new NetworkToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         vm.ActiveMode = 2; // Scan
 
         int active = new[]
@@ -115,7 +115,7 @@ public class UiConsistencyTests
     [Fact]
     public void Text_ModeSelectors_OneActiveAtATime()
     {
-        var vm = new TextToolsViewModel(new LocalizationService());
+        var vm = new TextToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         vm.ActiveMode = 1; // Word
 
         int active = new[]
@@ -131,7 +131,7 @@ public class UiConsistencyTests
     [Fact]
     public void Network_AllModeLabels_NonEmpty()
     {
-        var vm = new NetworkToolsViewModel(new LocalizationService());
+        var vm = new NetworkToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         Assert.NotEmpty(vm.ModeMyIpLabel);
         Assert.NotEmpty(vm.ModePingLabel);
         Assert.NotEmpty(vm.ModeScanLabel);
@@ -143,7 +143,7 @@ public class UiConsistencyTests
     [Fact]
     public void Text_AllModeLabels_NonEmpty()
     {
-        var vm = new TextToolsViewModel(new LocalizationService());
+        var vm = new TextToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         Assert.NotEmpty(vm.ModeUnicodeLabel);
         Assert.NotEmpty(vm.ModeWordLabel);
         Assert.NotEmpty(vm.ModePasswordLabel);
@@ -177,7 +177,7 @@ public class UiConsistencyTests
     {
         var adapter  = new FakeNepaliDateAdapter();
         var cal      = new CalendarService(adapter);
-        var loc      = new LocalizationService();
+        var loc      = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv     = new ConversionService(adapter);
         var vm       = new CalendarViewModel(cal, loc, conv,
                                               true, true, selectedTimezoneId: null!);
@@ -192,7 +192,7 @@ public class UiConsistencyTests
     [Fact]
     public void Text_DirectionCommands_AllExist()
     {
-        var vm = new TextToolsViewModel(new LocalizationService());
+        var vm = new TextToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         Assert.NotNull(vm.PreetiToUnicodeCommand);
         Assert.NotNull(vm.UnicodeToPreetiCommand);
         Assert.NotNull(vm.ScriptRomanToDevaCommand);
@@ -260,7 +260,7 @@ public class UiConsistencyTests
     {
         var adapter = new FakeNepaliDateAdapter();
         var cal     = new CalendarService(adapter);
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv    = new ConversionService(adapter);
         loc.SetLanguage("ne");
         var vm = new CalendarViewModel(cal, loc, conv);
@@ -285,7 +285,7 @@ public class UiConsistencyTests
         // Navigate to a year at the boundary to ensure index is valid
         var adapter = new FakeNepaliDateAdapter { TodayBsYear = 1901, TodayBsMonth = 1 };
         var cal     = new CalendarService(adapter);
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv    = new ConversionService(adapter);
         var vm      = new CalendarViewModel(cal, loc, conv);
         // 1901 is outside 2000-2100, so SelectedYearIndex should be -1
@@ -451,9 +451,9 @@ public class UiConsistencyTests
     public void Converter_ModeSelectors_OneActiveAtATime()
     {
         var adapter = new FakeNepaliDateAdapter();
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv    = new ConversionService(adapter);
-        var vm      = new ConverterViewModel(conv, loc, adapter);
+        var vm      = new ConverterViewModel(conv, loc, adapter: adapter);
         vm.ActiveMode = 2; // Time
 
         int active = new[] { vm.IsModeConvert, vm.IsModeDays, vm.IsModeTime }
@@ -468,9 +468,9 @@ public class UiConsistencyTests
     public void Converter_EachMode_HasExactlyOneActive(int mode)
     {
         var adapter = new FakeNepaliDateAdapter();
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv    = new ConversionService(adapter);
-        var vm      = new ConverterViewModel(conv, loc, adapter);
+        var vm      = new ConverterViewModel(conv, loc, adapter: adapter);
         vm.ActiveMode = mode;
 
         int active = new[] { vm.IsModeConvert, vm.IsModeDays, vm.IsModeTime }
@@ -484,9 +484,9 @@ public class UiConsistencyTests
     public void Converter_DirectionBooleans_ExclusiveForAdToBs()
     {
         var adapter = new FakeNepaliDateAdapter();
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv    = new ConversionService(adapter);
-        var vm      = new ConverterViewModel(conv, loc, adapter);
+        var vm      = new ConverterViewModel(conv, loc, adapter: adapter);
         vm.IsAdToBs = true;
 
         Assert.True(vm.IsAdToBs);
@@ -497,9 +497,9 @@ public class UiConsistencyTests
     public void Converter_DirectionBooleans_ExclusiveForBsToAd()
     {
         var adapter = new FakeNepaliDateAdapter();
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv    = new ConversionService(adapter);
-        var vm      = new ConverterViewModel(conv, loc, adapter);
+        var vm      = new ConverterViewModel(conv, loc, adapter: adapter);
 
         Assert.False(vm.IsAdToBs);
         Assert.True(vm.IsBsToAd);
@@ -709,7 +709,7 @@ public class UiConsistencyTests
     [InlineData(5)]
     public void Network_EachMode_ExactlyOneActive(int mode)
     {
-        var vm = new NetworkToolsViewModel(new LocalizationService());
+        var vm = new NetworkToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         vm.ActiveMode = mode;
 
         int active = new[]
@@ -730,7 +730,7 @@ public class UiConsistencyTests
     [InlineData(3)]
     public void Text_EachMode_ExactlyOneActive(int mode)
     {
-        var vm = new TextToolsViewModel(new LocalizationService());
+        var vm = new TextToolsViewModel(new LocalizationService(TestPaths.DefaultLocalizationPath));
         vm.ActiveMode = mode;
 
         int active = new[]
@@ -747,7 +747,7 @@ public class UiConsistencyTests
     {
         var adapter = new FakeNepaliDateAdapter();
         var cal     = new CalendarService(adapter);
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv    = new ConversionService(adapter);
         loc.SetLanguage(language);
         return new CalendarViewModel(cal, loc, conv);

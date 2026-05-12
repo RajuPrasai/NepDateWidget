@@ -310,9 +310,8 @@
 
                         <!-- From row label -->
                         <TextBlock Text="{Binding AreaFromLabel}"
-                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                       FontSize="11" Opacity="0.5"
-                       Margin="0,0,0,3" />
+                                   Style="{StaticResource FieldLabel}"
+                                   Margin="0,0,0,3" />
 
                         <!-- From: value + unit -->
                         <Grid Margin="0,0,0,8">
@@ -337,8 +336,8 @@
 
                         <!-- To row label -->
                         <TextBlock Text="{Binding AreaToLabel}"
-                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                       FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+                                   Style="{StaticResource FieldLabel}"
+                                   Margin="0,0,0,3" />
 
                         <!-- To: result + unit + copy -->
                         <Grid>
@@ -370,9 +369,8 @@ MaxDropDownHeight="200" />
                     <StackPanel Visibility="{Binding IsModeWeight, Converter={StaticResource BoolToVis}}">
 
                         <TextBlock Text="{Binding WeightFromLabel}"
-                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                       FontSize="11" Opacity="0.5"
-                       Margin="0,0,0,3" />
+                                   Style="{StaticResource FieldLabel}"
+                                   Margin="0,0,0,3" />
 
                         <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
@@ -394,8 +392,8 @@ MaxDropDownHeight="200" />
                         </Grid>
 
                         <TextBlock Text="{Binding WeightToLabel}"
-                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                       FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+                                   Style="{StaticResource FieldLabel}"
+                                   Margin="0,0,0,3" />
 
                         <Grid>
                             <Grid.ColumnDefinitions>

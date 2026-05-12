@@ -24,7 +24,7 @@ public class SettingsServiceTests : IDisposable
         return p;
     }
 
-    private static SettingsService ServiceAt(string path) => new(path);
+    private static SettingsService ServiceAt(string path) => new(path, TestPaths.DefaultSettingsPath);
 
     public void Dispose()
     {

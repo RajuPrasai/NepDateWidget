@@ -8,7 +8,7 @@ public class UnitViewModelTests
 {
     private static UnitViewModel Create(string lang = "en")
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage(lang);
         return new UnitViewModel(loc);
     }
@@ -43,7 +43,7 @@ public class UnitViewModelTests
     [Fact]
     public void OnLanguageChanged_Ne_UpdatesLabels()
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("en");
         var vm = new UnitViewModel(loc);
         var enLabel = vm.ModeLabelArea;

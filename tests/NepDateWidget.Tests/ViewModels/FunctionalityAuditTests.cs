@@ -46,7 +46,7 @@ public class FunctionalityAuditTests
         return new MainViewModel(
             settings,
             new CalendarService(adapter),
-            new LocalizationService(),
+            new LocalizationService(TestPaths.DefaultLocalizationPath),
             new ConversionService(adapter),
             new FakeThemeService(),
             new FakeAutoStartService(false));
@@ -57,8 +57,8 @@ public class FunctionalityAuditTests
         var adapter = new FakeNepaliDateAdapter();
         return new ConverterViewModel(
             new ConversionService(adapter),
-            new LocalizationService(),
-            adapter);
+            new LocalizationService(TestPaths.DefaultLocalizationPath),
+            adapter: adapter);
     }
 
     // ═════════════════════════════════════════════════════════════════════════

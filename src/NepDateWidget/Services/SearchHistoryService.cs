@@ -1,6 +1,5 @@
 using NepDateWidget.Helpers;
 using System.IO;
-using System.Reflection;
 using System.Text.Json;
 
 namespace NepDateWidget.Services;
@@ -11,14 +10,14 @@ public sealed class SearchHistoryService : ISearchHistoryService
 
     private readonly string _filePath;
     private readonly int _maxEntries;
-    private readonly string? _defaultResourceName;
+    private readonly string? _defaultFilePath;
     private List<string> _history = new();
 
-    public SearchHistoryService(string filePath, int maxEntries = 100, string? defaultResourceName = null)
+    public SearchHistoryService(string filePath, int maxEntries = 100, string? defaultFilePath = null)
     {
-        _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
-        _maxEntries = maxEntries > 0 ? maxEntries : 100;
-        _defaultResourceName = defaultResourceName;
+        _filePath        = filePath ?? throw new ArgumentNullException(nameof(filePath));
+        _maxEntries      = maxEntries > 0 ? maxEntries : 100;
+        _defaultFilePath = defaultFilePath;
     }
 
     public IReadOnlyList<string> GetMatching(string prefix, int max = 10)
@@ -60,7 +59,7 @@ public sealed class SearchHistoryService : ISearchHistoryService
     {
         if (!File.Exists(_filePath))
         {
-            if (_defaultResourceName is not null) SeedFromDefaults();
+            if (_defaultFilePath is not null) SeedFromDefaults();
             Save();
             return;
         }
@@ -74,6 +73,7 @@ public sealed class SearchHistoryService : ISearchHistoryService
             Log.Error("Failed to load search history", ex);
             _history = new();
         }
+        MergeNewDefaults();
     }
 
     public void Save()
@@ -91,30 +91,51 @@ public sealed class SearchHistoryService : ISearchHistoryService
     }
 
     /// <summary>
-    /// Loads the embedded default entries for the given resource name.
-    /// Returns an empty list if the resource is absent or the JSON is malformed.
+    /// Loads the default run-history entries from the given file path.
+    /// Returns an empty list if the file is absent or the JSON is malformed.
     /// </summary>
-    internal static IReadOnlyList<string> LoadDefaultEntries(string resourceName)
+    internal static IReadOnlyList<string> LoadDefaultEntries(string filePath)
     {
         try
         {
-            var asm = typeof(SearchHistoryService).Assembly;
-            using var stream = asm.GetManifestResourceStream(resourceName)
-                ?? throw new InvalidOperationException($"Embedded resource '{resourceName}' not found.");
-            using var reader = new StreamReader(stream);
-            var json = reader.ReadToEnd();
+            if (!File.Exists(filePath)) return Array.Empty<string>();
+            var json = File.ReadAllText(filePath);
             return JsonSerializer.Deserialize<List<string>>(json, Options) ?? new();
         }
         catch (Exception ex)
         {
-            Log.Warn($"SearchHistoryService: failed to load defaults from '{resourceName}': {ex.Message}");
+            Log.Warn($"SearchHistoryService: failed to load defaults from '{filePath}': {ex.Message}");
             return Array.Empty<string>();
         }
     }
 
     private void SeedFromDefaults()
     {
-        var defaults = LoadDefaultEntries(_defaultResourceName!);
+        var defaults = LoadDefaultEntries(_defaultFilePath!);
         _history = defaults.Take(_maxEntries).ToList();
+    }
+
+    /// <summary>
+    /// Appends to the history any entry from the default file that is not already
+    /// present (case-insensitive). Writes to disk if new entries were added.
+    /// Runs at every launch on existing files so updates automatically seed new commands.
+    /// </summary>
+    private void MergeNewDefaults()
+    {
+        if (_defaultFilePath is null) return;
+        var defaults = LoadDefaultEntries(_defaultFilePath);
+        if (defaults.Count == 0) return;
+
+        var existingSet = new HashSet<string>(_history, StringComparer.OrdinalIgnoreCase);
+        var toAdd = defaults.Where(d => !existingSet.Contains(d)).ToList();
+        if (toAdd.Count == 0) return;
+
+        _history.AddRange(toAdd);
+
+        // Cap at max entries — newly added defaults have lowest priority so they get dropped first.
+        if (_history.Count > _maxEntries)
+            _history.RemoveRange(_maxEntries, _history.Count - _maxEntries);
+
+        Save();
     }
 }

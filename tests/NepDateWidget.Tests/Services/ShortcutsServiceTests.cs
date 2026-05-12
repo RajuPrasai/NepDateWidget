@@ -22,7 +22,7 @@ public sealed class ShortcutsServiceTests : IDisposable
 
     private ShortcutsService CreateAndLoad()
     {
-        var svc = new ShortcutsService(_filePath);
+        var svc = new ShortcutsService(_filePath, TestPaths.DefaultShortcutsPath);
         svc.Load();
         return svc;
     }
@@ -35,21 +35,21 @@ public sealed class ShortcutsServiceTests : IDisposable
     [Fact]
     public void CreateBuiltInOnly_PrefixesNotEmpty()
     {
-        var svc = ShortcutsService.CreateBuiltInOnly();
+        var svc = ShortcutsService.CreateBuiltInOnly(TestPaths.DefaultShortcutsPath);
         Assert.NotEmpty(svc.Prefixes);
     }
 
     [Fact]
     public void CreateBuiltInOnly_PrefixSiteNamesNotEmpty()
     {
-        var svc = ShortcutsService.CreateBuiltInOnly();
+        var svc = ShortcutsService.CreateBuiltInOnly(TestPaths.DefaultShortcutsPath);
         Assert.NotEmpty(svc.PrefixSiteNames);
     }
 
     [Fact]
     public void CreateBuiltInOnly_ContainsKnownBuiltIn_Google()
     {
-        var svc = ShortcutsService.CreateBuiltInOnly();
+        var svc = ShortcutsService.CreateBuiltInOnly(TestPaths.DefaultShortcutsPath);
         Assert.True(svc.Prefixes.ContainsKey("g"), "Built-in 'g' (Google) shortcut must exist");
     }
 
@@ -57,7 +57,7 @@ public sealed class ShortcutsServiceTests : IDisposable
     public void CreateBuiltInOnly_AllUrlsUseFormatPlaceholder_NotQueryToken()
     {
         // {query} must be normalized to {0} so callers can use string.Format directly.
-        var svc = ShortcutsService.CreateBuiltInOnly();
+        var svc = ShortcutsService.CreateBuiltInOnly(TestPaths.DefaultShortcutsPath);
         foreach (var (key, url) in svc.Prefixes)
         {
             Assert.False(url.Contains("{query}", StringComparison.OrdinalIgnoreCase),
@@ -69,7 +69,7 @@ public sealed class ShortcutsServiceTests : IDisposable
     [Fact]
     public void CreateBuiltInOnly_PrefixesAndSiteNames_SameKeySet()
     {
-        var svc = ShortcutsService.CreateBuiltInOnly();
+        var svc = ShortcutsService.CreateBuiltInOnly(TestPaths.DefaultShortcutsPath);
         Assert.Equal(svc.Prefixes.Keys.OrderBy(k => k), svc.PrefixSiteNames.Keys.OrderBy(k => k));
     }
 

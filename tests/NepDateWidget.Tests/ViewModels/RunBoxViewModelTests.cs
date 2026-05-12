@@ -64,7 +64,7 @@ public sealed class RunBoxViewModelTests
     private sealed class FakeShortcutsService : IShortcutsService
     {
         private static readonly (IReadOnlyDictionary<string, string> Prefixes, IReadOnlyDictionary<string, string> SiteNames) Defaults
-            = ShortcutsService.LoadDefaults();
+            = ShortcutsService.LoadDefaults(TestPaths.DefaultShortcutsPath);
 
         public IReadOnlyDictionary<string, string> Prefixes        => Defaults.Prefixes;
         public IReadOnlyDictionary<string, string> PrefixSiteNames => Defaults.SiteNames;

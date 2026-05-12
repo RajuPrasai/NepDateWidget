@@ -1,7 +1,6 @@
 using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using System.IO;
-using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -20,30 +19,20 @@ namespace NepDateWidget.Services;
 /// </summary>
 public sealed class ShortcutsService : IShortcutsService, IDisposable
 {
-    // ── Defaults (embedded resource) ──────────────────────────────────────────
-
-    private const string DefaultResourceName = "NepDateWidget.shortcuts.default.json";
-
-    private static string ReadDefaultJson()
-    {
-        var asm = typeof(ShortcutsService).Assembly;
-        using var stream = asm.GetManifestResourceStream(DefaultResourceName)
-            ?? throw new InvalidOperationException($"Embedded resource '{DefaultResourceName}' not found.");
-        using var reader = new StreamReader(stream, Encoding.UTF8);
-        return reader.ReadToEnd();
-    }
+    // ── Defaults (default config file) ───────────────────────────────────────
 
     /// <summary>
-    /// Parses the embedded defaults and returns the merged prefix/name dictionaries.
+    /// Parses the default shortcuts file and returns the merged prefix/name dictionaries.
     /// Used by the no-file fallback path and test infrastructure.
     /// </summary>
-    internal static (IReadOnlyDictionary<string, string> Prefixes, IReadOnlyDictionary<string, string> SiteNames) LoadDefaults()
+    internal static (IReadOnlyDictionary<string, string> Prefixes, IReadOnlyDictionary<string, string> SiteNames) LoadDefaults(string defaultFilePath)
     {
         var prefixes  = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var siteNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         try
         {
-            var items = JsonSerializer.Deserialize<List<UserShortcut>>(ReadDefaultJson(), JsonOptions);
+            if (!File.Exists(defaultFilePath)) return (prefixes, siteNames);
+            var items = JsonSerializer.Deserialize<List<UserShortcut>>(File.ReadAllText(defaultFilePath), JsonOptions);
             if (items is not null)
             {
                 foreach (var item in items)
@@ -59,7 +48,7 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
         }
         catch (Exception ex)
         {
-            Log.Warn($"shortcuts defaults: failed to parse embedded resource: {ex.Message}");
+            Log.Warn($"shortcuts defaults: failed to parse '{defaultFilePath}': {ex.Message}");
         }
         return (prefixes, siteNames);
     }
@@ -80,6 +69,7 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
     // ── State ─────────────────────────────────────────────────────────────────
 
     private readonly string _path;
+    private readonly string? _defaultFilePath;
     private readonly SynchronizationContext? _syncContext;
     private DebouncedFileReloader? _reloader;
 
@@ -93,10 +83,11 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
 
     // ── Construction ──────────────────────────────────────────────────────────
 
-    public ShortcutsService(string path)
+    public ShortcutsService(string path, string? defaultFilePath = null)
     {
-        _path     = path;
-        _syncContext = SynchronizationContext.Current;
+        _path            = path;
+        _defaultFilePath = defaultFilePath;
+        _syncContext     = SynchronizationContext.Current;
 
         // Empty until Load() is called.
         _prefixes  = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -109,6 +100,7 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
     {
         if (!File.Exists(_path))
             SeedFile();
+        MergeNewDefaults();
         LoadFromFile();
         _reloader ??= new DebouncedFileReloader(_path, debounceMs: 500, onReload: () =>
         {
@@ -125,11 +117,52 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
-            File.WriteAllText(_path, ReadDefaultJson(), Encoding.UTF8);
+            if (_defaultFilePath is not null && File.Exists(_defaultFilePath))
+                File.Copy(_defaultFilePath, _path, overwrite: false);
+            else
+                File.WriteAllText(_path, "[]", Encoding.UTF8);
         }
         catch (Exception ex)
         {
             Log.Warn($"shortcuts.json: failed to create default file: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Appends to the user's shortcuts.json any entry from the default file whose Key
+    /// is not already present (active or disabled) in the user's file.
+    /// Runs at every launch; writes to disk only when new entries are found.
+    /// Hot-reload does NOT call this; merging only happens at startup.
+    /// </summary>
+    private void MergeNewDefaults()
+    {
+        if (_defaultFilePath is null || !File.Exists(_defaultFilePath) || !File.Exists(_path)) return;
+        try
+        {
+            var defaultItems = JsonSerializer.Deserialize<List<UserShortcut>>(File.ReadAllText(_defaultFilePath), JsonOptions) ?? new();
+            var userItems    = JsonSerializer.Deserialize<List<UserShortcut>>(File.ReadAllText(_path), JsonOptions) ?? new();
+
+            // Keys already in user's file (active or explicitly disabled)
+            var existingKeys = new HashSet<string>(
+                userItems.Where(i => i.Key is not null).Select(i => i.Key),
+                StringComparer.OrdinalIgnoreCase);
+
+            var toAdd = defaultItems
+                .Where(d => !string.IsNullOrWhiteSpace(d.Key) && !existingKeys.Contains(d.Key))
+                .ToList();
+
+            if (toAdd.Count == 0) return;
+
+            userItems.AddRange(toAdd);
+            var merged = JsonSerializer.Serialize(userItems, JsonOptions);
+            if (!AtomicFile.WriteAllText(_path, merged))
+                Log.Warn("shortcuts.json: atomic write failed during merge.");
+            else
+                Log.Info($"shortcuts.json: merged {toAdd.Count} new default shortcut(s).");
+        }
+        catch (Exception ex)
+        {
+            Log.Warn($"shortcuts.json: merge failed: {ex.Message}");
         }
     }
 
@@ -233,16 +266,16 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
     /// Returns a no-op implementation that exposes only the built-in shortcuts.
     /// Useful as a default when no shortcuts.json path is available (e.g. unit tests).
     /// </summary>
-    public static IShortcutsService CreateBuiltInOnly() => new BuiltInOnlyService();
+    public static IShortcutsService CreateBuiltInOnly(string defaultFilePath) => new BuiltInOnlyService(defaultFilePath);
 
     private sealed class BuiltInOnlyService : IShortcutsService
     {
         private readonly IReadOnlyDictionary<string, string> _prefixes;
         private readonly IReadOnlyDictionary<string, string> _siteNames;
 
-        public BuiltInOnlyService()
+        public BuiltInOnlyService(string defaultFilePath)
         {
-            (_prefixes, _siteNames) = LoadDefaults();
+            (_prefixes, _siteNames) = ShortcutsService.LoadDefaults(defaultFilePath);
         }
 
         public IReadOnlyDictionary<string, string> Prefixes        => _prefixes;

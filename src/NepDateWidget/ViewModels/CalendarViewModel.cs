@@ -411,7 +411,7 @@ public sealed class CalendarViewModel : ViewModelBase
         _clipboard = clipboardService ?? new ClipboardService();
 
         Converter = new ConverterViewModel(conversionService, localizationService,
-            adapter, selectedTimezoneId);
+            adapter: adapter, selectedTimezoneId: selectedTimezoneId);
 
         PrevMonthCommand = new RelayCommand(() => NavigateMonths(-1));
         NextMonthCommand = new RelayCommand(() => NavigateMonths(+1));

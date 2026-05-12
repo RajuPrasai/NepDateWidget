@@ -292,8 +292,8 @@
 
                     <!-- Language -->
                     <TextBlock Text="{Binding LanguageLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="12" Opacity="0.65" Margin="0,0,0,4" />
+                               Style="{StaticResource FieldLabel}"
+                               Margin="0,0,0,4" />
                     <WrapPanel Margin="0,0,0,10">
                         <Button Content="English" Command="{Binding SetLanguageEnCommand}">
                             <Button.Style>
@@ -325,8 +325,8 @@
 
                     <!-- Theme -->
                     <TextBlock Text="{Binding ThemeLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="12" Opacity="0.65" Margin="0,0,0,4" />
+                               Style="{StaticResource FieldLabel}"
+                               Margin="0,0,0,4" />
                     <WrapPanel Margin="0,0,0,10">
                         <Button Content="{Binding ThemeDarkLabel}" Command="{Binding SetThemeDarkCommand}">
                             <Button.Style>
@@ -358,8 +358,8 @@
 
                     <!-- Background Preset -->
                     <TextBlock Text="{Binding BackgroundLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="12" Opacity="0.65" Margin="0,0,0,4" />
+                               Style="{StaticResource FieldLabel}"
+                               Margin="0,0,0,4" />
                     <WrapPanel Margin="0,0,0,10">
                         <Button Content="{Binding PresetDefaultLabel}"  Command="{Binding SetPresetDefaultCommand}">
                             <Button.Style>
@@ -495,8 +495,8 @@
 
                     <!-- Corner Style -->
                     <TextBlock Text="{Binding CornerStyleLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="12" Opacity="0.65" Margin="0,0,0,4" />
+                               Style="{StaticResource FieldLabel}"
+                               Margin="0,0,0,4" />
                     <WrapPanel>
                         <Button Content="{Binding CornerRoundedLabel}" Command="{Binding SetCornerRoundedCommand}">
                             <Button.Style>
@@ -528,8 +528,8 @@
 
                     <!-- Font -->
                     <TextBlock Text="{Binding FontLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="12" Opacity="0.65" Margin="0,6,0,4" />
+                               Style="{StaticResource FieldLabel}"
+                               Margin="0,6,0,4" />
                     <ComboBox ItemsSource="{x:Static vm:SettingsViewModel.FontFamilyNames}"
                               SelectedItem="{Binding FontFamily}"
                               MaxDropDownHeight="220"
@@ -558,8 +558,8 @@
                                 Margin="16,0,0,0">
                         <!-- Clock format: 12h / 24h -->
                         <TextBlock Text="{Binding ClockFormatLabel}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="12" Opacity="0.65" Margin="0,6,0,4" />
+                                   Style="{StaticResource FieldLabel}"
+                                   Margin="0,6,0,4" />
                         <WrapPanel Margin="0,0,0,8">
                             <Button Content="12h" Command="{Binding SetClockFormat12hCommand}">
                                 <Button.Style>
@@ -590,8 +590,8 @@
                         </WrapPanel>
 
                         <TextBlock Text="{Binding TimezoneLabel}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="12" Opacity="0.65" Margin="0,6,0,4" />
+                                   Style="{StaticResource FieldLabel}"
+                                   Margin="0,6,0,4" />
                         <ComboBox ItemsSource="{Binding Timezones}"
                                   SelectedItem="{Binding SelectedTimezone}"
                                   DisplayMemberPath="DisplayName"
@@ -655,8 +655,8 @@
                               Style="{StaticResource SettingsCheckBox}" />
                     <!-- Highlight color picker -->
                     <TextBlock Text="{Binding HighlightColorLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="12" Opacity="0.65" Margin="0,6,0,4" />
+                               Style="{StaticResource FieldLabel}"
+                               Margin="0,6,0,4" />
                     <WrapPanel Margin="0,0,0,4">
                         <!-- Default (theme color) -->
                         <Button Command="{Binding SetHighlightColorDefaultCommand}" ToolTip="Default" Width="24" Height="24" Margin="0,0,5,5" Padding="0" Cursor="Hand">
@@ -1254,8 +1254,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="{Binding NotificationDurationLabel}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="12" Opacity="0.65"
+                                   Style="{StaticResource FieldLabel}"
                                    VerticalAlignment="Center" />
                         <TextBlock Grid.Column="1"
                                    Text="{Binding NotificationDurationDisplay}"

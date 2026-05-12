@@ -328,7 +328,7 @@ public sealed class ConverterViewModel : ViewModelBase
     public ConverterViewModel(
         IConversionService conversionService,
         ILocalizationService localizationService,
-        string defaultDirection = "ADtoBS",
+        string defaultDirection = "BStoAD",
         INepaliDateAdapter? adapter = null,
         string selectedTimezoneId = "")
     {

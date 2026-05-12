@@ -18,7 +18,7 @@ public sealed class ReminderViewModelTests : IDisposable
         Directory.CreateDirectory(_tempDir);
         _filePath = Path.Combine(_tempDir, "reminders.json");
         _adapter = new FakeNepaliDateAdapter();
-        _loc = new LocalizationService();
+        _loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         _loc.SetLanguage("en");
     }
 

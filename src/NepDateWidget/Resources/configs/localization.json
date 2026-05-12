@@ -29,15 +29,15 @@
   },
   "calendar.holiday.in_days": {
     "en": "{0} days until {1}",
-    "ne": "{1} सम्म {0} दिन"
+    "ne": "{1} सम्म {0} दिन बाँकी"
   },
   "calendar.holiday.more_events": {
     "en": "+{0} more",
-    "ne": "+{0} थप"
+    "ne": "+{0} अरू"
   },
   "calendar.holiday.more_events_one": {
     "en": "+1 more",
-    "ne": "+१ थप"
+    "ne": "+१ अरू"
   },
   "calendar.holiday.popup_title": {
     "en": "Upcoming holidays",
@@ -57,7 +57,7 @@
   },
   "calendar.copy.title": {
     "en": "Copy",
-    "ne": "कपी गर्नुहोस्"
+    "ne": "कपी"
   },
   "dow.full.sun": {
     "en": "Sunday",
@@ -97,7 +97,7 @@
   },
   "calendar.go_today": {
     "en": "Go to today",
-    "ne": "आजको मिति"
+    "ne": "आजमा जानुहोस्"
   },
   "dow.sun": {
     "en": "Sun",
@@ -129,7 +129,7 @@
   },
   "converter.title": {
     "en": "Date Converter",
-    "ne": "मिति रूपान्तर"
+    "ne": "मिति रूपान्तरण"
   },
   "converter.ad_to_bs": {
     "en": "AD → BS",
@@ -177,11 +177,11 @@
   },
   "menu.always_on_top": {
     "en": "Always on top",
-    "ne": "सधैँ माथि"
+    "ne": "सधैँ माथि राख्ने"
   },
   "menu.auto_start": {
     "en": "Start with Windows",
-    "ne": "Windows सँगै सुरु हुने"
+    "ne": "Windows सँगै सुरु गर्ने"
   },
   "menu.show_clock": {
     "en": "Show clock",
@@ -217,11 +217,11 @@
   },
   "menu.background": {
     "en": "Background",
-    "ne": "ब्याकग्राउन्ड"
+    "ne": "पृष्ठभूमि"
   },
   "menu.corner_style": {
     "en": "Corner style",
-    "ne": "कुना शैली"
+    "ne": "कुनाको शैली"
   },
   "menu.corner_rounded": {
     "en": "Rounded",
@@ -233,15 +233,15 @@
   },
   "menu.preset_default": {
     "en": "Default",
-    "ne": "डिफल्ट"
+    "ne": "पूर्वनिर्धारित"
   },
   "menu.preset_ocean": {
     "en": "Ocean",
-    "ne": "समुद्र"
+    "ne": "महासागर"
   },
   "menu.preset_forest": {
     "en": "Forest",
-    "ne": "वन"
+    "ne": "जंगल"
   },
   "menu.preset_sunset": {
     "en": "Sunset",
@@ -253,7 +253,7 @@
   },
   "menu.preset_aurora": {
     "en": "Aurora",
-    "ne": "औरोरा"
+    "ne": "अरोरा"
   },
   "menu.preset_cherry": {
     "en": "Cherry",
@@ -269,7 +269,7 @@
   },
   "menu.preset_ember": {
     "en": "Ember",
-    "ne": "अंगारो"
+    "ne": "अङ्गार"
   },
   "menu.exit": {
     "en": "Exit",
@@ -285,7 +285,7 @@
   },
   "menu.tools_convert": {
     "en": "Convert",
-    "ne": "रूपान्तर"
+    "ne": "रूपान्तरण"
   },
   "menu.tools_days": {
     "en": "Days",
@@ -377,7 +377,7 @@
   },
   "tools.tab": {
     "en": "Tools",
-    "ne": "टुल्स"
+    "ne": "उपकरणहरू"
   },
   "tools.mode_convert": {
     "en": "Convert",
@@ -405,11 +405,11 @@
   },
   "tools.time_from": {
     "en": "From",
-    "ne": "बाट"
+    "ne": "देखि"
   },
   "tools.time_to": {
     "en": "To",
-    "ne": "मा"
+    "ne": "सम्म"
   },
   "tools.age_from": {
     "en": "From",
@@ -437,7 +437,7 @@
   },
   "settings.appearance": {
     "en": "Appearance",
-    "ne": "रूप"
+    "ne": "देखावट"
   },
   "settings.behavior": {
     "en": "Behavior",
@@ -445,7 +445,7 @@
   },
   "settings.reset": {
     "en": "Reset to defaults",
-    "ne": "सबै डिफल्ट बनाउनुहोस्"
+    "ne": "पूर्वनिर्धारितमा फर्काउनुहोस्"
   },
   "settings.language": {
     "en": "Language",
@@ -461,7 +461,7 @@
   },
   "settings.corner_style": {
     "en": "Corner style",
-    "ne": "कुना शैली"
+    "ne": "कुनाको शैली"
   },
   "settings.font": {
     "en": "Font",
@@ -497,7 +497,7 @@
   },
   "settings.show_daily_events_notification": {
     "en": "Notify me about today's events",
-    "ne": "आजका कार्यक्रम सूचित गर"
+    "ne": "आजका कार्यक्रमबारे सूचना पाउनुहोस्"
   },
   "settings.animation": {
     "en": "Animation",
@@ -505,7 +505,7 @@
   },
   "settings.auto_start": {
     "en": "Start with Windows",
-    "ne": "Windows सँगै सुरु हुने"
+    "ne": "Windows सँगै सुरु गर्ने"
   },
   "settings.apply": {
     "en": "Apply",
@@ -517,19 +517,19 @@
   },
   "settings.show_eng_day_nums": {
     "en": "Show English day",
-    "ne": "अंग्रेजी दिन देखाउने"
+    "ne": "अंग्रेजी बार देखाउने"
   },
   "settings.highlight_saturdays": {
     "en": "Highlight Saturdays",
-    "ne": "शनिबार हाइलाइट गर्ने"
+    "ne": "शनिबारलाई हाइलाइट गर्ने"
   },
   "settings.highlight_sundays": {
     "en": "Highlight Sundays",
-    "ne": "आइतबार हाइलाइट गर्ने"
+    "ne": "आइतबारलाई हाइलाइट गर्ने"
   },
   "settings.highlight_color": {
     "en": "Highlight Color",
-    "ne": "हाइलाइट रंग"
+    "ne": "हाइलाइट रङ"
   },
   "settings.clock_format": {
     "en": "Clock format",
@@ -537,15 +537,15 @@
   },
   "settings.log_size": {
     "en": "Log file size",
-    "ne": "लग फाइल साइज"
+    "ne": "लग फाइल आकार"
   },
   "settings.auto_collapse": {
     "en": "Auto-collapse on focus loss",
-    "ne": "अरू थिच्दा आफै बन्द होस्"
+    "ne": "फोकस हराउँदा आफैँ बन्द होस्"
   },
   "settings.reset_defaults": {
     "en": "Reset to defaults",
-    "ne": "सबै डिफल्ट बनाउनुहोस्"
+    "ne": "पूर्वनिर्धारितमा फर्काउनुहोस्"
   },
   "settings.show_tithi": {
     "en": "Show Tithi",
@@ -553,7 +553,7 @@
   },
   "settings.show_events": {
     "en": "Show events",
-    "ne": "चाडपर्व देखाउने"
+    "ne": "कार्यक्रम देखाउने"
   },
   "settings.highlight_holidays": {
     "en": "Highlight public holidays",
@@ -565,7 +565,7 @@
   },
   "settings.notification_duration": {
     "en": "Notification duration",
-    "ne": "सूचना अवधि"
+    "ne": "सूचना देखिने अवधि"
   },
   "settings.notification_sound": {
     "en": "Notification sound",
@@ -577,7 +577,7 @@
   },
   "settings.show_help_badges": {
     "en": "Show help badges",
-    "ne": "सहायता ब्याज देखाउने"
+    "ne": "सहायता बैज देखाउने"
   },
   "settings.reminder_interval": {
     "en": "Reminder check interval",
@@ -589,7 +589,7 @@
   },
   "settings.test_notification": {
     "en": "Test",
-    "ne": "परीक्षण"
+    "ne": "परीक्षण गर्नुहोस्"
   },
   "settings.updates": {
     "en": "Updates",
@@ -609,15 +609,15 @@
   },
   "settings.update_uptodate": {
     "en": "Up to date ({0})",
-    "ne": "अपडेट छैन ({0})"
+    "ne": "अद्यावधिक छ ({0})"
   },
   "settings.update_downloading": {
     "en": "Downloading {0}...",
-    "ne": "{0} डाउनलोड गर्दै..."
+    "ne": "{0} डाउनलोड हुँदैछ..."
   },
   "settings.update_failed": {
     "en": "Update failed.",
-    "ne": "अपडेट असफल।"
+    "ne": "अपडेट असफल भयो।"
   },
   "settings.update_unavailable": {
     "en": "Updates are not available in this build.",
@@ -633,11 +633,11 @@
   },
   "dayinfo.events_label": {
     "en": "Events",
-    "ne": "चाडपर्व"
+    "ne": "कार्यक्रम"
   },
   "dayinfo.no_events": {
     "en": "No events today",
-    "ne": "आज केही चाडपर्व छैन"
+    "ne": "आज कुनै कार्यक्रम छैन"
   },
   "dayinfo.note_label": {
     "en": "Note",
@@ -649,7 +649,7 @@
   },
   "dayinfo.edit_note": {
     "en": "Edit Note",
-    "ne": "नोट एडिट"
+    "ne": "नोट सम्पादन"
   },
   "dayinfo.delete": {
     "en": "Delete",
@@ -657,7 +657,7 @@
   },
   "dayinfo.save_note": {
     "en": "Save",
-    "ne": "सेभ गर्नुहोस्"
+    "ne": "सेभ"
   },
   "dayinfo.cancel": {
     "en": "Cancel",
@@ -673,11 +673,11 @@
   },
   "dayinfo.no_reminders": {
     "en": "No reminders",
-    "ne": "रिमाइन्डर छैन"
+    "ne": "कुनै रिमाइन्डर छैन"
   },
   "dayinfo.no_note": {
     "en": "No note for this day",
-    "ne": "यो दिनको नोट छैन"
+    "ne": "यो दिनको कुनै नोट छैन"
   },
   "tab.unit": {
     "en": "Unit",
@@ -744,11 +744,11 @@
     "ne": "आउटपुट"
   },
   "texttools.script_r2d": {
-    "en": "Roman → Devnagari",
+    "en": "Roman → Devanagari",
     "ne": "Roman → देवनागरी"
   },
   "texttools.script_d2r": {
-    "en": "Devnagari → Roman",
+    "en": "Devanagari → Roman",
     "ne": "देवनागरी → Roman"
   },
   "unit.error_invalid_number": {
@@ -769,7 +769,7 @@
   },
   "menu.unit_area": {
     "en": "Area",
-    "ne": "क्षेत्र"
+    "ne": "क्षेत्रफल"
   },
   "menu.unit_script": {
     "en": "Script",
@@ -892,8 +892,8 @@
     "ne": "ट्रेस"
   },
   "net.mode_whois": {
-    "en": "Whois",
-    "ne": "व्होइज"
+    "en": "WHOIS",
+    "ne": "WHOIS"
   },
   "net.mode_dns": {
     "en": "DNS",
@@ -941,7 +941,7 @@
   },
   "net.loading": {
     "en": "Working…",
-    "ne": "गर्दैछ…"
+    "ne": "काम हुँदैछ…"
   },
   "net.offline": {
     "en": "No internet connection",
@@ -953,7 +953,7 @@
   },
   "net.no_result": {
     "en": "No results returned",
-    "ne": "केही भेटिएन"
+    "ne": "नतिजा भेटिएन"
   },
   "net.dns_not_found": {
     "en": "Host not found",
@@ -961,7 +961,7 @@
   },
   "net.no_network": {
     "en": "No active network interface",
-    "ne": "नेटवर्क जडान छैन"
+    "ne": "सक्रिय नेटवर्क इन्टरफेस छैन"
   },
   "net.scanning": {
     "en": "Scanning…",
@@ -1033,11 +1033,11 @@
   },
   "texttools.preeti_to_unicode": {
     "en": "Preeti → Unicode",
-    "ne": "प्रिती → युनिकोड"
+    "ne": "प्रिती → Unicode"
   },
   "texttools.unicode_to_preeti": {
     "en": "Unicode → Preeti",
-    "ne": "युनिकोड → प्रिती"
+    "ne": "Unicode → प्रिती"
   },
   "texttools.copy": {
     "en": "Copy",
@@ -1157,7 +1157,7 @@
   },
   "texttools.file_section": {
     "en": "Convert a File",
-    "ne": "फाइल बदल्नुहोस्"
+    "ne": "फाइल रूपान्तरण"
   },
   "texttools.file_no_file": {
     "en": "No file selected",
@@ -1165,15 +1165,15 @@
   },
   "texttools.file_browse": {
     "en": "Browse",
-    "ne": "छान्नुहोस्"
+    "ne": "ब्राउज"
   },
   "texttools.file_convert": {
     "en": "Convert & Save",
-    "ne": "बदलेर सेभ गर्नुहोस्"
+    "ne": "रूपान्तरण गरेर सेभ"
   },
   "texttools.file_converting": {
     "en": "Converting...",
-    "ne": "बदल्दैछ..."
+    "ne": "रूपान्तरण हुँदैछ..."
   },
   "texttools.file_saved": {
     "en": "Saved:",
@@ -1205,7 +1205,7 @@
   },
   "reminder.edit": {
     "en": "Edit Reminder",
-    "ne": "रिमाइन्डर एडिट"
+    "ne": "रिमाइन्डर सम्पादन"
   },
   "reminder.title": {
     "en": "Title",
@@ -1221,7 +1221,7 @@
   },
   "reminder.notes": {
     "en": "Notes",
-    "ne": "नोट"
+    "ne": "नोटहरू"
   },
   "reminder.recurrence": {
     "en": "Repeat",
@@ -1253,11 +1253,11 @@
   },
   "reminder.save": {
     "en": "Save",
-    "ne": "सेभ गर्नुहोस्"
+    "ne": "सेभ"
   },
   "reminder.cancel": {
     "en": "Cancel",
-    "ne": "रद्द गर्नुहोस्"
+    "ne": "रद्द"
   },
   "reminder.delete": {
     "en": "Delete",
@@ -1265,7 +1265,7 @@
   },
   "reminder.no_reminders": {
     "en": "No reminders for this day",
-    "ne": "यो दिनको रिमाइन्डर छैन"
+    "ne": "यो दिनका लागि कुनै रिमाइन्डर छैन"
   },
   "reminder.title_required": {
     "en": "Title is required",
@@ -1293,11 +1293,11 @@
   },
   "reminder.discard_title": {
     "en": "Discard changes?",
-    "ne": "बदलेको नराख्ने?"
+    "ne": "परिवर्तनहरू छोड्ने?"
   },
   "reminder.discard_yes": {
     "en": "Discard",
-    "ne": "हटाउ"
+    "ne": "छोड्नुहोस्"
   },
   "reminder.notification": {
     "en": "Reminder",
@@ -1305,27 +1305,27 @@
   },
   "reminder.dismiss": {
     "en": "Dismiss",
-    "ne": "हटाउ"
+    "ne": "बन्द"
   },
   "daily_events.header": {
     "en": "Today's events",
-    "ne": "आजका कार्यक्रम"
+    "ne": "आजका कार्यक्रमहरू"
   },
   "daily_events.title": {
     "en": "Events today",
-    "ne": "आजको दिनमा"
+    "ne": "आजका कार्यक्रमहरू"
   },
   "reminder.missed_badge": {
     "en": "Reminders ({0})",
-    "ne": "स्मरण ({0})"
+    "ne": "छुटेका रिमाइन्डरहरू ({0})"
   },
   "reminder.completed": {
     "en": "Completed",
-    "ne": "सकियो"
+    "ne": "सम्पन्न"
   },
   "runbox.placeholder": {
     "en": "Search, open file, use shortcuts, or run...",
-    "ne": "खोज्नुहोस्, फाइल खोल्नुहोस्..."
+    "ne": "खोज्नुहोस्, फाइल खोल्नुहोस्, सर्टकट प्रयोग गर्नुहोस्, वा चलाउनुहोस्..."
   },
   "runbox.error": {
     "en": "Could not open",
@@ -1353,7 +1353,7 @@
   },
   "settings.hotkey_clear": {
     "en": "Clear",
-    "ne": "खाली गर्नुहोस्"
+    "ne": "खाली"
   },
   "tab.about": {
     "en": "About",
@@ -1365,7 +1365,7 @@
   },
   "about.tagline": {
     "en": "A Nepali calendar & tools widget for your desktop.",
-    "ne": "तपाईंको डेस्कटपको लागि नेपाली पात्रो र टुल्स।"
+    "ne": "तपाईंको डेस्कटपका लागि नेपाली पात्रो र उपकरणहरू।"
   },
   "about.features_heading": {
     "en": "What's inside",
@@ -1381,15 +1381,15 @@
   },
   "about.feature_banking": {
     "en": "Interest & EMI calculator",
-    "ne": "ब्याज र EMI क्याल्कुलेटर"
+    "ne": "ब्याज तथा EMI क्याल्कुलेटर"
   },
   "about.feature_text": {
     "en": "Preeti ↔ Unicode, script tools & file conversion",
-    "ne": "प्रिती ↔ युनिकोड, लिपि टुल्स र फाइल रूपान्तरण"
+    "ne": "प्रिती ↔ युनिकोड, लिपि उपकरणहरू र फाइल रूपान्तरण"
   },
   "about.feature_network": {
     "en": "Network tools: ping, scan, trace, WHOIS, DNS",
-    "ne": "नेटवर्क टुल्स: पिङ, स्क्यान, ट्रेस, WHOIS, DNS"
+    "ne": "नेटवर्क उपकरणहरू: पिङ, स्क्यान, ट्रेस, WHOIS, DNS"
   },
   "about.feature_reminders": {
     "en": "Reminders & day notes",
@@ -1401,11 +1401,11 @@
   },
   "about.support_heading": {
     "en": "Support this project",
-    "ne": "यो प्रोजेक्ट सपोर्ट गर्नुहोस्"
+    "ne": "यो प्रोजेक्टलाई समर्थन गर्नुहोस्"
   },
   "about.support_body": {
     "en": "NepDateWidget is free and always will be. If it saves you time, consider buying me a momo.",
-    "ne": "NepDateWidget फ्री छ र सधैं रहनेछ। यसले समय बचायो भने, एउटा मोमो किनिदिनुहोस्।"
+    "ne": "NepDateWidget नि:शुल्क छ र सधैं नि:शुल्क नै रहनेछ। यसले समय बचायो भने, एउटा मोमो किनिदिनुहोस्।"
   },
   "about.support_button": {
     "en": "Buy Me a Momo",
@@ -1413,7 +1413,7 @@
   },
   "about.links_heading": {
     "en": "Links",
-    "ne": "लिंकहरू"
+    "ne": "लिङ्कहरू"
   },
   "about.repo_button": {
     "en": "View on GitHub",
@@ -1421,7 +1421,7 @@
   },
   "about.built_by": {
     "en": "Built by Raju Prasai",
-    "ne": "रजु प्रसाईले बनाएको"
+    "ne": "राजु प्रसाई द्वारा निर्मित"
   },
   "tab.more": {
     "en": "More",
@@ -1449,15 +1449,15 @@
   },
   "more.edit": {
     "en": "Edit",
-    "ne": "एडिट"
+    "ne": "सम्पादन"
   },
   "more.save": {
     "en": "Save",
-    "ne": "सेभ गर्नुहोस्"
+    "ne": "सेभ"
   },
   "more.cancel": {
     "en": "Cancel",
-    "ne": "रद्द गर्नुहोस्"
+    "ne": "रद्द"
   },
   "tooltip.about": {
     "en": "About",
@@ -1469,7 +1469,7 @@
   },
   "tooltip.unpin": {
     "en": "Unpin (auto-close)",
-    "ne": "अनपिन (आफै बन्द हुन्छ)"
+    "ne": "अनपिन (स्वतः बन्द हुन्छ)"
   },
   "tooltip.minimize": {
     "en": "Minimize",
@@ -1489,7 +1489,7 @@
   },
   "hint.principal": {
     "en": "e.g. 500000",
-    "ne": "जस्तै: ५००००"
+    "ne": "जस्तै: ५०००००"
   },
   "hint.rate": {
     "en": "e.g. 12",
@@ -1501,7 +1501,7 @@
   },
   "hint.loan": {
     "en": "e.g. 5000000",
-    "ne": "जस्तै: ५०००००"
+    "ne": "जस्तै: ५००००००"
   },
   "hint.date_bs": {
     "en": "YYYY/MM/DD",
@@ -1573,7 +1573,7 @@
   },
   "docs.no_docs_hint": {
     "en": "Add your important documents for quick access",
-    "ne": "छिटो पहुँचको लागि आफ्ना महत्त्वपूर्ण कागजातहरू थप्नुहोस्"
+    "ne": "छिटो पहुँचका लागि आफ्ना महत्त्वपूर्ण कागजातहरू थप्नुहोस्"
   },
   "docs.add": {
     "en": "Add Document",
@@ -1597,7 +1597,7 @@
   },
   "docs.file_not_found": {
     "en": "File not found on disk",
-    "ne": "फाइल भेटिएन"
+    "ne": "डिस्कमा फाइल भेटिएन"
   },
   "docs.title_required": {
     "en": "Title is required",
@@ -1629,7 +1629,7 @@
   },
   "docs.field_notes": {
     "en": "Notes (optional)",
-    "ne": "टिप्पणी (ऐच्छिक)"
+    "ne": "नोटहरू (ऐच्छिक)"
   },
   "docs.clear_file": {
     "en": "Remove file",
@@ -1637,7 +1637,7 @@
   },
   "docs.search_hint": {
     "en": "Search... or #tag to filter by tag",
-    "ne": "खोज्नुहोस्... वा #ट्याग"
+    "ne": "खोज्नुहोस्... वा #ट्याग अनुसार फिल्टर गर्नुहोस्"
   },
   "docs.duplicate_title": {
     "en": "A document with this title already exists",
@@ -1661,7 +1661,7 @@
   },
   "notes.form_title_edit": {
     "en": "Edit Note",
-    "ne": "नोट सम्पादन गर्नुहोस्"
+    "ne": "नोट सम्पादन"
   },
   "notes.field_date": {
     "en": "Date (BS)",
@@ -1713,7 +1713,7 @@
   },
   "reminders.form_title_edit": {
     "en": "Edit Reminder",
-    "ne": "रिमाइन्डर सम्पादन गर्नुहोस्"
+    "ne": "रिमाइन्डर सम्पादन"
   },
   "settings.data_export": {
     "en": "Export Backup...",
@@ -1721,7 +1721,7 @@
   },
   "settings.data_import": {
     "en": "Restore Backup...",
-    "ne": "ब्याकअप पुनर्स्थापित..."
+    "ne": "ब्याकअप पुनर्स्थापना..."
   },
   "settings.data_export_ok": {
     "en": "Backup exported successfully.",
@@ -1729,15 +1729,15 @@
   },
   "settings.data_export_failed": {
     "en": "Export failed. See log for details.",
-    "ne": "निर्यात असफल। लग हेर्नुहोस्।"
+    "ne": "निर्यात असफल भयो। लग हेर्नुहोस्।"
   },
   "settings.data_import_ok": {
     "en": "Backup restored. Restart the app to apply all changes.",
-    "ne": "ब्याकअप पुनर्स्थापित भयो। सबै परिवर्तन लागू गर्न ऐप पुनः सुरु गर्नुहोस्।"
+    "ne": "ब्याकअप पुनर्स्थापित भयो। सबै परिवर्तन लागू गर्न एप पुनः सुरु गर्नुहोस्।"
   },
   "settings.data_import_failed": {
     "en": "Restore failed. See log for details.",
-    "ne": "पुनर्स्थापना असफल। लग हेर्नुहोस्।"
+    "ne": "पुनर्स्थापना असफल भयो। लग हेर्नुहोस्।"
   },
   "settings.data_import_invalid": {
     "en": "Not a valid NepDateWidget backup.",
@@ -1757,7 +1757,7 @@
   },
   "help.converter.convert.desc": {
     "en": "Converts dates between the Bikram Sambat (BS) and Gregorian (AD) calendars in both directions.",
-    "ne": "बिक्रम संवत (वि.सं.) र ग्रेगोरियन (इ.सं.) मितिबीच दुवै दिशामा रूपान्तर गर्छ।"
+    "ne": "बिक्रम संवत (वि.सं.) र इस्वी संवत (ई.सं.) बीच दुवै दिशामा मिति रूपान्तरण गर्छ।"
   },
   "help.converter.convert.how1": {
     "en": "Select AD → BS or BS → AD using the direction buttons, then type your date.",
@@ -1773,11 +1773,11 @@
   },
   "help.converter.convert.why1": {
     "en": "Quickly check BS dates when filling official Nepali forms.",
-    "ne": "सरकारी नेपाली फाराम भर्दा वि.सं. मिति फटाफट मिलाउन मिल्छ।"
+    "ne": "सरकारी नेपाली फाराम भर्दा वि.सं. मिति छिटो जाँच्न मिल्छ।"
   },
   "help.converter.convert.why2": {
     "en": "No need to manually count calendar months or look up conversion tables.",
-    "ne": "क्यालेन्डर महिना हात्ले गन्नु वा रूपान्तरण तालिका हेर्नु पर्दैन।"
+    "ne": "क्यालेन्डरका महिना हातैले गन्नु वा रूपान्तरण तालिका हेर्नु पर्दैन।"
   },
   "help.converter.convert.why3": {
     "en": "Works for the full range of valid BS dates.",
@@ -1793,15 +1793,15 @@
   },
   "help.converter.days.how1": {
     "en": "Use Diff mode to find how many years, months, and days lie between two BS dates.",
-    "ne": "दुई वि.सं. मितिबीच कति वर्ष, महिना र दिन छन् भन्न Diff मोड प्रयोग गर्नुहोस्।"
+    "ne": "अन्तर मोड प्रयोग गरेर दुई वि.सं. मितिबीच कति वर्ष, महिना र दिन छन् पत्ता लगाउनुहोस्।"
   },
   "help.converter.days.how2": {
     "en": "Use Add/Sub mode to add or subtract a number of days from a BS date.",
-    "ne": "वि.सं. मितिमा दिन जोड्न वा घटाउन Add/Sub मोड प्रयोग गर्नुहोस्।"
+    "ne": "जोड/घटाउ मोड प्रयोग गरेर वि.सं. मितिमा दिन थप्नुहोस् वा घटाउनुहोस्।"
   },
   "help.converter.days.how3": {
     "en": "The second date in Diff mode is pre-filled with today so you can find your age or tenure instantly.",
-    "ne": "Diff मोडमा दोस्रो मिति आजको मितिले भरिन्छ जसले उमेर वा सेवाकाल तुरुन्त थाहा पाउन मिल्छ।"
+    "ne": "अन्तर मोडमा दोस्रो मिति आजको मितिले स्वतः भरिन्छ, त्यसैले उमेर वा सेवाकाल तुरुन्त थाहा पाउन मिल्छ।"
   },
   "help.converter.days.why1": {
     "en": "Calculate contract duration, loan periods, or age directly in the BS calendar.",
@@ -1821,7 +1821,7 @@
   },
   "help.converter.time.desc": {
     "en": "Converts a time from any timezone to any other timezone, supporting all system timezones including Nepal Standard Time.",
-    "ne": "नेपाल मानक समयसहित कुनै पनि टाइमजोनबाट अर्को टाइमजोनमा समय रूपान्तर गर्छ।"
+    "ne": "नेपाल मानक समयसहित कुनै पनि टाइमजोनबाट अर्को टाइमजोनमा समय रूपान्तरण गर्छ।"
   },
   "help.converter.time.how1": {
     "en": "Select source and destination timezones from the dropdowns, then enter the time.",
@@ -1829,7 +1829,7 @@
   },
   "help.converter.time.how2": {
     "en": "Toggle AM/PM using the button beside the time input.",
-    "ne": "समय इनपुटको छेउको बटनले AM/PM टगल गर्न मिल्छ।"
+    "ne": "समय इनपुटको छेउको बटन थिचेर AM/PM बदल्न सकिन्छ।"
   },
   "help.converter.time.how3": {
     "en": "Use the swap button to reverse the conversion direction instantly.",
@@ -1853,7 +1853,7 @@
   },
   "help.unit.area.desc": {
     "en": "Converts area between Nepali traditional units (Ropani, Aana, Paisa, Dam) and metric units (sq. m, sq. ft, hectares).",
-    "ne": "नेपाली परम्परागत एकाइ (रोपनी, आना, पैसा, दाम) र मेट्रिक एकाइ (वर्ग मिटर, वर्ग फिट, हेक्टर) बीच क्षेत्रफल रूपान्तर गर्छ।"
+    "ne": "नेपाली परम्परागत एकाइ (रोपनी, आना, पैसा, दाम) र मेट्रिक एकाइ (वर्ग मिटर, वर्ग फिट, हेक्टर) बीच क्षेत्रफल रूपान्तरण गर्छ।"
   },
   "help.unit.area.how1": {
     "en": "Select the source unit from the From dropdown and the target unit from the To dropdown.",
@@ -1885,7 +1885,7 @@
   },
   "help.unit.weight.desc": {
     "en": "Converts weight between Nepali units (Tola, Pau, Dharni, Chatak) and international units (kg, g, lb, oz).",
-    "ne": "नेपाली एकाइ (तोला, पाउ, धार्नी, छटाक) र अन्तर्राष्ट्रिय एकाइ (किलोग्राम, ग्राम, पाउन्ड, औंस) बीच तौल रूपान्तर गर्छ।"
+    "ne": "नेपाली एकाइ (तोला, पाउ, धार्नी, छटाक) र अन्तर्राष्ट्रिय एकाइ (किलोग्राम, ग्राम, पाउन्ड, औंस) बीच तौल रूपान्तरण गर्छ।"
   },
   "help.unit.weight.how1": {
     "en": "Select source and target weight units using the From and To dropdowns.",
@@ -1901,15 +1901,15 @@
   },
   "help.unit.weight.why1": {
     "en": "Useful when buying gold or silver from jewellers who use Tola measurements.",
-    "ne": "तोलामा मापन गर्ने जुहारीबाट सुन वा चाँदी किन्दा उपयोगी छ।"
+    "ne": "तोलामा मापन गर्ने सुनचाँदी पसलहरूमा उपयोगी छ।"
   },
   "help.unit.weight.why2": {
     "en": "Convert traditional Nepali cooking measurements to metric for recipe accuracy.",
-    "ne": "परम्परागत नेपाली रेसिपी मापनलाई मेट्रिकमा बदल्न मिल्छ।"
+    "ne": "परम्परागत नेपाली मापनलाई मेट्रिकमा बदलेर रेसिपी मिलाउन मिल्छ।"
   },
   "help.unit.weight.why3": {
     "en": "Avoids errors when comparing weights quoted in different unit systems.",
-    "ne": "फरक एकाइमा उद्धृत तौलहरू तुलना गर्दा गल्ती हुँदैन।"
+    "ne": "फरक एकाइमा दिइएका तौलहरू तुलना गर्दा गल्ती हुँदैन।"
   },
   "help.text.password.title": {
     "en": "Password Generator",
@@ -1921,11 +1921,11 @@
   },
   "help.text.password.how1": {
     "en": "Adjust length and character sets using the toggles, then click Generate.",
-    "ne": "लम्बाइ र अक्षर सेट टगलहरूले मिलाउनुहोस् र Generate क्लिक गर्नुहोस्।"
+    "ne": "लम्बाइ र अक्षर सेट टगलहरू मिलाउनुहोस्, अनि Generate क्लिक गर्नुहोस्।"
   },
   "help.text.password.how2": {
     "en": "To check an existing password's strength, clear the field and type or paste it.",
-    "ne": "भइरहेको पासवर्डको बल जाँच्न फिल्ड खाली गरी पासवर्ड टाइप वा पेस्ट गर्नुहोस्।"
+    "ne": "भएको पासवर्डको बल जाँच्न फिल्ड खाली गरी पासवर्ड टाइप वा पेस्ट गर्नुहोस्।"
   },
   "help.text.password.how3": {
     "en": "Click the output field to copy the generated password to your clipboard.",
@@ -1933,7 +1933,7 @@
   },
   "help.text.password.why1": {
     "en": "Passwords are cryptographically random, not predictable patterns.",
-    "ne": "पासवर्डहरू क्रिप्टोग्राफिकली अनियमित हुन्छन्, अनुमान गर्न गाह्रो।"
+    "ne": "पासवर्डहरू क्रिप्टोग्राफिक रूपमा अनियमित हुन्छन्, कुनै अनुमान गर्न सकिने ढाँचामा आधारित हुँदैनन्।"
   },
   "help.text.password.why2": {
     "en": "Including Nepali characters makes passwords resistant to standard dictionary attacks.",
@@ -1949,15 +1949,15 @@
   },
   "help.text.word.desc": {
     "en": "Counts words, characters, and characters without spaces. Also applies case transformations to your text.",
-    "ne": "शब्द, अक्षर र स्पेसबिनाका अक्षर गन्छ। टेक्स्टमा अक्षर केस रूपान्तरण पनि लागू गर्छ।"
+    "ne": "शब्द, अक्षर र स्पेसबिनाका अक्षरहरूको गणना गर्छ। टेक्स्टको अक्षर शैली पनि बदल्छ।"
   },
   "help.text.word.how1": {
     "en": "Paste or type your text in the input area and the counts update instantly.",
-    "ne": "इनपुट क्षेत्रमा टेक्स्ट पेस्ट वा टाइप गर्नुहोस् र संख्याहरू तुरुन्त अपडेट हुन्छन्।"
+    "ne": "इनपुट क्षेत्रमा टेक्स्ट पेस्ट वा टाइप गर्नुहोस्, गणना तुरुन्त अपडेट हुन्छ।"
   },
   "help.text.word.how2": {
     "en": "Use the case buttons (UPPER, lower, Title, Sentence, snake, camel) to transform the text.",
-    "ne": "टेक्स्ट रूपान्तरण गर्न UPPER, lower, Title, Sentence, snake, camel बटनहरू प्रयोग गर्नुहोस्।"
+    "ne": "टेक्स्टको अक्षर शैली बदल्न UPPER, lower, Title, Sentence, snake, camel बटनहरू प्रयोग गर्नुहोस्।"
   },
   "help.text.word.how3": {
     "en": "Click Copy to copy the transformed text to your clipboard.",
@@ -1973,7 +1973,7 @@
   },
   "help.text.word.why3": {
     "en": "snake_case and camelCase conversions are especially handy for developers.",
-    "ne": "डेभलपरहरूका लागि snake_case र camelCase रूपान्तरण विशेष रूपमा उपयोगी छ।"
+    "ne": "snake_case र camelCase रूपान्तरण विशेष रूपमा डेभलपरहरूका लागि उपयोगी हुन्छ।"
   },
   "help.text.unicode.title": {
     "en": "Script Converter",
@@ -1981,7 +1981,7 @@
   },
   "help.text.unicode.desc": {
     "en": "Converts text between Preeti (legacy Nepali encoding) and Unicode (standard Devanagari).",
-    "ne": "Preeti (पुरानो नेपाली इन्कोडिङ) र Unicode (मानक देवनागरी) बीच टेक्स्ट रूपान्तर गर्छ।"
+    "ne": "Preeti (पुरानो नेपाली इन्कोडिङ) र Unicode (मानक देवनागरी) बीच टेक्स्ट रूपान्तरण गर्छ।"
   },
   "help.text.unicode.how1": {
     "en": "Select Preeti → Unicode or Unicode → Preeti, then type or paste your text.",
@@ -1993,11 +1993,11 @@
   },
   "help.text.unicode.how3": {
     "en": "Use the file conversion section to convert an entire Preeti document to Unicode.",
-    "ne": "सम्पूर्ण Preeti कागजातलाई Unicode मा बदल्न फाइल रूपान्तरण खण्ड प्रयोग गर्नुहोस्।"
+    "ne": "सम्पूर्ण Preeti कागजातलाई Unicode मा रूपान्तरण गर्न फाइल रूपान्तरण खण्ड प्रयोग गर्नुहोस्।"
   },
   "help.text.unicode.why1": {
     "en": "Rescues old documents written in Preeti that display as garbled text in modern apps.",
-    "ne": "आधुनिक अनुप्रयोगमा उल्टोपुल्टो देखिने Preeti कागजातहरू ठीक गर्न मिल्छ।"
+    "ne": "आधुनिक एप्समा बिग्रिएको जस्तो देखिने पुराना Preeti कागजातहरू पुनः उपयोग गर्न मिल्छ।"
   },
   "help.text.unicode.why2": {
     "en": "Ensures Nepali text is properly indexed and searchable in digital systems.",
@@ -2005,7 +2005,7 @@
   },
   "help.text.unicode.why3": {
     "en": "Handles batch file conversion so you can process entire documents at once.",
-    "ne": "ब्याच फाइल रूपान्तरण सपोर्ट गर्छ, एकैपटक पूरै कागजात प्रशोधन गर्न मिल्छ।"
+    "ne": "ब्याच फाइल रूपान्तरण गरेर एकैपटक पूरै कागजात प्रशोधन गर्न मिल्छ।"
   },
   "help.text.script.title": {
     "en": "Transliteration",
@@ -2013,11 +2013,11 @@
   },
   "help.text.script.desc": {
     "en": "Converts text between Romanized Nepali and Devanagari script using standard transliteration rules.",
-    "ne": "मानक लिप्यन्तरण नियम अनुसार रोमनमा लेखेको नेपाली र देवनागरी बीच टेक्स्ट रूपान्तर गर्छ।"
+    "ne": "मानक लिप्यन्तरण नियमअनुसार रोमन अक्षरमा लेखिएको नेपाली र देवनागरी बीच टेक्स्ट रूपान्तरण गर्छ।"
   },
   "help.text.script.how1": {
     "en": "Select Roman → Devanagari to type in Roman characters and get Devanagari output.",
-    "ne": "रोमन अक्षरमा टाइप गरी देवनागरी आउटपुट पाउन Roman → Devanagari छान्नुहोस्।"
+    "ne": "रोमन अक्षरमा टाइप गरेर देवनागरी आउटपुट पाउन Roman → Devanagari छान्नुहोस्।"
   },
   "help.text.script.how2": {
     "en": "Use 'aa' for ā and 'ii' for ī when typing long vowels in Roman mode.",
@@ -2025,7 +2025,7 @@
   },
   "help.text.script.how3": {
     "en": "Select Devanagari → Roman to convert existing Devanagari text to its Roman equivalent.",
-    "ne": "भइरहेको देवनागरी टेक्स्टलाई रोमनमा बदल्न Devanagari → Roman छान्नुहोस्।"
+    "ne": "भएको देवनागरी टेक्स्टलाई रोमनमा बदल्न Devanagari → Roman छान्नुहोस्।"
   },
   "help.text.script.why1": {
     "en": "Lets you type Nepali when you don't have a Devanagari keyboard installed.",
@@ -2037,7 +2037,7 @@
   },
   "help.text.script.why3": {
     "en": "Follows standard IAST-based rules so the output is consistent and predictable.",
-    "ne": "मानक IAST-आधारित नियम पालन गर्छ, आउटपुट एकरूप र अनुमानयोग्य हुन्छ।"
+    "ne": "मानक IAST-आधारित नियमहरू पालना गर्छ, त्यसैले आउटपुट एकरूप र अनुमानयोग्य हुन्छ।"
   },
   "help.banking.interest.title": {
     "en": "Interest Calculator",
@@ -2205,7 +2205,7 @@
   },
   "help.network.trace.desc": {
     "en": "Traces the network path to a destination host, showing each intermediate router hop and its latency.",
-    "ne": "गन्तव्य होस्टसम्मको नेटवर्क मार्ग ट्रेस गर्छ, बाटामा पर्ने हरेक राउटर हप र विलम्बता देखाउँदै।"
+    "ne": "गन्तव्य होस्टतर्फको नेटवर्क मार्ग ट्रेस गर्छ, बीचमा पर्ने प्रत्येक राउटर हप र त्यसको विलम्बता देखाउँछ।"
   },
   "help.network.trace.how1": {
     "en": "Enter a hostname or IP address and click Trace to start route discovery.",
@@ -2229,10 +2229,10 @@
   },
   "help.network.trace.why3": {
     "en": "Shows the full geographic path packets take to reach an international server.",
-    "ne": "अन्तर्राष्ट्रिय सर्भरमा पुग्न प्याकेटले लिने सम्पूर्ण भौगोलिक मार्ग देखाउँछ।"
+    "ne": "अन्तर्राष्ट्रिय सर्भरसम्म प्याकेटले लिने पूरा मार्ग देखाउँछ।"
   },
   "help.network.whois.title": {
-    "en": "Whois Lookup",
+    "en": "WHOIS Lookup",
     "ne": "Whois खोज"
   },
   "help.network.whois.desc": {
@@ -2397,11 +2397,11 @@
   },
   "help.runbox.desc": {
     "en": "A keyboard-driven command bar for launching apps, opening URLs, running scripts, searching the web, and doing quick calculations.",
-    "ne": "अनुप्रयोग सुरु गर्न, URL खोल्न, स्क्रिप्ट चलाउन, वेब खोज्न र छिटो गणना गर्नका लागि किबोर्ड-चालित कमान्ड पट्टी।"
+    "ne": "अनुप्रयोग सुरु गर्न, URL खोल्न, स्क्रिप्ट चलाउन, वेब खोज्न र छिटो गणना गर्न मिल्ने किबोर्ड-चालित कमान्ड बार।"
   },
   "help.runbox.how1": {
     "en": "Type 'help' and press Enter to open this window at any time.",
-    "ne": "'help' टाइप गरी Enter थिच्नुहोस् जुनसुकै बेला यो विन्डो खोल्न।"
+    "ne": "'help' टाइप गरेर जुनसुकै बेला यो विन्डो खोल्न Enter थिच्नुहोस्।"
   },
   "help.runbox.how2": {
     "en": "Type a prefix like 'yt ' (YouTube) followed by your query to search a specific site.",

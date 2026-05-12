@@ -36,7 +36,7 @@ public class SettingsViewModelTests
     private static (SettingsViewModel vm, FakeSettingsService svc, FakeThemeService theme, FakeAutoStartService auto) Create()
     {
         var svc = new FakeSettingsService();
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var theme = new FakeThemeService();
         var auto = new FakeAutoStartService();
         var vm = new SettingsViewModel(svc, loc, theme, auto);
@@ -391,7 +391,7 @@ public class SettingsViewModelTests
     public void OnLanguageChanged_UpdatesLabels()
     {
         var svc = new FakeSettingsService();
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("en");
         var vm = new SettingsViewModel(svc, loc, new FakeThemeService(), new FakeAutoStartService());
         var enTheme = vm.ThemeLabel;
@@ -542,7 +542,7 @@ public class SettingsViewModelTests
     public void ExportBackupLabel_ChangesOnLanguageSwitch()
     {
         var svc = new FakeSettingsService();
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("en");
         var vm = new SettingsViewModel(svc, loc, new FakeThemeService(), new FakeAutoStartService());
         var en = vm.ExportBackupLabel;
@@ -557,7 +557,7 @@ public class SettingsViewModelTests
     public void ImportBackupLabel_ChangesOnLanguageSwitch()
     {
         var svc = new FakeSettingsService();
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("en");
         var vm = new SettingsViewModel(svc, loc, new FakeThemeService(), new FakeAutoStartService());
         var en = vm.ImportBackupLabel;

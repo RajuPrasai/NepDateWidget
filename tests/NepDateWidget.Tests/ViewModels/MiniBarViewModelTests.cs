@@ -13,7 +13,7 @@ public class MiniBarViewModelTests : IDisposable
 {
     private readonly FakeNepaliDateAdapter   _adapter = new();
     private readonly CalendarService         _calendar;
-    private readonly LocalizationService     _loc     = new();
+    private readonly LocalizationService     _loc     = new(TestPaths.DefaultLocalizationPath);
     private          MiniBarViewModel?       _vm;
 
     public MiniBarViewModelTests()

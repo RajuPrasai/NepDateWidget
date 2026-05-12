@@ -523,7 +523,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         Network = new NetworkToolsViewModel(localizationService);
         Banking = new BankingViewModel(localizationService);
         TextTools = new TextToolsViewModel(localizationService);
-        RunBox = new RunBoxViewModel(runHistoryService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly(), scriptService);
+        RunBox = new RunBoxViewModel(runHistoryService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly(AppPaths.DefaultShortcutsPath), scriptService);
         About = new AboutViewModel(localizationService);
         More = new MoreViewModel(localizationService, notesService, reminderService, documentService, adapter: adapter);
 

@@ -128,7 +128,7 @@ public partial class App : Application
         var nepDateAdapter = new NepaliDateAdapter();
         var calendarService = new CalendarService(nepDateAdapter);
         var conversionService = new ConversionService(nepDateAdapter);
-        var localizationService = new LocalizationService(Helpers.AppPaths.LocalizationPath);
+        var localizationService = new LocalizationService(Helpers.AppPaths.LocalizationPath, Helpers.AppPaths.DefaultLocalizationPath);
         localizationService.Load();
         var themeService = new ThemeService();
         var autoStartService = new AutoStartService();
@@ -164,15 +164,15 @@ public partial class App : Application
         PinDocumentsFolderToQuickAccess();
 
         // Run box command history
-        var runHistoryService = new SearchHistoryService(Helpers.AppPaths.RunHistoryPath, maxEntries: 500, defaultResourceName: "NepDateWidget.Resources.run-history.default.json");
+        var runHistoryService = new SearchHistoryService(Helpers.AppPaths.RunHistoryPath, maxEntries: 500, defaultFilePath: Helpers.AppPaths.DefaultRunHistoryPath);
         runHistoryService.Load();
 
         var updateService = new VelopackUpdateService();
 
-        _shortcutsService = new ShortcutsService(Helpers.AppPaths.ShortcutsPath);
+        _shortcutsService = new ShortcutsService(Helpers.AppPaths.ShortcutsPath, Helpers.AppPaths.DefaultShortcutsPath);
         _shortcutsService.Load();
 
-        _scriptService = new ScriptService(Helpers.AppPaths.ScriptsPath);
+        _scriptService = new ScriptService(Helpers.AppPaths.ScriptsPath, Helpers.AppPaths.DefaultScriptsPath);
         _scriptService.Load();
 
         var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, runHistoryService: runHistoryService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!, scriptService: _scriptService);

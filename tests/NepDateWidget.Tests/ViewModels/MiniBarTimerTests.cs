@@ -17,7 +17,7 @@ public class MiniBarTimerTests
     private static MiniBarViewModel Build(bool showSeconds)
     {
         var calendar = new CalendarService(new FakeNepaliDateAdapter());
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         return new MiniBarViewModel(
             calendarService: calendar,
             localizationService: loc,

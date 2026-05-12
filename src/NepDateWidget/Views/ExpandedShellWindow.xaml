@@ -212,21 +212,15 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- App icon -->
-                <Image Grid.Column="0"
-                       Source="pack://application:,,,/NepDateWidget;component/Assets/icon.png"
-                       Width="20" Height="20"
-                       Margin="12,0,8,0"
-                       VerticalAlignment="Center" />
-
                 <!-- App name + current date.
                      Reuses MiniBarView so the formatting and live-update behaviour
                      stay identical to the pill. Right-click bubbles up to the
                      TitleBar grid which owns the shared context menu. -->
-                <views:MiniBarView Grid.Column="1"
+                <views:MiniBarView Grid.Column="0"
                                    x:Name="TitleBarMiniBar"
                                    DataContext="{Binding MiniBar}"
-                                UseTransparentStyling="False"
+                                   UseTransparentStyling="False"
+                                   Margin="12,0,0,0"
                                    VerticalAlignment="Center" />
 
                 <!-- Drag region (transparent stretch) - left as window chrome,

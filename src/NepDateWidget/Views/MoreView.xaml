@@ -439,8 +439,8 @@
 
                             <!-- Date field -->
                             <TextBlock Text="{Binding NoteFieldDateLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="0,0,0,2" />
                             <TextBox x:Name="NoteFormFirstInput"
                                      Text="{Binding NoteFormDateInput, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource InputBoxStyle}"
@@ -450,8 +450,8 @@
 
                             <!-- Note text -->
                             <TextBlock Text="{Binding NoteFieldTextLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="0,0,0,2" />
                             <TextBox Text="{Binding NoteFormText, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource MultilineInputStyle}"
                                      Tag="Write your note here..."
@@ -657,8 +657,8 @@
 
                             <!-- Title -->
                             <TextBlock Text="{Binding ReminderFieldTitleLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="0,0,0,2" />
                             <TextBox x:Name="ReminderFormFirstInput"
                                      Text="{Binding ReminderFormTitle, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource InputBoxStyle}"
@@ -680,8 +680,8 @@
                                 <!-- Date -->
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="{Binding ReminderFieldDateLabel}"
-                                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                                               FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                               Style="{StaticResource FieldLabel}"
+                                               Margin="0,0,0,2" />
                                     <TextBox Text="{Binding ReminderFormDate, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{StaticResource InputBoxStyle}"
                                              Height="34"
@@ -694,8 +694,8 @@
                                 <!-- Time -->
                                 <StackPanel Grid.Column="2">
                                     <TextBlock Text="{Binding ReminderFieldTimeLabel}"
-                                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                                               FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                               Style="{StaticResource FieldLabel}"
+                                               Margin="0,0,0,2" />
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
@@ -725,8 +725,8 @@
 
                             <!-- Recurrence -->
                             <TextBlock Text="{Binding ReminderFieldRecurLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="0,0,0,2" />
                             <ComboBox ItemsSource="{Binding ReminderRecurrenceOptions}"
                                       SelectedIndex="{Binding ReminderFormRecurrenceIndex}"
                                       Style="{StaticResource ThemedComboBoxStyle}"
@@ -735,8 +735,8 @@
                             <!-- End Date (only shown when recurrence is set) -->
                             <StackPanel Visibility="{Binding ShowReminderEndDate, Converter={StaticResource BoolToVis}}">
                                 <TextBlock Text="{Binding ReminderFieldEndDateLabel}"
-                                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                                           FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                           Style="{StaticResource FieldLabel}"
+                                           Margin="0,0,0,2" />
                                 <TextBox Text="{Binding ReminderFormEndDate, UpdateSourceTrigger=PropertyChanged}"
                                          Style="{StaticResource InputBoxStyle}"
                                          Height="34"
@@ -750,8 +750,8 @@
 
                             <!-- Notes -->
                             <TextBlock Text="{Binding ReminderFieldNotesLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="0,0,0,2" />
                             <TextBox Text="{Binding ReminderFormNotes, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource MultilineInputStyle}"
                                      Tag="{Binding HintReminderNotes}"
@@ -1039,8 +1039,8 @@
 
                             <!-- Title -->
                             <TextBlock Text="{Binding DocFieldTitleLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="0,0,0,2" />
                             <TextBox Text="{Binding DocEditTitle, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource InputBoxStyle}"
                                      Height="34"
@@ -1094,8 +1094,8 @@
 
                             <!-- Tags -->
                             <TextBlock Text="{Binding DocFieldTagsLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="11" Opacity="0.65" Margin="0,0,0,4" />
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="0,0,0,4" />
 
                             <!-- Selected tag chips -->
                             <ItemsControl ItemsSource="{Binding DocEditTags}" Margin="0,0,0,4">
@@ -1204,8 +1204,8 @@
 
                             <!-- File (required) -->
                             <TextBlock Text="{Binding DocFieldFileLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="0,0,0,2" />
                             <Grid Margin="0,0,0,10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -1262,8 +1262,8 @@
 
                             <!-- Notes (optional) -->
                             <TextBlock Text="{Binding DocFieldNotesLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="11" Opacity="0.65" Margin="0,0,0,2" />
+                                       Style="{StaticResource FieldLabel}"
+                                       Margin="0,0,0,2" />
                             <TextBox Text="{Binding DocEditNotes, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource MultilineInputStyle}"
                                      Tag="Optional notes about this document..."

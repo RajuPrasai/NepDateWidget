@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Services;
+using NepDateWidget.Services;
 using NepDateWidget.Tests.Services;
 using NepDateWidget.ViewModels;
 
@@ -12,7 +12,7 @@ public class CalendarViewModelTests
     {
         var a   = adapter ?? new FakeNepaliDateAdapter();
         var svc = new CalendarService(a);
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv = new ConversionService(a);
         loc.SetLanguage(language);
         return new CalendarViewModel(svc, loc, conv);
@@ -182,7 +182,7 @@ public class CalendarViewModelTests
     {
         var a    = new FakeNepaliDateAdapter();
         var svc  = new CalendarService(a);
-        var loc  = new LocalizationService();
+        var loc  = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv = new ConversionService(a);
         loc.SetLanguage("en");
         var vm   = new CalendarViewModel(svc, loc, conv);
@@ -200,7 +200,7 @@ public class CalendarViewModelTests
     {
         var a    = new FakeNepaliDateAdapter();
         var svc  = new CalendarService(a);
-        var loc  = new LocalizationService();
+        var loc  = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var conv = new ConversionService(a);
         loc.SetLanguage("en");
         var vm   = new CalendarViewModel(svc, loc, conv);

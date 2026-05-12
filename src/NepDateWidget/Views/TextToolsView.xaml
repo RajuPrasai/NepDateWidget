@@ -156,14 +156,6 @@
             <Setter Property="Padding"  Value="6,0" />
         </Style>
 
-        <!-- Field label -->
-        <Style x:Key="FieldLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"   Value="11" />
-            <Setter Property="Opacity"    Value="0.65" />
-            <Setter Property="Margin"     Value="0,0,0,3" />
-        </Style>
-
         <!-- Stat number label -->
         <Style x:Key="StatNumber" TargetType="TextBlock">
             <Setter Property="FontSize"     Value="18" />

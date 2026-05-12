@@ -13,7 +13,7 @@ public class NetworkToolsViewModelTests
 {
     private static NetworkToolsViewModel Create(string lang = "en")
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage(lang);
         return new NetworkToolsViewModel(loc);
     }
@@ -276,7 +276,7 @@ public class NetworkToolsViewModelTests
     [Fact]
     public void OnLanguageChanged_UpdatesLabels()
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("en");
         var vm = new NetworkToolsViewModel(loc);
         var enLabel = vm.ModeMyIpLabel;

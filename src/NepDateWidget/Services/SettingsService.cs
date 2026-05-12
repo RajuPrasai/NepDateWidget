@@ -1,6 +1,7 @@
 ﻿using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -29,10 +30,12 @@ public sealed class SettingsService : ISettingsService, IDisposable
     };
 
     private readonly string _settingsPath;
+    private readonly string _defaultFilePath;
     private readonly SynchronizationContext? _syncContext;
     private DebouncedFileReloader? _reloader;
     private long _lastSelfWriteTicks;
     private WidgetSettings _current = new();
+    private WidgetSettings? _cachedDefaults;
     private bool _isFirstLaunch;
 
     public event EventHandler? SettingsChanged;
@@ -40,21 +43,24 @@ public sealed class SettingsService : ISettingsService, IDisposable
     // ── Construction ─────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Production constructor: resolves path beside the running executable.
+    /// Production constructor: resolves paths from AppPaths.
     /// </summary>
     public SettingsService()
-        : this(ResolveDefaultPath()) { }
+        : this(AppPaths.SettingsPath, AppPaths.DefaultSettingsPath) { }
 
     /// <summary>
-    /// Testable constructor that accepts an explicit file path.
+    /// Testable constructor that accepts explicit file paths.
     /// </summary>
-    public SettingsService(string settingsFilePath)
+    public SettingsService(string settingsFilePath, string defaultFilePath)
     {
         if (string.IsNullOrWhiteSpace(settingsFilePath))
             throw new ArgumentException("Settings file path must not be empty.", nameof(settingsFilePath));
+        if (string.IsNullOrWhiteSpace(defaultFilePath))
+            throw new ArgumentException("Default settings file path must not be empty.", nameof(defaultFilePath));
 
-        _settingsPath = settingsFilePath;
-        _syncContext = SynchronizationContext.Current;
+        _settingsPath    = settingsFilePath;
+        _defaultFilePath = defaultFilePath;
+        _syncContext     = SynchronizationContext.Current;
     }
 
     // ── ISettingsService ──────────────────────────────────────────────────────
@@ -68,36 +74,24 @@ public sealed class SettingsService : ISettingsService, IDisposable
     /// </summary>
     public void Load()
     {
+        _cachedDefaults = LoadDefaultSettings();
+
         if (!File.Exists(_settingsPath))
         {
             _isFirstLaunch = true;
-            _current = CreateDefaults();
-            try { Save(); } catch { /* best-effort: startup proceeds with in-memory defaults */ }
+            CopyDefaultToAppData();
+            if (File.Exists(_settingsPath))
+                LoadAndValidateFromDisk();
+            else
+            {
+                _current = _cachedDefaults ?? new WidgetSettings();
+                try { Save(); } catch { /* best-effort: startup proceeds with in-memory defaults */ }
+            }
         }
         else
         {
-            try
-            {
-                var json = File.ReadAllText(_settingsPath);
-                var loaded = JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
-
-                if (loaded is null)
-                {
-                    _current = CreateDefaults();
-                }
-                else
-                {
-                    loaded = Migrate(loaded, json);
-                    SettingsValidator.Validate(loaded);
-                    _current = loaded;
-                }
-            }
-            catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
-            {
-                Helpers.Log.Warn($"Settings load failed: {ex.GetType().Name}: {ex.Message}. Reverting to defaults.");
-                TryBackupCorrupted();
-                _current = CreateDefaults();
-            }
+            MergeNewSettingKeys();
+            LoadAndValidateFromDisk();
         }
 
         _reloader ??= new DebouncedFileReloader(_settingsPath, debounceMs: 500, onReload: () =>
@@ -106,6 +100,122 @@ public sealed class SettingsService : ISettingsService, IDisposable
             if (elapsed.TotalSeconds < 1.0) return;
             ReloadFromDisk();
         });
+    }
+
+    private WidgetSettings? LoadDefaultSettings()
+    {
+        try
+        {
+            if (!File.Exists(_defaultFilePath)) return null;
+            var json = File.ReadAllText(_defaultFilePath);
+            return JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
+        }
+        catch (Exception ex)
+        {
+            Helpers.Log.Warn($"SettingsService: failed to load defaults from '{_defaultFilePath}': {ex.Message}");
+            return null;
+        }
+    }
+
+    private void CopyDefaultToAppData()
+    {
+        try
+        {
+            if (!File.Exists(_defaultFilePath))
+            {
+                Helpers.Log.Warn($"SettingsService: default file '{_defaultFilePath}' not found; using C# defaults.");
+                return;
+            }
+            Directory.CreateDirectory(Path.GetDirectoryName(_settingsPath)!);
+            File.Copy(_defaultFilePath, _settingsPath, overwrite: false);
+        }
+        catch (Exception ex)
+        {
+            Helpers.Log.Warn($"SettingsService: failed to copy default settings: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Raw JSON key-level merge: adds any key present in the default file that is
+    /// absent from the user's AppData settings.json, then writes the merged file
+    /// back atomically.  Runs at every launch so updates automatically provision
+    /// new settings with their intended default values.
+    /// </summary>
+    private void MergeNewSettingKeys()
+    {
+        if (!File.Exists(_defaultFilePath)) return;
+        try
+        {
+            var userJson    = File.ReadAllText(_settingsPath);
+            var defaultJson = File.ReadAllText(_defaultFilePath);
+
+            using var userDoc    = JsonDocument.Parse(userJson);
+            using var defaultDoc = JsonDocument.Parse(defaultJson);
+
+            var userProps = new Dictionary<string, JsonElement>(StringComparer.OrdinalIgnoreCase);
+            foreach (var prop in userDoc.RootElement.EnumerateObject())
+                userProps[prop.Name] = prop.Value;
+
+            bool added = false;
+            foreach (var prop in defaultDoc.RootElement.EnumerateObject())
+            {
+                if (!userProps.ContainsKey(prop.Name))
+                {
+                    userProps[prop.Name] = prop.Value.Clone();
+                    added = true;
+                }
+            }
+
+            if (!added) return;
+
+            using var stream = new MemoryStream();
+            using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+            writer.WriteStartObject();
+            foreach (var kvp in userProps)
+            {
+                writer.WritePropertyName(kvp.Key);
+                kvp.Value.WriteTo(writer);
+            }
+            writer.WriteEndObject();
+            writer.Flush();
+
+            var mergedJson = Encoding.UTF8.GetString(stream.ToArray());
+            Interlocked.Exchange(ref _lastSelfWriteTicks, DateTime.UtcNow.Ticks);
+            if (!AtomicFile.WriteAllText(_settingsPath, mergedJson))
+                Helpers.Log.Warn("SettingsService: atomic write failed during key merge.");
+            else
+                Helpers.Log.Info("SettingsService: merged new default setting keys into settings.json.");
+        }
+        catch (Exception ex)
+        {
+            Helpers.Log.Warn($"SettingsService: failed to merge new setting keys: {ex.Message}");
+        }
+    }
+
+    private void LoadAndValidateFromDisk()
+    {
+        if (!File.Exists(_settingsPath)) return;
+        try
+        {
+            var json   = File.ReadAllText(_settingsPath);
+            var loaded = JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
+            if (loaded is null)
+            {
+                _current = _cachedDefaults ?? new WidgetSettings();
+            }
+            else
+            {
+                loaded = Migrate(loaded, json);
+                SettingsValidator.Validate(loaded, _cachedDefaults ?? new WidgetSettings());
+                _current = loaded;
+            }
+        }
+        catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
+        {
+            Helpers.Log.Warn($"Settings load failed: {ex.GetType().Name}: {ex.Message}. Reverting to defaults.");
+            TryBackupCorrupted();
+            _current = _cachedDefaults ?? new WidgetSettings();
+        }
     }
 
     private void TryBackupCorrupted()
@@ -137,7 +247,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
         Interlocked.Exchange(ref _lastSelfWriteTicks, DateTime.UtcNow.Ticks);
         try
         {
-            SettingsValidator.Validate(_current);
+            SettingsValidator.Validate(_current, _cachedDefaults ?? new WidgetSettings());
 
             var json = JsonSerializer.Serialize(_current, SerializerOptions);
             var tmpPath = _settingsPath + ".tmp";
@@ -169,7 +279,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
     /// </summary>
     public void ResetToDefaults()
     {
-        _current = CreateDefaults();
+        _current = _cachedDefaults ?? new WidgetSettings();
         Save();
     }
 
@@ -182,11 +292,11 @@ public sealed class SettingsService : ISettingsService, IDisposable
         if (!File.Exists(_settingsPath)) return;
         try
         {
-            var json = File.ReadAllText(_settingsPath);
+            var json   = File.ReadAllText(_settingsPath);
             var loaded = JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
             if (loaded is null) return;
             loaded = Migrate(loaded, json);
-            SettingsValidator.Validate(loaded);
+            SettingsValidator.Validate(loaded, _cachedDefaults ?? new WidgetSettings());
             _current = loaded;
             if (_syncContext is not null)
                 _syncContext.Post(_ => SettingsChanged?.Invoke(this, EventArgs.Empty), null);
@@ -232,15 +342,6 @@ public sealed class SettingsService : ISettingsService, IDisposable
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────
-
-    private static WidgetSettings CreateDefaults() => new();
-
-    private static string ResolveDefaultPath()
-    {
-        // Single source of truth for data paths is AppPaths. Migration of
-        // legacy beside-EXE files is handled centrally by AppPaths.MigrateLegacyData.
-        return AppPaths.SettingsPath;
-    }
 
     private static void TryDelete(string path)
     {

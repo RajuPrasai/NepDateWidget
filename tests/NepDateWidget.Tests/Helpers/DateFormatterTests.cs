@@ -8,7 +8,7 @@ public sealed class DateFormatterTests
 {
     private static LocalizationService Loc(string lang)
     {
-        var l = new LocalizationService();
+        var l = new LocalizationService(TestPaths.DefaultLocalizationPath);
         l.SetLanguage(lang);
         return l;
     }

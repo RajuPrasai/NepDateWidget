@@ -18,7 +18,7 @@ public class CalendarViewModelHolidayCountdownTests
         string language = "en")
     {
         var calSvc  = new CalendarService(adapter);
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var convSvc = new ConversionService(adapter);
         loc.SetLanguage(language);
         var holidayLookup = new HolidayLookupService(adapter);
@@ -45,7 +45,7 @@ public class CalendarViewModelHolidayCountdownTests
     {
         var calAdapter = new FakeNepaliDateAdapter();
         var calSvc  = new CalendarService(calAdapter);
-        var loc     = new LocalizationService();
+        var loc     = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var convSvc = new ConversionService(calAdapter);
         var vm = new CalendarViewModel(calSvc, loc, convSvc,
             showHolidayCountdown: true, holidayLookupService: null);
@@ -180,7 +180,7 @@ public class CalendarViewModelHolidayCountdownTests
 
         Assert.Single(vm.HolidayCountdownLines);
         // Nepali template: "{1} सम्म {0} दिन" → "दशैं सम्म ५ दिन"
-        Assert.Equal("दशैं सम्म ५ दिन", vm.HolidayCountdownLines[0]);
+        Assert.Equal("दशैं सम्म ५ दिन बाँकी", vm.HolidayCountdownLines[0]);
     }
 
     [Fact]
@@ -195,7 +195,7 @@ public class CalendarViewModelHolidayCountdownTests
         loc.SetLanguage("ne");
         vm.OnLanguageChanged();
 
-        Assert.Equal("दशैं सम्म ५ दिन", vm.HolidayCountdownLines[0]);
+        Assert.Equal("दशैं सम्म ५ दिन बाँकी", vm.HolidayCountdownLines[0]);
     }
 
     [Fact]

@@ -206,7 +206,7 @@ public class SettingsValidatorTests
     {
         var s = Valid(); s.ExpandedWidth = double.NaN;
         SettingsValidator.Validate(s);
-        Assert.Equal(600, s.ExpandedWidth);
+        Assert.Equal(840, s.ExpandedWidth);
     }
 
     [Fact]
@@ -214,7 +214,7 @@ public class SettingsValidatorTests
     {
         var s = Valid(); s.ExpandedWidth = double.PositiveInfinity;
         SettingsValidator.Validate(s);
-        Assert.Equal(600, s.ExpandedWidth);
+        Assert.Equal(840, s.ExpandedWidth);
     }
 
     [Fact]
@@ -222,7 +222,7 @@ public class SettingsValidatorTests
     {
         var s = Valid(); s.ExpandedWidth = double.NegativeInfinity;
         SettingsValidator.Validate(s);
-        Assert.Equal(600, s.ExpandedWidth);
+        Assert.Equal(840, s.ExpandedWidth);
     }
 
     [Fact]
@@ -256,7 +256,7 @@ public class SettingsValidatorTests
     {
         var s = Valid(); s.ExpandedHeight = double.NaN;
         SettingsValidator.Validate(s);
-        Assert.Equal(497.33333, s.ExpandedHeight);
+        Assert.Equal(750, s.ExpandedHeight);
     }
 
     [Fact]
@@ -396,8 +396,8 @@ public class SettingsValidatorTests
         Assert.Equal("Default", s.BackgroundPreset);
         Assert.Equal("Rounded", s.CornerStyle);
         Assert.Equal("12h", s.ClockFormat);
-        Assert.Equal(600, s.ExpandedWidth);
-        Assert.Equal(497.33333, s.ExpandedHeight);
+        Assert.Equal(840, s.ExpandedWidth);
+        Assert.Equal(750, s.ExpandedHeight);
         Assert.Equal(10, s.LogMaxSizeMb);
         Assert.Equal(6, s.RunBoxHotkeyModifiers);
         Assert.Equal(0x20, s.RunBoxHotkeyKey);
@@ -435,11 +435,11 @@ public class SettingsValidatorTests
     [InlineData(-1)]
     [InlineData(9)]
     [InlineData(100)]
-    public void LastExpandedTab_OutOfRange_ClampsTo0(int val)
+    public void LastExpandedTab_OutOfRange_FallsBackToDefault(int val)
     {
         var s = Valid(); s.LastExpandedTab = val;
         SettingsValidator.Validate(s);
-        Assert.Equal(0, s.LastExpandedTab);
+        Assert.Equal(8, s.LastExpandedTab);
     }
 
     [Theory]

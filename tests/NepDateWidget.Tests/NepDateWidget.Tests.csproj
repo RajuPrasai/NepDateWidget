@@ -31,4 +31,23 @@
     <ProjectReference Include="..\..\src\NepDateWidget\NepDateWidget.csproj" />
   </ItemGroup>
 
+  <!-- Copy default config files to test output so TestPaths can resolve them. -->
+  <ItemGroup>
+    <Content Include="..\..\src\NepDateWidget\Resources\configs\localization.json" CopyToOutputDirectory="PreserveNewest">
+      <Link>Resources\configs\localization.json</Link>
+    </Content>
+    <Content Include="..\..\src\NepDateWidget\Resources\configs\shortcuts.json" CopyToOutputDirectory="PreserveNewest">
+      <Link>Resources\configs\shortcuts.json</Link>
+    </Content>
+    <Content Include="..\..\src\NepDateWidget\Resources\configs\run-history.json" CopyToOutputDirectory="PreserveNewest">
+      <Link>Resources\configs\run-history.json</Link>
+    </Content>
+    <Content Include="..\..\src\NepDateWidget\Resources\configs\settings.json" CopyToOutputDirectory="PreserveNewest">
+      <Link>Resources\configs\settings.json</Link>
+    </Content>
+    <Content Include="..\..\src\NepDateWidget\Resources\configs\scripts.json" CopyToOutputDirectory="PreserveNewest">
+      <Link>Resources\configs\scripts.json</Link>
+    </Content>
+  </ItemGroup>
+
 </Project>

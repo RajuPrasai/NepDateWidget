@@ -11,11 +11,11 @@ public class ConverterViewModelTests
         string language = "en",
         IConversionService? conversionService = null)
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage(language);
         var adapter = new FakeNepaliDateAdapter();
         var svc = conversionService ?? new ConversionService(adapter);
-        var vm = new ConverterViewModel(svc, loc, adapter);
+        var vm = new ConverterViewModel(svc, loc, adapter: adapter);
         if (isAdToBs) vm.IsAdToBs = true;
         return vm;
     }
@@ -137,7 +137,7 @@ public class ConverterViewModelTests
     {
         var vm = Create(language: "en");
         var enTitle = vm.TitleLabel;
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("ne");
         var vmNe = new ConverterViewModel(new ConversionService(new FakeNepaliDateAdapter()), loc);
         Assert.NotEmpty(vmNe.TitleLabel);
@@ -147,7 +147,7 @@ public class ConverterViewModelTests
     [Fact]
     public void OnLanguageChanged_Called_Updates_Labels_In_Place()
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("en");
         var vm = new ConverterViewModel(new ConversionService(new FakeNepaliDateAdapter()), loc);
         var enTitle = vm.TitleLabel;

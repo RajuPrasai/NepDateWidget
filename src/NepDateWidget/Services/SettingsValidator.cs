@@ -36,9 +36,9 @@ public static class SettingsValidator
 
     /// <summary>
     /// Validates all fields of <paramref name="s"/>, replacing any invalid value with
-    /// the documented safe default.  Operates in-place; nothing is thrown.
+    /// the corresponding value from <paramref name="defaults"/>.  Operates in-place; nothing is thrown.
     /// </summary>
-    public static void Validate(WidgetSettings s)
+    public static void Validate(WidgetSettings s, WidgetSettings defaults)
     {
         // Schema version - values below 1 are corrupt; reset to current.
         // Values above CurrentSchemaVersion are from a future app version; preserve.
@@ -49,38 +49,43 @@ public static class SettingsValidator
         // off-screen recovery is handled by ScreenBoundsHelper at startup.
 
         // Window dimensions
-        s.ExpandedWidth  = Clamp(s.ExpandedWidth,  560,       MaxWindowDim, 600);
-        s.ExpandedHeight = Clamp(s.ExpandedHeight, 497.33333, MaxWindowDim, 497.33333);
+        s.ExpandedWidth  = Clamp(s.ExpandedWidth,  560,       MaxWindowDim, defaults.ExpandedWidth);
+        s.ExpandedHeight = Clamp(s.ExpandedHeight, 497.33333, MaxWindowDim, defaults.ExpandedHeight);
 
         // String enums
-        s.Language = ValidOrDefault(s.Language, ValidLanguages, "en");
-        s.Theme = ValidOrDefault(s.Theme, ValidThemes, "Light");
-        s.BackgroundPreset = ValidOrDefault(s.BackgroundPreset, ValidPresets, "Default");
-        s.CornerStyle = ValidOrDefault(s.CornerStyle, ValidCorners, "Rounded");
-        s.ClockFormat = ValidOrDefault(s.ClockFormat, ValidClockFormats, "12h");
-        s.FontFamily = ValidOrDefault(s.FontFamily, ValidFonts, "Open Sans");
+        s.Language         = ValidOrDefault(s.Language,         ValidLanguages,   defaults.Language);
+        s.Theme            = ValidOrDefault(s.Theme,            ValidThemes,      defaults.Theme);
+        s.BackgroundPreset = ValidOrDefault(s.BackgroundPreset, ValidPresets,     defaults.BackgroundPreset);
+        s.CornerStyle      = ValidOrDefault(s.CornerStyle,      ValidCorners,     defaults.CornerStyle);
+        s.ClockFormat      = ValidOrDefault(s.ClockFormat,      ValidClockFormats,defaults.ClockFormat);
+        s.FontFamily       = ValidOrDefault(s.FontFamily,       ValidFonts,       defaults.FontFamily);
 
         // Log size: clamp to supported range
         if (s.LogMaxSizeMb < 5 || s.LogMaxSizeMb > 100)
-            s.LogMaxSizeMb = 10;
+            s.LogMaxSizeMb = defaults.LogMaxSizeMb;
 
         // Hotkey modifiers: must be a valid combination (0 = disabled, or 1..15)
         if (s.RunBoxHotkeyModifiers < 0 || s.RunBoxHotkeyModifiers > 15)
-            s.RunBoxHotkeyModifiers = 6; // Ctrl+Shift
+            s.RunBoxHotkeyModifiers = defaults.RunBoxHotkeyModifiers;
 
         // Hotkey key: must be a valid virtual key code (0 = disabled, or 1..254)
         if (s.RunBoxHotkeyKey < 0 || s.RunBoxHotkeyKey > 254)
-            s.RunBoxHotkeyKey = 0x20; // VK_SPACE
+            s.RunBoxHotkeyKey = defaults.RunBoxHotkeyKey;
 
         // Notification duration: 5-60 seconds
         if (s.NotificationDurationSeconds < 5 || s.NotificationDurationSeconds > 60)
-            s.NotificationDurationSeconds = 10;
+            s.NotificationDurationSeconds = defaults.NotificationDurationSeconds;
 
         // Last expanded tab: 0-MaxTabIndex
         if (s.LastExpandedTab < 0 || s.LastExpandedTab > MaxTabIndex)
-            s.LastExpandedTab = 0;
-
+            s.LastExpandedTab = defaults.LastExpandedTab;
     }
+
+    /// <summary>
+    /// Convenience overload using C# property defaults as fallback values.
+    /// Kept for test backward-compatibility.
+    /// </summary>
+    public static void Validate(WidgetSettings s) => Validate(s, new WidgetSettings());
 
     // ── Private helpers ───────────────────────────────────────────────────────
 

@@ -13,7 +13,7 @@ public class TextToolsViewModelTests
 {
     private static TextToolsViewModel Create(string lang = "en")
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage(lang);
         return new TextToolsViewModel(loc);
     }
@@ -541,7 +541,7 @@ public class TextToolsViewModelTests
     public void TabTextLabel_NonEmpty_InEnglish()
     {
         // This test verifies the localization key exists and the tab label is wired in MainViewModel.
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("en");
         var label = loc.Get("tab.text");
         Assert.NotEmpty(label);
@@ -551,7 +551,7 @@ public class TextToolsViewModelTests
     [Fact]
     public void TabTextLabel_NonEmpty_InNepali()
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage("ne");
         var label = loc.Get("tab.text");
         Assert.NotEmpty(label);

@@ -66,7 +66,7 @@ public class SettingsViewModelUpdateTests
         IUpdateService? updateService = null)
     {
         var svc = new FakeSettingsService();
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var theme = new FakeThemeService();
         var auto = new FakeAutoStartService();
         var upd = updateService as FakeUpdateService ?? new FakeUpdateService();
@@ -79,7 +79,7 @@ public class SettingsViewModelUpdateTests
     public void Constructor_WithNullUpdateService_DoesNotThrow()
     {
         var svc = new FakeSettingsService();
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var theme = new FakeThemeService();
         var auto = new FakeAutoStartService();
         var ex = Record.Exception(() => new SettingsViewModel(svc, loc, theme, auto, updateService: null));
@@ -122,7 +122,7 @@ public class SettingsViewModelUpdateTests
     public async Task CheckForUpdatesNow_NoUpdateService_SetsUnavailableMessage()
     {
         var svc = new FakeSettingsService();
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         var theme = new FakeThemeService();
         var auto = new FakeAutoStartService();
         var vm = new SettingsViewModel(svc, loc, theme, auto, updateService: null);
@@ -191,7 +191,7 @@ public class SettingsViewModelUpdateTests
             NextDownloadResult = false
         };
         var (vm, _, _, _) = Create(upd);
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
 
         await InvokeCheckAsync(vm);
 

@@ -79,7 +79,7 @@ public sealed class MoreViewModelTests
 
     private static LocalizationService MakeLoc(string lang = "en")
     {
-        var loc = new LocalizationService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         loc.SetLanguage(lang);
         return loc;
     }

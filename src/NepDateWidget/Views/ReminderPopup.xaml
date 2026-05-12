@@ -103,13 +103,6 @@
             <Setter Property="Height" Value="30" />
         </Style>
 
-        <Style x:Key="FieldLabel" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize" Value="13" />
-            <Setter Property="Opacity" Value="0.7" />
-            <Setter Property="Margin" Value="0,6,0,2" />
-        </Style>
-
         <Style x:Key="RecurrenceToggle" TargetType="RadioButton">
             <Setter Property="Cursor" Value="Hand" />
             <Setter Property="Template">
@@ -310,7 +303,7 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel Grid.Column="0">
-                        <TextBlock Text="{Binding DateLabel}" Style="{StaticResource FieldLabel}" />
+                        <TextBlock Text="{Binding DateLabel}" Style="{StaticResource FieldLabel}" Margin="0,6,0,2" />
                         <TextBox Text="{Binding EditDate, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource RInput_Error}" MaxLength="12"
                                  Tag="{Binding HintReminderDate}" TabIndex="1" />
@@ -320,7 +313,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Grid.ColumnSpan="2" Margin="10,0,0,0">
-                        <TextBlock Text="{Binding TimeLabel}" Style="{StaticResource FieldLabel}" />
+                        <TextBlock Text="{Binding TimeLabel}" Style="{StaticResource FieldLabel}" Margin="0,6,0,2" />
                         <StackPanel Orientation="Horizontal" Height="37" Width="130">
                             <TextBox Text="{Binding EditTime, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource RInput_TimeError}" MaxLength="5"
@@ -348,14 +341,14 @@
                 </Grid>
 
                 <!-- Notes -->
-                <TextBlock Text="{Binding NotesLabel}" Style="{StaticResource FieldLabel}" />
+                <TextBlock Text="{Binding NotesLabel}" Style="{StaticResource FieldLabel}" Margin="0,6,0,2" />
                 <TextBox Text="{Binding EditNotes, UpdateSourceTrigger=PropertyChanged}"
                          Style="{StaticResource MultilineInputStyle}"
                          Height="40" MaxLength="500"
                          TabIndex="4" />
 
                 <!-- Recurrence toggle row -->
-                <TextBlock Text="{Binding RecurrenceLabel}" Style="{StaticResource FieldLabel}" />
+                <TextBlock Text="{Binding RecurrenceLabel}" Style="{StaticResource FieldLabel}" Margin="0,6,0,2" />
                 <UniformGrid Columns="5">
                     <RadioButton Content="{Binding RecurrenceOptions[0]}"
                                  Style="{StaticResource RecurrenceToggle}"
@@ -391,7 +384,7 @@
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
-                    <TextBlock Text="{Binding EndDateLabel}" Style="{StaticResource FieldLabel}" />
+                    <TextBlock Text="{Binding EndDateLabel}" Style="{StaticResource FieldLabel}" Margin="0,6,0,2" />
                     <TextBox Text="{Binding EditEndDate, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource RInput_EndDateError}" MaxLength="12"
                              Tag="{Binding HintReminderDate}" TabIndex="9" />

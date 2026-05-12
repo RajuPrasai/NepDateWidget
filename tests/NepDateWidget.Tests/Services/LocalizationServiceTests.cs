@@ -6,7 +6,7 @@ public class LocalizationServiceTests
 {
     private static LocalizationService Create(string lang = "en")
     {
-        var svc = new LocalizationService();
+        var svc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         svc.SetLanguage(lang);
         return svc;
     }
@@ -237,13 +237,13 @@ public class LocalizationServiceTests
     // ── Disk-based path (Load + seed) ─────────────────────────────────────────
 
     [Fact]
-    public void Load_FileAbsent_SeedsFileFromEmbedded()
+    public void Load_FileAbsent_SeedsFileFromDefault()
     {
         var dir  = Path.Combine(Path.GetTempPath(), $"NepDateWidget_LocTest_{Guid.NewGuid():N}");
         var path = Path.Combine(dir, "localization.json");
         try
         {
-            using var svc = new LocalizationService(path);
+            using var svc = new LocalizationService(path, TestPaths.DefaultLocalizationPath);
             svc.Load();
             Assert.True(File.Exists(path), "localization.json should be created on first Load()");
             Assert.True(new FileInfo(path).Length > 0, "seeded file must not be empty");
@@ -261,7 +261,7 @@ public class LocalizationServiceTests
         var path = Path.Combine(dir, "localization.json");
         try
         {
-            using var svc = new LocalizationService(path);
+            using var svc = new LocalizationService(path, TestPaths.DefaultLocalizationPath);
             svc.Load();
             Assert.Equal("Exit", svc.Get("app.exit"));
         }
@@ -280,10 +280,10 @@ public class LocalizationServiceTests
         {
             Directory.CreateDirectory(dir);
             File.WriteAllText(path, """{"custom.key":{"en":"hello","ne":"नमस्ते"}}""");
-            using var svc = new LocalizationService(path);
+            using var svc = new LocalizationService(path, TestPaths.DefaultLocalizationPath);
             svc.Load();
             Assert.Equal("hello", svc.Get("custom.key"));
-            // Missing embedded keys are merged in — disk values take precedence over embedded.
+            // Missing default keys are merged in-memory — disk values take precedence over defaults.
             Assert.Equal("Exit", svc.Get("app.exit"));
         }
         finally
@@ -293,11 +293,11 @@ public class LocalizationServiceTests
     }
 
     [Fact]
-    public void Load_EmptyPath_EmbeddedConstructor_IsNoOp()
+    public void Load_TestConstructor_IsNoOp()
     {
-        // Calling Load() on the embedded-only (no-arg) constructor must not throw
+        // Calling Load() on the test constructor must not throw
         // or log warnings about missing paths — it is a documented no-op.
-        using var svc = new LocalizationService();
+        using var svc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         svc.Load(); // must not throw
         Assert.Equal("Exit", svc.Get("app.exit")); // data still intact
     }
@@ -311,11 +311,11 @@ public class LocalizationServiceTests
         {
             Directory.CreateDirectory(dir);
             File.WriteAllText(path, "NOT VALID JSON {{{{");
-            using var svc = new LocalizationService(path);
+            using var svc = new LocalizationService(path, TestPaths.DefaultLocalizationPath);
             var ex = Record.Exception(() => svc.Load());
             Assert.Null(ex);
-            // corrupted disk file causes LoadFromDisk to no-op; MergeMissingFromEmbedded
-            // then fills all keys from embedded strings so the app remains usable.
+            // corrupted disk file causes LoadFromDisk to no-op; MergeMissingFromDefaults
+            // then fills all keys from default file so the app remains usable.
             Assert.Equal("Exit", svc.Get("app.exit"));
         }
         finally

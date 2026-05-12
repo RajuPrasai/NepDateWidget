@@ -237,8 +237,8 @@
                     Margin="0,0,0,4">
 
             <TextBlock Text="{Binding InterestPrincipalLabel}"
-                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                       FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+                       Style="{StaticResource FieldLabel}"
+                       Margin="0,0,0,3" />
             <TextBox Text="{Binding InterestPrincipal, UpdateSourceTrigger=PropertyChanged}"
                      Tag="{Binding HintPrincipal}"
                      Style="{StaticResource InputBoxStyle}"
@@ -252,11 +252,9 @@
                     <ColumnDefinition Width="*"  />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding InterestFromLabel}"
-                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                           FontSize="11" Opacity="0.5" />
+                           Style="{StaticResource FieldLabel}" />
                 <TextBlock Grid.Column="2" Text="{Binding InterestToLabel}"
-                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                           FontSize="11" Opacity="0.5" />
+                           Style="{StaticResource FieldLabel}" />
             </Grid>
 
             <!-- From / BS-AD toggle / To -->
@@ -316,11 +314,9 @@
                     <ColumnDefinition Width="32" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding InterestFromLabel}"
-                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                           FontSize="11" Opacity="0.5" />
+                           Style="{StaticResource FieldLabel}" />
                 <TextBlock Grid.Column="2" Text="{Binding InterestRateColLabel}"
-                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                           FontSize="11" Opacity="0.5" />
+                           Style="{StaticResource FieldLabel}" />
             </Grid>
 
             <!-- Rate rows -->
@@ -459,11 +455,9 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding EmiLoanLabel}"
-                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                           FontSize="11" Opacity="0.5" />
+                           Style="{StaticResource FieldLabel}" />
                 <TextBlock Grid.Column="2" Text="{Binding EmiStartDateLabel}"
-                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                           FontSize="11" Opacity="0.5" />
+                           Style="{StaticResource FieldLabel}" />
             </Grid>
             <Grid Margin="0,0,0,8">
                 <Grid.ColumnDefinitions>
@@ -521,16 +515,16 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="{Binding EmiRateLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+                               Style="{StaticResource FieldLabel}"
+                               Margin="0,0,0,3" />
                     <TextBox Text="{Binding EmiAnnualRate, UpdateSourceTrigger=PropertyChanged}"
                              Tag="{Binding HintRate}"
                              Style="{StaticResource InputBoxStyle}" />
                 </StackPanel>
                 <StackPanel Grid.Column="2">
                     <TextBlock Text="{Binding EmiMonthsLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="11" Opacity="0.5" Margin="0,0,0,3" />
+                               Style="{StaticResource FieldLabel}"
+                               Margin="0,0,0,3" />
                     <TextBox Text="{Binding EmiMonths, UpdateSourceTrigger=PropertyChanged}"
                              Tag="{Binding HintMonths}"
                              Style="{StaticResource InputBoxStyle}" />
@@ -598,8 +592,8 @@
 
                         <TextBlock Grid.Row="0" Grid.Column="0"
                                    Text="{Binding EmiMonthlyLabel}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="12" Opacity="0.7" VerticalAlignment="Center" />
+                                   Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center" />
                         <TextBlock Grid.Row="0" Grid.Column="1"
                                    Text="{Binding EmiMonthlyText}"
                                    Foreground="{DynamicResource WidgetSuccessBrush}"
@@ -612,8 +606,8 @@
 
                         <TextBlock Grid.Row="2" Grid.Column="0"
                                    Text="{Binding EmiTotalPaymentLabel}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="12" Opacity="0.7" VerticalAlignment="Center"
+                                   Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center"
                                    Margin="0,0,0,4" />
                         <TextBlock Grid.Row="2" Grid.Column="1"
                                    Text="{Binding EmiTotalPaymentText}"
@@ -623,8 +617,8 @@
 
                         <TextBlock Grid.Row="3" Grid.Column="0"
                                    Text="{Binding EmiTotalInterestLabel}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="12" Opacity="0.7" VerticalAlignment="Center" />
+                                   Style="{StaticResource FieldLabel}"
+                                   VerticalAlignment="Center" />
                         <TextBlock Grid.Row="3" Grid.Column="1"
                                    Text="{Binding EmiTotalInterestText}"
                                    Foreground="{DynamicResource WidgetErrorBrush}"
@@ -647,24 +641,19 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="{Binding EmiColYearLabel}"
-                                       FontSize="11" FontWeight="SemiBold" Opacity="0.5"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                                       Style="{StaticResource FieldLabel}" />
                             <TextBlock Grid.Column="1" Text="{Binding EmiColPrincipalLabel}"
-                                       FontSize="11" FontWeight="SemiBold" Opacity="0.5"
-                                       HorizontalAlignment="Right"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                                       Style="{StaticResource FieldLabel}"
+                                       HorizontalAlignment="Right" />
                             <TextBlock Grid.Column="2" Text="{Binding EmiColInterestLabel}"
-                                       FontSize="11" FontWeight="SemiBold" Opacity="0.5"
-                                       HorizontalAlignment="Right"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                                       Style="{StaticResource FieldLabel}"
+                                       HorizontalAlignment="Right" />
                             <TextBlock Grid.Column="3" Text="{Binding EmiColTotalLabel}"
-                                       FontSize="11" FontWeight="SemiBold" Opacity="0.5"
-                                       HorizontalAlignment="Right"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                                       Style="{StaticResource FieldLabel}"
+                                       HorizontalAlignment="Right" />
                             <TextBlock Grid.Column="4" Text="{Binding EmiColBalanceLabel}"
-                                       FontSize="11" FontWeight="SemiBold" Opacity="0.5"
-                                       HorizontalAlignment="Right"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                                       Style="{StaticResource FieldLabel}"
+                                       HorizontalAlignment="Right" />
                         </Grid>
 
                         <Border Height="1" Background="{DynamicResource WidgetDividerBrush}"
