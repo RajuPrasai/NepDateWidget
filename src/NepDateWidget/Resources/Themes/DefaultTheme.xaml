@@ -31,6 +31,7 @@
     <SolidColorBrush x:Key="WidgetDayTodayBrush"       Color="#89B4FA" />
     <SolidColorBrush x:Key="WidgetDayTodayTextBrush"   Color="#1E1E2E" />
     <SolidColorBrush x:Key="WidgetDaySaturdayBrush"    Color="#F38BA8" />
+    <SolidColorBrush x:Key="WidgetDayHolidayTextBrush" Color="#1E1E2E" />
     <SolidColorBrush x:Key="WidgetDayHighlightedBrush" Color="#A6E3A1" />
     <SolidColorBrush x:Key="WidgetDayWeekendTintBrush"  Color="#18F38BA8" />
     <SolidColorBrush x:Key="WidgetDayPaddingBrush"     Color="Transparent" />

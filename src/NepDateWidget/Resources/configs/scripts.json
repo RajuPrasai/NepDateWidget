@@ -1,1 +1,8 @@
-[]
+[
+  {
+    "Name": "organize-desktop",
+    "Description": "Move Desktop files into category subfolders inside Desktop\\Organized",
+    "Path": "{APPDIR}\\Resources\\configs\\scripts\\organize-desktop.ps1",
+    "Interpreter": "powershell"
+  }
+]

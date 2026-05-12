@@ -474,7 +474,7 @@
       e.preventDefault();
       const y = t.getBoundingClientRect().top + window.pageYOffset - 72;
       window.scrollTo({ top: y, behavior: 'smooth' });
-      history.replaceState(null, '', '#' + id);
+      try { history.replaceState(null, '', '#' + id); } catch (_) {}
     });
   }
 

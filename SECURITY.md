@@ -36,9 +36,15 @@ Please include:
 In scope:
 
 - Code in this repository (`src/`, `tests/`, build scripts, GitHub Actions)
-- The auto-update flow (Velopack feed, signature handling, channel resolution)
-- Local data files (`settings.json`, `reminders.json`, `notes.json`,
-  `nepdate.log`) where unsafe deserialization or path-traversal is possible
+- Local data files where unsafe deserialization or path-traversal is possible:
+  `settings.json`, `reminders.json`, `notes.json`, `documents.json`,
+  `run-history.json`, `runtime.json`, `localization.json`, `nepdate.log`
+- `scripts.json` - user-defined scripts executed by RunBox via `Process.Start`;
+  a crafted file could trigger arbitrary command execution
+- `shortcuts.json` - user-defined URL prefix shortcuts opened via the default
+  browser handler; a crafted entry could direct users to unintended URLs
+- Network requests from the Network Tools tab (outbound DNS, ICMP, HTTP/S, WHOIS
+  against user-supplied hosts; public IP lookup via `api.ipify.org`)
 
 Out of scope:
 

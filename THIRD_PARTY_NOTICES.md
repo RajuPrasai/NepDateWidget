@@ -17,19 +17,17 @@ corresponding third-party components, not to the rest of NepDate Widget.
 - Source: <https://github.com/TheCrossLegCoder/NepDate>
 - License: MIT
 
-### Velopack
-
-- Source: <https://github.com/velopack/velopack>
-- License: MIT
-
 ### DocumentFormat.OpenXml
 
 - Source: <https://github.com/dotnet/Open-XML-SDK>
 - License: MIT
 
-### MIT License (applies to NepDate, Velopack, DocumentFormat.OpenXml)
+### MIT License (applies to NepDate, DocumentFormat.OpenXml)
 
 ```
+NepDate - Copyright (c) 2023 NepDate and contributors
+DocumentFormat.OpenXml - Copyright (c) .NET Foundation and Contributors
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -49,9 +47,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
 
-(Each upstream project carries its own copyright notice; consult the
-linked source repositories for the full text and copyright lines.)
-
 ---
 
 ## Embedded fonts
@@ -60,19 +55,25 @@ The application bundles the following font families inside the
 executable. All are distributed under the **SIL Open Font License,
 Version 1.1**. The full OFL text is reproduced at the end of this file.
 
-| Family             | Copyright holder                          | Upstream                                                          |
-|--------------------|-------------------------------------------|-------------------------------------------------------------------|
-| Inter              | The Inter Project Authors                 | <https://github.com/rsms/inter>                                   |
-| JetBrains Mono     | JetBrains s.r.o.                          | <https://github.com/JetBrains/JetBrainsMono>                      |
-| Fira Code          | The Fira Code Project Authors             | <https://github.com/tonsky/FiraCode>                              |
-| Source Sans 3      | Adobe                                     | <https://github.com/adobe-fonts/source-sans>                      |
-| Source Code Pro    | Adobe                                     | <https://github.com/adobe-fonts/source-code-pro>                  |
-| IBM Plex Sans      | IBM Corp.                                 | <https://github.com/IBM/plex>                                     |
-| IBM Plex Mono      | IBM Corp.                                 | <https://github.com/IBM/plex>                                     |
-| Roboto             | Google LLC                                | <https://github.com/googlefonts/roboto>                           |
-| Roboto Mono        | Google LLC                                | <https://github.com/googlefonts/RobotoMono>                       |
-| Noto Sans          | Google LLC                                | <https://github.com/notofonts/latin-greek-cyrillic>               |
-| Cascadia Code      | Microsoft Corporation                     | <https://github.com/microsoft/cascadia-code>                      |
+| Family        | Copyright holder                   | Upstream                                                       |
+|---------------|------------------------------------|----------------------------------------------------------------|
+| Cascadia Code | Microsoft Corporation              | <https://github.com/microsoft/cascadia-code>                   |
+| DM Sans       | The DM Sans Project Authors        | <https://github.com/googlefonts/dm-fonts>                      |
+| IBM Plex Sans | IBM Corp.                          | <https://github.com/IBM/plex>                                  |
+| Imprima       | The Imprima Project Authors        | <https://github.com/googlefonts/imprima>                       |
+| Inter         | The Inter Project Authors          | <https://github.com/rsms/inter>                                |
+| Lato          | Łukasz Dziedzic                    | <https://github.com/googlefonts/lato-source>                   |
+| Montserrat    | The Montserrat Project Authors     | <https://github.com/JulietaUla/Montserrat>                     |
+| Noto Sans     | Google LLC                         | <https://github.com/notofonts/latin-greek-cyrillic>            |
+| Nunito        | The Nunito Project Authors         | <https://github.com/googlefonts/Nunito>                        |
+| Open Sans     | The Open Sans Project Authors      | <https://github.com/googlefonts/opensans>                      |
+| Poppins       | The Poppins Project Authors        | <https://github.com/itfoundry/poppins>                         |
+| Quicksand     | The Quicksand Project Authors      | <https://github.com/andrew-paglinawan/QuicksandFamily>         |
+| Raleway       | The Raleway Project Authors        | <https://github.com/impallari/Raleway>                         |
+| Roboto        | Google LLC                         | <https://github.com/googlefonts/roboto>                        |
+| Rubik         | The Rubik Project Authors          | <https://github.com/googlefonts/rubik>                         |
+| Source Sans 3 | Adobe                              | <https://github.com/adobe-fonts/source-sans>                   |
+| Work Sans     | The Work Sans Project Authors      | <https://github.com/weiweihuanghuang/Work-Sans>                |
 
 For exact upstream copyright lines, consult each project's `OFL.txt`
 file in the linked repositories.
@@ -171,5 +172,5 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 ## System fonts (not bundled)
 
-The default UI font (`Segoe UI`) is supplied by Windows and is not
-distributed with this application.
+`Segoe UI`, `Calibri`, and `Verdana` are available as UI font options but
+are not bundled with this application. They are supplied by Windows.

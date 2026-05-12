@@ -20,7 +20,7 @@
 # SIGNING NOTE
 #   The Store re-signs the package during certification. For Store submission you
 #   do not need a code-signing certificate. For local testing via Add-AppxPackage
-#   you do — create a self-signed cert whose Subject matches Publisher and install
+#   you do - create a self-signed cert whose Subject matches Publisher and install
 #   it to the Trusted People store, then sign with signtool.exe.
 #
 # STORE UPLOAD
@@ -29,8 +29,8 @@
 #   The portal validates the package and displays device family availability.
 #
 # OUTPUT
-#   publish/win-x64-store/     — unpacked content (for inspection)
-#   publish/NepDateWidget-<Version>.msix  — upload this to Partner Center
+#   publish/win-x64-store/     - unpacked content (for inspection)
+#   publish/NepDateWidget-<Version>.msix  - upload this to Partner Center
 
 param(
     # Version in 4-part format (Major.Minor.Build.Revision).
@@ -128,7 +128,7 @@ Then re-run:
     # Resize the project icon into every tile size required by the manifest and
     # by the Store. System.Drawing is available on Windows in .NET 7+ (the
     # Windows-only System.Drawing.Common support). All sizes must be exact pixels
-    # — the Store certification pipeline rejects wrong-sized images.
+    # - the Store certification pipeline rejects wrong-sized images.
     Write-Host ''
     Write-Host '[3/5] Generating store logo assets from Assets/icon.png' -ForegroundColor Cyan
 
@@ -171,7 +171,7 @@ Then re-run:
     Save-Tile  44  44  'Square44x44Logo.png'     # taskbar, app list
     Save-Tile  50  50  'StoreLogo.png'            # Settings → Apps, Properties logo
     Save-Tile 150 150  'Square150x150Logo.png'    # medium Start tile
-    # Optional but declared in manifest — include for completeness:
+    # Optional but declared in manifest - include for completeness:
     Save-Tile  71  71  'Square71x71Logo.png'      # small Start tile
     Save-Tile 310 310  'Square310x310Logo.png'    # large Start tile
     Save-WideTile      'Wide310x150Logo.png'      # wide Start tile
@@ -223,12 +223,12 @@ Then re-run:
     $outMsix = "$outDir\NepDateWidget-$Version4.msix"
     Remove-Item $outMsix -Force -ErrorAction SilentlyContinue
 
-    # /d        — content directory (everything in publishDir goes into the package)
-    # /p        — output .msix path
-    # /o        — overwrite output if it exists
-    # /h SHA256 — explicit SHA2-256 block map hash (Store requirement; this is
+    # /d        - content directory (everything in publishDir goes into the package)
+    # /p        - output .msix path
+    # /o        - overwrite output if it exists
+    # /h SHA256 - explicit SHA2-256 block map hash (Store requirement; this is
     #             also the MakeAppx default, but specifying it makes compliance visible)
-    # (no /nv)  — let MakeAppx run its full semantic validation
+    # (no /nv)  - let MakeAppx run its full semantic validation
     & $makeAppx pack /d $publishDir /p $outMsix /o /h SHA256
     if ($LASTEXITCODE -ne 0) { throw 'MakeAppx failed. See output above.' }
 
@@ -236,7 +236,7 @@ Then re-run:
     Write-Host "MSIX created: $outMsix" -ForegroundColor Green
 
     if ($hasPlaceholders) {
-        Write-Host 'REMINDER: identity values are PLACEHOLDER — not submittable.' -ForegroundColor Yellow
+        Write-Host 'REMINDER: identity values are PLACEHOLDER - not submittable.' -ForegroundColor Yellow
     } else {
         # ── WACK (Windows App Certification Kit) ─────────────────────────────
         # Microsoft requires you to validate with WACK before submitting.
@@ -263,7 +263,7 @@ Then re-run:
         #   5. Uninstall the test package:
         #        Remove-AppxPackage <PackageFullName>
         Write-Host ''
-        Write-Host 'Next step — run WACK before submitting:' -ForegroundColor Yellow
+        Write-Host 'Next step - run WACK before submitting:' -ForegroundColor Yellow
         $wackDir = 'C:\Program Files (x86)\Windows Kits\10\App Certification Kit'
         Write-Host "  $wackDir\appcert.exe reset" -ForegroundColor DarkGray
         Write-Host "  $wackDir\appcert.exe test -packagefullname <FullName> -reportoutputpath $root\publish\wack-report.xml" -ForegroundColor DarkGray

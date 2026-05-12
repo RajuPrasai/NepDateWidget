@@ -116,18 +116,18 @@
               </span>
               <span class="chip chip-success">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
-                Free &amp; open source
+                Source available
               </span>
               <span class="chip">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                MIT License
+                PolyForm Strict 1.0.0
               </span>
               <span class="chip chip-accent">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-12V5l-8-3-8 3v5c0 8 8 12 8 12z"/></svg>
                 Zero telemetry
               </span>
             </div><h1>
-              The Nepali calendar that <span class="grad">lives on your taskbar</span>.
+              The नेपाली calendar that <span class="grad">lives on your taskbar</span>.
             </h1>
             <p class="lede">
               NepDate Widget is a tiny, always-on-screen mini bar that shows the current Bikram Sambat
@@ -156,16 +156,36 @@
           </div>
 
           <!-- Hero shot: screenshot collage (decorative, free-floating) -->
+          <!-- DOM order here = lightbox cycle order. Visible items carry a CSS position class. -->
+          <!-- Hidden items (display:none) exist only to participate in lightbox cycling. -->
           <div class="hero-collage" aria-label="Screenshot collage">
             <div class="hc-glow"></div>
-            <div class="hc-item hc-tl" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="Loan EMI calculator" tabindex="0" role="button" aria-label="View Loan EMI calculator"><img src="assets/screenshots/tab-bank-emi.png" alt="Loan EMI calculator" loading="eager" /></div>
-            <div class="hc-item hc-tr" data-lightbox="assets/screenshots/tab-network-ping.png" data-caption="Network ping" tabindex="0" role="button" aria-label="View Network ping"><img src="assets/screenshots/tab-network-ping.png" alt="Network ping" loading="eager" /></div>
-            <div class="hc-item hc-bl" data-lightbox="assets/screenshots/tab-text-password.png" data-caption="Password generator" tabindex="0" role="button" aria-label="View Password generator"><img src="assets/screenshots/tab-text-password.png" alt="Password generator" loading="eager" /></div>
-            <div class="hc-item hc-br" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area unit conversion" tabindex="0" role="button" aria-label="View Area unit conversion"><img src="assets/screenshots/tab-unit-area.png" alt="Area unit conversion" loading="eager" /></div>
+            <div class="hc-item hc-hero" data-lightbox="assets/screenshots/tab-calander.png" data-caption="Bikram Sambat month grid with tithi, holidays, and fiscal quarter" tabindex="0" role="button" aria-label="View Bikram Sambat calendar"><img src="assets/screenshots/tab-calander.png" alt="Bikram Sambat calendar" loading="eager" /></div>
             <div class="hc-item hc-side-l" data-lightbox="assets/screenshots/tab-date-convert.png" data-caption="BS - AD date conversion" tabindex="0" role="button" aria-label="View BS - AD date conversion"><img src="assets/screenshots/tab-date-convert.png" alt="BS - AD date conversion" loading="eager" /></div>
-            <div class="hc-item hc-side-r" data-lightbox="assets/screenshots/tab-more-reminder.png" data-caption="Reminders pinned to BS dates" tabindex="0" role="button" aria-label="View Reminders pinned to BS dates"><img src="assets/screenshots/tab-more-reminder.png" alt="Reminders pinned to BS dates" loading="eager" /></div>
-            <div class="hc-item hc-front" data-lightbox="assets/screenshots/tab-settings.png" data-caption="Settings: appearance, language, presets" tabindex="0" role="button" aria-label="View Settings: appearance, language, presets"><img src="assets/screenshots/tab-settings.png" alt="Settings: appearance, language, presets" loading="eager" /></div>
-            <div class="hc-item hc-hero" data-lightbox="assets/screenshots/tab-calander.png" data-caption="Bikram Sambat calendar" tabindex="0" role="button" aria-label="View Bikram Sambat calendar"><img src="assets/screenshots/tab-calander.png" alt="Bikram Sambat calendar" loading="eager" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-date-days.png" data-caption="Add, subtract, and difference between BS dates"><img src="assets/screenshots/tab-date-days.png" alt="Date days calculator" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-date-time.png" data-caption="Timezone converter with compact dropdowns"><img src="assets/screenshots/tab-date-time.png" alt="Timezone converter" /></div>
+            <div class="hc-item hc-br" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area unit conversion" tabindex="0" role="button" aria-label="View Area unit conversion"><img src="assets/screenshots/tab-unit-area.png" alt="Area unit conversion" loading="eager" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-unit-weight.png" data-caption="Weight unit conversion"><img src="assets/screenshots/tab-unit-weight.png" alt="Weight unit conversion" /></div>
+            <div class="hc-item hc-bl" data-lightbox="assets/screenshots/tab-text-password.png" data-caption="Password generator with live strength meter" tabindex="0" role="button" aria-label="View Password generator"><img src="assets/screenshots/tab-text-password.png" alt="Password generator" loading="eager" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-text-word.png" data-caption="Word and character count"><img src="assets/screenshots/tab-text-word.png" alt="Word count" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-text-unicode.png" data-caption="Unicode helpers"><img src="assets/screenshots/tab-text-unicode.png" alt="Unicode helpers" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-text-script.png" data-caption="Script converter - Devanagari to Romanized"><img src="assets/screenshots/tab-text-script.png" alt="Script converter" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-bank-interest.png" data-caption="Multi-period simple interest calculator"><img src="assets/screenshots/tab-bank-interest.png" alt="Interest calculator" /></div>
+            <div class="hc-item hc-tl" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="Loan EMI calculator with full amortization schedule" tabindex="0" role="button" aria-label="View Loan EMI calculator"><img src="assets/screenshots/tab-bank-emi.png" alt="Loan EMI calculator" loading="eager" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-myip.png" data-caption="My IP - public, private, and ISP info"><img src="assets/screenshots/tab-network-myip.png" alt="My IP address" /></div>
+            <div class="hc-item hc-tr" data-lightbox="assets/screenshots/tab-network-ping.png" data-caption="Ping a host with packet count and RTT summary" tabindex="0" role="button" aria-label="View Network ping"><img src="assets/screenshots/tab-network-ping.png" alt="Network ping" loading="eager" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-scan.png" data-caption="IP Scanner - parallel-ping subnet scan"><img src="assets/screenshots/tab-network-scan.png" alt="Network scan" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-trace.png" data-caption="Traceroute - hop-by-hop network path"><img src="assets/screenshots/tab-network-trace.png" alt="Traceroute" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-whois.png" data-caption="Whois lookup"><img src="assets/screenshots/tab-network-whois.png" alt="Whois lookup" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-dns.png" data-caption="DNS Lookup"><img src="assets/screenshots/tab-network-dns.png" alt="DNS lookup" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-more-documents.png" data-caption="Documents - attach and organize local files"><img src="assets/screenshots/tab-more-documents.png" alt="Documents" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-more-notes.png" data-caption="Quick local notes alongside your calendar"><img src="assets/screenshots/tab-more-notes.png" alt="Quick notes" /></div>
+            <div class="hc-item hc-side-r" data-lightbox="assets/screenshots/tab-more-reminder.png" data-caption="One-shot or recurring reminders pinned to BS dates" tabindex="0" role="button" aria-label="View Reminders"><img src="assets/screenshots/tab-more-reminder.png" alt="Reminders pinned to BS dates" loading="eager" /></div>
+            <div class="hc-item hc-ex2" data-lightbox="assets/screenshots/runbox-hamrobazaar.png" data-caption="RunBox - Hamro Bazaar quick access" tabindex="0" role="button" aria-label="View Hamro Bazaar run command"><img src="assets/screenshots/runbox-hamrobazaar.png" alt="Hamro Bazaar run command" loading="eager" /></div>
+            <div class="hc-item hc-ex3" data-lightbox="assets/screenshots/runbox-map.png" data-caption="RunBox - map quick access" tabindex="0" role="button" aria-label="View Map run command"><img src="assets/screenshots/runbox-map.png" alt="Map run command" loading="eager" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/runbox-custom-script.png" data-caption="RunBox - custom script execution"><img src="assets/screenshots/runbox-custom-script.png" alt="Custom script run command" /></div>
+            <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/runbox-run.png" data-caption="RunBox - run a command or program"><img src="assets/screenshots/runbox-run.png" alt="Run command launcher" /></div>
+            <div class="hc-item hc-ex1" data-lightbox="assets/screenshots/Minibar.png" data-caption="Mini bar on taskbar" tabindex="0" role="button" aria-label="View Mini bar screenshot"><img src="assets/screenshots/Minibar.png" alt="Mini bar" loading="eager" /></div>
           </div>
         </div>
       </div>
@@ -301,8 +321,8 @@
           </div>
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-            <h3>One small installer</h3>
-            <p>Single Windows installer. Per-user, no admin prompt, no telemetry. Quietly auto-updates in the background so you stay current without thinking about it.</p>
+            <h3>Two ways to get it</h3>
+            <p>Microsoft Store for auto-updates and zero setup, or a portable zip from GitHub Releases for full control. Per-user, no admin prompt, no telemetry.</p>
           </div>
         </div>
 
@@ -357,7 +377,7 @@
         <div class="faq">
           <div class="faq-item">
             <button class="faq-q" type="button">What does NepDate Widget cost?</button>
-            <div class="faq-a"><div class="faq-a-inner"><p>Nothing. It's free, MIT licensed, and open source. If it saves you time, you can support development with the <strong>Buy me a momo</strong> button.</p></div></div>
+            <div class="faq-a"><div class="faq-a-inner"><p>Nothing. It&rsquo;s free for personal use and source-available under the <a href="https://github.com/RajuPrasai/NepDateWidget/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Strict 1.0.0</a> license. If it saves you time, you can support development with the <strong>Buy me a momo</strong> button.</p></div></div>
           </div>
           <div class="faq-item">
             <button class="faq-q" type="button">Does it phone home or send any data?</button>
@@ -365,7 +385,7 @@
           </div>
           <div class="faq-item">
             <button class="faq-q" type="button">Where is my data stored?</button>
-            <div class="faq-a"><div class="faq-a-inner"><p>In your local user profile under <code>%LocalAppData%\NepDateWidget</code>. Settings, notes, reminders, and attached documents all live there. Nothing is written to system folders.</p></div></div>
+            <div class="faq-a"><div class="faq-a-inner"><p>In your local user profile. The unpackaged build stores data under <code>%LocalAppData%\NepDateWidget</code>; the Store version uses <code>%LocalAppData%\NepDateWidget.Store</code>. Settings, notes, reminders, and attached documents all live there. Nothing is written to system folders.</p></div></div>
           </div>
           <div class="faq-item">
             <button class="faq-q" type="button">Do I need to install anything?</button>
@@ -443,7 +463,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2025–2026 NepDate Widget. MIT License.</span>
+        <span>© 2025–2026 NepDate Widget. PolyForm Strict 1.0.0.</span>
         <span><a href="privacy.html">Privacy Policy</a> &middot; Built with care for the Nepali desktop.</span>
       </div>
     </div>

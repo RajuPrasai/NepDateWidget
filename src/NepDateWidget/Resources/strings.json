@@ -591,42 +591,6 @@
     "en": "Test",
     "ne": "परीक्षण गर्नुहोस्"
   },
-  "settings.updates": {
-    "en": "Updates",
-    "ne": "अपडेट"
-  },
-  "settings.auto_update": {
-    "en": "Check for updates automatically",
-    "ne": "स्वतः अपडेट जाँच गर्ने"
-  },
-  "settings.check_update_now": {
-    "en": "Check for updates now",
-    "ne": "अहिले अपडेट जाँच्नुहोस्"
-  },
-  "settings.update_checking": {
-    "en": "Checking for updates…",
-    "ne": "अपडेट जाँच गर्दै…"
-  },
-  "settings.update_uptodate": {
-    "en": "Up to date ({0})",
-    "ne": "अद्यावधिक छ ({0})"
-  },
-  "settings.update_downloading": {
-    "en": "Downloading {0}...",
-    "ne": "{0} डाउनलोड हुँदैछ..."
-  },
-  "settings.update_failed": {
-    "en": "Update failed.",
-    "ne": "अपडेट असफल भयो।"
-  },
-  "settings.update_unavailable": {
-    "en": "Updates are not available in this build.",
-    "ne": "यो बिल्डमा अपडेट उपलब्ध छैन।"
-  },
-  "settings.update_store_managed": {
-    "en": "Updates are delivered through the Microsoft Store.",
-    "ne": "अपडेट Microsoft Store मार्फत प्रदान गरिन्छ।"
-  },
   "dayinfo.holiday_badge": {
     "en": "Public Holiday",
     "ne": "सार्वजनिक बिदा"
@@ -2273,7 +2237,7 @@
   },
   "help.network.dns.desc": {
     "en": "Resolves DNS records for a domain, showing A, AAAA, MX, NS, TXT, CNAME, and other record types.",
-    "ne": "डोमेनको DNS रेकर्डहरू रिजोल्भ गर्छ — A, AAAA, MX, NS, TXT, CNAME र अन्य प्रकारहरू देखाउँदै।"
+    "ne": "डोमेनको DNS रेकर्डहरू रिजोल्भ गर्छ - A, AAAA, MX, NS, TXT, CNAME र अन्य प्रकारहरू देखाउँदै।"
   },
   "help.network.dns.how1": {
     "en": "Enter a domain name, select the record type from the dropdown, and click Lookup.",
@@ -2456,15 +2420,15 @@
     "ne": "ड्रपडाउन बन्द गर्नुहोस्, उपसर्ग हटाउनुहोस् वा विजेट सानो बनाउनुहोस्"
   },
   "help.runbox.key.calc": {
-    "en": "Calculator mode — type =2+3*4 to evaluate",
+    "en": "Calculator mode - type =2+3*4 to evaluate",
     "ne": "क्याल्कुलेटर मोड खोल्नुहोस् (जस्तै =2+3*4)"
   },
   "help.runbox.key.prefix": {
-    "en": "Lock a search prefix — type prefix then Space",
+    "en": "Lock a search prefix - type prefix then Space",
     "ne": "खोज उपसर्ग लक गर्नुहोस् (उपसर्ग टाइप गर्नुहोस् त्यसपछि Space)"
   },
   "help.runbox.key.scr": {
-    "en": "Run a registered script — type scr then Space",
+    "en": "Run a registered script - type scr then Space",
     "ne": "दर्ता गरिएको स्क्रिप्ट चलाउनुहोस् (scr टाइप गर्नुहोस् त्यसपछि Space)"
   }
 }

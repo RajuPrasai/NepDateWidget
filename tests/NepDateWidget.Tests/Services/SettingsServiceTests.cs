@@ -261,16 +261,15 @@ public class SettingsServiceTests : IDisposable
     }
 
     [Fact]
-    public void Load_V1JsonWithLastUpdateCheckUtc_DoesNotThrow_AndIgnoresField()
+    public void Load_UnknownFields_DoNotThrow_AndAreIgnored()
     {
-        // LastUpdateCheckUtc was moved to runtime.json (AppStateService) in V2.
-        // UnmappedMemberHandling.Skip must silently discard it.
+        // UnmappedMemberHandling.Skip must silently discard unknown fields.
         var path = TempPath();
         var json = """
             {
                 "SchemaVersion": 1,
                 "Language": "en",
-                "LastUpdateCheckUtc": "2026-01-01T00:00:00Z"
+                "SomeRemovedField": "2026-01-01T00:00:00Z"
             }
             """;
         File.WriteAllText(path, json);
@@ -283,15 +282,14 @@ public class SettingsServiceTests : IDisposable
     }
 
     [Fact]
-    public void Load_V1Json_BothStaleFields_DoesNotThrow()
+    public void Load_V1Json_StaleFields_DoNotThrow()
     {
         var path = TempPath();
         var json = """
             {
                 "SchemaVersion": 1,
                 "Language": "ne",
-                "DayNotes": {},
-                "LastUpdateCheckUtc": "2025-06-01T12:00:00Z"
+                "DayNotes": {}
             }
             """;
         File.WriteAllText(path, json);

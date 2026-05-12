@@ -22,7 +22,7 @@ public class AppPathsTests
     public void DataDirectory_EndsWithAppDataSubfolder()
     {
         // Both portable and installed mode put data under "AppData".
-        // Velopack owns the un-suffixed install root in installed mode.
+        // Unpackaged (dev/portable) puts the parent beside the EXE; Store uses an MSIX container path.
         Assert.EndsWith(
             AppPaths.DataSubfolder,
             AppPaths.DataDirectory.TrimEnd(Path.DirectorySeparatorChar),

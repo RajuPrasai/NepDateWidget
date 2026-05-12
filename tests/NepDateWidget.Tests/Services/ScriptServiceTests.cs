@@ -187,7 +187,7 @@ public sealed class ScriptServiceTests : IDisposable
         Assert.IsAssignableFrom<IReadOnlyList<ScriptEntry>>(all);
     }
 
-    // ── Load() — file absent: seed + watcher setup ────────────────────────────
+    // ── Load() - file absent: seed + watcher setup ────────────────────────────
 
     [Fact]
     public void Load_FileAbsent_SeedsFile()

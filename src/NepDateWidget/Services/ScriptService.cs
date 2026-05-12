@@ -120,7 +120,7 @@ public sealed class ScriptService : IScriptService, IDisposable
             var json = File.ReadAllText(_filePath);
             _scripts = JsonSerializer.Deserialize<List<ScriptEntry>>(json, SerializerOptions)
                        ?? new List<ScriptEntry>();
-            // Remove entries that have no name or no path — they cannot be executed.
+            // Remove entries that have no name or no path - they cannot be executed.
             _scripts.RemoveAll(s => string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(s.Path));
         }
         catch

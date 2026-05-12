@@ -659,7 +659,7 @@ public class SettingsViewModelTests
     [Fact]
     public void ResolveImportEntryPath_CaseInsensitiveName_Allowed()
     {
-        // The allowlist uses OrdinalIgnoreCase — "config/Settings.JSON" is valid.
+        // The allowlist uses OrdinalIgnoreCase - "config/Settings.JSON" is valid.
         var dir  = Path.Combine(Path.GetTempPath(), $"bktest_{Guid.NewGuid():N}");
         var dest = SettingsViewModel.ResolveImportEntryPath("config/Settings.JSON", dir);
         Assert.NotNull(dest);
@@ -688,7 +688,7 @@ public class SettingsViewModelTests
     [InlineData("notes.json",        "{}")]  // string-keyed dictionary
     [InlineData("runtime.json",      "{}")]  // plain object
     [InlineData("settings.json",     "{}")]  // plain object
-    [InlineData("localization.json", "{}")]  // dict-of-dicts — must NOT be []
+    [InlineData("localization.json", "{}")]  // dict-of-dicts - must NOT be []
     [InlineData("reminders.json",    "[]")]
     [InlineData("documents.json",    "[]")]
     [InlineData("shortcuts.json",    "[]")]
@@ -813,14 +813,6 @@ public class SettingsViewModelTests
         var (vm, svc, _, _) = Create();
         vm.NotificationSound = false;
         Assert.False(svc.Current.NotificationSound);
-    }
-
-    [Fact]
-    public void AutoCheckForUpdates_PersistsToSettings()
-    {
-        var (vm, svc, _, _) = Create();
-        vm.AutoCheckForUpdates = false;
-        Assert.False(svc.Current.AutoCheckForUpdates);
     }
 
     [Fact]

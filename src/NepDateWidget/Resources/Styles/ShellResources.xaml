@@ -91,7 +91,7 @@
                                    Placement="Right"
                                    HorizontalOffset="-8"
                                    IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                   AllowsTransparency="False"
+                                   AllowsTransparency="True"
                                    Focusable="False"
                                    PopupAnimation="None">
                                 <Border Background="{DynamicResource WidgetBackgroundBrush}"
@@ -240,10 +240,10 @@
     </Style>
 
     <!-- ══════════════════════════════════════════════════════════════════
-         Hover gate — applied directly to each badge wrapper Grid (direct child
+         Hover gate - applied directly to each badge wrapper Grid (direct child
          of the column wrapper Grid). Handles both conditions in one place:
            1. ShowHelpBadges: default Setter uses DynamicResource HelpBadgeVisibility.
-              DynamicResource in a Style Setter is reactive — updates when the resource changes.
+              DynamicResource in a Style Setter is reactive - updates when the resource changes.
            2. Hover: DataTrigger collapses the Grid when the column wrapper (AncestorLevel=1)
               is not hovered. Trigger overrides the Setter while active.
          Collapsed rather than Opacity=0 so invisible badges never intercept clicks.
@@ -258,7 +258,7 @@
     </Style>
 
     <!-- ══════════════════════════════════════════════════════════════════
-         Info badge — 20×20 circle overlaid on active mode-selector pills.
+         Info badge - 20×20 circle overlaid on active mode-selector pills.
          Shows the cursive "i" glyph; visible only when ShowHelpBadges=True.
          ════════════════════════════════════════════════════════════════ -->
 

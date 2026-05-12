@@ -6,7 +6,7 @@ namespace NepDateWidget.Tests.Helpers;
 /// Rigorous unit tests for NetworkParsingHelpers.
 /// These cover: OUI table coverage and normalisation, manufacturer lookup edge cases,
 /// device-type inference classifier, and whois output formatting rules.
-/// All tests are pure in-memory — no I/O, no network.
+/// All tests are pure in-memory - no I/O, no network.
 /// </summary>
 public class NetworkParsingHelpersTests
 {
@@ -278,11 +278,11 @@ public class NetworkParsingHelpersTests
     public void FormatWhoisOutput_CaseInsensitiveKeyMatching()
     {
         const string raw = "DOMAIN NAME: EXAMPLE.ORG\nNoise: ignored";
-        // Key is "DOMAIN NAME" which does not match "Domain Name" — should fall through to raw
+        // Key is "DOMAIN NAME" which does not match "Domain Name" - should fall through to raw
         // (The comparison is exact case on the key name as written)
         var result = NetworkParsingHelpers.FormatWhoisOutput(raw);
         Assert.NotNull(result);
-        // Ensure the raw text is still preserved — no crash
+        // Ensure the raw text is still preserved - no crash
         Assert.Contains("DOMAIN NAME: EXAMPLE.ORG", result);
     }
 

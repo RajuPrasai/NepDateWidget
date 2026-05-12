@@ -7,9 +7,6 @@ namespace NepDateWidget.Models;
 /// </summary>
 public sealed class AppState
 {
-    /// <summary>UTC timestamp of the last automatic or manual update check.</summary>
-    public DateTime? LastUpdateCheckUtc { get; set; }
-
     /// <summary>
     /// AD date (yyyy-MM-dd) of the last day a daily events notification was shown.
     /// Empty when never shown. Enforces the once-per-day rule across restarts.

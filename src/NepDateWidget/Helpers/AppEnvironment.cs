@@ -4,7 +4,7 @@ namespace NepDateWidget.Helpers;
 
 /// <summary>
 /// Runtime distribution-channel detection.
-/// Separates Velopack-installed / portable builds from MSIX-packaged (Store or sideloaded).
+/// Separates unpackaged (dev/portable) builds from MSIX-packaged (Store or sideloaded).
 /// Used to pick channel-appropriate data paths, mutex names, and autostart mechanisms.
 /// </summary>
 internal static class AppEnvironment
@@ -24,13 +24,13 @@ internal static class AppEnvironment
 
     /// <summary>
     /// True when the process is running inside an MSIX package (Store or sideloaded).
-    /// False for Velopack-installed and portable builds.
+    /// False for unpackaged (dev/portable) builds.
     /// </summary>
     public static bool IsPackaged => _isPackaged.Value;
 
     /// <summary>
     /// Single-instance mutex name scoped to the distribution channel. Prevents the
-    /// Velopack and Store instances from blocking each other when both are installed
+    /// unpackaged and Store instances from blocking each other when both are installed
     /// on the same machine simultaneously.
     /// </summary>
     public static string SingleInstanceMutexName =>
@@ -38,7 +38,7 @@ internal static class AppEnvironment
 
     /// <summary>
     /// %LOCALAPPDATA% subfolder name for user data. The Store channel uses a separate
-    /// root from the Velopack channel so uninstalling one cannot affect the other's data.
+    /// root from the unpackaged channel so uninstalling one cannot affect the other's data.
     /// </summary>
     public static string DataFolderName =>
         IsPackaged ? "NepDateWidget.Store" : "NepDateWidget";

@@ -555,7 +555,7 @@ public sealed class MoreViewModel : ViewModelBase
     public ICommand ClearDocSearchCommand       { get; }
     public ICommand OpenHelpCommand              { get; }
 
-    // No popup events — add/edit is now handled inline within this ViewModel.
+    // No popup events - add/edit is now handled inline within this ViewModel.
 
     // ── Construction ─────────────────────────────────────────────────────────
 

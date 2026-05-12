@@ -65,23 +65,10 @@ public sealed class AppStateServiceTests : IDisposable
     {
         var svc = new AppStateService(TempPath());
         svc.Load();
-        Assert.Null(svc.Current.LastUpdateCheckUtc);
         Assert.Equal(string.Empty, svc.Current.LastDailyEventsNotificationDate);
     }
 
     // ── Load: file present ────────────────────────────────────────────────────
-
-    [Fact]
-    public void Load_FilePresent_RestoresLastUpdateCheck()
-    {
-        var path     = TempPath();
-        var expected = new DateTime(2026, 5, 1, 12, 0, 0, DateTimeKind.Utc);
-        File.WriteAllText(path, JsonSerializer.Serialize(new AppState { LastUpdateCheckUtc = expected }));
-
-        var svc = new AppStateService(path);
-        svc.Load();
-        Assert.Equal(expected, svc.Current.LastUpdateCheckUtc);
-    }
 
     [Fact]
     public void Load_FilePresent_RestoresLastDailyEventsDate()
@@ -105,7 +92,7 @@ public sealed class AppStateServiceTests : IDisposable
         var svc = new AppStateService(path);
         var ex  = Record.Exception(() => svc.Load());
         Assert.Null(ex);
-        Assert.Null(svc.Current.LastUpdateCheckUtc);
+        Assert.Equal(string.Empty, svc.Current.LastDailyEventsNotificationDate);
     }
 
     [Fact]
@@ -136,7 +123,7 @@ public sealed class AppStateServiceTests : IDisposable
     public void Load_UnknownFields_AreIgnored_DoesNotThrow()
     {
         var path = TempPath();
-        File.WriteAllText(path, """{"LastUpdateCheckUtc":null,"FutureField":42,"AnotherNew":"x"}""");
+        File.WriteAllText(path, """{"FutureField":42,"AnotherNew":"x"}""");
 
         var svc = new AppStateService(path);
         var ex  = Record.Exception(() => svc.Load());
@@ -144,22 +131,6 @@ public sealed class AppStateServiceTests : IDisposable
     }
 
     // ── Round-trip ────────────────────────────────────────────────────────────
-
-    [Fact]
-    public void SaveThenLoad_RoundTrips_LastUpdateCheckUtc()
-    {
-        var path = TempPath();
-        var ts   = new DateTime(2026, 5, 11, 0, 0, 0, DateTimeKind.Utc);
-
-        var svc = new AppStateService(path);
-        svc.Load();
-        svc.Current.LastUpdateCheckUtc = ts;
-        svc.Save();
-
-        var svc2 = new AppStateService(path);
-        svc2.Load();
-        Assert.Equal(ts, svc2.Current.LastUpdateCheckUtc);
-    }
 
     [Fact]
     public void SaveThenLoad_RoundTrips_LastDailyEventsDate()

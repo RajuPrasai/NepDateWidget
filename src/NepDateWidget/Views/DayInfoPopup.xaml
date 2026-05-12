@@ -73,7 +73,7 @@
 
         <!--
             Dismiss button: invisible at rest, hover reveals background tint.
-            Keeps the header clean — the X stroke is the only affordance at rest.
+            Keeps the header clean - the X stroke is the only affordance at rest.
         -->
         <Style x:Key="DBtnClose" TargetType="Button">
             <Setter Property="Background"      Value="Transparent" />
@@ -178,7 +178,7 @@
                                         Background="{DynamicResource WidgetDaySaturdayBrush}"
                                         Visibility="{Binding IsHoliday, Converter={StaticResource BoolToVis}}">
                                     <TextBlock Text="{Binding HolidayBadgeLabel}"
-                                               Foreground="White"
+                                               Foreground="{DynamicResource WidgetDayHolidayTextBrush}"
                                                FontSize="11" FontWeight="SemiBold" />
                                 </Border>
                                 <Border CornerRadius="5" Padding="8,3"

@@ -168,6 +168,19 @@ public partial class MainWindow : Window
         RegisterRunBoxHotkey();
 
         _initialized = true;
+
+        // Persist the startup position immediately after layout so the resolved
+        // first-run or recovered position survives the session even if the window
+        // is never moved. Without this, OnLocationChanged is suppressed during
+        // OnSourceInitialized (because _initialized is still false at that point),
+        // and a fast VS stop / process kill before the 800ms debounce fires leaves
+        // WindowLeft/WindowTop at their default (0,0) - placing the pill at the
+        // wrong corner on the next launch.
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Loaded, new Action(() =>
+        {
+            ViewModel.UpdatePosition(Left, Top);
+            ViewModel.SaveSettings();
+        }));
     }
 
     protected override void OnStateChanged(EventArgs e)

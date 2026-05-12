@@ -132,7 +132,7 @@ public sealed class SearchHistoryService : ISearchHistoryService
 
         _history.AddRange(toAdd);
 
-        // Cap at max entries — newly added defaults have lowest priority so they get dropped first.
+        // Cap at max entries - newly added defaults have lowest priority so they get dropped first.
         if (_history.Count > _maxEntries)
             _history.RemoveRange(_maxEntries, _history.Count - _maxEntries);
 

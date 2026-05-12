@@ -5,7 +5,6 @@ using NepDateWidget.Views;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Velopack;
 
 namespace NepDateWidget;
 
@@ -17,40 +16,6 @@ public partial class App : Application
     private AppStateService? _appStateService;
     private NotesService? _notesService;
     private ReminderService? _reminderService;
-
-    /// <summary>
-    /// Custom entry point. Runs Velopack's CLI hook (handles --veloapp-install,
-    /// --veloapp-uninstall, etc.) before any WPF code starts. This is the
-    /// supported pattern for WPF + Velopack.
-    /// </summary>
-    [STAThread]
-    public static void Main()
-    {
-        // Velopack hook MUST be the first call so installer / updater commands
-        // are intercepted before the rest of the app loads.
-        VelopackApp.Build().Run();
-
-        // Process-wide handlers for non-UI exceptions. Registered before the
-        // WPF application is constructed so background tasks that fault during
-        // App() construction are still observed. Logging is best-effort: if
-        // Log.Initialize has not run yet (very early failure) the calls are
-        // no-ops and we still avoid an unhandled crash.
-        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
-        {
-            var ex = e.ExceptionObject as Exception;
-            Log.Fatal($"AppDomain unhandled exception (terminating={e.IsTerminating})", ex);
-        };
-
-        TaskScheduler.UnobservedTaskException += (_, e) =>
-        {
-            Log.Error("Unobserved task exception", e.Exception);
-            e.SetObserved();
-        };
-
-        var app = new App();
-        app.InitializeComponent();
-        app.Run();
-    }
 
     private void OnStartup(object sender, StartupEventArgs e)
     {
@@ -120,7 +85,7 @@ public partial class App : Application
         // Now that the user-configured log cap is known, push it down.
         Log.UpdateMaxSize(settingsService.Current.LogMaxSizeMb);
         Log.Info($"App started | v={System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}" +
-                 $" channel={( Helpers.AppEnvironment.IsPackaged ? "store" : "velopack")}" +
+                 $" channel={(Helpers.AppEnvironment.IsPackaged ? "store" : "dev")}" +
                  $" theme={settingsService.Current.Theme}/{settingsService.Current.BackgroundPreset}" +
                  $" lang={settingsService.Current.Language}" +
                  $" portable={Helpers.AppPaths.IsPortable}" +
@@ -168,50 +133,17 @@ public partial class App : Application
         var runHistoryService = new SearchHistoryService(Helpers.AppPaths.RunHistoryPath, maxEntries: 500, defaultFilePath: Helpers.AppPaths.DefaultRunHistoryPath);
         runHistoryService.Load();
 
-        var updateService = new VelopackUpdateService();
-
         _shortcutsService = new ShortcutsService(Helpers.AppPaths.ShortcutsPath, Helpers.AppPaths.DefaultShortcutsPath);
         _shortcutsService.Load();
 
         _scriptService = new ScriptService(Helpers.AppPaths.ScriptsPath, Helpers.AppPaths.DefaultScriptsPath);
         _scriptService.Load();
 
-        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, runHistoryService: runHistoryService, updateService: updateService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!, scriptService: _scriptService);
+        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, runHistoryService: runHistoryService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!, scriptService: _scriptService);
         var mainWindow = new MainWindow(mainViewModel, settingsService, _appStateService!);
         mainWindow.SetupReminders(_reminderService, localizationService, nepDateAdapter, _notesService);
 
         mainWindow.Show();
-
-        // Background update check: respects user opt-in and a 24h throttle.
-        if (settingsService.Current.AutoCheckForUpdates && updateService.IsInstalled)
-        {
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    var last = _appStateService.Current.LastUpdateCheckUtc;
-                    if (last is not null && (DateTime.UtcNow - last.Value).TotalHours < 24)
-                        return;
-
-                    var result = await updateService.CheckAsync().ConfigureAwait(false);
-
-                    // AppState is mutated and saved on the UI thread to avoid
-                    // racing the user toggling other settings concurrently.
-                    await Dispatcher.InvokeAsync(() =>
-                    {
-                        _appStateService.Current.LastUpdateCheckUtc = DateTime.UtcNow;
-                        _appStateService.Save();
-                    });
-
-                    if (result.UpdateAvailable)
-                        Log.Info($"Update available: {result.AvailableVersion} (current {result.CurrentVersion})");
-                }
-                catch (Exception ex)
-                {
-                    Log.Warn($"Background update check failed: {ex.Message}");
-                }
-            });
-        }
     }
 
     private static void PinDocumentsFolderToQuickAccess()
@@ -235,7 +167,7 @@ public partial class App : Application
                 {
                     var existing = System.IO.File.ReadAllText(iniPath);
                     if (existing == iniContent)
-                        goto skipIni; // content identical — skip the write entirely
+                        goto skipIni; // content identical - skip the write entirely
                     System.IO.File.SetAttributes(iniPath, System.IO.FileAttributes.Normal);
                 }
 

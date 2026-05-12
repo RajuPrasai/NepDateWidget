@@ -156,11 +156,11 @@ public class UnitViewModelTests
     [Fact]
     public void Area_SqMetresToRopani_RoundTrip()
     {
-        // 508.72 sq m → 1 Ropani → back to 508.72 sq m
+        // 1 Ropani = 508.80 sq m; converting back must yield 1.0 exactly
         var vm = Create();
         vm.AreaFromUnit  = 9; // Sq. Metres
         vm.AreaToUnit    = 3; // Ropani
-        vm.AreaFromValue = "508.72";
+        vm.AreaFromValue = "508.80";
         Assert.False(vm.AreaHasError);
         double result = double.Parse(vm.AreaResult, System.Globalization.CultureInfo.InvariantCulture);
         Assert.InRange(result, 0.9999, 1.0001);
@@ -279,7 +279,7 @@ public class UnitViewModelTests
         vm.WeightToUnit    = 5; // kg
         vm.WeightFromValue = "1";
         Assert.False(vm.WeightHasError);
-        Assert.Equal("2.33", vm.WeightResult);
+        Assert.Equal("2.3325", vm.WeightResult);
     }
 
     [Fact]
@@ -290,7 +290,7 @@ public class UnitViewModelTests
         vm.WeightFromUnit  = 4; // Muri
         vm.WeightToUnit    = 5; // kg
         vm.WeightFromValue = "1";
-        Assert.Equal("90.92", vm.WeightResult);
+        Assert.Equal("90.9192", vm.WeightResult);
     }
 
     [Fact]
@@ -323,6 +323,105 @@ public class UnitViewModelTests
         vm.WeightToUnit    = 3; // Pathi
         vm.WeightFromValue = "7";
         Assert.Equal("7", vm.WeightResult);
+    }
+
+    [Fact]
+    public void Weight_PoundToKg_KnownValue()
+    {
+        // 1 lb = 0.45359237 kg  (International Yard and Pound Agreement 1959, exact)
+        // FormatResult: 0.45359237 → F4 → "0.4536" (5th decimal = 9, rounds 4th up)
+        var vm = Create();
+        vm.WeightFromUnit  = 8; // lb
+        vm.WeightToUnit    = 5; // kg
+        vm.WeightFromValue = "1";
+        Assert.False(vm.WeightHasError);
+        Assert.Equal("0.4536", vm.WeightResult);
+    }
+
+    [Fact]
+    public void Weight_KgToPound_KnownValue()
+    {
+        // 1 kg = 2.20462262... lb  → F4 → "2.2046" (5th decimal = 2, no round-up)
+        var vm = Create();
+        vm.WeightFromUnit  = 5; // kg
+        vm.WeightToUnit    = 8; // lb
+        vm.WeightFromValue = "1";
+        Assert.False(vm.WeightHasError);
+        Assert.Equal("2.2046", vm.WeightResult);
+    }
+
+    [Fact]
+    public void Weight_OunceToGrams_KnownValue()
+    {
+        // 1 oz = 28.349523125 g  (1/16 avoirdupois lb, exact)
+        // FormatResult: 28.349523125 → F4 → "28.3495" (5th decimal = 2, no round-up)
+        var vm = Create();
+        vm.WeightFromUnit  = 9; // oz
+        vm.WeightToUnit    = 6; // g
+        vm.WeightFromValue = "1";
+        Assert.False(vm.WeightHasError);
+        Assert.Equal("28.3495", vm.WeightResult);
+    }
+
+    [Fact]
+    public void Weight_TonneToKg_KnownValue()
+    {
+        // 1 tonne = 1000 kg  (SI metric ton, exact)
+        var vm = Create();
+        vm.WeightFromUnit  = 10; // tonne
+        vm.WeightToUnit    = 5;  // kg
+        vm.WeightFromValue = "1";
+        Assert.False(vm.WeightHasError);
+        Assert.Equal("1000", vm.WeightResult);
+    }
+
+    [Fact]
+    public void Weight_KgToTonne_KnownValue()
+    {
+        // 1000 kg = 1 tonne
+        var vm = Create();
+        vm.WeightFromUnit  = 5;  // kg
+        vm.WeightToUnit    = 10; // tonne
+        vm.WeightFromValue = "1000";
+        Assert.False(vm.WeightHasError);
+        Assert.Equal("1", vm.WeightResult);
+    }
+
+    [Fact]
+    public void Weight_TolaToGrams_KnownValue()
+    {
+        // 1 tola = 11.6638038 g  (180 troy grains = 3/8 troy oz; British Indian standard 1833)
+        // FormatResult: 11.6638038 → F4 → "11.6638" (5th decimal = 0, no round-up)
+        var vm = Create();
+        vm.WeightFromUnit  = 11; // tola
+        vm.WeightToUnit    = 6;  // g
+        vm.WeightFromValue = "1";
+        Assert.False(vm.WeightHasError);
+        Assert.Equal("11.6638", vm.WeightResult);
+    }
+
+    [Fact]
+    public void Weight_GramsToMilligrams_KnownValue()
+    {
+        // 1 g = 1000 mg  (SI definitional, exact)
+        var vm = Create();
+        vm.WeightFromUnit  = 6;  // g
+        vm.WeightToUnit    = 12; // mg
+        vm.WeightFromValue = "1";
+        Assert.False(vm.WeightHasError);
+        Assert.Equal("1000", vm.WeightResult);
+    }
+
+    [Fact]
+    public void Weight_MilligramsToGrams_SmallValue()
+    {
+        // 1 mg = 0.001 g  - with F2 this rendered as "0"; F4 renders "0.001"
+        var vm = Create();
+        vm.WeightFromUnit  = 12; // mg
+        vm.WeightToUnit    = 6;  // g
+        vm.WeightFromValue = "1";
+        Assert.False(vm.WeightHasError);
+        Assert.Equal("0.001", vm.WeightResult);
     }
 
     // ═════════════════════════════════════════════════════════════════════════

@@ -101,19 +101,6 @@
                         </MenuItem>
                     </MenuItem>
 
-                    <MenuItem Header="{Binding MenuBankingSectionLabel}"
-                              Style="{StaticResource WidgetMenuItemStyle}">
-                        <MenuItem.Icon>
-                            <Path Data="{StaticResource IconBanking}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
-                        </MenuItem.Icon>
-                        <MenuItem Header="{Binding MenuBankingInterestLabel}" Command="{Binding OpenBankingInterestCommand}">
-                            <MenuItem.Icon><Path Data="{StaticResource IconCalculator}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="{Binding MenuBankingEmiLabel}" Command="{Binding OpenBankingEmiCommand}">
-                            <MenuItem.Icon><Path Data="{StaticResource IconCalculator}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
-                        </MenuItem>
-                    </MenuItem>
-
                     <MenuItem Header="{Binding MenuUnitSectionLabel}"
                               Style="{StaticResource WidgetMenuItemStyle}">
                         <MenuItem.Icon>
@@ -124,6 +111,38 @@
                         </MenuItem>
                         <MenuItem Header="{Binding MenuUnitWeightLabel}" Command="{Binding OpenUnitWeightCommand}">
                             <MenuItem.Icon><Path Data="{StaticResource IconWeight}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+
+                    <MenuItem Header="{Binding MenuTextSectionLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconText}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                        <MenuItem Header="{Binding MenuTextUnicodeLabel}" Command="{Binding OpenTextUnicodeCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconUnicode}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuTextWordLabel}" Command="{Binding OpenTextWordCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconWordCount}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuTextPasswordLabel}" Command="{Binding OpenTextPasswordCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconLock}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuTextScriptLabel}" Command="{Binding OpenTextScriptCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconScript}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                    </MenuItem>
+
+                    <MenuItem Header="{Binding MenuBankingSectionLabel}"
+                              Style="{StaticResource WidgetMenuItemStyle}">
+                        <MenuItem.Icon>
+                            <Path Data="{StaticResource IconBanking}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
+                        </MenuItem.Icon>
+                        <MenuItem Header="{Binding MenuBankingInterestLabel}" Command="{Binding OpenBankingInterestCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconCalculator}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{Binding MenuBankingEmiLabel}" Command="{Binding OpenBankingEmiCommand}">
+                            <MenuItem.Icon><Path Data="{StaticResource IconCalculator}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
 
@@ -149,25 +168,6 @@
                         </MenuItem>
                         <MenuItem Header="{Binding MenuNetworkDnsLabel}" Command="{Binding OpenNetworkDnsCommand}">
                             <MenuItem.Icon><Path Data="{StaticResource IconDns}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
-                        </MenuItem>
-                    </MenuItem>
-
-                    <MenuItem Header="{Binding MenuTextSectionLabel}"
-                              Style="{StaticResource WidgetMenuItemStyle}">
-                        <MenuItem.Icon>
-                            <Path Data="{StaticResource IconText}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" />
-                        </MenuItem.Icon>
-                        <MenuItem Header="{Binding MenuTextUnicodeLabel}" Command="{Binding OpenTextUnicodeCommand}">
-                            <MenuItem.Icon><Path Data="{StaticResource IconUnicode}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="{Binding MenuTextWordLabel}" Command="{Binding OpenTextWordCommand}">
-                            <MenuItem.Icon><Path Data="{StaticResource IconWordCount}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="{Binding MenuTextPasswordLabel}" Command="{Binding OpenTextPasswordCommand}">
-                            <MenuItem.Icon><Path Data="{StaticResource IconLock}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem Header="{Binding MenuTextScriptLabel}" Command="{Binding OpenTextScriptCommand}">
-                            <MenuItem.Icon><Path Data="{StaticResource IconScript}" Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1" Stretch="Uniform" /></MenuItem.Icon>
                         </MenuItem>
                     </MenuItem>
 

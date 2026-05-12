@@ -451,7 +451,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         INotesService? notesService = null,
         IDocumentService? documentService = null,
         ISearchHistoryService? runHistoryService = null,
-        IUpdateService? updateService = null,
         IHolidayLookupService? holidayLookupService = null,
         INepaliDateAdapter? adapter = null,
         IShortcutsService? shortcutsService = null,
@@ -518,7 +517,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         // Apply user-chosen highlight color override after theme is set
         _themeService.OverrideHighlightColor(s.HighlightColor);
 
-        Settings = new SettingsViewModel(settingsService, localizationService, themeService, autoStartService, updateService, appStateService);
+        Settings = new SettingsViewModel(settingsService, localizationService, themeService, autoStartService, appStateService);
         Unit = new UnitViewModel(localizationService);
         Network = new NetworkToolsViewModel(localizationService);
         Banking = new BankingViewModel(localizationService);
@@ -810,7 +809,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         if (embeddedBase is not null)
             ff = new System.Windows.Media.FontFamily(new Uri(embeddedBase), "./#" + fontName);
         else
-            // System font — fall back through Segoe UI then Tahoma.
+            // System font - fall back through Segoe UI then Tahoma.
             ff = new System.Windows.Media.FontFamily(fontName + ", Segoe UI, Tahoma");
 
         System.Windows.Application.Current.Resources["WidgetFontFamily"] = ff;

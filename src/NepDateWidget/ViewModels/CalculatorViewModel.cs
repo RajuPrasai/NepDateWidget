@@ -53,12 +53,18 @@ public sealed class UnitViewModel : ViewModelBase
         1.0,        // 5  kg
         0.001,      // 6  g
         1.0,        // 7  litre   (≈ 1 kg for water; grain will differ)
+        0.45359237,     // 8  lb      (avoirdupois; International Yard and Pound Agreement 1959, exact)
+        0.028349523125, // 9  oz      (avoirdupois; lb / 16, exact)
+        1000.0,         // 10 tonne   (metric ton; SI definitional, exact)
+        0.0116638038,   // 11 tola    (180 troy grains = 3/8 troy oz; British Indian standard 1833, used in Nepal/India/Pakistan/Bangladesh)
+        0.000001,       // 12 mg      (SI definitional, exact)
     ];
 
     private static readonly string[] WeightUnitNames =
     [
         "Dharni", "Pawa", "Mana", "Pathi", "Muri",
         "kg", "g", "litre",
+        "lb", "oz", "tonne", "tola", "mg",
     ];
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -428,7 +434,7 @@ public sealed class UnitViewModel : ViewModelBase
     /// </summary>
     private static string FormatResult(double value)
     {
-        string s = value.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
+        string s = value.ToString("F4", System.Globalization.CultureInfo.InvariantCulture);
         if (s.Contains('.'))
             s = s.TrimEnd('0').TrimEnd('.');
         return s;

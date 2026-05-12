@@ -283,7 +283,7 @@ public class LocalizationServiceTests
             using var svc = new LocalizationService(path, TestPaths.DefaultLocalizationPath);
             svc.Load();
             Assert.Equal("hello", svc.Get("custom.key"));
-            // Missing default keys are merged in-memory — disk values take precedence over defaults.
+            // Missing default keys are merged in-memory - disk values take precedence over defaults.
             Assert.Equal("Exit", svc.Get("app.exit"));
         }
         finally
@@ -296,7 +296,7 @@ public class LocalizationServiceTests
     public void Load_TestConstructor_IsNoOp()
     {
         // Calling Load() on the test constructor must not throw
-        // or log warnings about missing paths — it is a documented no-op.
+        // or log warnings about missing paths - it is a documented no-op.
         using var svc = new LocalizationService(TestPaths.DefaultLocalizationPath);
         svc.Load(); // must not throw
         Assert.Equal("Exit", svc.Get("app.exit")); // data still intact

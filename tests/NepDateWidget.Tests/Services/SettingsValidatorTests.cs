@@ -156,7 +156,6 @@ public class SettingsValidatorTests
         Assert.Equal(750,           s.ExpandedHeight);
         Assert.Equal(6,             s.RunBoxHotkeyModifiers);   // Ctrl+Shift
         Assert.Equal(0x20,          s.RunBoxHotkeyKey);         // VK_SPACE
-        Assert.True(s.AutoCheckForUpdates);
     }
 
     // ── SchemaVersion ─────────────────────────────────────────────────────────

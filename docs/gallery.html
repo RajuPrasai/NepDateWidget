@@ -88,7 +88,7 @@
         <div style="max-width: 760px; margin: 0 auto; text-align: center;">
           <div class="section-eyebrow">Screenshots</div>
           <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 14px;">See NepDate Widget in action</h1>
-          <p class="lede" style="margin: 0 auto;">Every tab, every tool. Click any screenshot to view it full-size and use arrow keys to browse. Placeholder frames mark tools where screenshots are coming soon.</p>
+          <p class="lede" style="margin: 0 auto;">Every tab, every tool. Click any screenshot to view it full-size and use arrow keys to browse.</p>
         </div>
       </div>
     </section>
@@ -99,19 +99,17 @@
         <a href="#gal-mini-bar">Mini Bar</a>
         <a href="#gal-calendar">Calendar</a>
         <a href="#gal-date">Date</a>
-        <a href="#gal-bank">Bank</a>
-        <a href="#gal-text">Text</a>
-        <a href="#gal-network">Network</a>
         <a href="#gal-unit">Unit</a>
+        <a href="#gal-text">Text</a>
+        <a href="#gal-bank">Bank</a>
+        <a href="#gal-network">Network</a>
         <a href="#gal-more">More</a>
-        <a href="#gal-settings">Settings</a>
+        <a href="#gal-runbox">RunBox</a>
       </div>
     </nav>
 
-    <section class="section" style="padding-top: 36px;">
+    <section id="gal-mini-bar" class="gallery-section" style="background:var(--bg-alt);">
       <div class="container">
-
-        <div class="gallery-group" id="gal-mini-bar">
         <div class="gallery-head">
           <span class="gh-eyebrow">Widget</span>
           <h2>Mini Bar</h2>
@@ -122,14 +120,12 @@
             <img src="assets/screenshots/Minibar.png" alt="Mini bar - day, time, BS date, AD date" />
             <div class="cap">Mini bar</div>
           </div>
-          <div class="shot" data-lightbox="assets/screenshots/minibar-with-windows-icons.png" data-caption="Mini bar sitting alongside the Windows taskbar icons">
-            <img src="assets/screenshots/minibar-with-windows-icons.png" alt="Mini bar in context with Windows taskbar" />
-            <div class="cap">Beside the Windows taskbar</div>
-          </div>
         </div>
-        </div>
+      </div>
+    </section>
 
-        <div class="gallery-group" id="gal-calendar">
+    <section id="gal-calendar" class="gallery-section">
+      <div class="container">
         <div class="gallery-head">
           <span class="gh-eyebrow">Home tab</span>
           <h2>Bikram Sambat Calendar</h2>
@@ -141,9 +137,11 @@
             <div class="cap">Calendar with tithi and festivals</div>
           </div>
         </div>
-        </div>
+      </div>
+    </section>
 
-        <div class="gallery-group" id="gal-date">
+    <section id="gal-date" class="gallery-section" style="background:var(--bg-alt);">
+      <div class="container">
         <div class="gallery-head">
           <span class="gh-eyebrow">Date tab</span>
           <h2>Date Conversion, Days &amp; Timezone</h2>
@@ -163,27 +161,31 @@
             <div class="cap">Timezone converter</div>
           </div>
         </div>
-        </div>
+      </div>
+    </section>
 
-        <div class="gallery-group" id="gal-bank">
+    <section id="gal-unit" class="gallery-section">
+      <div class="container">
         <div class="gallery-head">
-          <span class="gh-eyebrow">Bank tab</span>
-          <h2>Loan EMI &amp; Multi-period Interest</h2>
-          <p>Full amortization schedule tagged to BS months, and a multi-rate simple interest calculator for loans that changed rates over time.</p>
+          <span class="gh-eyebrow">Unit tab</span>
+          <h2>Area, Weight &amp; Script Conversion</h2>
+          <p>Traditional Nepali land units (Bigha, Kattha, Ropani&hellip;) and weight units (Dharni, Pawa, Mana&hellip;) side by side with metric, plus Devanagari &harr; Romanized script.</p>
         </div>
         <div class="gallery">
-          <div class="shot" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="Loan EMI calculator with full amortization schedule">
-            <img src="assets/screenshots/tab-bank-emi.png" alt="EMI" />
-            <div class="cap">EMI calculator</div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area conversion &mdash; Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri, plus metric">
+            <img src="assets/screenshots/tab-unit-area.png" alt="Area" />
+            <div class="cap">Area conversion</div>
           </div>
-          <div class="shot" data-lightbox="assets/screenshots/tab-bank-interest.png" data-caption="Multi-period simple interest calculator">
-            <img src="assets/screenshots/tab-bank-interest.png" alt="Interest" />
-            <div class="cap">Multi-period interest</div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-unit-weight.png" data-caption="Weight conversion &mdash; Dharni, Pawa, Mana, Pathi, Muri &mdash; local and metric">
+            <img src="assets/screenshots/tab-unit-weight.png" alt="Weight" />
+            <div class="cap">Weight conversion &mdash; Dharni, Pawa, Mana, Pathi, Muri</div>
           </div>
         </div>
-        </div>
+      </div>
+    </section>
 
-        <div class="gallery-group" id="gal-text">
+    <section id="gal-text" class="gallery-section" style="background:var(--bg-alt);">
+      <div class="container">
         <div class="gallery-head">
           <span class="gh-eyebrow">Text tab</span>
           <h2>Password, Word Count, Preeti &harr; Unicode, Script</h2>
@@ -207,9 +209,31 @@
             <div class="cap">Script converter</div>
           </div>
         </div>
-        </div>
+      </div>
+    </section>
 
-        <div class="gallery-group" id="gal-network">
+    <section id="gal-bank" class="gallery-section">
+      <div class="container">
+        <div class="gallery-head">
+          <span class="gh-eyebrow">Bank tab</span>
+          <h2>Loan EMI &amp; Multi-period Interest</h2>
+          <p>Full amortization schedule tagged to BS months, and a multi-rate simple interest calculator for loans that changed rates over time.</p>
+        </div>
+        <div class="gallery">
+          <div class="shot" data-lightbox="assets/screenshots/tab-bank-interest.png" data-caption="Multi-period simple interest calculator">
+            <img src="assets/screenshots/tab-bank-interest.png" alt="Interest" />
+            <div class="cap">Multi-period interest</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="Loan EMI calculator with full amortization schedule">
+            <img src="assets/screenshots/tab-bank-emi.png" alt="EMI" />
+            <div class="cap">EMI calculator</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gal-network" class="gallery-section" style="background:var(--bg-alt);">
+      <div class="container">
         <div class="gallery-head">
           <span class="gh-eyebrow">Network tab</span>
           <h2>My IP, Ping, Scan, Trace, Whois &amp; DNS</h2>
@@ -224,69 +248,38 @@
             <img src="assets/screenshots/tab-network-ping.png" alt="Ping" />
             <div class="cap">Ping</div>
           </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="IP Scanner screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-scan.png" data-caption="IP Scanner &mdash; parallel-ping subnet scan">
+            <img src="assets/screenshots/tab-network-scan.png" alt="IP Scanner" />
             <div class="cap">IP Scanner</div>
           </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="Traceroute screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-trace.png" data-caption="Traceroute &mdash; hop-by-hop network path">
+            <img src="assets/screenshots/tab-network-trace.png" alt="Traceroute" />
             <div class="cap">Traceroute</div>
           </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="Whois screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-whois.png" data-caption="Whois lookup">
+            <img src="assets/screenshots/tab-network-whois.png" alt="Whois" />
             <div class="cap">Whois</div>
           </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="DNS Lookup screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-dns.png" data-caption="DNS Lookup">
+            <img src="assets/screenshots/tab-network-dns.png" alt="DNS Lookup" />
             <div class="cap">DNS Lookup</div>
           </div>
         </div>
-        </div>
+      </div>
+    </section>
 
-        <div class="gallery-group" id="gal-unit">
-        <div class="gallery-head">
-          <span class="gh-eyebrow">Unit tab</span>
-          <h2>Area, Weight &amp; Script Conversion</h2>
-          <p>Traditional Nepali land units (Bigha, Kattha, Ropani&hellip;) and weight units (Dharni, Pawa, Mana&hellip;) side by side with metric, plus Devanagari &harr; Romanized script.</p>
-        </div>
-        <div class="gallery">
-          <div class="shot" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area conversion &mdash; Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri, plus metric">
-            <img src="assets/screenshots/tab-unit-area.png" alt="Area" />
-            <div class="cap">Area conversion</div>
-          </div>
-          <div class="shot" data-lightbox="assets/screenshots/tab-unit-weight.png" data-caption="Weight conversion &mdash; Dharni, Pawa, Mana, Pathi, Muri &mdash; local and metric">
-            <img src="assets/screenshots/tab-unit-weight.png" alt="Weight" />
-            <div class="cap">Weight conversion &mdash; Dharni, Pawa, Mana, Pathi, Muri</div>
-          </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="Unit script converter screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
-            <div class="cap">Script converter</div>
-          </div>
-        </div>
-        </div>
-
-        <div class="gallery-group" id="gal-more">
+    <section id="gal-more" class="gallery-section">
+      <div class="container">
         <div class="gallery-head">
           <span class="gh-eyebrow">More tab</span>
           <h2>Documents, Notes &amp; Reminders</h2>
           <p>Attach local files with tags, write short notes pinned to BS dates, and set one-shot or recurring reminders. Everything lives on your machine.</p>
         </div>
         <div class="gallery">
+          <div class="shot" data-lightbox="assets/screenshots/tab-more-documents.png" data-caption="Documents &mdash; attach and organize local files">
+            <img src="assets/screenshots/tab-more-documents.png" alt="Documents" />
+            <div class="cap">Documents</div>
+          </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-more-notes.png" data-caption="Quick local notes alongside your calendar">
             <img src="assets/screenshots/tab-more-notes.png" alt="Notes" />
             <div class="cap">Notes</div>
@@ -295,30 +288,35 @@
             <img src="assets/screenshots/tab-more-reminder.png" alt="Reminders" />
             <div class="cap">Reminders</div>
           </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="Documents screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
-            <div class="cap">Documents</div>
-          </div>
         </div>
-        </div>
+      </div>
+    </section>
 
-        <div class="gallery-group" id="gal-settings">
+    <section id="gal-runbox" class="gallery-section" style="background:var(--bg-alt);">
+      <div class="container">
         <div class="gallery-head">
-          <span class="gh-eyebrow">Settings</span>
-          <h2>Appearance &amp; Behavior</h2>
-          <p>20 color presets, 20+ font choices, calendar display toggles, language, transparency, timezone, mini bar layout, and RunBox hotkey &mdash; every preference persists.</p>
+          <span class="gh-eyebrow">RunBox</span>
+          <h2>Global Launcher</h2>
+          <p>Press the hotkey from anywhere in Windows to summon RunBox. Run commands, open URLs, search the web, or use quick-access shortcuts for Hamro Bazaar and Maps.</p>
         </div>
         <div class="gallery">
-          <div class="shot" data-lightbox="assets/screenshots/tab-settings.png" data-caption="Appearance, language, color presets, mini bar toggles, and start with Windows">
-            <img src="assets/screenshots/tab-settings.png" alt="Settings" />
-            <div class="cap">Settings panel</div>
+          <div class="shot" data-lightbox="assets/screenshots/runbox-hamrobazaar.png" data-caption="RunBox &mdash; Hamro Bazaar quick access">
+            <img src="assets/screenshots/runbox-hamrobazaar.png" alt="RunBox Hamro Bazaar" />
+            <div class="cap">Hamro Bazaar shortcut</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/runbox-map.png" data-caption="RunBox &mdash; map quick access">
+            <img src="assets/screenshots/runbox-map.png" alt="RunBox map" />
+            <div class="cap">Map shortcut</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/runbox-custom-script.png" data-caption="RunBox &mdash; custom script execution">
+            <img src="assets/screenshots/runbox-custom-script.png" alt="RunBox custom script" />
+            <div class="cap">Custom script</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/runbox-run.png" data-caption="RunBox &mdash; run a command or program">
+            <img src="assets/screenshots/runbox-run.png" alt="RunBox run command" />
+            <div class="cap">Run a command</div>
           </div>
         </div>
-        </div>
-
       </div>
     </section>
   </main>
@@ -361,9 +359,10 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2025–2026 NepDate Widget. MIT License.</span>
+        <span>© 2025–2026 NepDate Widget. PolyForm Strict 1.0.0.</span>
         <span><a href="privacy.html">Privacy Policy</a> &middot; Built with care for the Nepali desktop.</span>
       </div>
+  <script src="js/main.js"></script>
 </body>
 </html>
 

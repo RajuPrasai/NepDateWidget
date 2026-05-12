@@ -2,7 +2,7 @@
 
 /// <summary>
 /// Manages the Windows "Start with Windows" startup entry for the widget.
-/// Velopack / portable channel: HKCU registry Run key.
+/// Unpackaged (dev/portable) channel: HKCU registry Run key.
 /// MSIX / Store channel: Windows.ApplicationModel.StartupTask.
 /// </summary>
 public interface IAutoStartService

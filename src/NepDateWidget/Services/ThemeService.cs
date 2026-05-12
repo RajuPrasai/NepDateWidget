@@ -96,6 +96,7 @@ public sealed class ThemeService : IThemeService
         {
             var color = (Color)ColorConverter.ConvertFromString(colorHex);
             SetBrush("WidgetDaySaturdayBrush", color);
+            SetBrush("WidgetDayHolidayTextBrush", HolidayText(color));
         }
         catch (FormatException) { /* ignore invalid hex values */ }
     }
@@ -139,6 +140,7 @@ public sealed class ThemeService : IThemeService
         SetBrush("WidgetDayTodayBrush", acc);
         SetBrush("WidgetDayTodayTextBrush", todayText);
         SetBrush("WidgetDaySaturdayBrush", holiday);
+        SetBrush("WidgetDayHolidayTextBrush", HolidayText(holiday));
         SetBrush("WidgetDayHighlightedBrush", success);
         SetBrush("WidgetDayWeekendTintBrush", Color.FromArgb(0x10, holiday.R, holiday.G, holiday.B));
         SetBrush("WidgetDayPaddingBrush", Colors.Transparent);
@@ -183,6 +185,17 @@ public sealed class ThemeService : IThemeService
             (byte)(a.R + (b.R - a.R) * t),
             (byte)(a.G + (b.G - a.G) * t),
             (byte)(a.B + (b.B - a.B) * t));
+    }
+
+    /// <summary>
+    /// Returns the appropriate text color (dark or white) to maintain readability
+    /// on a background of <paramref name="c"/>. Uses a 0.40 luminance threshold so
+    /// light pinks (e.g. #F38BA8, lum≈0.64) correctly get dark text rather than white.
+    /// </summary>
+    private static Color HolidayText(Color c)
+    {
+        double lum = 0.2126 * (c.R / 255.0) + 0.7152 * (c.G / 255.0) + 0.0722 * (c.B / 255.0);
+        return lum > 0.40 ? C("#1C1C1C") : C("#FFFFFF");
     }
 
     /// <summary>Returns true if the colour is perceptually light (luminance > 0.5).</summary>

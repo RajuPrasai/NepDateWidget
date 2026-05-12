@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Helpers;
+using NepDateWidget.Helpers;
 using NepDateWidget.Services;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -15,7 +15,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     private readonly ILocalizationService _loc;
     private readonly IThemeService _themeService;
     private readonly IAutoStartService _autoStartService;
-    private readonly IUpdateService? _updateService;
     private readonly IAppStateService? _appStateService;
 
     // ── Bound properties (two-way) ───────────────────────────────────────────
@@ -112,11 +111,11 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     /// </summary>
     public static IReadOnlyList<string> FontFamilyNames { get; } = new[]
     {
-        // Windows system fonts — guaranteed on Windows 10+
+        // Windows system fonts - guaranteed on Windows 10+
         "Segoe UI",
         "Calibri",
         "Verdana",
-        // Embedded sans — static weights
+        // Embedded sans - static weights
         "Inter",
         "Source Sans 3",
         "IBM Plex Sans",
@@ -124,7 +123,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         "Noto Sans",
         // Embedded monospace
         "Cascadia Code",
-        // Embedded sans — variable + display
+        // Embedded sans - variable + display
         "Poppins",
         "Lato",
         "Montserrat",
@@ -398,19 +397,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     public bool ShowHelpBadges { get => _showHelpBadges; set { if (SetProperty(ref _showHelpBadges, value)) { Log.Action($"setting: show-help-badges {value}"); Apply(); } } }
     public string ShowHelpBadgesLabel { get; private set; } = string.Empty;
 
-    // ── Updates ─────────────────────────────────────────────────────────────
-
-    private bool _autoCheckForUpdates = true;
-    public bool AutoCheckForUpdates { get => _autoCheckForUpdates; set { if (SetProperty(ref _autoCheckForUpdates, value)) { Log.Action($"setting: auto-update {value}"); Apply(); } } }
-
-    private string _updateStatusText = string.Empty;
-    public string UpdateStatusText
-    {
-        get => _updateStatusText;
-        private set { if (SetProperty(ref _updateStatusText, value)) OnPropertyChanged(nameof(HasUpdateStatus)); }
-    }
-    public bool HasUpdateStatus => !string.IsNullOrEmpty(_updateStatusText);
-
     private DispatcherTimer? _dataFileMessageTimer;
     private string _dataFileMessage = string.Empty;
     public string DataFileMessage
@@ -420,28 +406,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     }
     public bool HasDataFileMessage => !string.IsNullOrEmpty(_dataFileMessage);
 
-    private bool _isCheckingForUpdates;
-    public bool IsCheckingForUpdates
-    {
-        get => _isCheckingForUpdates;
-        private set
-        {
-            if (SetProperty(ref _isCheckingForUpdates, value))
-                CommandManager.InvalidateRequerySuggested();
-        }
-    }
-
-    /// <summary>
-    /// True when running from a Velopack install (portable or GitHub Releases).
-    /// False when running inside an MSIX package (Microsoft Store or sideloaded).
-    /// Used to show/hide the Velopack update UI in the Settings view.
-    /// </summary>
-    public bool IsVelopackBuild => !AppEnvironment.IsPackaged;
-
-    public string UpdateSectionLabel  { get; private set; } = string.Empty;
-    public string AutoUpdateLabel     { get; private set; } = string.Empty;
-    public string CheckUpdateNowLabel { get; private set; } = string.Empty;
-    public string StoreUpdateLabel    { get; private set; } = string.Empty;
     public string ThemeDarkLabel    { get; private set; } = string.Empty;
     public string ThemeLightLabel   { get; private set; } = string.Empty;
     public string CornerRoundedLabel { get; private set; } = string.Empty;
@@ -494,7 +458,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     public ICommand SetHighlightColorBrownCommand   { get; }
     public ICommand SetPresetCommand { get; }
     public ICommand SetHighlightColorCommand { get; }
-    public ICommand CheckForUpdatesNowCommand { get; private set; } = null!;
     public ICommand TestNotificationCommand   { get; }
     public ICommand OpenSettingsFileCommand          { get; }
     public ICommand OpenShortcutsFileCommand         { get; }
@@ -518,14 +481,12 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         ILocalizationService localizationService,
         IThemeService themeService,
         IAutoStartService autoStartService,
-        IUpdateService? updateService = null,
         IAppStateService? appStateService = null)
     {
         _settingsService = settingsService;
         _loc = localizationService;
         _themeService = themeService;
         _autoStartService = autoStartService;
-        _updateService = updateService;
         _appStateService = appStateService;
 
         var s = _settingsService.Current;
@@ -611,12 +572,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         _notificationSound = s.NotificationSound;
         _showSecondsInClock = s.ShowSecondsInClock;
         _showFiscalYear = s.ShowFiscalYear;
-        _autoCheckForUpdates = s.AutoCheckForUpdates;
         _showHelpBadges = s.ShowHelpBadges;
-
-        CheckForUpdatesNowCommand = new RelayCommand(
-            async () => await CheckForUpdatesNowAsync(),
-            () => !_isCheckingForUpdates);
 
         TestNotificationCommand = new RelayCommand(() => TestNotificationRequested?.Invoke(this, EventArgs.Empty));
 
@@ -730,7 +686,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         s.NotificationSound = _notificationSound;
         s.ShowSecondsInClock = _showSecondsInClock;
         s.ShowFiscalYear = _showFiscalYear;
-        s.AutoCheckForUpdates = _autoCheckForUpdates;
         s.ShowHelpBadges = _showHelpBadges;
 
         _autoStartService.SetEnabled(_autoStart);
@@ -783,10 +738,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         ShowSecondsLabel = _loc.Get("settings.show_seconds");
         ShowFiscalYearLabel = _loc.Get("settings.show_fiscal_year");
         ShowHelpBadgesLabel = _loc.Get("settings.show_help_badges");
-        UpdateSectionLabel  = _loc.Get("settings.updates");
-        AutoUpdateLabel     = _loc.Get("settings.auto_update");
-        CheckUpdateNowLabel = _loc.Get("settings.check_update_now");
-        StoreUpdateLabel    = _loc.Get("settings.update_store_managed");
 
         ThemeDarkLabel    = _loc.Get("settings.theme_dark");
         ThemeLightLabel   = _loc.Get("settings.theme_light");
@@ -842,9 +793,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(TestNotificationLabel));
         OnPropertyChanged(nameof(ShowSecondsLabel));
         OnPropertyChanged(nameof(ShowFiscalYearLabel));
-        OnPropertyChanged(nameof(UpdateSectionLabel));
-        OnPropertyChanged(nameof(AutoUpdateLabel));
-        OnPropertyChanged(nameof(CheckUpdateNowLabel));
         OnPropertyChanged(nameof(ThemeDarkLabel));
         OnPropertyChanged(nameof(ThemeLightLabel));
         OnPropertyChanged(nameof(CornerRoundedLabel));
@@ -859,59 +807,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(PresetMidnightLabel));
         OnPropertyChanged(nameof(PresetSlateLabel));
         OnPropertyChanged(nameof(PresetEmberLabel));
-    }
-
-    private async Task CheckForUpdatesNowAsync()
-    {
-        if (_updateService is null)
-        {
-            UpdateStatusText = _loc.Get("settings.update_unavailable");
-            return;
-        }
-
-        IsCheckingForUpdates = true;
-        try
-        {
-            UpdateStatusText = _loc.Get("settings.update_checking");
-            var result = await _updateService.CheckAsync().ConfigureAwait(true);
-
-            if (_appStateService is not null)
-            {
-                _appStateService.Current.LastUpdateCheckUtc = DateTime.UtcNow;
-                _appStateService.Save();
-            }
-
-            if (!string.IsNullOrEmpty(result.ErrorMessage))
-            {
-                UpdateStatusText = result.ErrorMessage!;
-                return;
-            }
-
-            if (!result.UpdateAvailable)
-            {
-                UpdateStatusText = string.Format(
-                    _loc.Get("settings.update_uptodate"),
-                    result.CurrentVersion ?? string.Empty);
-                return;
-            }
-
-            UpdateStatusText = string.Format(
-                _loc.Get("settings.update_downloading"),
-                result.AvailableVersion ?? string.Empty);
-            var ok = await _updateService.DownloadAndApplyAsync().ConfigureAwait(true);
-            if (!ok)
-                UpdateStatusText = _loc.Get("settings.update_failed");
-            // On success the process is restarted by Velopack; no further UI change.
-        }
-        catch (Exception ex)
-        {
-            Log.Error("Manual update check failed", ex);
-            UpdateStatusText = ex.Message;
-        }
-        finally
-        {
-            IsCheckingForUpdates = false;
-        }
     }
 
     private static readonly HashSet<string> AllowedBackupEntries = new(StringComparer.OrdinalIgnoreCase)
@@ -1078,7 +973,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
                 content = string.Empty;
             File.WriteAllText(path, content, System.Text.Encoding.UTF8);
         }
-        catch { /* best-effort — the editor will show an error if the file is still missing */ }
+        catch { /* best-effort - the editor will show an error if the file is still missing */ }
     }
 
     private void ShowDataFileMessage(string message)
@@ -1129,7 +1024,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         _notificationSound = s.NotificationSound;
         _showSecondsInClock = s.ShowSecondsInClock;
         _showFiscalYear = s.ShowFiscalYear;
-        _autoCheckForUpdates = s.AutoCheckForUpdates;
         _showHelpBadges = s.ShowHelpBadges;
 
         PopulateTimezones(s.SelectedTimezoneId);
@@ -1155,7 +1049,6 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(NotificationDurationSeconds)); OnPropertyChanged(nameof(NotificationDurationDisplay));
         OnPropertyChanged(nameof(NotificationSound));
         OnPropertyChanged(nameof(ShowSecondsInClock)); OnPropertyChanged(nameof(ShowFiscalYear));
-        OnPropertyChanged(nameof(AutoCheckForUpdates));
         OnPropertyChanged(nameof(ShowHelpBadges));
 
         Apply();

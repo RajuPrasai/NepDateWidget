@@ -76,7 +76,7 @@ internal sealed class HolidayWalkingFakeAdapter : INepaliDateAdapter
     public string FormatBsLongEn(int y, int m, int d) => $"{m}/{d}/{y}-en";
     public string FormatBsLongNe(int y, int m, int d) => $"{m}/{d}/{y}-ne";
 
-    // ── Unused by HolidayLookupService — inert defaults ──────────────────────
+    // ── Unused by HolidayLookupService - inert defaults ──────────────────────
     public int GetDaysInMonth(int bsYear, int bsMonth) => 30;
     public DayOfWeek GetFirstDayOfMonth(int bsYear, int bsMonth) => DayOfWeek.Sunday;
     public DateTime? BsToAd(int bsYear, int bsMonth, int bsDay) => _todayAd;

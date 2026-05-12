@@ -319,8 +319,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
     private static WidgetSettings Migrate(WidgetSettings s, string rawJson)
     {
         // V1 → V2: DayNotes removed from WidgetSettings (day notes now live in
-        // notes.json managed by NotesService). LastUpdateCheckUtc moved to
-        // runtime.json (AppStateService). Both stale JSON fields are silently
+        // notes.json managed by NotesService). Both stale JSON fields are silently
         // dropped by UnmappedMemberHandling.Skip on the next save.
 
         // V1 → V1: ShowTime was renamed to ShowTimezone.

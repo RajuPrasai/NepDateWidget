@@ -43,7 +43,7 @@ public partial class RunBoxSpotlightWindow : Window
             if (_isClosing) return;
             _isClosing = true;
             Hide();
-            // Do NOT reset _isClosing here — Deactivated fires on Hide() and dispatches
+            // Do NOT reset _isClosing here - Deactivated fires on Hide() and dispatches
             // AnimateAndClose, which guards on _isClosing. PrepareForShow() resets it on
             // the next open cycle.
         });

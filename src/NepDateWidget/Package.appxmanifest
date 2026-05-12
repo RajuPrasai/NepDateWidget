@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  MSIX package manifest — Microsoft Store channel.
+  MSIX package manifest - Microsoft Store channel.
   Before running build-store.ps1, this file is used as a template.
   The build script substitutes the four PLACEHOLDER_ tokens and VERSION_PLACEHOLDER
   with real values from Partner Center and the csproj version.

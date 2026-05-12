@@ -39,8 +39,9 @@ Open an issue with:
 - Steps to reproduce
 - What you expected vs. what happened
 - A snippet from `nepdate.log` if relevant (located in
-  `%LOCALAPPDATA%\NepDateWidget\AppData\` for installed builds, or
-  beside the EXE for portable builds)
+  `%LOCALAPPDATA%\NepDateWidget.Store\AppData\` for Store builds,
+  `%LOCALAPPDATA%\NepDateWidget\AppData\` for unpackaged/installed builds,
+  or `AppData\` beside the EXE for portable builds)
 
 For security issues, follow [SECURITY.md](SECURITY.md) instead.
 

@@ -81,11 +81,11 @@ li { margin-bottom: .25em; }
   --shadow-glow:   0 0 0 1px var(--accent-border), 0 8px 24px -8px var(--accent-glow);
 
   /* Radii */
-  --radius-xs:     2px;
-  --radius-sm:     4px;
-  --radius:        6px;
-  --radius-lg:     8px;
-  --radius-2xl:    16px;
+  --radius-xs:     4px;
+  --radius-sm:     8px;
+  --radius:        12px;
+  --radius-lg:     16px;
+  --radius-2xl:    24px;
   --radius-pill:   999px;
 
   /* Motion */
@@ -1342,13 +1342,13 @@ pre:hover .copy-btn { opacity: 1; }
 .hero-shot {
   background: var(--bg-elev);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 8px;
   padding: 14px;
   box-shadow: var(--shadow-lg);
 }
 .hero-shot img {
   width: 100%;
-  border-radius: 10px;
+  border-radius: 8px;
   display: block;
 }
 
@@ -1356,7 +1356,7 @@ pre:hover .copy-btn { opacity: 1; }
 .shot {
   background: var(--bg-elev);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
@@ -1382,6 +1382,7 @@ pre:hover .copy-btn { opacity: 1; }
   margin: 0 auto;
   justify-self: center;
 }
+.feat-block .shot { cursor: zoom-in; }
 .feat-block .body .eyebrow {
   display: inline-block;
   font-size: .76rem;
@@ -1426,20 +1427,22 @@ pre:hover .copy-btn { opacity: 1; }
 
 /* ----- Gallery grid ----- */
 .gallery {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
+  align-items: start;
 }
-.gallery .shot { cursor: zoom-in; }
+.gallery .shot { cursor: zoom-in; display: flex; flex-direction: column; flex: 1 1 260px; max-width: 400px; }
 .gallery .shot .cap {
   padding: 12px 14px;
   font-size: .88rem;
   color: var(--text-muted);
-  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
   background: var(--bg-alt);
+  order: -1;
 }
-@media (max-width: 900px) { .gallery { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .gallery { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .gallery .shot { max-width: 100%; } }
 
 /* ----- Lightbox ----- */
 .lightbox {
@@ -1746,6 +1749,43 @@ pre:hover .copy-btn { opacity: 1; }
     0 10px 22px -8px rgba(0, 0, 0, 0.7);
 }
 
+@keyframes hc-drift-ex1 {
+  0%   { transform: translate3d(  0px,   0px, 0) rotate( 5deg); }
+  18%  { transform: translate3d(-40px,  24px, 0) rotate( 3deg); }
+  44%  { transform: translate3d(-16px, -36px, 0) rotate( 7deg); }
+  69%  { transform: translate3d( 32px,  18px, 0) rotate( 4deg); }
+  100% { transform: translate3d(  0px,   0px, 0) rotate( 5deg); }
+}
+@keyframes hc-drift-ex2 {
+  0%   { transform: translate3d(  0px,   0px, 0) rotate(-6deg); }
+  23%  { transform: translate3d( 36px, -22px, 0) rotate(-4deg); }
+  51%  { transform: translate3d(-20px,   8px, 0) rotate(-9deg); }
+  78%  { transform: translate3d( 24px, -12px, 0) rotate(-5deg); }
+  100% { transform: translate3d(  0px,   0px, 0) rotate(-6deg); }
+}
+@keyframes hc-drift-ex3 {
+  0%   { transform: translate3d(  0px,   0px, 0) rotate( 9deg); }
+  31%  { transform: translate3d(-32px, -28px, 0) rotate( 7deg); }
+  57%  { transform: translate3d( 44px,  18px, 0) rotate(11deg); }
+  82%  { transform: translate3d(-12px,  34px, 0) rotate( 8deg); }
+  100% { transform: translate3d(  0px,   0px, 0) rotate( 9deg); }
+}
+.hero-collage .hc-ex1 {
+  bottom: 6%; left: 2%;
+  width: 35%; z-index: 12;
+  animation: hc-drift-ex1 12.5s ease-in-out -1.8s infinite !important;
+}
+.hero-collage .hc-ex2 {
+  top: -8%; left: 32%;
+  width: 45%; z-index: 13;
+  animation: hc-drift-ex2 10.2s ease-in-out -4.1s infinite !important;
+}
+.hero-collage .hc-ex3 {
+  top: 48%; right: 2%;
+  width: 40%; z-index: 12;
+  animation: hc-drift-ex3 13.8s ease-in-out -2.6s infinite !important;
+}
+
 @media (max-width: 980px) {
   .hero-collage { max-width: 520px; }
 }
@@ -1798,7 +1838,7 @@ pre:hover .copy-btn { opacity: 1; }
   pointer-events: none;
   background: rgba(255, 255, 255, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.85);
-  border-radius: 8px;
+  border-radius: 14px;
   backdrop-filter: blur(18px) saturate(160%);
   -webkit-backdrop-filter: blur(18px) saturate(160%);
   box-shadow:
@@ -1847,7 +1887,7 @@ pre:hover .copy-btn { opacity: 1; }
     position: static;
     max-width: 100%;
     margin: 14px;
-    border-radius: 8px;
+    border-radius: 12px;
     background: rgba(255, 255, 255, 0.92);
   }
 }
@@ -1913,7 +1953,7 @@ html.taskbar-docked .win-taskbar {
   background: #0c0e12;
 }
 
-/* NepDate widget block on the left — minimal, no decoration, just typography */
+/* NepDate widget block on the left - minimal, no decoration, just typography */
 .win-taskbar-tray {
   display: flex;
   align-items: center;
@@ -1966,7 +2006,7 @@ html.taskbar-docked .win-taskbar {
   font-weight: 500;
 }
 
-/* Centered icon group — flat, monochrome-leaning, modern */
+/* Centered icon group - flat, monochrome-leaning, modern */
 .win-taskbar-icons {
   display: flex;
   align-items: center;
@@ -2007,7 +2047,7 @@ html.taskbar-docked .win-taskbar {
 }
 .win-taskbar .wt-icon svg { display: block; }
 
-/* Real Windows clock on the right — quieter than the NepDate widget */
+/* Real Windows clock on the right - quieter than the NepDate widget */
 .win-taskbar-clock {
   justify-self: end;
   text-align: right;
@@ -2142,7 +2182,7 @@ html.taskbar-docked .win-taskbar {
   position: relative;
   padding: 14px 18px 14px 56px;
   margin-bottom: 10px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--border);
   background: var(--surface);
   counter-increment: step;
@@ -2257,7 +2297,7 @@ html.taskbar-docked .win-taskbar {
   position: relative;
   padding: 14px 18px 14px 56px;
   margin-bottom: 10px;
-  border-radius: 8px;
+  border-radius: 12px;
   border: 1px solid var(--border);
   background: var(--surface);
   counter-increment: step;
@@ -2287,15 +2327,16 @@ html.taskbar-docked .win-taskbar {
 .site-footer .footer-bottom { opacity: .8; font-size: .88rem; }
 
 /* ==========================================================================
-   Phase 4 — Second-pass polish
+   Phase 4 - Second-pass polish
    Gallery section dividers, structural refinements
    ========================================================================== */
 
 /* ----- Gallery page: structured section headers ----- */
+.gallery-section { padding: 52px 0; }
 .gallery-head {
   text-align: center;
-  margin: 0 0 28px;
-  padding: 0 0 20px;
+  margin: 0 0 36px;
+  padding: 0 0 24px;
   border-bottom: 1px solid var(--border);
 }
 .gallery-head .gh-eyebrow {
@@ -2327,7 +2368,7 @@ html.taskbar-docked .win-taskbar {
 .gallery-group > .gallery { margin-bottom: 0; }
 
 /* ==========================================================================
-   Phase 3 — Features page enhancements
+   Phase 3 - Features page enhancements
    Screenshot placeholders, "New" badges, sticky sub-nav, tool cards
    ========================================================================== */
 
@@ -2552,7 +2593,7 @@ kbd {
 /* ----- Settings feature cards (two-column, more detailed) ----- */
 .settings-features {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 18px;
   margin-top: 36px;
 }
@@ -2897,7 +2938,7 @@ a.chip:hover { border-color: var(--accent-border); color: var(--accent); }
   padding-top: 0;                   /* undo titlebar slot */
   background: var(--bg-elev-1);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   overflow: hidden;
   box-shadow:
     0 1px 0 0 rgba(11, 15, 26, 0.04) inset,
@@ -3019,7 +3060,7 @@ a.chip:hover { border-color: var(--accent-border); color: var(--accent); }
    Phase 2 third pass: revert SVG mark, polish PNG brand, sponsor btn-lg
    ===================================================================== */
 
-/* The brand image is a transparent circular PNG — kill the rounded
+/* The brand image is a transparent circular PNG - kill the rounded
    square clip, the backing tile, and the box shadow. */
 .brand .logo-img {
   width: 32px;

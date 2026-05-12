@@ -50,9 +50,8 @@ its community in public spaces.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may
 be reported by contacting the project maintainer through a private
-GitHub message or via the contact method listed in
-[SECURITY.md](SECURITY.md). All complaints will be reviewed and
-investigated promptly and fairly.
+GitHub message. All complaints will be reviewed and investigated
+promptly and fairly.
 
 All maintainers are obligated to respect the privacy and security of
 the reporter of any incident.

@@ -6,7 +6,7 @@ namespace NepDateWidget.Services;
 
 /// <summary>
 /// Manages the Windows "Start with Windows" startup entry.
-/// Velopack / portable channel: HKCU\Software\Microsoft\Windows\CurrentVersion\Run, value "NepDateWidget".
+/// Unpackaged (dev/portable) channel: HKCU\Software\Microsoft\Windows\CurrentVersion\Run, value "NepDateWidget".
 /// MSIX / Store channel: Windows.ApplicationModel.StartupTask with ID "NepDateWidgetStartupTask".
 /// The task ID must match the TaskId declared in Package.appxmanifest.
 /// </summary>

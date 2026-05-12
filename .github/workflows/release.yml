@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag (e.g. v1.0.0) — tag must already exist in the repo'
+        description: 'Release tag (e.g. v1.0.0) - tag must already exist in the repo'
         required: true
 
 env:
@@ -41,7 +41,7 @@ jobs:
           Write-Host "Releasing tag: $t"
 
       # ── 2. Checkout ────────────────────────────────────────────────────────
-      #  Checkout at the exact tag — not at whatever HEAD is on main right now.
+      #  Checkout at the exact tag - not at whatever HEAD is on main right now.
       #  Critical for reproducibility and for the manual-trigger path.
       - name: Checkout
         uses: actions/checkout@v4
@@ -77,7 +77,7 @@ jobs:
 
           if ($csprojVersion -ne $tagVersion) {
             Write-Error @"
-          Version mismatch — update <Version> in your .csproj before tagging.
+          Version mismatch - update <Version> in your .csproj before tagging.
             csproj : $csprojVersion
             tag    : $tagVersion
           "@
@@ -91,7 +91,7 @@ jobs:
       #  build step below. Publish steps do NOT use --no-restore because each
       #  publish profile targets a specific RID and needs its own restore pass
       #  to produce the net10.0-windows/<rid> target in project.assets.json.
-      #  Multiple --runtime restores are not additive — each call regenerates
+      #  Multiple --runtime restores are not additive - each call regenerates
       #  the assets file, so the last one would silently lose earlier RIDs.
       - name: Restore
         run: |
@@ -112,7 +112,7 @@ jobs:
 
       # ── 8. Publish ─────────────────────────────────────────────────────────
       #  /p:PublishProfile reads the committed .pubxml from
-      #  Properties/PublishProfiles/ — identical to publishing from Visual Studio.
+      #  Properties/PublishProfiles/ - identical to publishing from Visual Studio.
       #  All profile settings (SelfContained, PublishSingleFile, ReadyToRun,
       #  EnableCompressionInSingleFile, IncludeNativeLibrariesForSelfExtract,
       #  PublishDir) are respected automatically.
@@ -121,7 +121,7 @@ jobs:
       #  net10.0-windows/<rid> target to project.assets.json before building.
       #  Currently we ship a single self-contained win-x64 variant. Add other
       #  RIDs (win-arm64, win-x86) here when there is real demand.
-      - name: Publish — win-x64-portable
+      - name: Publish - win-x64-portable
         run: dotnet publish ${{ env.PROJECT }} /p:PublishProfile=win-x64-portable
 
       # ── 9. Bundle zip ──────────────────────────────────────────────────────
@@ -146,7 +146,7 @@ jobs:
             $zip   = "dist/NepDateWidget-$tag-$label.zip"
 
             if (-not (Test-Path $dir)) {
-              Write-Error "Publish output not found at '$dir' — did the publish step fail silently?"
+              Write-Error "Publish output not found at '$dir' - did the publish step fail silently?"
               exit 1
             }
 
@@ -178,7 +178,7 @@ jobs:
       # ── 11. Upload artifacts ───────────────────────────────────────────────
       #  Runs even if the release step below fails (if: always()).
       #  This means you can always download the zips from the Actions run
-      #  to inspect or upload manually — nothing is ever lost to a failed step.
+      #  to inspect or upload manually - nothing is ever lost to a failed step.
       - name: Upload build artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -187,139 +187,9 @@ jobs:
           path: dist/
           if-no-files-found: warn
 
-      # ── 11b. Velopack auto-update package ──────────────────────────────────
-      #  Builds an installer + delta package from the win-x64 publish output.
-      #  Output goes into releases/ and is uploaded to the same GitHub Release
-      #  as the existing zips. Velopack's UpdateManager (in-app) reads the
-      #  RELEASES file from this folder via GithubSource and serves deltas.
-      - name: Install Velopack CLI
-        # Pin to the same version as the Velopack runtime package referenced
-        # in NepDateWidget.csproj to avoid CLI/runtime format drift.
-        run: dotnet tool install -g vpk --version 0.0.1298
-
-      # ── 11c. Optional code signing ─────────────────────────────────────────
-      # Activates only when the repo has the WINDOWS_PFX_BASE64 and
-      # WINDOWS_PFX_PASSWORD secrets configured. Until then, releases are
-      # unsigned (SmartScreen will warn on first run for the small audience
-      # we currently have).
-      #
-      # How to enable, free, for an open-source project:
-      #   1. Apply to SignPath Foundation (https://signpath.io/foundation).
-      #      They sign OSS Windows binaries at no cost after a manual review.
-      #   2. Once approved, you have two integration paths:
-      #        a) Recommended: replace this step with the official
-      #           signpath/github-action-submit-signing-request action,
-      #           which uploads artifacts to SignPath, gets them signed
-      #           server-side, and downloads them back.
-      #        b) Or, if SignPath issues you a downloadable PFX, store it
-      #           as WINDOWS_PFX_BASE64 (base64 of the .pfx) and
-      #           WINDOWS_PFX_PASSWORD secrets in this repo. The two steps
-      #           below will then sign the EXE and the Velopack installer.
-      #
-      # If you buy a regular OV/EV cert later, the same secrets work as-is.
-      - name: Sign published EXE (if cert configured)
-        if: ${{ env.WINDOWS_PFX_BASE64 != '' }}
-        shell: pwsh
-        env:
-          WINDOWS_PFX_BASE64:   ${{ secrets.WINDOWS_PFX_BASE64 }}
-          WINDOWS_PFX_PASSWORD: ${{ secrets.WINDOWS_PFX_PASSWORD }}
-        run: |
-          $pfxPath = Join-Path $env:RUNNER_TEMP 'codesign.pfx'
-          [IO.File]::WriteAllBytes($pfxPath,
-            [Convert]::FromBase64String($env:WINDOWS_PFX_BASE64))
-          $signtool = (Get-ChildItem `
-              "${env:ProgramFiles(x86)}\Windows Kits\10\bin\*\x64\signtool.exe" |
-              Sort-Object FullName -Descending |
-              Select-Object -First 1).FullName
-          # Sign the self-contained EXE that vpk will pack into the installer.
-          & $signtool sign `
-            /f $pfxPath `
-            /p $env:WINDOWS_PFX_PASSWORD `
-            /tr http://timestamp.digicert.com `
-            /td sha256 /fd sha256 `
-            "publish/win-x64-portable/NepDateWidget.exe"
-          if ($LASTEXITCODE -ne 0) { throw "signtool failed for EXE" }
-          # Save resolved values for the next step (vpk needs the same params).
-          "PFX_PATH=$pfxPath"                       | Out-File -Append $env:GITHUB_ENV
-          "PFX_PASSWORD=$env:WINDOWS_PFX_PASSWORD"  | Out-File -Append $env:GITHUB_ENV
-          "SIGNTOOL_PATH=$signtool"                 | Out-File -Append $env:GITHUB_ENV
-
-      # ── 11d. Download previous full.nupkg for delta generation ──────────────
-      #  releases/ is gitignored, so CI always starts with an empty folder.
-      #  vpk needs the previous version's full.nupkg present in --outputDir to
-      #  produce a smaller delta package alongside the full one.
-      #  Without this, every update downloads the full package (~75 MB).
-      #  This step uses the GitHub CLI (pre-installed on windows-latest) to
-      #  pull the most recent published release's full.nupkg into releases/.
-      #  On the very first release there are no previous releases, so the
-      #  command exits cleanly and vpk produces a full package only.
-      - name: Download previous full.nupkg (for delta)
-        shell: pwsh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          New-Item -ItemType Directory -Force releases | Out-Null
-          $currentTag = "${{ steps.tag.outputs.value }}"
-          # Find the most recent release that is not the current tag.
-          $prev = gh release list --json tagName,isDraft,isPrerelease --limit 20 |
-                  ConvertFrom-Json |
-                  Where-Object { -not $_.isDraft -and -not $_.isPrerelease -and $_.tagName -ne $currentTag } |
-                  Select-Object -First 1
-          if ($prev) {
-            Write-Host "Downloading previous full.nupkg from $($prev.tagName) for delta generation..."
-            gh release download $prev.tagName --pattern '*-full.nupkg' --dir releases --skip-existing 2>&1
-            Write-Host "Delta baseline: $(Get-ChildItem releases -Filter '*-full.nupkg' | Select-Object -ExpandProperty Name)"
-          } else {
-            Write-Host "No previous published release found. First release — full package only, no delta."
-          }
-
-      - name: Velopack pack (win-x64)
-        shell: pwsh
-        run: |
-          $version = "${{ steps.tag.outputs.value }}".TrimStart('v')
-          New-Item -ItemType Directory -Force releases | Out-Null
-
-          # If the optional sign step ran, hand vpk the signtool params so the
-          # installer (Setup.exe) and Update.exe are signed too. Otherwise pack
-          # unsigned.
-          $signArgs = @()
-          if ($env:PFX_PATH) {
-            $signArgs = @(
-              '--signParams',
-              ('/f "{0}" /p "{1}" /tr http://timestamp.digicert.com /td sha256 /fd sha256' `
-                -f $env:PFX_PATH, $env:PFX_PASSWORD)
-            )
-          }
-
-          # IMPORTANT: pack the self-contained, single-file publish output so
-          # users without the .NET 10 desktop runtime can run the installed app.
-          vpk pack `
-            --packId NepDateWidget `
-            --packVersion $version `
-            --packDir publish/win-x64-portable `
-            --mainExe NepDateWidget.exe `
-            --packTitle "NepDate Widget" `
-            --packAuthors "RajuPrasai" `
-            --icon src/NepDateWidget/Assets/icon.ico `
-            --outputDir releases `
-            @signArgs
-
-      - name: Cleanup signing material
-        if: always() && env.PFX_PATH != ''
-        shell: pwsh
-        run: Remove-Item -Force -ErrorAction SilentlyContinue $env:PFX_PATH
-
-      - name: Upload Velopack artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: velopack-${{ steps.tag.outputs.value }}
-          path: releases/
-          if-no-files-found: warn
-
       # ── 12. Create GitHub Release (draft) ──────────────────────────────────
       #  Created as a draft so you can write release notes before going live.
-      #  GITHUB_TOKEN is built into every repo — no secrets to configure.
+      #  GITHUB_TOKEN is built into every repo - no secrets to configure.
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -329,9 +199,5 @@ jobs:
           files: |
             dist/NepDateWidget-${{ steps.tag.outputs.value }}-win-x64-self-contained.zip
             dist/checksums.sha256.txt
-            releases/NepDateWidget-*-Setup.exe
-            releases/NepDateWidget-*-full.nupkg
-            releases/NepDateWidget-*-delta.nupkg
-            releases/RELEASES
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

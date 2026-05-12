@@ -86,15 +86,15 @@
     <!-- Sticky feature section nav -->
     <nav class="feat-nav" aria-label="Feature sections">
       <div class="feat-nav-inner">
-        <a href="#mini-bar">Mini Bar</a>
-        <a href="#runbox">RunBox</a>
         <a href="#date">Date</a>
-        <a href="#bank">Bank</a>
-        <a href="#text">Text</a>
-        <a href="#network">Network</a>
         <a href="#unit">Unit</a>
+        <a href="#text">Text</a>
+        <a href="#bank">Bank</a>
+        <a href="#network">Network</a>
         <a href="#more">More</a>
         <a href="#settings">Settings</a>
+        <a href="#runbox">RunBox</a>
+        <a href="#mini-bar">Mini Bar</a>
       </div>
     </nav>
 
@@ -114,14 +114,14 @@
             <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>7 Tabs</span>
             <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>25+ Tools</span>
             <span class="chip chip-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/></svg>20 Color Presets</span>
-            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h7"/></svg>20+ Font Choices</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h7"/></svg>20 Font Choices</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Mini Bar -->
-    <section class="section" id="mini-bar" style="padding-top: 48px;">
+ <!-- Mini Bar -->
+    <section class="section" id="mini-bar" style="background:var(--bg-alt);">
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">Always visible</div>
@@ -170,39 +170,6 @@
       </div>
     </section>
 
-    <!-- RunBox -->
-    <section class="section" id="runbox">
-      <div class="container">
-        <div class="section-head">
-          <div class="section-eyebrow">RunBox</div>
-          <h2 class="section-title">Run anything without leaving the keyboard.</h2>
-        </div>
-
-        <div class="feat-block">
-          <div class="body">
-            <span class="eyebrow">Launcher</span>
-            <h3>Global hotkey command launcher with history</h3>
-            <p>Press the configurable hotkey (default <kbd>Ctrl+Shift+Space</kbd>) from anywhere in
-              Windows to summon a compact run bar. Type a program name, file path, URL, or just a
-              search term and press Enter.</p>
-            <ul>
-              <li>Runs commands exactly like the Windows native Run dialog</li>
-              <li>Detects URLs and opens them in your default browser</li>
-              <li>Falls back to a Google search for anything that doesn&rsquo;t match a command or URL</li>
-              <li>Remembers the last 50 entries; navigate with arrow keys, filter by typing, Tab-complete from history</li>
-              <li>Hotkey is fully configurable from Settings</li>
-            </ul>
-          </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="RunBox launcher screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- Date tab -->
     <section class="section" id="date" style="background:var(--bg-alt);">
       <div class="container">
@@ -245,46 +212,37 @@
       </div>
     </section>
 
-    <!-- Bank tab -->
-    <section class="section" id="bank">
+    <!-- Unit tab -->
+    <section class="section" id="unit">
       <div class="container">
         <div class="section-head">
-          <div class="section-eyebrow">Bank tab</div>
-          <h2 class="section-title">EMI and interest, in your calendar.</h2>
-          <p class="section-sub">Calculate monthly loan repayments with a full amortization schedule tagged to BS dates, or model interest across multiple rate periods for loans that changed rates mid-term.</p>
+          <div class="section-eyebrow">Unit tab</div>
+          <h2 class="section-title">Local Nepali units &mdash; area and weight.</h2>
+          <p class="section-sub">Two modes in one tab: land area conversion with traditional Nepali units, and weight and volume with standard Nepal Weights &amp; Measures Act values.</p>
         </div>
 
         <div class="feat-block">
           <div class="body">
-            <span class="eyebrow">EMI</span>
-            <h3>Loan EMI with full schedule</h3>
-            <p>Enter loan amount, BS start date, annual rate, and tenure in months. The widget computes
-              monthly EMI, total interest, and total payment, then shows the year-by-year and month-by-month
-              amortization breakdown.</p>
-            <ul>
-              <li>Year rows expand to monthly detail</li>
-              <li>Each row tagged with its BS month start</li>
-              <li>Both BS and AD dates respected</li>
-            </ul>
+            <span class="eyebrow">Area</span>
+            <h3>Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri</h3>
+            <p>Convert between traditional Nepali land area units and Sq. Metres and Sq. Feet.
+              Includes <strong>Khetmuri</strong>, the Terai synonym for Kattha used across many districts.
+              Pick From and To, type the value, get the result.</p>
           </div>
-          <div class="shot" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="EMI calculator with amortization schedule"><img src="assets/screenshots/tab-bank-emi.png" alt="EMI calculator with amortization schedule" loading="lazy" /></div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area unit conversion"><img src="assets/screenshots/tab-unit-area.png" alt="Area unit conversion" loading="lazy" /></div>
         </div>
 
         <div class="feat-block reverse">
           <div class="body">
-            <span class="eyebrow">Interest</span>
-            <h3>Multi-period simple interest</h3>
-            <p>Enter principal and a global From / To date range, then add as many rate periods as needed.
-              Each row carries its own start date and annual rate. The <strong>Add Period</strong> button
-              auto-fills the next start date to the first day of the following month.</p>
-            <ul>
-              <li>Per-row interest breakdown plus a grand total</li>
-              <li>Supports rate changes mid-loan</li>
-              <li>Switch freely between BS and AD input</li>
-            </ul>
+            <span class="eyebrow">Weight</span>
+            <h3>Dharni, Pawa, Mana, Pathi, Muri, Tola &mdash; local, metric &amp; imperial</h3>
+            <p>13 units in one converter: traditional Nepali units (Dharni, Pawa, Mana, Pathi, Muri, Tola),
+              metric (kg, g, mg, tonne, litre), and imperial (lb, oz). Uses standard
+              Nepal Weights &amp; Measures Act values for the traditional units.</p>
           </div>
-          <div class="shot" data-lightbox="assets/screenshots/tab-bank-interest.png" data-caption="Interest calculator"><img src="assets/screenshots/tab-bank-interest.png" alt="Interest calculator" loading="lazy" /></div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-unit-weight.png" data-caption="Weight unit conversion"><img src="assets/screenshots/tab-unit-weight.png" alt="Weight unit conversion" loading="lazy" /></div>
         </div>
+
       </div>
     </section>
 
@@ -311,8 +269,8 @@
           <div class="body">
             <span class="eyebrow">Word</span>
             <h3>Word and character count</h3>
-            <p>Paste any text and get an instant breakdown of words, characters with and without spaces,
-              sentences, and lines. Works on both Nepali and English text.</p>
+            <p>Paste any text and get an instant breakdown of words, characters, and characters without spaces.
+              The same panel includes text case transformations: UPPER, lower, Title Case, Sentence case, snake_case, and camelCase &mdash; with one-click copy of the result.</p>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-text-word.png" data-caption="Word count tool"><img src="assets/screenshots/tab-text-word.png" alt="Word count tool" loading="lazy" /></div>
         </div>
@@ -349,8 +307,51 @@
       </div>
     </section>
 
+    <!-- Bank tab -->
+    <section class="section" id="bank">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">Bank tab</div>
+          <h2 class="section-title">Interest and EMI, in your calendar.</h2>
+          <p class="section-sub">Model interest across multiple rate periods for loans that changed rates mid-term, or calculate monthly repayments with a full amortization schedule tagged to BS dates.</p>
+        </div>
+
+        <div class="feat-block">
+          <div class="body">
+            <span class="eyebrow">Interest</span>
+            <h3>Multi-period simple interest</h3>
+            <p>Enter principal and a global From / To date range, then add as many rate periods as needed.
+              Each row carries its own start date and annual rate. The <strong>Add Period</strong> button
+              auto-fills the next start date to the first day of the following month.</p>
+            <ul>
+              <li>Per-row interest breakdown plus a grand total</li>
+              <li>Supports rate changes mid-loan</li>
+              <li>Switch freely between BS and AD input</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-bank-interest.png" data-caption="Interest calculator"><img src="assets/screenshots/tab-bank-interest.png" alt="Interest calculator" loading="lazy" /></div>
+        </div>
+
+        <div class="feat-block reverse">
+          <div class="body">
+            <span class="eyebrow">EMI</span>
+            <h3>Loan EMI with full schedule</h3>
+            <p>Enter loan amount, BS start date, annual rate, and tenure in months. The widget computes
+              monthly EMI, total interest, and total payment, then shows the year-by-year and month-by-month
+              amortization breakdown.</p>
+            <ul>
+              <li>Year rows expand to monthly detail</li>
+              <li>Each row tagged with its BS month start</li>
+              <li>Both BS and AD dates respected</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="EMI calculator with amortization schedule"><img src="assets/screenshots/tab-bank-emi.png" alt="EMI calculator with amortization schedule" loading="lazy" /></div>
+        </div>
+      </div>
+    </section>
+
     <!-- Network tab -->
-    <section class="section" id="network">
+    <section class="section" id="network" style="background:var(--bg-alt);">
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">Network tab</div>
@@ -390,7 +391,7 @@
         <div class="feat-block">
           <div class="body">
             <span class="eyebrow">IP Scanner</span>
-            <h3>Scan your whole subnet in seconds <span class="badge-new">New</span></h3>
+            <h3>Scan your whole subnet in seconds</h3>
             <p>Parallel-pings every host on your local subnet (auto-detected, up to /24) and builds
               a table of every device that responds. Hostname resolution uses DNS with NetBIOS fallback,
               MAC address via ARP, and manufacturer from the OUI database.</p>
@@ -400,104 +401,56 @@
               <li>Marks your own machine and the gateway automatically</li>
             </ul>
           </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="IP Scanner screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-scan.png" data-caption="IP Scanner">
+            <img src="assets/screenshots/tab-network-scan.png" alt="IP Scanner" loading="lazy" />
           </div>
         </div>
 
-        <div class="tool-cards">
-          <div class="tool-card">
-            <div class="tool-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>
-            </div>
-            <h4>Traceroute <span class="badge-new">New</span></h4>
-            <p>Shows the network path to any host hop by hop. Each hop shows IP, hostname if resolvable, and round-trip time.</p>
+        <div class="feat-block reverse">
+          <div class="body">
+            <span class="eyebrow">Traceroute</span>
+            <h3>Hop-by-hop network path to any host</h3>
+            <p>Shows the full route a packet takes to reach any host. Each hop displays the IP, hostname if resolvable, and round-trip time &mdash; useful for pinpointing where latency or packet loss originates.</p>
             <ul>
               <li>Full per-hop breakdown</li>
               <li>Identifies high-latency hops at a glance</li>
             </ul>
           </div>
-          <div class="tool-card">
-            <div class="tool-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            </div>
-            <h4>Whois <span class="badge-new">New</span></h4>
-            <p>Look up registration and ownership records for any domain or IP block directly from the widget.</p>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-trace.png" data-caption="Traceroute &mdash; hop-by-hop network path">
+            <img src="assets/screenshots/tab-network-trace.png" alt="Traceroute" loading="lazy" />
+          </div>
+        </div>
+
+        <div class="feat-block">
+          <div class="body">
+            <span class="eyebrow">Whois</span>
+            <h3>Domain and IP registration lookup</h3>
+            <p>Look up registration and ownership records for any domain or IP block directly from the widget. No browser tab, no copy-pasting into a web form.</p>
             <ul>
               <li>Registrar, registration and expiry dates</li>
               <li>Name servers and contact details</li>
             </ul>
           </div>
-          <div class="tool-card">
-            <div class="tool-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-            </div>
-            <h4>DNS Lookup <span class="badge-new">New</span></h4>
-            <p>Resolve hostnames and inspect DNS records. Supports A, AAAA, MX, TXT, CNAME, and NS queries.</p>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-whois.png" data-caption="Whois lookup">
+            <img src="assets/screenshots/tab-network-whois.png" alt="Whois lookup" loading="lazy" />
+          </div>
+        </div>
+
+        <div class="feat-block reverse">
+          <div class="body">
+            <span class="eyebrow">DNS Lookup</span>
+            <h3>Resolve hostnames and inspect DNS records</h3>
+            <p>Query any hostname for its DNS records directly. Supports A, AAAA, MX, TXT, CNAME, and NS record types in a single query.</p>
             <ul>
               <li>Multiple record types in one query</li>
               <li>Results displayed as a clean, readable table</li>
             </ul>
           </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Unit tab -->
-    <section class="section" id="unit" style="background:var(--bg-alt);">
-      <div class="container">
-        <div class="section-head">
-          <div class="section-eyebrow">Unit tab</div>
-          <h2 class="section-title">Local Nepali units &mdash; area, weight, and script.</h2>
-          <p class="section-sub">Three modes in one tab: land area conversion with traditional Nepali units, weight and volume with standard Nepal Weights &amp; Measures Act values, and Devanagari &harr; Romanized script conversion.</p>
-        </div>
-
-        <div class="feat-block">
-          <div class="body">
-            <span class="eyebrow">Area</span>
-            <h3>Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri</h3>
-            <p>Convert between traditional Nepali land area units and Sq. Metres and Sq. Feet.
-              Includes <strong>Khetmuri</strong>, the Terai synonym for Kattha used across many districts.
-              Pick From and To, type the value, get the result.</p>
-          </div>
-          <div class="shot" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area unit conversion"><img src="assets/screenshots/tab-unit-area.png" alt="Area unit conversion" loading="lazy" /></div>
-        </div>
-
-        <div class="feat-block reverse">
-          <div class="body">
-            <span class="eyebrow">Weight</span>
-            <h3>Dharni, Pawa, Mana, Pathi, Muri &mdash; local &amp; metric</h3>
-            <p>Convert between traditional Nepali weight and volume units using standard
-              Nepal Weights &amp; Measures Act values. Dharni, Pawa, Mana, Pathi, and Muri
-              converted to and from kg, grams, and litres.</p>
-          </div>
-          <div class="shot" data-lightbox="assets/screenshots/tab-unit-weight.png" data-caption="Weight unit conversion"><img src="assets/screenshots/tab-unit-weight.png" alt="Weight unit conversion" loading="lazy" /></div>
-        </div>
-
-        <div class="feat-block">
-          <div class="body">
-            <span class="eyebrow">Script</span>
-            <h3>Devanagari &#8596; Romanized <span class="badge-new">Also in Text tab</span></h3>
-            <p>The same script converter available in the Text tab is also right here in the Unit tab
-              so you can stay in one place. Switch direction mid-session, convert inline.
-            </p>
-            <ul>
-              <li>Roman &rarr; Devanagari and Devanagari &rarr; Roman</li>
-              <li>Results update as you type</li>
-              <li>Copy output with one click</li>
-            </ul>
-          </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="Unit script converter screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-dns.png" data-caption="DNS Lookup">
+            <img src="assets/screenshots/tab-network-dns.png" alt="DNS lookup" loading="lazy" />
           </div>
         </div>
+
       </div>
     </section>
 
@@ -525,11 +478,8 @@
                 appears in every file-upload dialog sidebar</li>
             </ul>
           </div>
-          <div class="shot">
-            <div class="img-placeholder" aria-label="Documents tab screenshot coming soon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-              <span>Screenshot coming soon</span>
-            </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-more-documents.png" data-caption="Documents">
+            <img src="assets/screenshots/tab-more-documents.png" alt="Documents" loading="lazy" />
           </div>
         </div>
 
@@ -556,6 +506,86 @@
       </div>
     </section>
 
+    <!-- RunBox -->
+    <section class="section" id="runbox">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">RunBox</div>
+          <h2 class="section-title">Run anything without leaving the keyboard.</h2>
+        </div>
+
+        <div class="feat-block">
+          <div class="body">
+            <span class="eyebrow">Launcher</span>
+            <h3>Global hotkey command launcher with history</h3>
+            <p>Press the configurable hotkey (default <kbd>Ctrl+Shift+Space</kbd>) from anywhere in
+              Windows to summon a compact run bar. Type a program name, file path, URL, or just a
+              search term and press Enter.</p>
+            <ul>
+              <li>Runs commands exactly like the Windows native Run dialog</li>
+              <li>Detects URLs and opens them in your default browser</li>
+              <li>Falls back to a Google search for anything that doesn&rsquo;t match a command or URL</li>
+              <li>Calculator: type <code>= 2+3*4</code> to evaluate a math expression inline &mdash; press Enter to copy the result to clipboard</li>
+              <li>Stores up to 500 history entries; navigate with arrow keys, filter by typing, Tab-complete from history</li>
+              <li>Hotkey is fully configurable from Settings</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/runbox-run.png" data-caption="RunBox launcher">
+            <img src="assets/screenshots/runbox-run.png" alt="RunBox launcher" loading="lazy" />
+          </div>
+        </div>
+
+        <div class="feat-block reverse">
+          <div class="body">
+            <span class="eyebrow">Quick commands</span>
+            <h3>Search prefix shortcuts for frequently used sites</h3>
+            <p>RunBox ships with preconfigured search keywords. Type a keyword followed by your search term and press Enter &mdash; for example <code>yt lofi mix</code> searches YouTube or <code>hb oven</code> searches HamroBazaar.</p>
+            <ul>
+              <li>YouTube, GitHub, Google Maps, HamroBazaar, eKantipur, and 17 more out of the box</li>
+              <li>No full URL needed &mdash; keyword + query is all it takes</li>
+              <li>Each shortcut is editable from Settings</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/runbox-hamrobazaar.png" data-caption="RunBox &mdash; Hamro Bazaar quick access">
+            <img src="assets/screenshots/runbox-hamrobazaar.png" alt="RunBox Hamro Bazaar command" loading="lazy" />
+          </div>
+        </div>
+
+        <div class="feat-block">
+          <div class="body">
+            <span class="eyebrow">Map search</span>
+            <h3>Open a map directly from a keyword</h3>
+            <p>Type <code>map</code> followed by any location and RunBox passes the query straight to Google Maps &mdash; no browser pre-opened, no extra navigation required.</p>
+            <ul>
+              <li>Works with any address, place name, or coordinate</li>
+              <li>Opens in your default browser</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/runbox-map.png" data-caption="RunBox &mdash; map quick access">
+            <img src="assets/screenshots/runbox-map.png" alt="RunBox map command" loading="lazy" />
+          </div>
+        </div>
+
+        <div class="feat-block reverse">
+          <div class="body">
+            <span class="eyebrow">Custom scripts</span>
+            <h3>Run your own scripts from the command bar</h3>
+            <p>Define custom commands that run any script or executable on your machine. Assign a keyword, point it at a file, and it runs on Enter &mdash; the same way as any built-in command.</p>
+            <ul>
+              <li>Comes with a <strong>Desktop Organizer</strong> script out of the box &mdash; no setup required</li>
+              <li>Supports PowerShell, batch files, cmd, Python, and WSL scripts</li>
+              <li>Use <code>{APPDIR}</code> in paths to reference scripts bundled with the app</li>
+              <li>Edit <code>scripts.json</code> from Settings to add or change entries</li>
+              <li>Invoke from RunBox by typing <code>scr</code> followed by the script name &mdash; prefix locks and suggestions appear as you type</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/runbox-custom-script.png" data-caption="RunBox &mdash; custom script execution">
+            <img src="assets/screenshots/runbox-custom-script.png" alt="RunBox custom script command" loading="lazy" />
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Settings -->
     <section class="section" id="settings" style="background:var(--bg-alt);">
       <div class="container">
@@ -577,12 +607,12 @@
           </div>
           <div class="settings-feature">
             <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
-            <h3>Font selection <span class="badge-new">New</span></h3>
-            <p>20+ font choices. Segoe UI, Calibri, Verdana plus embedded fonts that work on any machine regardless of what&rsquo;s installed: Inter, IBM Plex Sans, Roboto, Noto Sans, Cascadia Code, Poppins, Montserrat, Lato, Nunito, Rubik, and more.</p>
+            <h3>Font selection</h3>
+            <p>20 font choices. Segoe UI, Calibri, and Verdana (system fonts) plus 17 embedded fonts that work on any machine regardless of what&rsquo;s installed: Inter, Open Sans, Roboto, IBM Plex Sans, Source Sans 3, Noto Sans, Cascadia Code, Poppins, Montserrat, Lato, Raleway, Nunito, Rubik, DM Sans, Work Sans, Quicksand, Imprima.</p>
           </div>
           <div class="settings-feature">
             <div class="sf-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-            <h3>Calendar display <span class="badge-new">New</span></h3>
+            <h3>Calendar display</h3>
             <p>Toggle each calendar element independently: English day numbers, Saturday highlights, Sunday highlights, tithi, festival labels, and public holiday highlights. Pick a holiday accent color from 12 options (Red, Orange, Pink, Purple, Blue, Teal, Green, Yellow, Amber, Cyan, Indigo, Brown).</p>
           </div>
           <div class="settings-feature">
@@ -680,7 +710,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2025–2026 NepDate Widget. MIT License.</span>
+        <span>© 2025–2026 NepDate Widget. PolyForm Strict 1.0.0.</span>
         <span><a href="privacy.html">Privacy Policy</a> &middot; Built with care for the Nepali desktop.</span>
       </div>
   <script src="js/main.js"></script>

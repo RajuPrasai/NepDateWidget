@@ -853,7 +853,7 @@
                                             <TextBlock Text="{Binding Notes}"
                                                        Foreground="{DynamicResource WidgetForegroundBrush}"
                                                        Opacity="0.5" FontSize="12"
-                                                       TextTrimming="CharacterEllipsis" MaxWidth="260"
+                                                       TextTrimming="CharacterEllipsis" MaxWidth="260" HorizontalAlignment="Left"
                                                        Visibility="{Binding HasNotes, Converter={StaticResource BoolToVis}}" />
                                         </StackPanel>
                                         <Button Grid.Column="1" Style="{StaticResource MItemBtn}" Margin="4,0,0,0"
@@ -1340,7 +1340,7 @@
                                                        FontSize="14" FontWeight="SemiBold"
                                                        TextTrimming="CharacterEllipsis"
                                                        VerticalAlignment="Center" />
-                                            <!-- Extension badge — always visible, click to reveal in Explorer -->
+                                            <!-- Extension badge - always visible, click to reveal in Explorer -->
                                             <Button Grid.Column="1" Margin="6,0,0,0"
                                                     Visibility="{Binding HasFile, Converter={StaticResource BoolToVis}}"
                                                     Command="{Binding DataContext.OpenDocumentFolderCommand,

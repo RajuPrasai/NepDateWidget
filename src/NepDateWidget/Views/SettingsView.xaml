@@ -1226,18 +1226,11 @@
             <Border Style="{StaticResource CardPanel}">
                 <StackPanel>
                     <TextBlock Text="{Binding BehaviorSectionLabel}" Style="{StaticResource SectionLabel}" />
-                    <!-- Sorted: Animation (9) → Always on top (13) → Start with Windows (18) -->
                     <CheckBox Content="{Binding AnimationLabel}"
                               IsChecked="{Binding AnimationEnabled}"
                               Style="{StaticResource SettingsCheckBox}" />
-                    <CheckBox Content="{Binding AlwaysOnTopLabel}"
-                              IsChecked="{Binding AlwaysOnTop}"
-                              Style="{StaticResource SettingsCheckBox}" />
                     <CheckBox Content="{Binding AutoStartLabel}"
                               IsChecked="{Binding AutoStart}"
-                              Style="{StaticResource SettingsCheckBox}" />
-                    <CheckBox Content="{Binding HideFullscreenLabel}"
-                              IsChecked="{Binding HideOnFullscreen}"
                               Style="{StaticResource SettingsCheckBox}" />
                 </StackPanel>
             </Border>
@@ -1336,39 +1329,6 @@
                 </StackPanel>
             </Border>
 
-            <!-- Updates ─────────────────────────────────────────── -->
-            <Border Style="{StaticResource CardPanel}">
-                <StackPanel>
-                    <TextBlock Text="{Binding UpdateSectionLabel}"
-                               Style="{StaticResource SectionLabel}" />
-                    <!-- Velopack channel: auto-check toggle + manual check button + status -->
-                    <StackPanel Visibility="{Binding IsVelopackBuild, Converter={StaticResource BoolToVis}}">
-                        <CheckBox Content="{Binding AutoUpdateLabel}"
-                                  IsChecked="{Binding AutoCheckForUpdates}"
-                                  Style="{StaticResource SettingsCheckBox}" />
-                        <Button Content="{Binding CheckUpdateNowLabel}"
-                                Command="{Binding CheckForUpdatesNowCommand}"
-                                Style="{StaticResource OptionButton}"
-                                HorizontalAlignment="Stretch"
-                                Margin="0,6,0,0" />
-                        <TextBlock Text="{Binding UpdateStatusText}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   Opacity="0.75"
-                                   FontSize="11"
-                                   TextWrapping="Wrap"
-                                   Margin="0,6,0,0"
-                                   Visibility="{Binding HasUpdateStatus, Converter={StaticResource BoolToVis}}" />
-                    </StackPanel>
-                    <!-- Store channel: updates are delivered by the Windows Store -->
-                    <TextBlock Text="{Binding StoreUpdateLabel}"
-                               Foreground="{DynamicResource WidgetForegroundBrush}"
-                               Opacity="0.75"
-                               FontSize="11"
-                               TextWrapping="Wrap"
-                               Visibility="{Binding IsVelopackBuild, Converter={StaticResource InverseBoolToVis}}" />
-                </StackPanel>
-            </Border>
-
             <!-- Data files ───────────────────────────────────────── -->
             <Border Style="{StaticResource CardPanel}">
                 <StackPanel>
@@ -1435,7 +1395,7 @@
                             <TextBlock Text="shortcuts.json"
                                        FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
                                        Foreground="{DynamicResource WidgetForegroundBrush}" />
-                            <TextBlock Text="RunBox prefix shortcuts — add, edit, or disable"
+                            <TextBlock Text="RunBox prefix shortcuts - add, edit, or disable"
                                        FontSize="10.5"
                                        Foreground="{DynamicResource WidgetForegroundBrush}"
                                        Opacity="0.45"
@@ -1651,7 +1611,7 @@
                             <TextBlock Text="runtime.json"
                                        FontSize="12" FontFamily="Cascadia Code, Consolas, monospace"
                                        Foreground="{DynamicResource WidgetForegroundBrush}" />
-                            <TextBlock Text="Internal app state (last update check, notifications)"
+                            <TextBlock Text="Internal app state (notifications)"
                                        FontSize="10.5"
                                        Foreground="{DynamicResource WidgetForegroundBrush}"
                                        Opacity="0.45"

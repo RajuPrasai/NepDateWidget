@@ -9,31 +9,25 @@ namespace NepDateWidget.Helpers;
 ///   1. If a file named <c>portable.flag</c> exists beside the running EXE,
 ///      data lives in <c>{exeDir}\AppData\</c> (portable mode, single-folder install).
 ///   2. Otherwise data lives in <c>%LOCALAPPDATA%\NepDateWidget\AppData\</c>
-///      (installed mode). The <c>AppData</c> subfolder is mandatory because
-///      Velopack installs the app itself into <c>%LOCALAPPDATA%\NepDateWidget\</c>
-///      (with <c>current\</c>, <c>packages\</c>, <c>Update.exe</c>) — we must
-///      stay out of that folder so Velopack uninstall / update operations do not
-///      touch user data.
+///      (installed mode). The <c>AppData</c> subfolder keeps user data out of
+///      the install root so any future re-install does not touch user data.
 ///
-/// On first launch in installed mode, files from any prior beside-EXE
-/// <c>AppData\</c> folder are migrated automatically.
+/// On first Store launch, data from any prior GitHub Releases install
+/// is copied from <c>%LOCALAPPDATA%\NepDateWidget\AppData\</c> automatically.
 ///
 /// Directory layout under <c>AppData\</c>:
-///   config/  — user-editable configuration files
+///   config/  - user-editable configuration files
 ///     settings.json, localization.json, shortcuts.json, scripts.json
-///   data/    — user content
+///   data/    - user content
 ///     notes.json, reminders.json, documents.json, run-history.json, Documents/
-///   (root)   — operational files
+///   (root)   - operational files
 ///     runtime.json, nepdate.log
 /// </summary>
 public static class AppPaths
 {
     public const string PortableFlagFile = "portable.flag";
     public const string DataSubfolder = "AppData";
-    // The Velopack install root is always "NepDateWidget" regardless of channel.
-    // Used only in MigrateLegacyData to locate data left by a Velopack install.
-    private const string VelopackFolderName = "NepDateWidget";
-    // Channel-aware: "NepDateWidget" for Velopack/portable, "NepDateWidget.Store" for MSIX.
+    // Channel-aware: "NepDateWidget" for unpackaged/portable, "NepDateWidget.Store" for MSIX.
     public static string InstalledFolderName => AppEnvironment.DataFolderName;
 
     private static readonly Lazy<string> _exeDir = new(ResolveExeDir);
@@ -44,7 +38,7 @@ public static class AppPaths
     public static bool IsPortable => _isPortable.Value;
     public static string DataDirectory => _dataDir.Value;
 
-    // Subdirectories — created eagerly in ResolveDataDir.
+    // Subdirectories - created eagerly in ResolveDataDir.
     private static string ConfigDir   => Path.Combine(DataDirectory, "config");
     private static string UserDataDir => Path.Combine(DataDirectory, "data");
 
@@ -54,7 +48,7 @@ public static class AppPaths
     public static string ShortcutsPath     => Path.Combine(ConfigDir, "shortcuts.json");
     public static string ScriptsPath       => Path.Combine(ConfigDir, "scripts.json");
 
-    // Shipped default config files — located next to the EXE in Resources/configs/.
+    // Shipped default config files - located next to the EXE in Resources/configs/.
     // These are read-only at runtime; the app copies from here to AppData on first launch
     // and merges new keys/entries on subsequent launches.
     public static string DefaultsDirectory      => Path.Combine(ExeDirectory, "Resources", "configs");
@@ -110,27 +104,26 @@ public static class AppPaths
         {
             var target = DataDirectory;
 
-            // 0. MSIX first-run: copy user data from the Velopack channel's AppData dir so a
-            //    user switching from GitHub Releases to the Store keeps their notes and settings.
-            //    This is a copy (not move) so the Velopack install is unaffected if still present.
+            // 0. Store first-run: copy user data from the prior GitHub Releases install's
+            //    AppData dir so a user switching channels keeps their notes and settings.
+            //    This is a copy (not move) so the old install is unaffected if still present.
             if (AppEnvironment.IsPackaged && !IsPortable)
             {
-                var velopackData = Path.Combine(
+                var priorData = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    VelopackFolderName,
+                    "NepDateWidget",
                     DataSubfolder);
-                if (Directory.Exists(velopackData))
                 {
                     foreach (var subDir in new[] { "config", "data" })
                     {
-                        var srcDir = Path.Combine(velopackData, subDir);
+                        var srcDir = Path.Combine(priorData, subDir);
                         var dstDir = Path.Combine(target, subDir);
                         if (!Directory.Exists(srcDir)) continue;
                         foreach (var srcFile in Directory.GetFiles(srcDir))
                             TryCopy(srcFile, Path.Combine(dstDir, Path.GetFileName(srcFile)));
                     }
                     // Root-level files: nepdate.log, runtime.json
-                    foreach (var srcFile in Directory.GetFiles(velopackData))
+                    foreach (var srcFile in Directory.GetFiles(priorData))
                         TryCopy(srcFile, Path.Combine(target, Path.GetFileName(srcFile)));
                 }
             }
@@ -152,11 +145,10 @@ public static class AppPaths
 
                 // 1b. Migrate from any prior dev build that wrote data straight into
                 //     %LOCALAPPDATA%\NepDateWidget\ (without the AppData subfolder).
-                //     Velopack now owns that root, so move our files into AppData\.
-                //     Always use VelopackFolderName here: this migration predates channel splits.
+                //     Move our files into AppData\.
                 var legacyInstalled = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    VelopackFolderName);
+                    "NepDateWidget");
                 if (!string.Equals(legacyInstalled, target, StringComparison.OrdinalIgnoreCase))
                 {
                     foreach (var fileName in new[] { "settings.json", "reminders.json", "notes.json", "nepdate.log" })
@@ -186,7 +178,7 @@ public static class AppPaths
                 TryMove(Path.Combine(target, fn), Path.Combine(target, "data", fn));
             TryMoveDir(Path.Combine(target, "Documents"), Path.Combine(target, "data", "Documents"));
 
-            // Remove doc-search-history.json — feature removed.
+            // Remove doc-search-history.json - feature removed.
             TryDelete(Path.Combine(target, "doc-search-history.json"));
         }
         catch

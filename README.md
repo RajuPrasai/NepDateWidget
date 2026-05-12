@@ -54,7 +54,7 @@ Right-click any cell to copy that date in your preferred format.
 
 ### Tools
 
-All four tools are accessible from the **Tools tab** or directly via the right-click context menu.
+Convert, Days, and Time are accessible from the **Tools tab** or directly via the right-click context menu.
 
 #### Convert
 
@@ -82,6 +82,30 @@ Timezone converter with compact labeled dropdowns (e.g. `Nepal +05:45`, `Singapo
 
 <br clear="right" />
 
+---
+
+### Unit
+
+Area converter between traditional Nepali land units (Ropani, Aana, Paisa, Dam) and metric/imperial (sq metres, sq feet). Weight and volume converter spanning traditional Nepali units (Dharni, Pawa, Mana, Pathi, Muri, Tola), metric (kg, g, mg, tonne, litre), and imperial (lb, oz). A character-level Nepali script reference is also included.
+
+---
+
+### Text Tools
+
+**Password** - Configurable generator with adjustable length and charset toggles (uppercase, lowercase, digits, symbols, Nepali characters). A strength indicator shows which criteria are met in real time.
+
+**Word Count** - Counts words, characters, and characters excluding spaces for any pasted or typed text.
+
+**Unicode / Preeti** - Converts Preeti-encoded legacy Nepali text to Unicode and back, character by character.
+
+**Script** - Batch-converts `.docx` and `.txt` files between Preeti and Unicode encodings.
+
+---
+
+### Banking
+
+Interest and EMI calculators are accessible from the **Banking tab** or directly via the right-click context menu.
+
 #### Interest
 
 <img align="right" width="300" src="https://github.com/user-attachments/assets/d32d62dc-c0cf-4417-83e7-7840be6b1b56" alt="Interest calculator" />
@@ -93,6 +117,47 @@ Enter a principal amount and a global From / To date range. Switch freely betwee
 Results show a per-row interest breakdown and a grand total line.
 
 <br clear="right" />
+
+#### EMI
+
+Loan repayment schedule on the reducing balance method. Enter principal, annual interest rate, and loan term in months. The calculator produces a full amortization table showing principal, interest, and outstanding balance for each period, plus cumulative totals.
+
+---
+
+### Network Tools
+
+Six tools accessible from the **Network tab** or directly via the right-click context menu.
+
+- **My IP** - Fetches your public IPv4 and IPv6 addresses via `api.ipify.org` / `api64.ipify.org`.
+- **Ping** - ICMP ping to any host with configurable count and per-reply RTT.
+- **Scan** - discovers all active hosts on the local subnet; shows IP, hostname, MAC address, manufacturer, and inferred device type.
+- **Traceroute** - Hop-by-hop path trace with RTT per hop.
+- **WHOIS** - Raw WHOIS lookup against the appropriate registry.
+- **DNS** - DNS record query (A, AAAA, MX, TXT, CNAME, NS, and others).
+
+---
+
+### More
+
+**Notes** - Per-day notes tied to the BS calendar. Each note is attached to its date and accessible from the calendar cell or the Notes tab.
+
+**Reminders** - One-off and recurring reminders with title, date, and optional time. Overdue and upcoming reminders surface in the mini bar footer.
+
+**Documents** - A library for `.docx` files with built-in Preeti-to-Unicode detection and batch conversion. Import documents, browse the library, and convert encodings in place.
+
+---
+
+### RunBox
+
+A global hotkey launcher (default: `Ctrl+Shift+Space`) that opens a spotlight-style input field. It can run programs, open files or folders, open URLs, or fall back to a web search.
+
+Special modes:
+- `= <expression>` - inline calculator; press Enter to copy the result to clipboard
+- `scr <name>` - run a named user script from the Scripts registry
+- `<prefix> <query>` - shortcut-based web search (e.g. `yt cats` opens YouTube search for "cats")
+- `help` - opens the built-in RunBox help reference
+
+Type `Escape` once to close the dropdown, again to dismiss the launcher. History is saved across sessions and supports Tab completion.
 
 ---
 
@@ -143,13 +208,32 @@ Right-click anywhere on the widget to open the menu. Tool header labels are non-
 Tools
 ├── Convert
 ├── Days
-├── Time
-└── Interest
-Copy
+└── Time
+Unit
+├── Area
+└── Weight
+Text
+├── Unicode / Preeti
+├── Word Count
+├── Password
+└── Script
+Banking
+├── Interest
+└── EMI
+Network
+├── My IP
+├── Ping
+├── Scan
+├── Traceroute
+├── WHOIS
+└── DNS
+Copy Today
 ├── BS short    (2082/01/15)
 ├── BS long     (Baisakh 15, 2082)
 ├── AD short    (2025-04-28)
 └── AD long     (April 28, 2025)
+---
+More
 Settings
 Exit
 ```
@@ -162,8 +246,8 @@ Exit
 
 | Requirement | Detail |
 |---|---|
-| OS | Windows 10 version 1903 or later, Windows 11 |
-| Runtime | None — self-contained build, .NET 10 bundled |
+| OS | Windows 10 version 1809 or later, Windows 11 |
+| Runtime | None - self-contained build, .NET 10 bundled |
 | Architecture | x64 |
 | Admin rights | Not required |
 
@@ -171,24 +255,39 @@ Exit
 
 ## Installation
 
-1. Download the latest package from [Releases](https://github.com/RajuPrasai/NepDateWidget/releases)
-2. Place it in a permanent folder (e.g. `C:\Tools\NepDateWidget\`)
-3. Run it - no installer, no admin rights needed
-4. Enable **Start with Windows** in Settings to auto-launch on login
+**Microsoft Store (recommended)**
+Search for *NepDate Widget* in the Microsoft Store and click **Get**.
+No admin rights required. Updates are delivered automatically by the Store.
+
+**Portable zip (GitHub Releases)**
+
+1. Download the latest zip from [Releases](https://github.com/RajuPrasai/NepDateWidget/releases).
+2. Extract to a permanent folder (e.g. `C:\Tools\NepDateWidget\`).
+3. Run `NepDateWidget.exe`. No installer, no admin rights needed.
+4. Enable **Start with Windows** in Settings to auto-launch on login.
 
 **Files created at runtime:**
 
-Location depends on install type:
+Location depends on build type:
 
-- **Installed build (Setup.exe):** `%LOCALAPPDATA%\NepDateWidget\AppData\`
-- **Portable build (zip):** the `AppData\` subfolder beside `NepDateWidget.exe` (created automatically when a `portable.flag` file exists beside the EXE)
+- **Store build:** `%LOCALAPPDATA%\NepDateWidget.Store\AppData\`
+- **Portable build:** the `AppData\` subfolder beside `NepDateWidget.exe` (created automatically when a `portable.flag` file exists beside the EXE)
 
-Files:
+Files (organized into subdirectories within the data folder):
 
-- `settings.json` — user preferences
-- `reminders.json` — recurring and one-off reminders
-- `notes.json` — per-day notes
-- `nepdate.log` — diagnostic log, auto-trimmed at 10 MB (configurable up to 100 MB)
+**config/** - user-editable configuration
+- `settings.json` - app preferences
+- `shortcuts.json` - RunBox URL shortcut prefixes
+- `scripts.json` - RunBox named scripts
+
+**data/** - user content
+- `notes.json` - per-day calendar notes
+- `reminders.json` - one-off and recurring reminders
+- `documents.json` - document library metadata
+- `run-history.json` - RunBox launch history
+
+**Root:**
+- `nepdate.log` - diagnostic log, auto-trimmed at 10 MB (configurable up to 100 MB)
 
 ---
 
@@ -199,17 +298,14 @@ Files:
 1. In the widget, open **Settings** and disable **Start with Windows**.
 2. Right-click the widget and choose **Exit**.
 3. Delete the folder where you placed `NepDateWidget.exe`.
-4. Optional: delete the user data folder if you used the installed build:
-   `%LOCALAPPDATA%\NepDateWidget\AppData\` (contains `settings.json`,
-   `reminders.json`, `notes.json`, `nepdate.log`).
+4. Optional: delete the user data folder `%LOCALAPPDATA%\NepDateWidget\AppData\`
+   if it was created by an older unpackaged build.
 
-**Installed build (Setup.exe):**
+**Store build:**
 
-Use **Settings → Apps → Installed apps** in Windows to remove
-*NepDate Widget*. The uninstaller removes the application files and
-the Start-with-Windows registry entry. User data under
-`%LOCALAPPDATA%\NepDateWidget\` is left intact in case you reinstall;
-delete that folder manually for a full cleanup.
+Use **Settings → Apps → Installed apps** in Windows to uninstall
+*NepDate Widget*. User data under `%LOCALAPPDATA%\NepDateWidget.Store\`
+is left intact; delete that folder manually for a full cleanup.
 
 ---
 
@@ -222,18 +318,13 @@ locally on your machine.
 Network requests are made only in the following cases, and only when
 you opt in:
 
-- **Update check** (default: on, can be disabled in Settings) —
-  contacts the configured Velopack feed (GitHub Releases by default)
-  to check for a newer version. No personal data is sent. Override the
-  feed via the `NEPDATE_UPDATE_FEED` environment variable; non-HTTPS
-  overrides are rejected.
-- **Network Tools** (only when you actively run a tool) — outbound
+- **Network Tools** (only when you actively run a tool) - outbound
   DNS, ICMP (ping), HTTP(S), or WHOIS requests against the host you
   enter. Public IP lookup uses `https://api.ipify.org` /
   `https://api64.ipify.org`.
 
 Local data files are stored in plain JSON at
-`%LOCALAPPDATA%\NepDateWidget\AppData\` (installed build) or beside
+`%LOCALAPPDATA%\NepDateWidget.Store\AppData\` (Store build) or beside
 the EXE (portable build). Do not store secrets in notes or reminders.
 
 ---
@@ -244,13 +335,14 @@ the EXE (portable build). Do not store secrets in notes or reminders.
 The saved window position may be off-screen (for example after
 unplugging an external monitor). Quit the app from the tray context
 menu if visible, then delete `settings.json` from the data folder
-(`%LOCALAPPDATA%\NepDateWidget\AppData\` or beside the EXE) and
+(`%LOCALAPPDATA%\NepDateWidget.Store\AppData\` for Store, or beside `NepDateWidget.exe` for portable) and
 restart. The widget will return to its first-run position next to the
 taskbar.
 
-**SmartScreen blocks the installer or shows “Unknown publisher”.**
-The v1.0 build is not yet code-signed. Click **More info → Run anyway**.
-A signed build is planned via SignPath Foundation.
+**SmartScreen blocks the app or shows "Unknown publisher".**
+The portable build is not yet code-signed. If Windows blocks `NepDateWidget.exe`,
+click **More info → Run anyway**. A signed build is planned via SignPath Foundation.
+This does not apply to the Store build (Store apps are verified by Microsoft).
 
 **Settings reset themselves on restart.**
 This happens when `settings.json` cannot be parsed. The app keeps a
@@ -258,14 +350,9 @@ timestamped backup as `settings.json.broken-<yyyyMMdd-HHmmss>` in the
 same folder. Open `nepdate.log` for the parse error and report the
 backed-up file with your bug report if needed.
 
-**Auto-update fails silently.**
-Check `nepdate.log` for entries beginning with `Update check failed`
-or `Update manager unavailable`. Confirm the machine has HTTPS access
-to `https://github.com`.
-
 **Where are the logs?**
-Installed build: `%LOCALAPPDATA%\NepDateWidget\AppData\nepdate.log`.
-Portable build: beside `NepDateWidget.exe`.
+Store build: `%LOCALAPPDATA%\NepDateWidget.Store\AppData\nepdate.log`.
+Portable build: `AppData\nepdate.log` beside `NepDateWidget.exe`.
 
 ---
 
@@ -292,10 +379,10 @@ See [SECURITY.md](SECURITY.md) for vulnerability reporting,
 submitting a contribution you grant the project owner the right to
 relicense it), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community
 expectations, and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for
-upstream dependency and bundled-font attributions (NepDate, Velopack,
-DocumentFormat.OpenXml under MIT; Inter, JetBrains Mono, Fira Code,
-Source Sans 3, Source Code Pro, IBM Plex Sans/Mono, Roboto, Roboto
-Mono, Noto Sans, Cascadia Code under SIL OFL 1.1).
+upstream dependency and bundled-font attributions (NepDate,
+DocumentFormat.OpenXml under MIT; Cascadia Code, DM Sans, IBM Plex Sans,
+Imprima, Inter, Lato, Montserrat, Noto Sans, Nunito, Open Sans, Poppins,
+Quicksand, Raleway, Roboto, Rubik, Source Sans 3, Work Sans under SIL OFL 1.1).
 
 ---
 
@@ -329,8 +416,8 @@ The published output is a single self-contained EXE. No separate runtime or DLLs
 | Framework | .NET 10, WPF |
 | UI pattern | MVVM (no framework - hand-rolled) |
 | Calendar engine | [NepDate](https://www.nuget.org/packages/NepDate) |
-| Tests | xUnit, 1357 tests, no mocking frameworks |
-| Settings storage | JSON in `%LOCALAPPDATA%\NepDateWidget\AppData\` (or beside EXE in portable mode), atomic write (tmp → replace) |
+| Tests | xUnit, 1534 tests, no mocking frameworks |
+| Settings storage | JSON in `%LOCALAPPDATA%\NepDateWidget.Store\AppData\` (Store) or `AppData\` beside EXE (portable), atomic write (tmp → replace) |
 
 ---
 

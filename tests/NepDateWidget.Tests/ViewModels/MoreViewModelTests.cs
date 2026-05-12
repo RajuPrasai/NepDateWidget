@@ -740,9 +740,9 @@ public sealed class MoreViewModelTests
         var vm = Create(rs);
         vm.SetModeRemindersCommand.Execute(null);
 
-        var showLabel = vm.ToggleCompletedLabel;   // before toggle — should say "Show completed"
+        var showLabel = vm.ToggleCompletedLabel;   // before toggle - should say "Show completed"
         vm.ToggleShowCompletedCommand.Execute(null);
-        var hideLabel = vm.ToggleCompletedLabel;   // after toggle — should say "Hide completed"
+        var hideLabel = vm.ToggleCompletedLabel;   // after toggle - should say "Hide completed"
 
         Assert.NotEqual(showLabel, hideLabel);
         Assert.NotEmpty(showLabel);
@@ -760,7 +760,7 @@ public sealed class MoreViewModelTests
 
         vm.ReminderSearchText = "meeting";
 
-        // only the active one should match — completed is hidden
+        // only the active one should match - completed is hidden
         Assert.Single(vm.FilteredReminders);
         Assert.Equal("r1", vm.FilteredReminders[0].Id);
     }

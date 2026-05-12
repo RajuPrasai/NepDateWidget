@@ -328,7 +328,7 @@ public sealed class RunBoxViewModel : ViewModelBase
     public void RequestCollapse()
     {
         IsHistoryOpen = false;
-        // Reset prefix state directly — avoids UpdateFilteredHistory running
+        // Reset prefix state directly - avoids UpdateFilteredHistory running
         // inside ClearPrefix, since we're closing and the list is irrelevant.
         if (_activePrefix is not null)
         {
@@ -336,7 +336,7 @@ public sealed class RunBoxViewModel : ViewModelBase
             SearchHintLabel = PlaceholderLabel;
             OnPropertyChanged(nameof(SearchHintLabel));
         }
-        // Reset RunText directly — avoids UpdateFilteredHistory running through
+        // Reset RunText directly - avoids UpdateFilteredHistory running through
         // the setter, since we're closing and the list is irrelevant.
         _runText = string.Empty;
         OnPropertyChanged(nameof(RunText));
@@ -655,7 +655,7 @@ public sealed class RunBoxViewModel : ViewModelBase
     {
         if (item is null) return;
         // Script entries exist only in the registry; they are never in run history.
-        // Removing them from the visible list is meaningless — they reappear on the
+        // Removing them from the visible list is meaningless - they reappear on the
         // next filter update. Treat as a no-op so the UX is not misleading.
         if (string.Equals(item.Prefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase)) return;
         _runHistoryService?.Remove(item.Raw);
@@ -934,7 +934,7 @@ public sealed class RunBoxViewModel : ViewModelBase
 
             if (purgeList.Count > 0 && _activePrefix is not null && removedKeys.Contains(_activePrefix))
             {
-                // Clear the active prefix directly — ClearPrefix() calls UpdateFilteredHistory(),
+                // Clear the active prefix directly - ClearPrefix() calls UpdateFilteredHistory(),
                 // so we return immediately to avoid the redundant call below.
                 ClearPrefix();
                 return;
@@ -975,7 +975,8 @@ public sealed class RunBoxViewModel : ViewModelBase
         string resolvedPath;
         try
         {
-            resolvedPath = Path.GetFullPath(script.Path);
+            var rawPath = script.Path.Replace("{APPDIR}", AppPaths.ExeDirectory, StringComparison.OrdinalIgnoreCase);
+            resolvedPath = Path.GetFullPath(rawPath);
         }
         catch
         {

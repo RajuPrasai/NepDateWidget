@@ -396,7 +396,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <!--
-                                            Today rows use the input surface (card-level) background — more
+                                            Today rows use the input surface (card-level) background - more
                                             visually stable than WidgetHoverBrush which can be near-invisible.
                                         -->
                                         <Border Margin="0,2" Padding="8,7" CornerRadius="6">
@@ -895,8 +895,8 @@
                                         <!-- Tithi (bottom-left) -->
                                         <!--
                                             Two-layer Grid so pill border opacity and text opacity are independent.
-                                            Layer 1: Border (outline only, no children) — dimmed via Opacity trigger.
-                                            Layer 2: TextBlock — always full opacity, unaffected by the Border's Opacity.
+                                            Layer 1: Border (outline only, no children) - dimmed via Opacity trigger.
+                                            Layer 2: TextBlock - always full opacity, unaffected by the Border's Opacity.
                                         -->
                                         <Grid Grid.Column="0"
                                               HorizontalAlignment="Left"
@@ -913,7 +913,7 @@
                                                 </Style>
                                             </Grid.Style>
 
-                                            <!-- Pill outline — Opacity here does NOT affect the sibling TextBlock -->
+                                            <!-- Pill outline - Opacity here does NOT affect the sibling TextBlock -->
                                             <Border CornerRadius="4"
                                                     HorizontalAlignment="Stretch"
                                                     VerticalAlignment="Stretch"
@@ -947,7 +947,7 @@
                                                 </Border.Style>
                                             </Border>
 
-                                            <!-- Text — full opacity, padding provides breathing room inside the pill -->
+                                            <!-- Text - full opacity, padding provides breathing room inside the pill -->
                                             <TextBlock
                                                Text="{Binding TithiText}"
                                                Padding="5,0"

@@ -93,11 +93,4 @@ public sealed class WidgetSettings
     public int LastExpandedTab { get; set; } = 8;
 
     public bool ShowHelpBadges { get; set; } = true;
-
-    /// <summary>
-    /// Whether the app should periodically check for updates from the configured
-    /// release feed (Velopack / GitHub Releases). User opt-in.
-    /// The last-check timestamp is stored in <c>runtime.json</c> via <c>AppState</c>.
-    /// </summary>
-    public bool AutoCheckForUpdates { get; set; } = true;
 }

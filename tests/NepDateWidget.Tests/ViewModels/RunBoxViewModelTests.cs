@@ -852,7 +852,7 @@ public sealed class RunBoxViewModelTests
     [Fact]
     public void RunText_EqualAlone_NoResult_CalcModeInactive()
     {
-        // "=" with nothing after is an empty expression — evaluator returns null
+        // "=" with nothing after is an empty expression - evaluator returns null
         var (vm, _) = Create();
         vm.RunText = "=";
         Assert.False(vm.ShowCalcResult);
@@ -862,7 +862,7 @@ public sealed class RunBoxViewModelTests
     [Fact]
     public void RunText_InvalidExpression_CalcModeInactive()
     {
-        // "=abc" cannot be evaluated — evaluator returns null, ShowCalcResult stays false
+        // "=abc" cannot be evaluated - evaluator returns null, ShowCalcResult stays false
         var (vm, _) = Create();
         vm.RunText = "=abc";
         Assert.False(vm.ShowCalcResult);
@@ -872,7 +872,7 @@ public sealed class RunBoxViewModelTests
     [Fact]
     public void RunText_FloatResult_FormattedCorrectly()
     {
-        // "=1/3" produces a non-integer — must be returned as a numeric string, not empty
+        // "=1/3" produces a non-integer - must be returned as a numeric string, not empty
         var (vm, _) = Create();
         vm.RunText = "=1/3";
         Assert.True(vm.ShowCalcResult);
@@ -882,7 +882,7 @@ public sealed class RunBoxViewModelTests
     [Fact]
     public void RunText_ExpressionWithSpaces_Evaluated()
     {
-        // "= 2 + 3" — the expression is trimmed before passing to DataTable.Compute
+        // "= 2 + 3" - the expression is trimmed before passing to DataTable.Compute
         var (vm, _) = Create();
         vm.RunText = "= 2 + 3";
         Assert.True(vm.ShowCalcResult);

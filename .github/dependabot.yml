@@ -21,11 +21,6 @@ updates:
           - "xunit*"
           - "Microsoft.NET.Test.Sdk"
           - "coverlet*"
-    ignore:
-      # Velopack is pinned intentionally; the CLI version in build-release.ps1
-      # and release.yml must match the runtime package. Bump manually after
-      # verifying the CLI side.
-      - dependency-name: "Velopack"
 
   # GitHub Actions referenced in .github/workflows/*.yml.
   - package-ecosystem: "github-actions"
