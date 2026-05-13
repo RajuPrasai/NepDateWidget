@@ -1,0 +1,191 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+         Default UI font: Segoe UI (ships on every supported Windows version).
+         WPF rasterises text through GDI, not DirectWrite, so the font's own
+         hinting determines small-size sharpness. Devanagari glyphs (Nepali
+         text) fall back to Nirmala UI automatically.
+    -->
+    <FontFamily x:Key="WidgetFontFamily">Segoe UI</FontFamily>
+
+    <!-- Background -->
+    <SolidColorBrush x:Key="WidgetBackgroundBrush" Color="#1E1E2E" />
+
+    <!-- Foreground text -->
+    <SolidColorBrush x:Key="WidgetForegroundBrush" Color="#CDD6F4" />
+
+    <!-- Border -->
+    <SolidColorBrush x:Key="WidgetBorderBrush" Color="#45475A" />
+
+    <!-- Accent (today highlight, active state) -->
+    <SolidColorBrush x:Key="WidgetAccentBrush" Color="#89B4FA" />
+
+    <!-- Saturday / holiday highlight -->
+    <SolidColorBrush x:Key="WidgetHolidayBrush" Color="#F38BA8" />
+
+    <!-- Hover state -->
+    <SolidColorBrush x:Key="WidgetHoverBrush" Color="#313244" />
+
+    <!-- Calendar day cell states -->
+    <SolidColorBrush x:Key="WidgetDayTodayBrush"       Color="#89B4FA" />
+    <SolidColorBrush x:Key="WidgetDayTodayTextBrush"   Color="#1E1E2E" />
+    <SolidColorBrush x:Key="WidgetDaySaturdayBrush"    Color="#F38BA8" />
+    <SolidColorBrush x:Key="WidgetDayHolidayTextBrush" Color="#1E1E2E" />
+    <SolidColorBrush x:Key="WidgetDayHighlightedBrush" Color="#A6E3A1" />
+    <SolidColorBrush x:Key="WidgetDayWeekendTintBrush"  Color="#18F38BA8" />
+    <SolidColorBrush x:Key="WidgetDayPaddingBrush"     Color="Transparent" />
+    <SolidColorBrush x:Key="WidgetDayPaddingTextBrush" Color="#45475A" />
+
+    <!-- Converter panel -->
+    <SolidColorBrush x:Key="WidgetInputBrush"          Color="#4B4C63" />
+    <SolidColorBrush x:Key="WidgetInputBorderBrush"    Color="#585B70" />
+    <SolidColorBrush x:Key="WidgetSuccessBrush"        Color="#A6E3A1" />
+    <SolidColorBrush x:Key="WidgetErrorBrush"          Color="#F38BA8" />
+    <SolidColorBrush x:Key="WidgetDividerBrush"        Color="#45475A" />
+
+    <!-- Muted foreground (toolbar icons, secondary text) -->
+    <SolidColorBrush x:Key="WidgetMutedForegroundBrush" Color="#6C7086" />
+
+    <!-- Tag pill background (accent at ~20% opacity) -->
+    <SolidColorBrush x:Key="WidgetTagBrush" Color="#3389B4FA" />
+
+    <!-- Calendar grid lines (subtle, theme-aware) -->
+    <SolidColorBrush x:Key="WidgetGridLineBrush"       Color="#2A2A3C" />
+
+    <!-- ── Global lean scrollbar (applies to every ScrollBar in the app) ──── -->
+    <Style x:Key="GlobalLeanScrollBarThumb" TargetType="Thumb">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="IsTabStop"             Value="False" />
+        <Setter Property="Width"                 Value="14" />
+        <Setter Property="MinHeight"             Value="18" />
+        <Setter Property="Cursor"                Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Border Background="Transparent" Padding="4,0">
+                        <Border x:Name="ThumbVisual"
+                                Background="{DynamicResource WidgetDividerBrush}"
+                                CornerRadius="3"
+                                Width="6"
+                                HorizontalAlignment="Center"
+                                Opacity="0.6" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ThumbVisual" Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ThumbVisual"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.9" Duration="0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ThumbVisual"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.6" Duration="0:0:0.3" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="ThumbVisual" Property="Opacity"    Value="1.0" />
+                            <Setter TargetName="ThumbVisual" Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="ScrollBar">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Width"                 Value="14" />
+        <Setter Property="MinWidth"              Value="14" />
+        <Setter Property="Margin"                Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="Transparent">
+                        <Track x:Name="PART_Track" IsDirectionReversed="True">
+                            <Track.Thumb>
+                                <Thumb Style="{DynamicResource GlobalLeanScrollBarThumb}" />
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ── Global iOS-style Slider (Settings + Text/Password) ──────────────── -->
+    <Style x:Key="IosSlider" TargetType="Slider">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="SnapsToDevicePixels"   Value="True" />
+        <Setter Property="Height"                Value="20" />
+        <Setter Property="Cursor"                Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Slider">
+                    <Grid VerticalAlignment="Center">
+                        <Track x:Name="PART_Track">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="Slider.DecreaseLarge" Focusable="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Height="4" CornerRadius="2"
+                                                    Background="{DynamicResource WidgetAccentBrush}"
+                                                    VerticalAlignment="Center" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="Slider.IncreaseLarge" Focusable="False">
+                                    <RepeatButton.Template>
+                                        <ControlTemplate TargetType="RepeatButton">
+                                            <Border Height="4" CornerRadius="2"
+                                                    Background="{DynamicResource WidgetInputBrush}"
+                                                    VerticalAlignment="Center" />
+                                        </ControlTemplate>
+                                    </RepeatButton.Template>
+                                </RepeatButton>
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb>
+                                    <Thumb.Template>
+                                        <ControlTemplate TargetType="Thumb">
+                                            <Border x:Name="ThumbBd"
+                                                    Width="18" Height="18"
+                                                    CornerRadius="9"
+                                                    Background="{DynamicResource WidgetForegroundBrush}"
+                                                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                                    BorderThickness="0.7">
+                                                <Border.Effect>
+                                                    <DropShadowEffect ShadowDepth="1" BlurRadius="4"
+                                                                      Opacity="0.25" Color="Black" />
+                                                </Border.Effect>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsDragging" Value="True">
+                                                    <Setter TargetName="ThumbBd" Property="Background"
+                                                            Value="{DynamicResource WidgetAccentBrush}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Thumb.Template>
+                                </Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

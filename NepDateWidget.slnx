@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NepDateWidget/NepDateWidget.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NepDateWidget.Tests/NepDateWidget.Tests.csproj" />
+  </Folder>
+</Solution>

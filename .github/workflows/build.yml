@@ -1,0 +1,39 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # MinVer needs full history for tag resolution
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore NepDateWidget.slnx
+
+      - name: Build
+        run: dotnet build NepDateWidget.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test tests/NepDateWidget.Tests/NepDateWidget.Tests.csproj --configuration Release --no-build --logger "trx;LogFileName=test-results.trx"
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: '**/TestResults/*.trx'

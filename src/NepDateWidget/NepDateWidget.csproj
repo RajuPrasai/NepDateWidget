@@ -1,0 +1,111 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>
+		<OutputType Condition="'$(Configuration)' != 'Release'">Exe</OutputType>
+		<TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>NepDateWidget.snk</AssemblyOriginatorKeyFile>
+
+		<!-- Assembly identity -->
+		<AssemblyName>NepDateWidget</AssemblyName>
+		<RootNamespace>NepDateWidget</RootNamespace>
+		<Version>1.0.0</Version>
+		<FileVersion>1.0.0.0</FileVersion>
+		<AssemblyTitle>NepDate Widget</AssemblyTitle>
+		<Company>RajuPrasai</Company>
+		<Authors>RajuPrasai</Authors>
+		<Product>NepDate Widget</Product>
+		<Description>A desktop widget for Nepali (BS) and English (AD) dates, calendar navigation, and date conversion.</Description>
+		<Copyright>Copyright (c) 2025-2026 RajuPrasai</Copyright>
+		<!-- PolyForm Strict 1.0.0 is not on the SPDX license list, so we cannot use
+		     PackageLicenseExpression. Reference the LICENSE file directly instead. -->
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<RepositoryUrl>https://github.com/RajuPrasai/NepDateWidget</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageProjectUrl>https://github.com/RajuPrasai/NepDateWidget</PackageProjectUrl>
+		<NeutralLanguage>en</NeutralLanguage>
+		<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+
+		<!-- Application icon (EXE taskbar / explorer icon) -->
+		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+
+	</PropertyGroup>
+
+	<!-- Release-mode optimisations -->
+	<!-- DebugType=embedded ships PDBs inside the assembly so user crash logs
+	     contain file/line info for support, at the cost of ~1-2 MB EXE size.
+	     This is much more useful than DebugType=none (no symbols at all). -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<Optimize>true</Optimize>
+		<DebugType>embedded</DebugType>
+		<RunAnalyzers>true</RunAnalyzers>
+	</PropertyGroup>
+
+	<!-- App icon assets -->
+	<ItemGroup>
+		<Resource Include="Assets\icon.png" />
+		<None Include="..\..\LICENSE" Pack="true" PackagePath="\" Visible="false" />
+		<None Include="..\..\THIRD_PARTY_NOTICES.md" Pack="true" PackagePath="\" Visible="false" />
+	</ItemGroup>
+	<!-- Shipped default config files - copied to output next to the EXE.
+	     On first launch these are copied to AppData; on subsequent launches new
+	     keys/entries are merged from here into the user's AppData copies. -->
+	<ItemGroup>
+		<Content Include="Resources\configs\localization.json"  CopyToOutputDirectory="PreserveNewest" />
+		<Content Include="Resources\configs\shortcuts.json"     CopyToOutputDirectory="PreserveNewest" />
+		<Content Include="Resources\configs\run-history.json"   CopyToOutputDirectory="PreserveNewest" />
+		<Content Include="Resources\configs\settings.json"      CopyToOutputDirectory="PreserveNewest" />
+		<Content Include="Resources\configs\scripts.json"       CopyToOutputDirectory="PreserveNewest" />
+		<Content Include="Resources\configs\scripts\organize-desktop.ps1" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
+	  <PackageReference Include="NepDate" Version="2.0.7" />
+	</ItemGroup>
+
+	<!-- Embedded font families. All fonts are bundled (OFL licensed) so they work regardless of OS install state.
+	     Static TTFs (3 weights): Cascadia Code, Inter, Source Sans 3, IBM Plex Sans, Roboto, Noto Sans, Poppins, Lato.
+	     Variable TTFs (full weight range): Nunito, Raleway, Open Sans, Montserrat, Work Sans, Quicksand.
+	     Single-weight: Imprima (Regular only). -->
+	<ItemGroup>
+		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-Light.ttf" />
+		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-SemiBold.ttf" />
+		<Resource Include="Assets\Fonts\Cascadia\CascadiaCode-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Inter\Inter-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Inter\Inter-Medium.ttf" />
+		<Resource Include="Assets\Fonts\Inter\Inter-Bold.ttf" />
+		<Resource Include="Assets\Fonts\SourceSans3\SourceSans3-Regular.ttf" />
+		<Resource Include="Assets\Fonts\SourceSans3\SourceSans3-Medium.ttf" />
+		<Resource Include="Assets\Fonts\SourceSans3\SourceSans3-Bold.ttf" />
+		<Resource Include="Assets\Fonts\IBMPlexSans\IBMPlexSans-Regular.ttf" />
+		<Resource Include="Assets\Fonts\IBMPlexSans\IBMPlexSans-Medium.ttf" />
+		<Resource Include="Assets\Fonts\IBMPlexSans\IBMPlexSans-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Roboto\Roboto-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Roboto\Roboto-Medium.ttf" />
+		<Resource Include="Assets\Fonts\Roboto\Roboto-Bold.ttf" />
+		<Resource Include="Assets\Fonts\NotoSans\NotoSans-Regular.ttf" />
+		<Resource Include="Assets\Fonts\NotoSans\NotoSans-Medium.ttf" />
+		<Resource Include="Assets\Fonts\NotoSans\NotoSans-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Poppins\Poppins-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Poppins\Poppins-Medium.ttf" />
+		<Resource Include="Assets\Fonts\Poppins\Poppins-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Imprima\Imprima-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Lato\Lato-Regular.ttf" />
+		<Resource Include="Assets\Fonts\Lato\Lato-Bold.ttf" />
+		<Resource Include="Assets\Fonts\Nunito\Nunito.ttf" />
+		<Resource Include="Assets\Fonts\Raleway\Raleway.ttf" />
+		<Resource Include="Assets\Fonts\OpenSans\OpenSans.ttf" />
+		<Resource Include="Assets\Fonts\Montserrat\Montserrat.ttf" />
+		<Resource Include="Assets\Fonts\WorkSans\WorkSans.ttf" />
+		<Resource Include="Assets\Fonts\Quicksand\Quicksand.ttf" />
+		<Resource Include="Assets\Fonts\Rubik\Rubik.ttf" />
+		<Resource Include="Assets\Fonts\DMSans\DMSans.ttf" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,781 @@
+<UserControl x:Class="NepDateWidget.Views.ConverterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
+             mc:Ignorable="d"
+             UseLayoutRounding="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             d:DataContext="{d:DesignInstance vm:ConverterViewModel}"
+             d:Width="380">
+
+            <UserControl.Resources>
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
+        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
+
+        <Style x:Key="PillButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Padding"         Value="14,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Opacity"         Value="0.55" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                    <Setter Property="Opacity" Value="0.9" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                 To="0.94" Duration="0:0:0.08" />
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                 To="0.94" Duration="0:0:0.08" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                 To="1" Duration="0:0:0.12" />
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                 To="1" Duration="0:0:0.12" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="DirButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="FontWeight"      Value="SemiBold" />
+            <Setter Property="Height"          Value="36" />
+            <Setter Property="Padding"         Value="8,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Bd"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="0.82" Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard FillBehavior="Stop">
+                                            <DoubleAnimation Storyboard.TargetName="Bd"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             To="1" Duration="0:0:0.15" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                 To="0.92" Duration="0:0:0.06" />
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                 To="0.92" Duration="0:0:0.06" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                 To="1" Duration="0:0:0.12" />
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                 To="1" Duration="0:0:0.12" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- InputBoxStyle, OutputBoxStyle: from global TextBoxStyles.xaml -->
+
+        <!-- Themed ComboBox for timezone dropdowns -->
+        <Style x:Key="TzComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height"          Value="36" />
+            <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Padding"         Value="6,0" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="MainBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6" />
+                            <ToggleButton Focusable="False" Background="Transparent" BorderThickness="0"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                       RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="Transparent" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                            <ContentPresenter Margin="8,0,28,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                              IsHitTestVisible="False" />
+                            <TextBlock Text="▾" FontSize="11"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,8,0" IsHitTestVisible="False" />
+                            <Popup Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True" Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Border MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Background="{DynamicResource WidgetInputBrush}"
+                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                        BorderThickness="0.7" CornerRadius="4" Margin="0,2,0,0">
+                                    <Border.Resources>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="Background"  Value="{DynamicResource WidgetInputBrush}" />
+                                            <Setter Property="Foreground"  Value="{DynamicResource WidgetForegroundBrush}" />
+                                            <Setter Property="Padding"     Value="8,5" />
+                                            <Setter Property="BorderThickness" Value="0" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsHighlighted" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Resources>
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="MainBorder" Property="Background"
+                                        Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsDropDownOpen" Value="True">
+                                <Setter TargetName="MainBorder" Property="Background"
+                                        Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Accent-coloured button: hover dims via opacity rather than swapping colour -->
+        <Style x:Key="AccentButton" TargetType="Button">
+            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="FontWeight"      Value="SemiBold" />
+            <Setter Property="Height"          Value="36" />
+            <Setter Property="Padding"         Value="8,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.82" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.68" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Trigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                 To="0.94" Duration="0:0:0.06" />
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                 To="0.94" Duration="0:0:0.06" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.EnterActions>
+                    <Trigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+                                                 To="1" Duration="0:0:0.12" />
+                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                                 To="1" Duration="0:0:0.12" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </Trigger.ExitActions>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Focusable="False"
+                  PanningMode="VerticalOnly">
+
+        <StackPanel Margin="8,4,8,0"
+                    MaxWidth="1024">
+
+        <!-- Mode selector: Convert | Days | Time -->
+        <Border Background="{DynamicResource WidgetInputBrush}"
+                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                BorderThickness="0.7"
+                CornerRadius="7"
+                Padding="3"
+                Margin="0,0,0,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid Grid.Column="0">
+                    <Button Command="{Binding SetModeConvertCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeConvert}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconConverter}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeLabelConvert}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeConvert, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.converter.convert" />
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Column="1">
+                    <Button Command="{Binding SetModeDaysCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeDays}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconDays}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeLabelDays}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeDays, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.converter.days" />
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Column="2">
+                    <Button Command="{Binding SetModeTimeCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeTime}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconClock}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ModeLabelTime}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeTime, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.converter.time" />
+                    </Grid>
+                </Grid>
+
+            </Grid>
+        </Border>
+
+        <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
+                BorderThickness="0.7"
+                CornerRadius="8"
+                Padding="12,10">
+        <StackPanel>
+
+        <!-- CONVERT mode -->
+        <Grid Visibility="{Binding IsModeConvert, Converter={StaticResource BoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="8"  />
+                <ColumnDefinition Width="*"  />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8"   />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                       Text="{Binding SwitchLabel}"
+                       Style="{StaticResource FieldLabel}"
+                       Margin="0,0,0,3" />
+            <TextBlock Grid.Row="0" Grid.Column="2"
+                       Text="{Binding InputLabel}"
+                       Style="{StaticResource FieldLabel}"
+                       Margin="0,0,0,3" />
+
+            <Button Grid.Row="1" Grid.Column="0"
+                    Content="{Binding BsToAdLabel}" Command="{Binding SetBsToAdCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsBsToAd}" Value="True">
+                                <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
+                                <Setter Property="Foreground"  Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <TextBox x:Name="InputBox"
+                     Grid.Row="1" Grid.Column="2" TabIndex="0"
+                     Text="{Binding ConvertInput, UpdateSourceTrigger=PropertyChanged}"
+                     Tag="{Binding ConvertPlaceholder}"
+                     Style="{StaticResource InputBoxStyle}" TextChanged="InputBox_TextChanged" />
+
+            <Button Grid.Row="3" Grid.Column="0"
+                    Content="{Binding AdToBsLabel}" Command="{Binding SetAdToBsCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsAdToBs}" Value="True">
+                                <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
+                                <Setter Property="Foreground"  Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Grid Grid.Row="3" Grid.Column="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" TabIndex="1"
+                         Text="{Binding ConvertOutputShort, Mode=OneWay}" Tag="--"
+                         Style="{StaticResource OutputBoxStyle}"
+                         GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                         PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                <TextBox Grid.Column="2" TabIndex="2"
+                         Text="{Binding ConvertOutputLong, Mode=OneWay}" Tag="--"
+                         Style="{StaticResource OutputBoxStyle}"
+                         GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                         PreviewMouseDown="OutputBox_PreviewMouseDown" />
+            </Grid>
+
+            <TextBlock Grid.Row="4" Grid.ColumnSpan="3"
+                       Margin="0,6,0,0" Text="{Binding ConvertError}"
+                       FontSize="12" Foreground="{DynamicResource WidgetErrorBrush}"
+                       HorizontalAlignment="Center"
+                       Visibility="{Binding ConvertHasError, Converter={StaticResource BoolToVis}}" />
+        </Grid>
+
+        <!-- DAYS mode -->
+        <Grid Visibility="{Binding IsModeDays, Converter={StaticResource BoolToVis}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="8"  />
+                <ColumnDefinition Width="*"  />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8"   />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8"   />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                       Text="{Binding SwitchLabel}"
+                       Style="{StaticResource FieldLabel}"
+                       Margin="0,0,0,3" />
+            <TextBlock Grid.Row="0" Grid.Column="2"
+                       Text="{Binding InputLabel}"
+                       Style="{StaticResource FieldLabel}"
+                       Margin="0,0,0,3" />
+
+            <!-- Diff button + Input 1 (BS date) -->
+            <Button Grid.Row="1" Grid.Column="0"
+                    Content="{Binding DaysDiffLabel}" Command="{Binding SetDaysDiffCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDaysDiff}" Value="True">
+                                <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
+                                <Setter Property="Foreground"  Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <TextBox Grid.Row="1" Grid.Column="2" TabIndex="0"
+                     Text="{Binding DaysInput1, UpdateSourceTrigger=PropertyChanged}"
+                     Tag="2082/12/21"
+                     Style="{StaticResource InputBoxStyle}" />
+
+            <!-- Add/Sub button + Input 2 (offset or second BS date) -->
+            <Button Grid.Row="3" Grid.Column="0"
+                    Content="{Binding DaysAddSubLabel}" Command="{Binding SetDaysAddSubCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsDaysAddSub}" Value="True">
+                                <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
+                                <Setter Property="Foreground"  Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Grid Grid.Row="3" Grid.Column="2">
+                <TextBox TabIndex="1"
+                         Text="{Binding DaysInput2, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="YYYY/MM/DD"
+                         Style="{StaticResource InputBoxStyle}" />
+                <TextBlock Margin="8,0" VerticalAlignment="Center"
+                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                           Opacity="0.35" FontSize="13"
+                           IsHitTestVisible="False">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsDaysAddSub}" Value="True" />
+                                        <Condition Binding="{Binding DaysInput2}"   Value="" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Text"       Value="e.g. -30 or 45" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding IsDaysDiff}" Value="True" />
+                                        <Condition Binding="{Binding DaysInput2}" Value="" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Text"       Value="2082/12/21" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+
+            <!-- Add/Sub outputs: short BS date + long BS date -->
+            <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3"
+                  Visibility="{Binding IsDaysAddSub, Converter={StaticResource BoolToVis}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" TabIndex="2"
+                         Text="{Binding DaysOutputShort, Mode=OneWay}" Tag="--"
+                         Style="{StaticResource OutputBoxStyle}"
+                         GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                         PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                <TextBox Grid.Column="2" TabIndex="3"
+                         Text="{Binding DaysOutputLong, Mode=OneWay}" Tag="--"
+                         Style="{StaticResource OutputBoxStyle}"
+                         GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                         PreviewMouseDown="OutputBox_PreviewMouseDown" />
+            </Grid>
+
+            <!-- Diff outputs: years/months/days breakdown + total integer days -->
+            <Grid Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3"
+                  Visibility="{Binding IsDaysDiff, Converter={StaticResource BoolToVis}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"    />
+                    <ColumnDefinition Width="8"    />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" TabIndex="2"
+                         Text="{Binding DaysOutputBreakdown, Mode=OneWay}" Tag="--"
+                         Style="{StaticResource OutputBoxStyle}"
+                         GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                         PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                <TextBox Grid.Column="2" TabIndex="3" MinWidth="72"
+                         Text="{Binding DaysOutputTotal, Mode=OneWay}" Tag="--"
+                         Style="{StaticResource OutputBoxStyle}"
+                         GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                         PreviewMouseDown="OutputBox_PreviewMouseDown" />
+            </Grid>
+
+            <TextBlock Grid.Row="6" Grid.ColumnSpan="3"
+                       Margin="0,6,0,0" Text="{Binding DaysError}"
+                       FontSize="12" Foreground="{DynamicResource WidgetErrorBrush}"
+                       HorizontalAlignment="Center"
+                       Visibility="{Binding DaysHasError, Converter={StaticResource BoolToVis}}" />
+        </Grid>
+
+        <!-- TIME mode -->
+        <Grid Visibility="{Binding IsModeTime, Converter={StaticResource BoolToVis}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="3"   />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8"   />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Row 0: From / To labels -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"    />
+                    <ColumnDefinition Width="6"    />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="6"    />
+                    <ColumnDefinition Width="*"    />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding TimeFromLabel}"
+                           Style="{StaticResource FieldLabel}" />
+                <TextBlock Grid.Column="4" Text="{Binding TimeToLabel}"
+                           Style="{StaticResource FieldLabel}" />
+            </Grid>
+
+            <!-- Row 2: From combo | Swap | To combo -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"    />
+                    <ColumnDefinition Width="6"    />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="6"    />
+                    <ColumnDefinition Width="*"    />
+                </Grid.ColumnDefinitions>
+                <ComboBox Grid.Column="0"
+                          ItemsSource="{Binding TimeFromZones}"
+                          SelectedItem="{Binding TimeFromZone}"
+                          DisplayMemberPath="DisplayName"
+                          TextSearch.TextPath="DisplayName"
+                          IsTextSearchEnabled="True"
+                          Style="{StaticResource TzComboBoxStyle}"
+                          MaxDropDownHeight="340" />
+                <Button Grid.Column="2" Command="{Binding TimeSwapCommand}"
+                        Content="⇄" ToolTip="{Binding TooltipSwapTz}" Width="36">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                            <Setter Property="FontSize" Value="15" />
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <ComboBox Grid.Column="4"
+                          ItemsSource="{Binding TimeToZones}"
+                          SelectedItem="{Binding TimeToZone}"
+                          DisplayMemberPath="DisplayName"
+                          TextSearch.TextPath="DisplayName"
+                          IsTextSearchEnabled="True"
+                          Style="{StaticResource TzComboBoxStyle}"
+                          MaxDropDownHeight="340" />
+            </Grid>
+
+            <!-- Row 4: Input | AM/PM | Spacer | Output -->
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="6" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="6" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" TabIndex="0"
+                         Text="{Binding TimeInput, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="{Binding HintTime}"
+                         MaxLength="5"
+                         Style="{StaticResource InputBoxStyle}" />
+                <Button Grid.Column="2" Command="{Binding TimeToggleAmPmCommand}"
+                        Content="{Binding TimeAmPmLabel}" Width="40">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                            <Setter Property="FontSize" Value="11" />
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <TextBox Grid.Column="4" TabIndex="1"
+                         Text="{Binding TimeOutput, Mode=OneWay}" Tag="--"
+                         Style="{StaticResource OutputBoxStyle}"
+                         GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                         PreviewMouseDown="OutputBox_PreviewMouseDown" />
+            </Grid>
+
+            <!-- Error display -->
+            <TextBlock Grid.Row="5"
+                       Margin="0,6,0,0" Text="{Binding TimeError}"
+                       FontSize="12" Foreground="{DynamicResource WidgetErrorBrush}"
+                       HorizontalAlignment="Center"
+                       Visibility="{Binding TimeHasError, Converter={StaticResource BoolToVis}}" />
+        </Grid>
+
+
+        </StackPanel>
+        </Border>
+
+    </StackPanel>
+    </ScrollViewer>
+</UserControl>

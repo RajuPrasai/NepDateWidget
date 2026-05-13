@@ -1,0 +1,76 @@
+name: Bug report
+description: Report a problem with NepDate Widget
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Please fill in
+        the fields below so the issue is reproducible.
+        For security vulnerabilities, do **not** use this form. Open a
+        [private security advisory](https://github.com/RajuPrasai/NepDateWidget/security/advisories/new) instead.
+  - type: input
+    id: version
+    attributes:
+      label: NepDate Widget version
+      description: From Settings → About, or the file properties of `NepDateWidget.exe`.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Windows version
+      description: Run `winver` and copy the version line (for example "Windows 11 Pro 23H2 22631.3447").
+      placeholder: "Windows 11 23H2"
+    validations:
+      required: true
+  - type: dropdown
+    id: install
+    attributes:
+      label: Install type
+      options:
+        - Microsoft Store
+        - Portable (zip)
+        - Built from source
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps that take the issue from launch to symptom.
+      placeholder: |
+        1. Open the widget
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Relevant log output
+      description: |
+        Paste the last few lines of `nepdate.log`. Location depends on how you installed:
+        - **Microsoft Store:** `%LOCALAPPDATA%`
+        - **Portable (zip) or Built from source:** `%LOCALAPPDATA%`
+        - **Portable mode** (only if `portable.flag` is beside the EXE): `AppData\` in the same folder as the EXE
+        Redact anything personal.
+      render: text
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context
+      description: Screenshots, dual-monitor setup, DPI scaling, anything unusual.

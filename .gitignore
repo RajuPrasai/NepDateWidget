@@ -1,0 +1,90 @@
+# ── Build outputs ────────────────────────────────────────────────────────────
+[Bb]in/
+[Oo]bj/
+out/
+build/
+artifacts/
+
+# ── .NET / MSBuild ────────────────────────────────────────────────────────────
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+project.lock.json
+project.assets.json
+*.nupkg
+*.snupkg
+*.nuget.props
+*.nuget.targets
+packages/
+nuget.config.user
+launchSettings.json
+
+# ── Publish output ────────────────────────────────────────────────────────────
+publish/
+dist/
+
+# ── Runtime artefacts (generated beside EXE) ─────────────────────────────────
+*.settings.json
+*.log
+*.log.bak
+*.log.tmp
+build.log
+
+# ── Strong-name keys (kept out of repo; CI injects from secrets) ─────────────
+# NOTE: NepDateWidget.snk is currently committed for build convenience. If you
+# rotate the key, do NOT commit the new one - store it in CI secrets instead.
+#*.snk
+
+# ── Store identity (Partner Center values - never commit) ─────────────────────
+store-identity.ps1
+
+# ── Visual Studio ─────────────────────────────────────────────────────────────
+.vs/
+*.rsuser
+*.vspx
+*.sap
+*.VC.db
+*.VC.VC.opendb
+TestResults/
+*.TestResults/
+*.coverage
+*.coveragexml
+
+# ── Rider / JetBrains ─────────────────────────────────────────────────────────
+.idea/
+*.sln.iml
+*.DotSettings.user
+
+# ── VS Code ───────────────────────────────────────────────────────────────────
+.vscode/
+!.vscode/extensions.json
+
+# ── OS artefacts ─────────────────────────────────────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.Spotlight-V100
+.Trashes
+
+# ── Windows crash dumps ───────────────────────────────────────────────────────
+*.dmp
+*.mdmp
+
+# ── Temp / swap files ─────────────────────────────────────────────────────────
+*.tmp
+*.bak
+*.swp
+*.orig
+*~
+
+# ── Environment / local config ───────────────────────────────────────────────
+.env
+.env.*
+.envrc
+!.env.example
+
+# ── Local working notes (AI scratchpad, prep checklists, etc.) ───────────────
+AI/

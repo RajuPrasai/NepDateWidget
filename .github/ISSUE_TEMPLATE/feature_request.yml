@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest an idea for NepDate Widget
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do? Describe the problem, not just the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Optional. If you have an idea for how it should work, sketch it here.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other ways you have already tried or thought about.
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context

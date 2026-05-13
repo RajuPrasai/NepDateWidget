@@ -1,0 +1,203 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.0.0) - tag must already exist in the repo'
+        required: true
+
+env:
+  PROJECT: src/NepDateWidget/NepDateWidget.csproj
+  TESTS:   tests/NepDateWidget.Tests/NepDateWidget.Tests.csproj
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: windows-latest
+
+    steps:
+
+      # ── 1. Resolve tag ─────────────────────────────────────────────────────
+      #  On tag push  : github.ref_name  = "v1.0.0"
+      #  On manual run: inputs.tag       = whatever the user typed
+      #  Both paths land in steps.tag.outputs.value for every later step.
+      - name: Resolve tag
+        id: tag
+        shell: pwsh
+        run: |
+          $t = if ("${{ github.event_name }}" -eq "workflow_dispatch") {
+            "${{ inputs.tag }}"
+          } else {
+            "${{ github.ref_name }}"
+          }
+          "value=$t" | Out-File -Append $env:GITHUB_OUTPUT
+          Write-Host "Releasing tag: $t"
+
+      # ── 2. Checkout ────────────────────────────────────────────────────────
+      #  Checkout at the exact tag - not at whatever HEAD is on main right now.
+      #  Critical for reproducibility and for the manual-trigger path.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.tag.outputs.value }}
+
+      # ── 3. Setup .NET 10 ───────────────────────────────────────────────────
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # ── 4. Version consistency check ───────────────────────────────────────
+      #  Fails immediately if the <Version> in your .csproj does not match the
+      #  tag being released. Prevents shipping a binary whose internal version
+      #  disagrees with what GitHub labels it.
+      #  Example: tag v1.2.0 requires <Version>1.2.0</Version> in the .csproj.
+      - name: Verify csproj version matches tag
+        shell: pwsh
+        run: |
+          $xml          = [xml](Get-Content "${{ env.PROJECT }}")
+          $csprojVersion = @($xml.Project.PropertyGroup) |
+                             ForEach-Object { $_.Version } |
+                             Where-Object   { $_ }         |
+                             Select-Object  -First 1
+
+          if (-not $csprojVersion) {
+            Write-Error "No <Version> element found in ${{ env.PROJECT }}"
+            exit 1
+          }
+
+          $tagVersion = "${{ steps.tag.outputs.value }}".TrimStart('v')
+
+          if ($csprojVersion -ne $tagVersion) {
+            Write-Error @"
+          Version mismatch - update <Version> in your .csproj before tagging.
+            csproj : $csprojVersion
+            tag    : $tagVersion
+          "@
+            exit 1
+          }
+
+          Write-Host "Version check passed: $csprojVersion"
+
+      # ── 5. Restore ─────────────────────────────────────────────────────────
+      #  Restore both projects. The main project restore (no RID) covers the
+      #  build step below. Publish steps do NOT use --no-restore because each
+      #  publish profile targets a specific RID and needs its own restore pass
+      #  to produce the net10.0-windows/<rid> target in project.assets.json.
+      #  Multiple --runtime restores are not additive - each call regenerates
+      #  the assets file, so the last one would silently lose earlier RIDs.
+      - name: Restore
+        run: |
+          dotnet restore ${{ env.PROJECT }}
+          dotnet restore ${{ env.TESTS }}
+
+      # ── 6. Build ───────────────────────────────────────────────────────────
+      #  Build the main project up front. If there is a compile error you see it
+      #  here in seconds rather than buried inside a publish step minutes later.
+      - name: Build
+        run: dotnet build ${{ env.PROJECT }} -c Release --no-restore
+
+      # ── 7. Test ────────────────────────────────────────────────────────────
+      #  Run the full test suite in Release config. Blocks the release if any
+      #  test fails. --no-restore is safe because step 5 restored the test project.
+      - name: Test
+        run: dotnet test ${{ env.TESTS }} -c Release --no-restore
+
+      # ── 8. Publish ─────────────────────────────────────────────────────────
+      #  /p:PublishProfile reads the committed .pubxml from
+      #  Properties/PublishProfiles/ - identical to publishing from Visual Studio.
+      #  All profile settings (SelfContained, PublishSingleFile, ReadyToRun,
+      #  EnableCompressionInSingleFile, IncludeNativeLibrariesForSelfExtract,
+      #  PublishDir) are respected automatically.
+      #  --no-restore is intentionally omitted: the profile targets a specific
+      #  RID and publish must restore for that RID to add the
+      #  net10.0-windows/<rid> target to project.assets.json before building.
+      #  Currently we ship a single self-contained win-x64 variant. Add other
+      #  RIDs (win-arm64, win-x86) here when there is real demand.
+      - name: Publish - win-x64-portable
+        run: dotnet publish ${{ env.PROJECT }} /p:PublishProfile=win-x64-portable
+
+      # ── 9. Bundle zip ──────────────────────────────────────────────────────
+      #  The pubxml writes output to publish/win-x64-portable/. The user-facing
+      #  zip is labelled "self-contained" so the download name is meaningful
+      #  without needing to read the docs.
+      - name: Create zip archive
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          $tag = "${{ steps.tag.outputs.value }}"
+
+          # Key   = publish output folder (matches PublishDir in the .pubxml)
+          # Value = user-facing label used in the zip filename
+          $variants = [ordered]@{
+            "win-x64-portable" = "win-x64-self-contained"
+          }
+
+          foreach ($key in $variants.Keys) {
+            $dir   = "publish/$key"
+            $label = $variants[$key]
+            $zip   = "dist/NepDateWidget-$tag-$label.zip"
+
+            if (-not (Test-Path $dir)) {
+              Write-Error "Publish output not found at '$dir' - did the publish step fail silently?"
+              exit 1
+            }
+
+            # PDBs are embedded into the assembly (<DebugType>embedded</DebugType>)
+            # so there are no loose .pdb files to strip after publish.
+
+            # Bundle extra files if present at repo root
+            if (Test-Path "LICENSE")               { Copy-Item "LICENSE"               "$dir/LICENSE"               }
+            if (Test-Path "README.md")             { Copy-Item "README.md"             "$dir/README.md"             }
+            if (Test-Path "THIRD_PARTY_NOTICES.md"){ Copy-Item "THIRD_PARTY_NOTICES.md" "$dir/THIRD_PARTY_NOTICES.md" }
+
+            Compress-Archive -Path "$dir/*" -DestinationPath $zip
+            Write-Host "Packaged: $zip"
+          }
+
+      # ── 10. SHA256 checksums ───────────────────────────────────────────────
+      - name: Generate checksums
+        shell: pwsh
+        run: |
+          $lines = Get-ChildItem dist/*.zip | Sort-Object Name | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower()
+            "$hash  $($_.Name)"
+          }
+          $lines | Out-File -Encoding UTF8 dist/checksums.sha256.txt
+
+          Write-Host "`nChecksums:"
+          Get-Content dist/checksums.sha256.txt
+
+      # ── 11. Upload artifacts ───────────────────────────────────────────────
+      #  Runs even if the release step below fails (if: always()).
+      #  This means you can always download the zips from the Actions run
+      #  to inspect or upload manually - nothing is ever lost to a failed step.
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ steps.tag.outputs.value }}
+          path: dist/
+          if-no-files-found: warn
+
+      # ── 12. Create GitHub Release (draft) ──────────────────────────────────
+      #  Created as a draft so you can write release notes before going live.
+      #  GITHUB_TOKEN is built into every repo - no secrets to configure.
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.value }}
+          name: ${{ steps.tag.outputs.value }}
+          draft: true
+          files: |
+            dist/NepDateWidget-${{ steps.tag.outputs.value }}-win-x64-self-contained.zip
+            dist/checksums.sha256.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,8 @@
+[
+  {
+    "Name": "organize-desktop",
+    "Description": "Organize desktop files into category subfolders based on file types",
+    "Path": "{APPDIR}\\Resources\\configs\\scripts\\organize-desktop.ps1",
+    "Interpreter": "powershell"
+  }
+]

@@ -1,0 +1,792 @@
+<UserControl x:Class="NepDateWidget.Views.NetworkToolsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
+             mc:Ignorable="d"
+             UseLayoutRounding="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             d:DataContext="{d:DesignInstance vm:NetworkToolsViewModel}"
+             d:Width="380">
+
+    <UserControl.Resources>
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
+        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
+
+        <!-- Pill mode-selector button (inactive state) -->
+        <Style x:Key="PillButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Padding"         Value="10,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Opacity"         Value="0.55" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                    <Setter Property="Opacity" Value="0.9" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Accent (primary action) button -->
+        <Style x:Key="AccentButton" TargetType="Button">
+            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="FontWeight"      Value="SemiBold" />
+            <Setter Property="Height"          Value="32" />
+            <Setter Property="Padding"         Value="12,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid x:Name="Root">
+                            <Border x:Name="BgLayer" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="6" />
+                            <Border Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Root" Property="Opacity" Value="0.4" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Secondary button (Copy) -->
+        <Style x:Key="SecondaryButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="11" />
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Padding"         Value="10,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- InputBoxStyle, ResultBoxStyle: from global TextBoxStyles.xaml -->
+
+        <!-- DataGrid themed for the IP Scanner results -->
+        <Style x:Key="ScanGridStyle" TargetType="DataGrid">
+            <Setter Property="Background"          Value="{DynamicResource WidgetInputBrush}" />
+            <Setter Property="Foreground"          Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="BorderBrush"         Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness"     Value="1" />
+            <Setter Property="FontSize"            Value="11" />
+            <Setter Property="RowBackground"       Value="{DynamicResource WidgetInputBrush}" />
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource WidgetBackgroundBrush}" />
+            <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource WidgetDividerBrush}" />
+            <Setter Property="VerticalGridLinesBrush"   Value="{DynamicResource WidgetDividerBrush}" />
+            <Setter Property="HeadersVisibility"   Value="Column" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="IsReadOnly"          Value="True" />
+            <Setter Property="SelectionMode"       Value="Single" />
+            <Setter Property="CanUserResizeColumns" Value="True" />
+            <Setter Property="CanUserReorderColumns" Value="False" />
+            <Setter Property="CanUserSortColumns"   Value="True" />
+            <Setter Property="GridLinesVisibility" Value="Horizontal" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+        </Style>
+
+        <Style x:Key="ScanGridColumnHeaderStyle" TargetType="DataGridColumnHeader">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Background"    Value="{DynamicResource WidgetBackgroundBrush}" />
+            <Setter Property="Foreground"    Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontWeight"    Value="SemiBold" />
+            <Setter Property="FontSize"      Value="11" />
+            <Setter Property="Padding"       Value="6,4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridColumnHeader">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{DynamicResource WidgetDividerBrush}"
+                                BorderThickness="0,0,0,0.7"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Left"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ScanGridCellStyle" TargetType="DataGridCell">
+            <Setter Property="Background"    Value="Transparent" />
+            <Setter Property="BorderBrush"   Value="Transparent" />
+            <Setter Property="Padding"       Value="4,2" />
+            <Setter Property="Foreground"    Value="{DynamicResource WidgetForegroundBrush}" />
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ScanGridRowStyle" TargetType="DataGridRow">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                </Trigger>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Spinner style for busy indicator -->
+        <Style x:Key="BusyIndicator" TargetType="Border">
+            <Setter Property="Background"     Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="Opacity"        Value="0.75" />
+            <Setter Property="CornerRadius"   Value="3" />
+            <Setter Property="Width"          Value="6" />
+            <Setter Property="Height"         Value="6" />
+        </Style>
+    </UserControl.Resources>
+
+    <!-- Root scroll container -->
+    <Grid Margin="0" MaxWidth="1024">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- ══ Mode selector - segmented control (3×2) ═════════════════════ -->
+        <Border Grid.Row="0"
+                Background="{DynamicResource WidgetInputBrush}"
+                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                BorderThickness="0.7"
+                CornerRadius="7"
+                Padding="3"
+                Margin="8,4,8,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                    <Button Command="{Binding SetModeMyIpCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeMyIp}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconMyIp}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeMyIpLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeMyIp, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.myip" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="1">
+                    <Button Command="{Binding SetModePingCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModePing}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconPing}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModePingLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModePing, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.ping" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="2">
+                    <Button Command="{Binding SetModeScanCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeScan}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconScan}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeScanLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeScan, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.scan" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="3">
+                    <Button Command="{Binding SetModeTraceCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeTrace}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconTrace}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeTraceLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeTrace, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.trace" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="4">
+                    <Button Command="{Binding SetModeWhoisCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeWhois}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconWhois}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeWhoisLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeWhois, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.whois" />
+                    </Grid>
+                </Grid>
+                <Grid Grid.Column="5">
+                    <Button Command="{Binding SetModeDnsCommand}">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsModeDns}" Value="True">
+                                        <Setter Property="Opacity"         Value="1" />
+                                        <Setter Property="FontWeight"      Value="SemiBold" />
+                                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
+                                        <Setter Property="BorderThickness" Value="0.7" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconDns}"
+                                  Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                  StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
+                                  VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="{Binding ModeDnsLabel}" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
+                          Style="{StaticResource HoverGateStyle}">
+                        <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                Visibility="{Binding IsModeDns, Converter={StaticResource BoolToVis}}"
+                                Command="{Binding OpenHelpCommand}" CommandParameter="help.network.dns" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- ══ Content area ══════════════════════════════════════════════════ -->
+        <Border Grid.Row="1" Margin="8,8,8,0"
+                BorderBrush="{DynamicResource WidgetBorderBrush}"
+                BorderThickness="0.7"
+                CornerRadius="8"
+                Padding="12,10">
+            <Grid>
+
+                        <!-- ── MODE 0: MY IP ─────────────────────────────── -->
+                        <Grid Visibility="{Binding IsModeMyIp, Converter={StaticResource BoolToVis}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                <Button Style="{StaticResource AccentButton}"
+                                        Command="{Binding FetchMyIpCommand}"
+                                        MinWidth="90">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconMyIp}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding FetchLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Border Width="8" />
+                                <Border Style="{StaticResource BusyIndicator}"
+                                        Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
+                                        VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBox Grid.Row="1" Style="{StaticResource ResultBoxStyle}"
+                                     Text="{Binding MyIpResult, Mode=OneWay}"
+                                     GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                                     PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                        </Grid>
+
+                        <!-- ── MODE 1: PING ──────────────────────────────── -->
+                        <Grid Visibility="{Binding IsModePing, Converter={StaticResource BoolToVis}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="64" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="PingHostBox"
+                                         Grid.Column="0"
+                                         Style="{StaticResource InputBoxStyle}"
+                                         Text="{Binding PingHost, UpdateSourceTrigger=PropertyChanged}"
+                                         Tag="{Binding HostLabel}"
+                                         PreviewKeyDown="PingHost_PreviewKeyDown" />
+                                <TextBox Grid.Column="2"
+                                         Style="{StaticResource InputBoxStyle}"
+                                         Text="{Binding PingCount, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Grid.Column="4"
+                                        Style="{StaticResource AccentButton}"
+                                        Command="{Binding PingCommand}"
+                                        MinWidth="72">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconPing}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding PingLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,6">
+                                <TextBlock Text="{Binding CountLabel}"
+                                           Style="{StaticResource FieldLabel}"
+                                           Margin="0,0,4,0" />
+                                <Border Style="{StaticResource BusyIndicator}"
+                                        Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
+                                        VerticalAlignment="Center" />
+                            </StackPanel>
+                            <TextBox Grid.Row="2" Style="{StaticResource ResultBoxStyle}"
+                                     Text="{Binding PingResult, Mode=OneWay}"
+                                     GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                                     PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                        </Grid>
+
+                        <!-- ── MODE 2: IP SCANNER ────────────────────────── -->
+                        <Grid Visibility="{Binding IsModeScan, Converter={StaticResource BoolToVis}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                                <Button Style="{StaticResource AccentButton}"
+                                        Command="{Binding ScanCommand}"
+                                        MinWidth="90">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconScan}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding ScanLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                                <Border Width="10" />
+                                <TextBlock Text="{Binding ScanStatus}"
+                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                           FontSize="11"
+                                           Opacity="0.75"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis" />
+                                <Border Width="8" />
+                                <Border Style="{StaticResource BusyIndicator}"
+                                        Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
+                                        VerticalAlignment="Center" />
+                            </StackPanel>
+                            <ScrollViewer Grid.Row="1"
+                                          VerticalScrollBarVisibility="Auto"
+                                          HorizontalScrollBarVisibility="Disabled"
+                                          Focusable="False">
+                                <StackPanel>
+                            <!-- Card list - no horizontal scroll, no header row needed -->
+                            <ItemsControl ItemsSource="{Binding ScanResults}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{DynamicResource WidgetInputBrush}"
+                                                BorderBrush="{DynamicResource WidgetBorderBrush}"
+                                                BorderThickness="0.7"
+                                                CornerRadius="6"
+                                                Padding="10,8"
+                                                Margin="0,0,0,6">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <!-- Row 0: IP + DeviceType badge | RTT -->
+                                                <StackPanel Grid.Row="0" Grid.Column="0"
+                                                            Orientation="Horizontal"
+                                                            VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding IpAddress}"
+                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                               FontSize="13" FontWeight="SemiBold"
+                                                               VerticalAlignment="Center" />
+                                                    <Border CornerRadius="3"
+                                                            Padding="5,1"
+                                                            Margin="6,0,0,0"
+                                                            VerticalAlignment="Center"
+                                                            Background="{DynamicResource WidgetHoverBrush}">
+                                                        <Border.Style>
+                                                            <Style TargetType="Border">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding DeviceType}" Value="">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Border.Style>
+                                                        <TextBlock Text="{Binding DeviceType}"
+                                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                                   FontSize="9"
+                                                                   Opacity="0.70" />
+                                                    </Border>
+                                                </StackPanel>
+                                                <TextBlock Grid.Row="0" Grid.Column="1"
+                                                           Text="{Binding RoundTripMs, StringFormat='{}{0} ms'}"
+                                                           Foreground="{DynamicResource WidgetAccentBrush}"
+                                                           FontSize="11"
+                                                           VerticalAlignment="Center" />
+                                                <!-- Row 1: Hostname (hidden if empty) -->
+                                                <TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                           Text="{Binding HostName}"
+                                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                           FontSize="11"
+                                                           Opacity="0.75"
+                                                           Margin="0,2,0,0">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding HostName}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <!-- Row 2: MAC + Manufacturer (hidden parts when empty) -->
+                                                <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                                            Orientation="Horizontal"
+                                                            Margin="0,3,0,0">
+                                                    <StackPanel.Style>
+                                                        <Style TargetType="StackPanel">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding MacAddress}" Value="">
+                                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </StackPanel.Style>
+                                                    <TextBlock Text="{Binding MacAddress}"
+                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                               FontSize="10"
+                                                               FontFamily="Cascadia Code, Consolas, Courier New"
+                                                               Opacity="0.60" />
+                                                    <TextBlock Text=" · "
+                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                               FontSize="10"
+                                                               Opacity="0.40">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Manufacturer}" Value="">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                    <TextBlock Text="{Binding Manufacturer}"
+                                                               Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                               FontSize="10"
+                                                               Opacity="0.60">
+                                                        <TextBlock.Style>
+                                                            <Style TargetType="TextBlock">
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding Manufacturer}" Value="">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </TextBlock.Style>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+
+                        <!-- ── MODE 3: TRACEROUTE ────────────────────────── -->
+                        <Grid Visibility="{Binding IsModeTrace, Converter={StaticResource BoolToVis}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="TraceHostBox"
+                                         Grid.Column="0"
+                                         Style="{StaticResource InputBoxStyle}"
+                                         Text="{Binding TraceHost, UpdateSourceTrigger=PropertyChanged}"
+                                         Tag="{Binding HostLabel}"
+                                         PreviewKeyDown="TraceHost_PreviewKeyDown" />
+                                <Button Grid.Column="2"
+                                        Style="{StaticResource AccentButton}"
+                                        Command="{Binding TraceCommand}"
+                                        MinWidth="72">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource IconTrace}"
+                                              Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                              Fill="Transparent" Stretch="Uniform"
+                                              Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                        <TextBlock Text="{Binding TraceLabel}" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </Button>
+                            </Grid>
+                            <TextBox Grid.Row="1" Style="{StaticResource ResultBoxStyle}"
+                                     Text="{Binding TraceResult, Mode=OneWay}"
+                                     GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                                     PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                        </Grid>
+
+                        <!-- ── MODE 4: WHOIS ─────────────────────────────── -->
+                        <Grid Visibility="{Binding IsModeWhois, Converter={StaticResource BoolToVis}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="WhoisBox"
+                                         Grid.Column="0"
+                                         Style="{StaticResource InputBoxStyle}"
+                                         Text="{Binding WhoisDomain, UpdateSourceTrigger=PropertyChanged}"
+                                         Tag="{Binding DomainLabel}"
+                                         PreviewKeyDown="WhoisDomain_PreviewKeyDown" />
+                                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                    <Button Style="{StaticResource AccentButton}"
+                                            Command="{Binding WhoisCommand}"
+                                            MinWidth="72">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource IconWhois}"
+                                                  Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                                  Fill="Transparent" Stretch="Uniform"
+                                                  Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                            <TextBlock Text="{Binding WhoisLabel}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Border Width="8" />
+                                    <Border Style="{StaticResource BusyIndicator}"
+                                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
+                                            VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Grid>
+                            <TextBox Grid.Row="1" Style="{StaticResource ResultBoxStyle}"
+                                     Text="{Binding WhoisResult, Mode=OneWay}"
+                                     GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                                     PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                        </Grid>
+
+                        <!-- ── MODE 5: DNS LOOKUP ────────────────────────── -->
+                        <Grid Visibility="{Binding IsModeDns, Converter={StaticResource BoolToVis}}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="DnsHostBox"
+                                         Grid.Column="0"
+                                         Style="{StaticResource InputBoxStyle}"
+                                         Text="{Binding DnsHost, UpdateSourceTrigger=PropertyChanged}"
+                                         Tag="{Binding HostLabel}"
+                                         PreviewKeyDown="DnsHost_PreviewKeyDown" />
+                                <StackPanel Grid.Column="2" Orientation="Horizontal">
+                                    <Button Style="{StaticResource AccentButton}"
+                                            Command="{Binding DnsCommand}"
+                                            MinWidth="72">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource IconDns}"
+                                                  Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.4"
+                                                  Fill="Transparent" Stretch="Uniform"
+                                                  Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                            <TextBlock Text="{Binding DnsLabel}" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button>
+                                    <Border Width="8" />
+                                    <Border Style="{StaticResource BusyIndicator}"
+                                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
+                                            VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Grid>
+                            <TextBox Grid.Row="1" Style="{StaticResource ResultBoxStyle}"
+                                     Text="{Binding DnsResult, Mode=OneWay}"
+                                     GotKeyboardFocus="OutputBox_GotKeyboardFocus"
+                                     PreviewMouseDown="OutputBox_PreviewMouseDown" />
+                        </Grid>
+
+            </Grid>
+        </Border>
+
+    </Grid>
+</UserControl>

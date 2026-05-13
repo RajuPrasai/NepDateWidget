@@ -1,0 +1,76 @@
+<UserControl x:Class="NepDateWidget.Views.MiniBarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:NepDateWidget.Views"
+             xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
+             mc:Ignorable="d"
+             UseLayoutRounding="True"
+             TextOptions.TextFormattingMode="Display"
+             TextOptions.TextRenderingMode="ClearType"
+             d:DataContext="{d:DesignInstance vm:MiniBarViewModel}"
+             d:Height="40" d:Width="340">
+
+    <UserControl.Resources>
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis" Invert="False" />
+        <!-- Base style for mini-bar text: uses theme foreground normally,
+             but switches to white + drop shadow when transparent mode is active
+             so the text is readable against any desktop wallpaper. -->
+        <Style x:Key="MiniBarText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+            <Style.Triggers>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding DataContext.IsCollapsedTransparent,
+                                     RelativeSource={RelativeSource AncestorType=Window}}" Value="True" />
+                        <Condition Binding="{Binding UseTransparentStyling,
+                                     RelativeSource={RelativeSource AncestorType={x:Type views:MiniBarView}}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect ShadowDepth="1" BlurRadius="3"
+                                              Color="Black" Opacity="0.7"
+                                              Direction="270" />
+                        </Setter.Value>
+                    </Setter>
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <!--
+        Two-line collapsed mini bar:
+        When timezone ON:  Line 1 = [DayOfWeek] | [TzLabel Time] [Offset]
+                          Line 2 = [NepaliDate] | [EnglishDate]
+        When timezone OFF: Line 1 = hidden (auto-collapse)
+                          Line 2 = [DayOfWeek] | [NepaliDate] | [EnglishDate]  (centered)
+        Display only - no buttons, no tabs. Compact and readable.
+    -->
+    <Grid Margin="6,2">
+
+        <StackPanel VerticalAlignment="Center">
+            <!-- Line 1: visible only when HasLine1 = true -->
+            <TextBlock Text="{Binding Line1Text}"
+                       Style="{StaticResource MiniBarText}"
+                       FontSize="13"
+                       Opacity="0.9"
+                       FontWeight="Medium"
+                       LineHeight="17">
+                <TextBlock.Visibility>
+                    <Binding Path="HasLine1" Converter="{StaticResource BoolToVis}" />
+                </TextBlock.Visibility>
+            </TextBlock>
+            <!-- Line 2 -->
+            <TextBlock Text="{Binding Line2Text}"
+                       Style="{StaticResource MiniBarText}"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       LineHeight="18" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>

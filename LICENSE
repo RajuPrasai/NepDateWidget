@@ -1,0 +1,39 @@
+# Software License & Intellectual Property Notice
+
+**Project:** NepaliDate Widget
+
+**Copyright Holder:** Raju Prasai
+
+**Copyright Period:** © 2025-2026 Raju Prasai. All rights reserved.
+
+**Legal Classification:** Source-Available (Not Open-Source / OSI-Approved)
+
+---
+
+## IMPORTANT NOTICE TO DEVELOPERS AND USERS
+This repository contains proprietary source code published strictly for portfolio demonstration and skill showcase purposes. While the code is publicly visible, it is NOT licensed under permissive open-source terms (such as MIT, Apache, or GPL). 
+
+By viewing, downloading, caching, cloning, or interacting with this repository, you agree to the binding legal terms of the PolyForm Strict License 1.0.0 detailed below.
+
+---
+
+# PolyForm Strict License 1.0.0
+
+<https://polyformproject.org>
+
+*Note: The core legal terms of the PolyForm Strict License 1.0.0 are included here by reference, as outlined in the source document [PolyForm Project](https://polyformproject.org/).*
+
+---
+
+## Plain-Language Intent Summary
+*(This summary provides clarity regarding the developer's intent and does not alter the legal terms above.)*
+
+- **Allowed:** You may clone this repository locally to read, analyze, audit, compile, and run the widget on your private machine strictly for personal evaluation, educational study, or reviewing the developer's technical capabilities.
+- **Prohibited:** You may NOT redistribute this code, host public forks, package it into compiled binaries for distribution, modify the logic to build derivative works, or deploy it within any application or service that generates revenue, serves a business, or competes with this toolkit.
+
+### Commercial Licensing & Inquiries
+For commercial licensing permissions, custom integrations, corporate usage rights, or engineering recruitment inquiries, please contact the author directly:
+
+- **Developer:** Raju Prasai
+- **Email:** Raju Prasai
+- **Portfolio:** Rajuprasai.com.np
