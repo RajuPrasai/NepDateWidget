@@ -373,13 +373,13 @@ body {
   content: "";
   position: absolute; inset: 0;
   background:
-    /* Cool indigo — top-left corner, within bounds */
+    /* Cool indigo - top-left corner, within bounds */
     radial-gradient(1400px 700px at 5% 0%,   rgba(99, 102, 241, 0.22), transparent 70%),
-    /* Violet — top-right, within bounds */
+    /* Violet - top-right, within bounds */
     radial-gradient(900px  580px at 95% 0%,  rgba(139, 92, 246, 0.16), transparent 68%),
-    /* Warm accent whisper — lower center, brand touch */
+    /* Warm accent whisper - lower center, brand touch */
     radial-gradient(800px  400px at 40% 90%, rgba(220, 63, 16, 0.10), transparent 70%),
-    /* Slate depth — bottom edge */
+    /* Slate depth - bottom edge */
     radial-gradient(1100px 280px at 60% 100%, rgba(71, 85, 105, 0.12), transparent 70%);
   filter: blur(40px);
   pointer-events: none;
@@ -417,7 +417,7 @@ body {
   color: transparent;
 }
 
-/* नेपाली — Devanagari system font, same gradient as .grad */
+/* नेपाली - Devanagari system font, same gradient as .grad */
 .ne-h1 {
   font-family: 'Yatra One', 'Nirmala UI', serif;
   background: linear-gradient(90deg, var(--accent), #dc2626);
@@ -426,7 +426,7 @@ body {
   color: transparent;
 }
 
-/* नेपाली — subtle warm gradient + soft glow */
+/* नेपाली - subtle warm gradient + soft glow */
 .ne-text {
   background: linear-gradient(90deg, #ff8a5b, #e84545);
   -webkit-background-clip: text;
@@ -1445,7 +1445,7 @@ pre:hover .copy-btn { opacity: 1; }
 }
 
 /* ----- Screenshot frame (chrome around app shots) ----- */
-/* Stripped base — layout only; decoration is in the final .shot block below */
+/* Stripped base - layout only; decoration is in the final .shot block below */
 .shot {
   background: var(--bg-elev);
   border-radius: 8px;
@@ -2918,7 +2918,7 @@ a.chip:hover { border-color: var(--accent-border); color: var(--accent); }
 
 /* ----- Screenshot window chrome ----- */
 /* Adds a 26px titlebar with traffic-light dots above every .shot. */
-/* traffic-lights removed — consolidated into final .shot block */
+/* traffic-lights removed - consolidated into final .shot block */
 
 /* ----- Animated stroke-dash on feature icons (hover only) ----- */
 @media (prefers-reduced-motion: no-preference) {
@@ -2989,7 +2989,7 @@ a.chip:hover { border-color: var(--accent-border); color: var(--accent); }
    - Lightbox close button colour fix on dark.
    ===================================================================== */
 
-/* ===== DEFINITIVE .shot — single source of truth for all screenshots =====
+/* ===== DEFINITIVE .shot - single source of truth for all screenshots =====
    Shadow theming lives here only. Light = grey all-sides. Dark = whitish all-sides.
    ========================================================================== */
 .shot {
@@ -3010,7 +3010,7 @@ a.chip:hover { border-color: var(--accent-border); color: var(--accent); }
     transform .22s ease,
     box-shadow .22s ease;
 }
-/* Dark mode: very subtle whitish shadow — just enough to define edges */
+/* Dark mode: very subtle whitish shadow - just enough to define edges */
 [data-theme="dark"] .shot {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, .04),
@@ -3022,7 +3022,7 @@ a.chip:hover { border-color: var(--accent-border); color: var(--accent); }
 .shot::before { content: none; }    /* kill any inherited traffic lights */
 .shot:hover {
   transform: translateY(-2px);
-  /* Slightly stronger on hover — still neutral, no accent */
+  /* Slightly stronger on hover - still neutral, no accent */
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, .10),
     0 -4px 10px rgba(0, 0, 0, .07),

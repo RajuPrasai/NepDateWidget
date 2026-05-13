@@ -43,7 +43,7 @@ The Store is the sole user-facing distribution channel. Users install and receiv
    git push origin main --tags
    ```
 4. The `Release` GitHub Actions workflow triggers on the tag. **Wait for it to pass.**
-   It enforces that the tag version exactly matches `<Version>` in the csproj — if it fails here
+   It enforces that the tag version exactly matches `<Version>` in the csproj - if it fails here
    with a version mismatch, do a full recovery:
    ```
    # 1. Fix the csproj <Version>, then:
@@ -85,7 +85,7 @@ regardless of what the csproj `<Version>` contains.
 
 Pushing a `vX.Y.Z` tag automatically triggers the `Release` workflow, which builds a
 self-contained win-x64 zip and creates a **draft** GitHub Release. The draft is not published
-as part of the Store-only release process — it is a reproducible build artifact and version
+as part of the Store-only release process - it is a reproducible build artifact and version
 audit trail kept for reference.
 
 If you choose to publish the draft (optional): edit it, write release notes grouped under

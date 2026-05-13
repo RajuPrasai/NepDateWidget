@@ -18,11 +18,11 @@ Report privately via GitHub Security Advisories:
 
 Please include:
 
-1. **Affected version** — visible in **Settings → About**
-2. **Vulnerability type** — e.g. Path Traversal, Command Injection, URL Hijack
-3. **Steps to reproduce** — clear instructions or a minimal proof of concept
-4. **Impact** — what an attacker could achieve if the flaw is exploited
-5. **OS and locale** — if relevant (this application handles locale-sensitive calendar data)
+1. **Affected version** - visible in **Settings → About**
+2. **Vulnerability type** - e.g. Path Traversal, Command Injection, URL Hijack
+3. **Steps to reproduce** - clear instructions or a minimal proof of concept
+4. **Impact** - what an attacker could achieve if the flaw is exploited
+5. **OS and locale** - if relevant (this application handles locale-sensitive calendar data)
 
 ## What to expect
 
@@ -49,7 +49,7 @@ In scope:
 Out of scope:
 
 - Vulnerabilities in third-party dependencies that are already publicly
-  tracked upstream — report those to the upstream maintainers and link
+  tracked upstream - report those to the upstream maintainers and link
   the advisory here so the dependency can be upgraded
 - Issues that require physical access to an unlocked machine
 - Social engineering or phishing
@@ -57,5 +57,5 @@ Out of scope:
 
 Note: Dependabot is configured and monitors NuGet and GitHub Actions
 dependencies monthly. If a CVE affects a dependency used here and the
-project has not yet upgraded to a safe version, that **is** in scope —
+project has not yet upgraded to a safe version, that **is** in scope -
 knowingly shipping a vulnerable dependency version is a valid report.
