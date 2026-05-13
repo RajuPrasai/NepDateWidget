@@ -6,8 +6,8 @@
 
 The नेपाली calendar that lives on your taskbar. Two lines on screen at all times. Click to expand into 25+ tools.
 
-[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D4?style=flat-square&logo=windows)](https://github.com/RajuPrasai/NepDateWidget/releases)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=flat-square)](https://github.com/RajuPrasai/NepDateWidget/releases)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D4?style=flat-square&logo=windows)](https://rajuprasai.github.io/NepDateWidget/download.html)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=flat-square)](https://rajuprasai.github.io/NepDateWidget/changelog.html)
 [![Framework](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com)
 [![License](https://img.shields.io/badge/license-PolyForm%20Strict%201.0.0-blue?style=flat-square)](LICENSE)
 [![Telemetry](https://img.shields.io/badge/telemetry-none-success?style=flat-square)](https://rajuprasai.github.io/NepDateWidget/)
@@ -80,7 +80,7 @@ Seven tabs, 25+ tools. The full tour is on the [website](https://rajuprasai.gith
 
 | Download | Notes |
 |---|---|
-| [**Microsoft Store**](https://www.microsoft.com/store/apps/NepDateWidget) | Auto-updates, no admin prompt, recommended |
+| [**Microsoft Store**](https://apps.microsoft.com/detail/{appId}) | Auto-updates, no admin prompt, recommended |
 
 Free for personal use. Per-user install, no admin rights required.
 
@@ -88,7 +88,7 @@ Free for personal use. Per-user install, no admin rights required.
 
 ## Requirements
 
-Windows 10 (1809 or later) or Windows 11. The Microsoft Store build supports both x64 and ARM64; the self-contained portable build is x64 only. No separate runtime required: .NET 10 is bundled.
+Windows 10 (1809 or later) or Windows 11. No separate runtime required: .NET 10 is bundled.
 
 ---
 
@@ -96,9 +96,7 @@ Windows 10 (1809 or later) or Windows 11. The Microsoft Store build supports bot
 
 No telemetry, no analytics, no account. All processing is local. The only network traffic happens when you actively use a network tool (My IP, ping, scan, traceroute, WHOIS, DNS). Notes, reminders, settings, and documents are stored in plain JSON:
 
-- **Microsoft Store:** `%LocalAppData%\NepDateWidget.Store\AppData\`
-- **Developer / unpackaged builds:** `%LocalAppData%\NepDateWidget\AppData\`
-- **Portable mode** (requires a `portable.flag` file beside the EXE): `AppData\` in the same folder as the EXE
+- `%LocalAppData%\NepDateWidget.Store\AppData\`
 
 Nothing is written to system folders or sent off-device.
 

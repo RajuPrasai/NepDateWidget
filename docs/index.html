@@ -23,12 +23,12 @@
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "NepDate Widget",
-    "operatingSystem": "Windows 10 1903+, Windows 11",
+    "operatingSystem": "Windows 10 1809+, Windows 11",
     "applicationCategory": "DesktopApplication",
     "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
     "author": { "@type": "Person", "name": "Raju Prasai" },
     "url": "https://rajuprasai.github.io/NepDateWidget/",
-    "license": "https://opensource.org/licenses/MIT"
+    "license": "https://polyformproject.org/licenses/strict/1.0.0/"
   }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -55,8 +55,6 @@
   </script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-
   <header class="site-header">
     <div class="inner">
       <a class="brand" href="index.html">
@@ -533,8 +531,8 @@
           </div>
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-            <h3>Two ways to install</h3>
-            <p>Microsoft Store for auto-updates, or a portable zip from GitHub Releases. Per-user, no admin prompt, no telemetry.</p>
+            <h3>One click to install</h3>
+            <p>Available on the Microsoft Store — per-user, no admin prompt, auto-updates, no telemetry.</p>
           </div>
         </div>
 
@@ -629,7 +627,7 @@
               </div>
               <div class="faq-item">
                 <button class="faq-q" type="button">What Windows versions does it support?</button>
-                <div class="faq-a"><div class="faq-a-inner"><p>Windows 10 and Windows 11. Both 32-bit and 64-bit. The Store version requires a Microsoft account for installation only — the app itself runs with no account.</p></div></div>
+                <div class="faq-a"><div class="faq-a-inner"><p>Windows 10 and Windows 11 (64-bit, version 1809 or later). The Store version requires a Microsoft account for installation only — the app itself runs with no account.</p></div></div>
               </div>
               <div class="faq-item">
                 <button class="faq-q" type="button">Does it work offline?</button>
@@ -641,7 +639,7 @@
               </div>
               <div class="faq-item">
                 <button class="faq-q" type="button">Will it slow down my PC?</button>
-                <div class="faq-a"><div class="faq-a-inner"><p>No noticeable impact. It's a lightweight WinUI 3 app — the mini bar uses negligible CPU when idle. The only background work is checking for due reminders, which runs on a low-frequency timer.</p></div></div>
+                <div class="faq-a"><div class="faq-a-inner"><p>No noticeable impact. It's a lightweight WPF app — the mini bar uses negligible CPU when idle. The only background work is checking for due reminders, which runs on a low-frequency timer.</p></div></div>
               </div>
             </div>
 
@@ -649,11 +647,11 @@
               <div class="faq-group-label">Installation &amp; Updates</div>
               <div class="faq-item">
                 <button class="faq-q" type="button">Do I need admin rights to install?</button>
-                <div class="faq-a"><div class="faq-a-inner"><p>No. It's a per-user install — no UAC prompt, nothing written to system folders. The Microsoft Store version handles everything silently. The portable ZIP just extracts and runs.</p></div></div>
+                <div class="faq-a"><div class="faq-a-inner"><p>No. It's a per-user install via the Microsoft Store — no UAC prompt, nothing written to system folders. Everything is handled silently.</p></div></div>
               </div>
               <div class="faq-item">
                 <button class="faq-q" type="button">How do I update?</button>
-                <div class="faq-a"><div class="faq-a-inner"><p>Store version updates automatically in the background — you don't need to do anything. For the portable build, download the new ZIP from <a href="https://github.com/RajuPrasai/NepDateWidget/releases" target="_blank" rel="noopener">GitHub Releases</a>, extract, and replace. Your data in AppData is untouched.</p></div></div>
+                <div class="faq-a"><div class="faq-a-inner"><p>Updates are delivered automatically in the background by the Microsoft Store — you don't need to do anything.</p></div></div>
               </div>
               <div class="faq-item">
                 <button class="faq-q" type="button">How is this different from the NepDate?</button>
@@ -674,7 +672,7 @@
               </div>
               <div class="faq-item">
                 <button class="faq-q" type="button">Where is my data stored?</button>
-                <div class="faq-a"><div class="faq-a-inner"><p>All data lives in your user profile. The portable build uses <code>%LocalAppData%\NepDateWidget</code>; the Store version uses <code>%LocalAppData%\NepDateWidget.Store</code>. Settings, notes, reminders, documents, shortcuts, and run history are all plain JSON files there.</p></div></div>
+                <div class="faq-a"><div class="faq-a-inner"><p>All data lives in your user profile under <code>%LocalAppData%\NepDateWidget.Store</code>. Settings, notes, reminders, documents, shortcuts, and run history are all plain JSON files there.</p></div></div>
               </div>
               <div class="faq-item">
                 <button class="faq-q" type="button">Can I back up or migrate my data?</button>
@@ -760,8 +758,7 @@
           <h4>Project</h4>
           <ul>
             <li><a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener">GitHub</a></li>
-            <li><a href="https://github.com/RajuPrasai/NepDateWidget/releases" target="_blank" rel="noopener">All Releases</a></li>
-            <li><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">Issues</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">Issues &amp; Feedback</a></li>
             <li><a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">Sponsor</a></li>
           </ul>
         </div>
