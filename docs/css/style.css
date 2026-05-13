@@ -153,6 +153,88 @@ body {
   transition: background var(--dur-med) var(--ease-out), color var(--dur-med) var(--ease-out);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  isolation: isolate;   /* stacking context: ::before z:-1 stays above bg, below children */
+}
+
+/* ===== Page-wide ambient glow — scattered throughout every page =====
+   15 radial blobs across 5 vertical zones (top → bottom).
+   Some large + vivid, most small + whisper-subtle.
+   Blur(80px) melts edges into organic atmosphere.
+   z-index: -1 sits above body background, behind all page content.
+   ===================================================================== */
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+
+  background:
+    /* ── Zone 1 · 0–10% · TOP — deliberately most subtle ────────────── */
+    radial-gradient(1100px 600px at  8%  1%,  color-mix(in srgb, var(--accent)  6%, transparent), transparent 70%),
+    radial-gradient( 750px 420px at 91%  4%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
+    radial-gradient( 420px 260px at 48%  8%,  color-mix(in srgb, var(--accent)  3%, transparent), transparent 70%),
+    radial-gradient( 560px 320px at 28%  6%,  color-mix(in srgb, #dc2626        3%, transparent), transparent 70%),
+
+    /* ── Zone 2 · 10–20% ─────────────────────────────────────────────── */
+    radial-gradient( 860px 500px at  5% 13%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
+    radial-gradient( 680px 400px at 78% 16%,  color-mix(in srgb, var(--accent)  8%, transparent), transparent 70%),
+    radial-gradient( 460px 280px at 55% 19%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
+    radial-gradient( 920px 520px at 25% 17%,  color-mix(in srgb, var(--accent)  5%, transparent), transparent 70%),
+
+    /* ── Zone 3 · 20–30% ─────────────────────────────────────────────── */
+    radial-gradient( 980px 560px at 88% 23%,  color-mix(in srgb, var(--accent)  7%, transparent), transparent 70%),
+    radial-gradient( 540px 330px at 12% 27%,  color-mix(in srgb, #dc2626        6%, transparent), transparent 70%),
+    radial-gradient( 770px 450px at 44% 25%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
+    radial-gradient( 420px 250px at 68% 29%,  color-mix(in srgb, #dc2626        3%, transparent), transparent 70%),
+
+    /* ── Zone 4 · 30–40% ─────────────────────────────────────────────── */
+    radial-gradient(1020px 580px at  3% 33%,  color-mix(in srgb, var(--accent)  8%, transparent), transparent 70%),
+    radial-gradient( 640px 380px at 82% 37%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
+    radial-gradient( 500px 300px at 36% 39%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
+    radial-gradient( 820px 480px at 60% 34%,  color-mix(in srgb, #dc2626        5%, transparent), transparent 70%),
+
+    /* ── Zone 5 · 40–50% ─────────────────────────────────────────────── */
+    radial-gradient( 890px 520px at 18% 43%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
+    radial-gradient( 730px 430px at 74% 47%,  color-mix(in srgb, var(--accent)  8%, transparent), transparent 70%),
+    radial-gradient(1100px 620px at 50% 45%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
+    radial-gradient( 480px 290px at  0% 49%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
+
+    /* ── Zone 6 · 50–60% ─────────────────────────────────────────────── */
+    radial-gradient( 960px 550px at 94% 52%,  color-mix(in srgb, var(--accent)  7%, transparent), transparent 70%),
+    radial-gradient( 620px 360px at  8% 56%,  color-mix(in srgb, #dc2626        6%, transparent), transparent 70%),
+    radial-gradient( 800px 460px at 42% 59%,  color-mix(in srgb, var(--accent)  5%, transparent), transparent 70%),
+    radial-gradient( 440px 260px at 70% 54%,  color-mix(in srgb, #dc2626        3%, transparent), transparent 70%),
+
+    /* ── Zone 7 · 60–70% ─────────────────────────────────────────────── */
+    radial-gradient(1000px 580px at 22% 63%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
+    radial-gradient( 700px 410px at 86% 67%,  color-mix(in srgb, var(--accent)  8%, transparent), transparent 70%),
+    radial-gradient( 560px 330px at 50% 69%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
+    radial-gradient( 840px 490px at  0% 64%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
+
+    /* ── Zone 8 · 70–80% ─────────────────────────────────────────────── */
+    radial-gradient( 780px 450px at 66% 73%,  color-mix(in srgb, var(--accent)  6%, transparent), transparent 70%),
+    radial-gradient( 600px 350px at 14% 77%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
+    radial-gradient( 480px 280px at 40% 79%,  color-mix(in srgb, var(--accent)  3%, transparent), transparent 70%),
+    radial-gradient( 920px 530px at 90% 74%,  color-mix(in srgb, #dc2626        5%, transparent), transparent 70%),
+
+    /* ── Zone 9 · 80–90% ─────────────────────────────────────────────── */
+    radial-gradient(1050px 600px at 30% 83%,  color-mix(in srgb, var(--accent)  7%, transparent), transparent 70%),
+    radial-gradient( 660px 390px at 78% 87%,  color-mix(in srgb, #dc2626        8%, transparent), transparent 70%),
+    radial-gradient( 520px 310px at  7% 89%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
+    radial-gradient( 760px 440px at 56% 85%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
+
+    /* ── Zone 10 · 90–100% · Bottom ──────────────────────────────────── */
+    radial-gradient( 880px 510px at 18% 93%,  color-mix(in srgb, #dc2626        6%, transparent), transparent 70%),
+    radial-gradient( 720px 420px at 72% 96%,  color-mix(in srgb, var(--accent)  7%, transparent), transparent 70%),
+    radial-gradient(1000px 580px at 50% 99%,  color-mix(in srgb, var(--accent)  5%, transparent), transparent 70%),
+    radial-gradient( 500px 300px at 95% 92%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%);
+
+  filter: blur(72px);
+}
+[data-theme="dark"] body::before {
+  opacity: 0.65;
 }
 
 /* Skip link */
@@ -345,12 +427,16 @@ body {
 .hero::before {
   content: "";
   position: absolute; inset: 0;
+  /* Fallback for browsers without color-mix */
   background:
-    radial-gradient(1000px 500px at 15% 10%, rgba(220, 63, 16, 0.26), transparent 70%),
-    radial-gradient(800px 420px at 85% 20%, rgba(220, 38, 38, 0.18), transparent 70%);
+    radial-gradient(1300px 650px at 12% 8%,  rgba(220, 63, 16, 0.30), transparent 72%),
+    radial-gradient(1000px 520px at 88% 18%, rgba(220, 38, 38, 0.22), transparent 72%),
+    radial-gradient(700px  400px at 50% 85%, rgba(220, 63, 16, 0.12), transparent 70%);
   background:
-    radial-gradient(1000px 500px at 15% 10%, color-mix(in srgb, var(--accent) 26%, transparent), transparent 70%),
-    radial-gradient(800px 420px at 85% 20%, color-mix(in srgb, #dc2626 18%, transparent), transparent 70%);
+    radial-gradient(1300px 650px at 12% 8%,  color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
+    radial-gradient(1000px 520px at 88% 18%, color-mix(in srgb, #dc2626 22%, transparent),        transparent 72%),
+    radial-gradient(700px  400px at 50% 85%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
+  filter: blur(8px);
   pointer-events: none;
 }
 .hero .container { position: relative; z-index: 1; }
@@ -2930,7 +3016,9 @@ a.chip:hover { border-color: var(--accent-border); color: var(--accent); }
    - Lightbox close button colour fix on dark.
    ===================================================================== */
 
-/* ===== DEFINITIVE .shot — single source of truth for all screenshots ===== */
+/* ===== DEFINITIVE .shot — single source of truth for all screenshots =====
+   Shadow theming lives here only. Light = grey all-sides. Dark = whitish all-sides.
+   ========================================================================== */
 .shot {
   position: relative;
   padding-top: 0;
@@ -2938,35 +3026,44 @@ a.chip:hover { border-color: var(--accent-border); color: var(--accent); }
   border: none;
   border-radius: 10px;
   overflow: hidden;
-  /*
-    The box-shadow ring below provides edge definition — no hard border needed.
-    Removing the border eliminates the dark/black line artifact on image edges.
-  */
-  */
+  /* Light mode: soft grey shadow on all four sides */
   box-shadow:
-    0 0 0 1px rgba(220, 63, 16, .08),
-    0 2px 8px -2px rgba(0, 0, 0, .10);
+    0 0 0 1px rgba(0, 0, 0, .07),
+    0 -3px 8px rgba(0, 0, 0, .05),
+    0  4px 12px rgba(0, 0, 0, .09),
+    -4px 0 10px rgba(0, 0, 0, .05),
+     4px 0 10px rgba(0, 0, 0, .05);
   transition:
     transform .22s ease,
-    box-shadow .22s ease,
-    border-color .22s ease;
+    box-shadow .22s ease;
 }
+/* Dark mode: very subtle whitish shadow — just enough to define edges */
 [data-theme="dark"] .shot {
   box-shadow:
-    0 0 0 1px rgba(255, 138, 91, .18),
-    0 4px 14px -6px rgba(0, 0, 0, .60);
+    0 0 0 1px rgba(255, 255, 255, .04),
+    0 -2px 5px rgba(255, 255, 255, .015),
+    0  3px 7px rgba(255, 255, 255, .02),
+    -3px 0 6px rgba(255, 255, 255, .015),
+     3px 0 6px rgba(255, 255, 255, .015);
 }
 .shot::before { content: none; }    /* kill any inherited traffic lights */
 .shot:hover {
   transform: translateY(-2px);
+  /* Slightly stronger on hover — still neutral, no accent */
   box-shadow:
-    0 0 0 1px rgba(220, 63, 16, .18),
-    0 6px 18px -8px rgba(0, 0, 0, .12);
+    0 0 0 1px rgba(0, 0, 0, .10),
+    0 -4px 10px rgba(0, 0, 0, .07),
+    0  8px 18px rgba(0, 0, 0, .12),
+    -5px 0 12px rgba(0, 0, 0, .06),
+     5px 0 12px rgba(0, 0, 0, .06);
 }
 [data-theme="dark"] .shot:hover {
   box-shadow:
-    0 0 0 1px rgba(255, 138, 91, .35),
-    0 6px 18px -8px rgba(0, 0, 0, .60);
+    0 0 0 1px rgba(255, 255, 255, .07),
+    0 -3px 7px rgba(255, 255, 255, .025),
+    0  6px 12px rgba(255, 255, 255, .035),
+    -4px 0 8px rgba(255, 255, 255, .02),
+     4px 0 8px rgba(255, 255, 255, .02);
 }
 .shot img {
   display: block;
@@ -3470,25 +3567,28 @@ kbd {
   margin: 0 20px 16px;
 }
 
-/* ----- Page hero glow (features.html, gallery.html) ----- */
+/* ----- Page hero glow (features.html, gallery.html, download.html) ----- */
 .page-hero {
   position: relative;
   overflow: hidden;
 }
 .page-hero::before {
   content: "";
-  position: absolute;
-  top: -100px;
-  left: 50%;
-  width: 1000px;
-  height: 600px;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background: radial-gradient(ellipse, var(--accent-glow) 0%, transparent 70%);
-  opacity: .20;
+  position: absolute; inset: 0;
+  /* Fallback */
+  background:
+    radial-gradient(1100px 560px at 10% 5%,  rgba(220, 63, 16, 0.24), transparent 72%),
+    radial-gradient(900px  480px at 90% 15%, rgba(220, 38, 38, 0.17), transparent 72%),
+    radial-gradient(600px  360px at 50% 90%, rgba(220, 63, 16, 0.10), transparent 70%);
+  background:
+    radial-gradient(1100px 560px at 10% 5%,  color-mix(in srgb, var(--accent) 24%, transparent), transparent 72%),
+    radial-gradient(900px  480px at 90% 15%, color-mix(in srgb, #dc2626 17%, transparent),        transparent 72%),
+    radial-gradient(600px  360px at 50% 90%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%);
+  filter: blur(10px);
+  opacity: .90;
   pointer-events: none;
 }
-[data-theme="dark"] .page-hero::before { opacity: .14; }
+[data-theme="dark"] .page-hero::before { opacity: .70; }
 .page-hero > .container { position: relative; z-index: 1; }
 
 /* ----- lang-compare inside feat-block (features.html calendar section) ----- */
