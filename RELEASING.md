@@ -6,9 +6,9 @@ This file documents the release process for maintainers. End users do not need t
 
 NepDate Widget follows [Semantic Versioning 2.0.0](https://semver.org) applied to the user's perspective:
 
-- **MAJOR** (`x.0.0`) — incompatible changes requiring user action: settings file migration, removed feature, `LOCALAPPDATA` folder rename.
-- **MINOR** (`1.x.0`) — new feature, setting, tool, theme, or language. Always backwards compatible.
-- **PATCH** (`1.0.x`) — bug fix, performance fix, dependency bump with no behavior change, documentation fix.
+- **MAJOR** (`x.0.0`) - incompatible changes requiring user action: settings file migration, removed feature, `LOCALAPPDATA` folder rename.
+- **MINOR** (`1.x.0`) - new feature, setting, tool, theme, or language. Always backwards compatible.
+- **PATCH** (`1.0.x`) - bug fix, performance fix, dependency bump with no behavior change, documentation fix.
 
 Pre-release tags (`-rc1`, `-beta.1`) are allowed but not promoted to the stable channel until re-tagged without the suffix.
 
