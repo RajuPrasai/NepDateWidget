@@ -1,116 +1,39 @@
-# PolyForm Strict License 1.0.0
+# Software License & Intellectual Property Notice
 
-<https://polyformproject.org/licenses/strict/1.0.0>
+**Project:** NepaliDate Widget
 
-## Acceptance
+**Copyright Holder:** Raju Prasai
 
-In order to get any license under these terms, you must agree
-to them as both strict obligations and conditions to all
-your licenses.
+**Copyright Period:** © 2025-2026 Raju Prasai. All rights reserved.
 
-## Copyright License
-
-The licensor grants you a copyright license for the software
-to do everything you might do with the software that would
-otherwise infringe the licensor's copyright in it for any
-permitted purpose, other than distributing the software or
-making changes or new works based on the software.
-
-## Patent License
-
-The licensor grants you a patent license for the software that
-covers patent claims the licensor can license, or becomes able
-to license, that you would infringe by using the software.
-
-## Internal Use
-
-You must use the software only for your internal, personal,
-or evaluation purposes. You may not use the software to
-provide products or services to others, or to operate a
-business.
-
-## Noncommercial Purposes
-
-Any purpose is a permitted purpose under these terms, except
-for using the software:
-
-- in connection with any product or service intended to
-  generate revenue, or
-- to develop any product or service that competes with the
-  software or any product or service the licensor offers
-  using the software.
-
-## No Other Rights
-
-These terms do not allow you to sublicense or transfer any of
-your licenses to anyone else, or prevent the licensor from
-granting licenses to anyone else.  These terms do not imply
-any other licenses.
-
-## Patent Defense
-
-If you make any written claim that the software infringes or
-contributes to infringement of any patent, your patent license
-for the software granted under these terms ends immediately. If
-your company makes such a claim, your patent license ends
-immediately for work on behalf of your company.
-
-## Violations
-
-The first time you are notified in writing that you have
-violated any of these terms, or done anything with the software
-not covered by your licenses, your licenses can nonetheless
-continue if you come into full compliance with these terms, and
-take practical steps to correct past violations, within 32 days
-of receiving notice.  Otherwise, all your licenses end
-immediately.
-
-## No Liability
-
-***As far as the law allows, the software comes as is, without
-any warranty or condition, and the licensor will not be liable
-to you for any damages arising out of these terms or the use
-or nature of the software, under any kind of legal claim.***
-
-## Definitions
-
-The **licensor** is the individual or entity offering these
-terms, and the **software** is the software the licensor makes
-available under these terms.
-
-**you** refers to the individual or entity agreeing to these
-terms.
-
-**your company** is any legal entity, sole proprietorship, or
-other kind of organization that you work for, plus all
-organizations that have control over, are under the control of,
-or are under common control with that organization.  **control**
-means ownership of substantially all the assets of an entity,
-or the power to direct its management and policies by vote,
-contract, or otherwise.  Control can be direct or indirect.
-
-**your licenses** are all the licenses granted to you for the
-software under these terms.
-
-**use** means anything you do with the software requiring one
-of your licenses.
+**Legal Classification:** Source-Available (Not Open-Source / OSI-Approved)
 
 ---
 
-## Plain-language summary (not part of the license)
+## IMPORTANT NOTICE TO DEVELOPERS AND USERS
+This repository contains proprietary source code published strictly for portfolio demonstration and skill showcase purposes. While the code is publicly visible, it is NOT licensed under permissive open-source terms (such as MIT, Apache, or GPL). 
 
-The terms above are the binding license. This summary is provided only
-to make the intent obvious to readers:
+By viewing, downloading, caching, cloning, or interacting with this repository, you agree to the binding legal terms of the PolyForm Strict License 1.0.0 detailed below.
 
-- You **may** read, audit, build, and run the source code on your own
-  machine for personal evaluation.
-- You **may not** redistribute the source code or compiled binaries.
-- You **may not** publish a derivative work, fork, or competing
-  product based on this code.
-- You **may not** use the software to operate a business or provide a
-  service to others.
+---
 
-If you want to use the software outside these limits, contact the
-copyright holder for a separate commercial license.
+# PolyForm Strict License 1.0.0
 
-Copyright (c) 2025-2026 RajuPrasai. All rights reserved.
+<https://polyformproject.org>
+
+*Note: The core legal terms of the PolyForm Strict License 1.0.0 are included here by reference, as outlined in the source document [PolyForm Project](https://polyformproject.org/).*
+
+---
+
+## Plain-Language Intent Summary
+*(This summary provides clarity regarding the developer's intent and does not alter the legal terms above.)*
+
+- **Allowed:** You may clone this repository locally to read, analyze, audit, compile, and run the widget on your private machine strictly for personal evaluation, educational study, or reviewing the developer's technical capabilities.
+- **Prohibited:** You may NOT redistribute this code, host public forks, package it into compiled binaries for distribution, modify the logic to build derivative works, or deploy it within any application or service that generates revenue, serves a business, or competes with this toolkit.
+
+### Commercial Licensing & Inquiries
+For commercial licensing permissions, custom integrations, corporate usage rights, or engineering recruitment inquiries, please contact the author directly:
+
+- **Developer:** Raju Prasai
+- **Email:** Raju Prasai
+- **Portfolio:** Rajuprasai.com.np

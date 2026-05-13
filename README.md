@@ -81,21 +81,26 @@ Seven tabs, 25+ tools. The full tour is on the [website](https://rajuprasai.gith
 | Download | Notes |
 |---|---|
 | [**Microsoft Store**](https://www.microsoft.com/store/apps/NepDateWidget) | Auto-updates, no admin prompt, recommended |
-| [**GitHub Releases** (portable zip)](https://github.com/RajuPrasai/NepDateWidget/releases/latest) | Extract and run, no installer needed |
 
-Both are free for personal use. Per-user install, no admin rights required.
+Free for personal use. Per-user install, no admin rights required.
 
 ---
 
 ## Requirements
 
-Windows 10 (1809 or later) or Windows 11, x64. No separate runtime required: .NET 10 is bundled in the EXE.
+Windows 10 (1809 or later) or Windows 11. The Microsoft Store build supports both x64 and ARM64; the self-contained portable build is x64 only. No separate runtime required: .NET 10 is bundled.
 
 ---
 
 ## Privacy
 
-No telemetry, no analytics, no account. All processing is local. The only network traffic happens when you actively use a network tool (My IP, ping, scan, traceroute, WHOIS, DNS). Notes, reminders, settings, and documents are stored in plain JSON in `AppData\` beside the EXE (portable) or `%LocalAppData%\NepDateWidget.Store\AppData\` (Store build). Nothing is written to system folders or sent off-device.
+No telemetry, no analytics, no account. All processing is local. The only network traffic happens when you actively use a network tool (My IP, ping, scan, traceroute, WHOIS, DNS). Notes, reminders, settings, and documents are stored in plain JSON:
+
+- **Microsoft Store:** `%LocalAppData%\NepDateWidget.Store\AppData\`
+- **Developer / unpackaged builds:** `%LocalAppData%\NepDateWidget\AppData\`
+- **Portable mode** (requires a `portable.flag` file beside the EXE): `AppData\` in the same folder as the EXE
+
+Nothing is written to system folders or sent off-device.
 
 ---
 
@@ -108,10 +113,12 @@ git clone https://github.com/RajuPrasai/NepDateWidget.git
 cd NepDateWidget
 dotnet build src/NepDateWidget/NepDateWidget.csproj -c Debug
 dotnet test tests/NepDateWidget.Tests/NepDateWidget.Tests.csproj
-dotnet publish src/NepDateWidget/NepDateWidget.csproj -c Release -r win-x64
+dotnet publish src/NepDateWidget/NepDateWidget.csproj /p:PublishProfile=win-x64-portable
 ```
 
-The published output is a single self-contained EXE. No separate runtime or DLLs required on the target machine.
+The published output is a single self-contained EXE in `publish/win-x64-portable/`. No separate runtime or DLLs required on the target machine. (`PublishSingleFile=true` is set in the publish profile, not the csproj, so the raw `-r win-x64` flag without the profile produces a directory of files, not a single EXE.)
+
+When running the EXE outside of the Store package (debug build, publish output, etc.), user data is stored in `%LocalAppData%\NepDateWidget\AppData\`. To use portable mode (data beside the EXE), create an empty file named `portable.flag` in the same directory as `NepDateWidget.exe` before launching.
 
 **Tech stack:** .NET 10, WPF, MVVM (hand-rolled, no framework), [NepDate](https://www.nuget.org/packages/NepDate) for all BS date operations, xUnit with 1534 tests and no mocking frameworks.
 

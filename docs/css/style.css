@@ -86,7 +86,7 @@ li { margin-bottom: .25em; }
   --radius:        12px;
   --radius-lg:     16px;
   --radius-2xl:    24px;
-  --radius-pill:   999px;
+  --radius-pill:   8px;
 
   /* Motion */
   --dur-fast:      .15s;
@@ -149,92 +149,31 @@ body {
   color: var(--text);
   font-size: 16px;
   line-height: 1.65;
-  font-feature-settings: 'ss01','cv11','cv03','cv05';   /* Inter sharper alternates */
+  font-feature-settings: 'ss01','cv11','cv03','cv05';
   transition: background var(--dur-med) var(--ease-out), color var(--dur-med) var(--ease-out);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  position: relative;
-  isolation: isolate;   /* stacking context: ::before z:-1 stays above bg, below children */
 }
 
-/* ===== Page-wide ambient glow — scattered throughout every page =====
-   15 radial blobs across 5 vertical zones (top → bottom).
-   Some large + vivid, most small + whisper-subtle.
-   Blur(80px) melts edges into organic atmosphere.
-   z-index: -1 sits above body background, behind all page content.
+/* ===== Ambient glow canvas (injected by main.js on every page) =====
+   position: fixed  → stays in viewport as you scroll, always visible
+   mix-blend-mode: soft-light → blends through all section backgrounds
+                                without covering text
+   pointer-events: none → zero interaction interference
+   z-index: 1 → above body bg, below header (z:100) and all content
+   overflow: hidden → clips blobs that overhang viewport edges
    ===================================================================== */
-body::before {
-  content: "";
-  position: absolute;
+.glow-canvas {
+  position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: -1;
-
-  background:
-    /* ── Zone 1 · 0–10% · TOP — deliberately most subtle ────────────── */
-    radial-gradient(1100px 600px at  8%  1%,  color-mix(in srgb, var(--accent)  6%, transparent), transparent 70%),
-    radial-gradient( 750px 420px at 91%  4%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
-    radial-gradient( 420px 260px at 48%  8%,  color-mix(in srgb, var(--accent)  3%, transparent), transparent 70%),
-    radial-gradient( 560px 320px at 28%  6%,  color-mix(in srgb, #dc2626        3%, transparent), transparent 70%),
-
-    /* ── Zone 2 · 10–20% ─────────────────────────────────────────────── */
-    radial-gradient( 860px 500px at  5% 13%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
-    radial-gradient( 680px 400px at 78% 16%,  color-mix(in srgb, var(--accent)  8%, transparent), transparent 70%),
-    radial-gradient( 460px 280px at 55% 19%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
-    radial-gradient( 920px 520px at 25% 17%,  color-mix(in srgb, var(--accent)  5%, transparent), transparent 70%),
-
-    /* ── Zone 3 · 20–30% ─────────────────────────────────────────────── */
-    radial-gradient( 980px 560px at 88% 23%,  color-mix(in srgb, var(--accent)  7%, transparent), transparent 70%),
-    radial-gradient( 540px 330px at 12% 27%,  color-mix(in srgb, #dc2626        6%, transparent), transparent 70%),
-    radial-gradient( 770px 450px at 44% 25%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
-    radial-gradient( 420px 250px at 68% 29%,  color-mix(in srgb, #dc2626        3%, transparent), transparent 70%),
-
-    /* ── Zone 4 · 30–40% ─────────────────────────────────────────────── */
-    radial-gradient(1020px 580px at  3% 33%,  color-mix(in srgb, var(--accent)  8%, transparent), transparent 70%),
-    radial-gradient( 640px 380px at 82% 37%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
-    radial-gradient( 500px 300px at 36% 39%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
-    radial-gradient( 820px 480px at 60% 34%,  color-mix(in srgb, #dc2626        5%, transparent), transparent 70%),
-
-    /* ── Zone 5 · 40–50% ─────────────────────────────────────────────── */
-    radial-gradient( 890px 520px at 18% 43%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
-    radial-gradient( 730px 430px at 74% 47%,  color-mix(in srgb, var(--accent)  8%, transparent), transparent 70%),
-    radial-gradient(1100px 620px at 50% 45%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
-    radial-gradient( 480px 290px at  0% 49%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
-
-    /* ── Zone 6 · 50–60% ─────────────────────────────────────────────── */
-    radial-gradient( 960px 550px at 94% 52%,  color-mix(in srgb, var(--accent)  7%, transparent), transparent 70%),
-    radial-gradient( 620px 360px at  8% 56%,  color-mix(in srgb, #dc2626        6%, transparent), transparent 70%),
-    radial-gradient( 800px 460px at 42% 59%,  color-mix(in srgb, var(--accent)  5%, transparent), transparent 70%),
-    radial-gradient( 440px 260px at 70% 54%,  color-mix(in srgb, #dc2626        3%, transparent), transparent 70%),
-
-    /* ── Zone 7 · 60–70% ─────────────────────────────────────────────── */
-    radial-gradient(1000px 580px at 22% 63%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
-    radial-gradient( 700px 410px at 86% 67%,  color-mix(in srgb, var(--accent)  8%, transparent), transparent 70%),
-    radial-gradient( 560px 330px at 50% 69%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
-    radial-gradient( 840px 490px at  0% 64%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
-
-    /* ── Zone 8 · 70–80% ─────────────────────────────────────────────── */
-    radial-gradient( 780px 450px at 66% 73%,  color-mix(in srgb, var(--accent)  6%, transparent), transparent 70%),
-    radial-gradient( 600px 350px at 14% 77%,  color-mix(in srgb, #dc2626        7%, transparent), transparent 70%),
-    radial-gradient( 480px 280px at 40% 79%,  color-mix(in srgb, var(--accent)  3%, transparent), transparent 70%),
-    radial-gradient( 920px 530px at 90% 74%,  color-mix(in srgb, #dc2626        5%, transparent), transparent 70%),
-
-    /* ── Zone 9 · 80–90% ─────────────────────────────────────────────── */
-    radial-gradient(1050px 600px at 30% 83%,  color-mix(in srgb, var(--accent)  7%, transparent), transparent 70%),
-    radial-gradient( 660px 390px at 78% 87%,  color-mix(in srgb, #dc2626        8%, transparent), transparent 70%),
-    radial-gradient( 520px 310px at  7% 89%,  color-mix(in srgb, var(--accent)  4%, transparent), transparent 70%),
-    radial-gradient( 760px 440px at 56% 85%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%),
-
-    /* ── Zone 10 · 90–100% · Bottom ──────────────────────────────────── */
-    radial-gradient( 880px 510px at 18% 93%,  color-mix(in srgb, #dc2626        6%, transparent), transparent 70%),
-    radial-gradient( 720px 420px at 72% 96%,  color-mix(in srgb, var(--accent)  7%, transparent), transparent 70%),
-    radial-gradient(1000px 580px at 50% 99%,  color-mix(in srgb, var(--accent)  5%, transparent), transparent 70%),
-    radial-gradient( 500px 300px at 95% 92%,  color-mix(in srgb, #dc2626        4%, transparent), transparent 70%);
-
-  filter: blur(72px);
+  z-index: 1;
+  overflow: hidden;
+  mix-blend-mode: soft-light;
 }
-[data-theme="dark"] body::before {
-  opacity: 0.65;
+[data-theme="dark"] .glow-canvas {
+  mix-blend-mode: soft-light;
+  opacity: 0.55;   /* dark bg already rich, pull back slightly */
 }
 
 /* Skip link */
@@ -346,7 +285,7 @@ body::before {
 }
 .section-eyebrow {
   display: inline-block;
-  font-size: .8rem;
+  font-size: 1.3rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .08em;
@@ -427,17 +366,25 @@ body::before {
 .hero::before {
   content: "";
   position: absolute; inset: 0;
-  /* Fallback for browsers without color-mix */
   background:
-    radial-gradient(1300px 650px at 12% 8%,  rgba(220, 63, 16, 0.30), transparent 72%),
-    radial-gradient(1000px 520px at 88% 18%, rgba(220, 38, 38, 0.22), transparent 72%),
-    radial-gradient(700px  400px at 50% 85%, rgba(220, 63, 16, 0.12), transparent 70%);
-  background:
-    radial-gradient(1300px 650px at 12% 8%,  color-mix(in srgb, var(--accent) 30%, transparent), transparent 72%),
-    radial-gradient(1000px 520px at 88% 18%, color-mix(in srgb, #dc2626 22%, transparent),        transparent 72%),
-    radial-gradient(700px  400px at 50% 85%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
-  filter: blur(8px);
+    /* Cool indigo — top-left corner, within bounds */
+    radial-gradient(1400px 700px at 5% 0%,   rgba(99, 102, 241, 0.22), transparent 70%),
+    /* Violet — top-right, within bounds */
+    radial-gradient(900px  580px at 95% 0%,  rgba(139, 92, 246, 0.16), transparent 68%),
+    /* Warm accent whisper — lower center, brand touch */
+    radial-gradient(800px  400px at 40% 90%, rgba(220, 63, 16, 0.10), transparent 70%),
+    /* Slate depth — bottom edge */
+    radial-gradient(1100px 280px at 60% 100%, rgba(71, 85, 105, 0.12), transparent 70%);
+  filter: blur(40px);
   pointer-events: none;
+}
+[data-theme="dark"] .hero::before {
+  background:
+    radial-gradient(1400px 700px at 5% 0%,   rgba(99, 102, 241, 0.28), transparent 70%),
+    radial-gradient(900px  580px at 95% 0%,  rgba(139, 92, 246, 0.22), transparent 68%),
+    radial-gradient(800px  400px at 40% 90%, rgba(255, 138, 91, 0.09), transparent 70%),
+    radial-gradient(1100px 280px at 60% 100%, rgba(71, 85, 105, 0.14), transparent 70%);
+  filter: blur(40px);
 }
 .hero .container { position: relative; z-index: 1; }
 .hero-grid {
@@ -463,6 +410,26 @@ body::before {
   background-clip: text;
   color: transparent;
 }
+
+/* नेपाली — Devanagari system font, same gradient as .grad */
+.ne-h1 {
+  font-family: 'Yatra One', 'Nirmala UI', serif;
+  background: linear-gradient(90deg, var(--accent), #dc2626);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* नेपाली — subtle warm gradient + soft glow */
+.ne-text {
+  background: linear-gradient(90deg, #ff8a5b, #e84545);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: none;
+  filter: drop-shadow(0 0 6px rgba(255, 100, 60, 0.45));
+}
+
 .hero .lede {
   font-size: 1.15rem;
   color: var(--text-muted);
@@ -3310,12 +3277,14 @@ kbd {
 
 .power-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  max-width: 900px;
   margin: 0 auto;
 }
-@media (max-width: 700px) {
+@media (max-width: 900px) {
+  .power-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
   .power-grid { grid-template-columns: 1fr; }
 }
 
@@ -3323,7 +3292,7 @@ kbd {
   background: rgba(255, 255, 255, .04);
   border: 1px solid rgba(255, 255, 255, .08);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 18px;
   transition: border-color .22s ease, transform .22s ease;
 }
 .power-card:hover {
@@ -3351,6 +3320,16 @@ kbd {
   line-height: 1.6;
   color: #9aa3b8;
   margin: 0;
+}
+.power-card .power-benefit {
+  color: #c8d0e4;
+  margin-bottom: 10px;
+}
+.power-card .power-how {
+  font-size: .87rem;
+  color: #676f85;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.06);
 }
 .power-card code {
   font-family: var(--font-mono);
@@ -3501,11 +3480,11 @@ kbd {
 .demo-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  max-width: 960px;
+  gap: 40px;
+  max-width: 1400px;
   margin: 0 auto;
 }
-@media (max-width: 700px) {
+@media (max-width: 800px) {
   .demo-grid { grid-template-columns: 1fr; }
 }
 
@@ -3525,21 +3504,13 @@ kbd {
   position: relative;
   background: var(--bg-alt);
   border-bottom: 1px solid var(--border);
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
+  line-height: 0; /* collapse inline whitespace */
 }
 .demo-media img {
   width: 100%;
   height: auto;
   display: block;
-}
-/* Placeholder styling when GIF is missing */
-.demo-media img[src$="-demo.gif"]:not([src^="data"]) {
-  min-height: 200px;
-  object-fit: contain;
 }
 /* Broken-image fallback: hide alt text and show placeholder bg */
 .demo-media img {
@@ -3575,20 +3546,22 @@ kbd {
 .page-hero::before {
   content: "";
   position: absolute; inset: 0;
-  /* Fallback */
   background:
-    radial-gradient(1100px 560px at 10% 5%,  rgba(220, 63, 16, 0.24), transparent 72%),
-    radial-gradient(900px  480px at 90% 15%, rgba(220, 38, 38, 0.17), transparent 72%),
-    radial-gradient(600px  360px at 50% 90%, rgba(220, 63, 16, 0.10), transparent 70%);
-  background:
-    radial-gradient(1100px 560px at 10% 5%,  color-mix(in srgb, var(--accent) 24%, transparent), transparent 72%),
-    radial-gradient(900px  480px at 90% 15%, color-mix(in srgb, #dc2626 17%, transparent),        transparent 72%),
-    radial-gradient(600px  360px at 50% 90%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%);
-  filter: blur(10px);
-  opacity: .90;
+    radial-gradient(1400px 620px at 5% 0%,   rgba(99, 102, 241, 0.18), transparent 70%),
+    radial-gradient(820px  500px at 95% 0%,  rgba(139, 92, 246, 0.13), transparent 68%),
+    radial-gradient(700px  360px at 45% 90%, rgba(220, 63, 16, 0.08), transparent 70%),
+    radial-gradient(1000px 240px at 55% 100%, rgba(71, 85, 105, 0.10), transparent 70%);
+  filter: blur(44px);
   pointer-events: none;
 }
-[data-theme="dark"] .page-hero::before { opacity: .70; }
+[data-theme="dark"] .page-hero::before {
+  background:
+    radial-gradient(1400px 620px at 5% 0%,   rgba(99, 102, 241, 0.24), transparent 70%),
+    radial-gradient(820px  500px at 95% 0%,  rgba(139, 92, 246, 0.18), transparent 68%),
+    radial-gradient(700px  360px at 45% 90%, rgba(255, 138, 91, 0.07), transparent 70%),
+    radial-gradient(1000px 240px at 55% 100%, rgba(71, 85, 105, 0.12), transparent 70%);
+  filter: blur(44px);
+}
 .page-hero > .container { position: relative; z-index: 1; }
 
 /* ----- lang-compare inside feat-block (features.html calendar section) ----- */

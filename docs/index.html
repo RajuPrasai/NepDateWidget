@@ -31,6 +31,9 @@
     "license": "https://opensource.org/licenses/MIT"
   }
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Yatra+One&display=swap" />
   <link rel="stylesheet" href="css/style.css" />
   <!-- Inline theme bootstrap. Resolves stored preference (light/dark/system)
        to a concrete data-theme so first paint matches the final state. -->
@@ -63,7 +66,7 @@
       <nav class="nav-main" aria-label="Primary">
         <a href="index.html" class="active">Home</a>
         <a href="features.html">Features</a>
-        <a href="gallery.html">Screenshots</a>
+        <a href="gallery.html">Gallery</a>
         <a href="download.html">Download</a>
         <a href="changelog.html">Changelog</a>
         <a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a>
@@ -94,7 +97,7 @@
   <nav class="mobile-nav" aria-label="Mobile">
     <a href="index.html" class="active">Home</a>
     <a href="features.html">Features</a>
-    <a href="gallery.html">Screenshots</a>
+    <a href="gallery.html">Gallery</a>
     <a href="download.html">Download</a>
     <a href="changelog.html">Changelog</a>
     <a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate Library</a>
@@ -127,7 +130,7 @@
                 Zero telemetry
               </span>
             </div><h1>
-              A Nepali desktop companion that <span class="grad">actually does everything</span>.
+              A <span class="ne-h1">नेपाली</span> desktop companion that <span class="grad">speaks quality</span>.
             </h1>
             <p class="lede">
               NepDate Widget sits on your taskbar showing the Bikram Sambat date, time,
@@ -245,6 +248,104 @@
       </div>
     </section>
 
+    <!-- ── See it in action ── -->
+    <section class="section section-demo" id="demo">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">See it in action</div>
+          <h2 class="section-title">The widget in use.</h2>
+          <p class="section-sub">Click the mini bar, navigate to any tab, or summon RunBox from anywhere with a single keystroke.</p>
+        </div>
+
+        <div class="demo-grid">
+          <div class="demo-card">
+            <div class="demo-media">
+              <img src="assets/gif/widget-overview.gif" alt="Widget expanding from taskbar" loading="lazy" />
+            </div>
+            <h3>Always one click away</h3>
+            <p>The mini bar sits on your taskbar. Click it to expand into the full widget. Right-click from anywhere to jump directly to any tool.</p>
+          </div>
+          <div class="demo-card">
+            <div class="demo-media">
+              <img src="assets/gif/runbox.gif" alt="RunBox command launcher in action" loading="lazy" />
+            </div>
+            <h3>RunBox in action</h3>
+            <p><kbd>Ctrl+Shift+Space</kbd> → type a command → done. Search the web, calculate, run scripts — without touching the mouse.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Power Users ── -->
+    <section class="section section-power" id="power-users">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow" style="color:var(--accent);">Goes deeper if you want</div>
+          <h2 class="section-title" style="color:#e8ecf4;">It's plain text files underneath.</h2>
+          <p class="section-sub" style="color:#9aa3b8;">
+            Most users will never need this. But if you want to go further —
+            every setting, every shortcut, every script, every note lives as a plain text file you can open in Notepad.
+            Edit it, save it, done. No menus, no export buttons, no restarts.
+          </p>
+        </div>
+
+        <div class="power-grid">
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              <span>Your own search shortcuts</span>
+            </div>
+            <p class="power-benefit">Type <code>shop</code> → search Daraz. Type <code>jira</code> → your team board. Type <code>wiki</code> → your company wiki. Any site. Any keyword.</p>
+            <p class="power-how">Stored in <code>shortcuts.json</code> — add a key, a URL with <code>{query}</code>, and a name. Merges with 22 built-in prefixes. Set <code>"disabled": true</code> to suppress ones you never use.</p>
+          </div>
+
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+              <span>Run scripts with 3 keystrokes</span>
+            </div>
+            <p class="power-benefit">Press the hotkey, type <code>scr backup</code> → your backup runs. <code>scr standup</code> → opens all your morning tabs. From anywhere in Windows, any time.</p>
+            <p class="power-how">Defined in <code>scripts.json</code> — name, file path, interpreter (PowerShell, Python, cmd, WSL). Works with anything your machine can execute. Supports <code>{APPDIR}</code> for bundled scripts.</p>
+          </div>
+
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="13" y2="13"/></svg>
+              <span>Shape your command history</span>
+            </div>
+            <p class="power-benefit">Pre-seed your most-used commands so they appear the moment you press the down arrow — on day one, on a new machine. Remove clutter you never want to see again.</p>
+            <p class="power-how">Kept in <code>run-history.json</code> — 500 entries, most-recent first. Open it, add or delete lines, save. Also stores past prefix searches like <code>yt lo-fi beats</code> so they auto-complete next time.</p>
+          </div>
+
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <span>Full backup &amp; restore — one click</span>
+            </div>
+            <p class="power-benefit">New computer? Reinstall? Colleagues want your shortcuts setup? One button exports a dated <code>.zip</code> of everything. One button imports it back — all shortcuts, scripts, notes, reminders, documents restored instantly.</p>
+            <p class="power-how">Settings → Export Backup packs <code>settings.json</code>, <code>shortcuts.json</code>, <code>scripts.json</code>, <code>notes.json</code>, <code>reminders.json</code>, <code>documents.json</code>, <code>run-history.json</code>, and <code>localization.json</code> into one signed ZIP.</p>
+          </div>
+
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+              <span>Translate or reword anything</span>
+            </div>
+            <p class="power-benefit">Every label in the app — month names, button text, tooltips, error messages — lives in a file you can edit. Add a third language. Fix a translation. Rename a button to suit your workflow.</p>
+            <p class="power-how">Stored in <code>localization.json</code> — each key maps to <code>"en"</code> and <code>"ne"</code> strings. New keys from app updates are merged in automatically; your customizations are never overwritten.</p>
+          </div>
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span>Bulk-manage your document library</span>
+            </div>
+            <p class="power-benefit">Have 50 frequently-used documents to register? Don't add them one by one. Build the list in a spreadsheet, convert it to JSON, drop it in — all 50 appear with their tags, notes, and sort order intact.</p>
+            <p class="power-how">Stored in <code>documents.json</code> — each entry has <code>title</code>, <code>tags</code> (array), <code>filePath</code>, <code>notes</code>, and <code>sortOrder</code>. Same hot-reload as every other file.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ── Feature Showcase ── -->
     <section class="section" id="showcase">
       <div class="container">
@@ -316,7 +417,6 @@
             </ul>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/runbox-daraz.png" data-caption="RunBox search prefix">
-            <!-- TODO: Replace with RunBox GIF when available (assets/screenshots/runbox-demo.gif) -->
             <img src="assets/screenshots/runbox-daraz.png" alt="RunBox search prefix" loading="lazy" />
           </div>
         </div>
@@ -392,87 +492,12 @@
       </div>
     </section>
 
-    <!-- ── Power Users ── -->
-    <section class="section section-power" id="power-users">
-      <div class="container">
-        <div class="section-head">
-          <div class="section-eyebrow" style="color:var(--accent);">For power users</div>
-          <h2 class="section-title" style="color:#e8ecf4;">Your data. Your rules. Plain JSON.</h2>
-          <p class="section-sub" style="color:#9aa3b8;">
-            All configuration lives in your AppData as readable JSON files. Edit them directly —
-            changes apply instantly without restarting the app.
-          </p>
-        </div>
-
-        <div class="power-grid">
-          <div class="power-card">
-            <div class="power-card-header">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-              <span>shortcuts.json</span>
-            </div>
-            <p>Add, edit, or disable search prefixes. Each entry is a key, a URL template with <code>{query}</code>, and a display name. Your custom prefixes merge with the built-in 22.</p>
-          </div>
-          <div class="power-card">
-            <div class="power-card-header">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
-              <span>scripts.json</span>
-            </div>
-            <p>Define your own RunBox commands. Name, path, interpreter (PowerShell, Python, cmd, WSL). Type <code>scr yourscript</code> from anywhere in Windows to run it.</p>
-          </div>
-          <div class="power-card">
-            <div class="power-card-header">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <span>run-history.json</span>
-            </div>
-            <p>Your RunBox command history — 500 entries, most-recent first. Edit it to seed frequently used commands or clean up entries you don't need.</p>
-          </div>
-          <div class="power-card">
-            <div class="power-card-header">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-              <span>Import anything</span>
-            </div>
-            <p>Bring your own shortcuts, scripts, or history from other sources. Follow the JSON pattern, drop the file in AppData, and the app picks it up on the next launch.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── See it in action ── -->
-    <section class="section section-demo" id="demo">
-      <div class="container">
-        <div class="section-head">
-          <div class="section-eyebrow">See it in action</div>
-          <h2 class="section-title">From taskbar to tool in seconds.</h2>
-          <p class="section-sub">Click the mini bar, navigate to any tab, or summon RunBox from anywhere with a single keystroke.</p>
-        </div>
-
-        <div class="demo-grid">
-          <div class="demo-card">
-            <div class="demo-media">
-              <!-- TODO: Replace with GIF showing RunBox flow: open → type prefix → search → close -->
-              <img src="assets/screenshots/runbox-demo.gif" alt="RunBox command launcher in action" loading="lazy" />
-            </div>
-            <h3>RunBox in action</h3>
-            <p><kbd>Ctrl+Shift+Space</kbd> → type a command → done. Search the web, calculate, run scripts — without touching the mouse.</p>
-          </div>
-          <div class="demo-card">
-            <div class="demo-media">
-              <!-- TODO: Replace with GIF showing widget expand: mini bar click → calendar → navigate tabs -->
-              <img src="assets/screenshots/widget-demo.gif" alt="Widget expanding from taskbar" loading="lazy" />
-            </div>
-            <h3>Always one click away</h3>
-            <p>The mini bar sits on your taskbar. Click it to expand into the full widget. Right-click from anywhere to jump directly to any tool.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ── What else is inside (compact grid linking to features page) ── -->
     <section class="section" id="more-tools">
       <div class="container">
         <div class="section-head">
-          <div class="section-eyebrow">And there's more</div>
-          <h2 class="section-title">Everything else packed inside.</h2>
+          <div class="section-eyebrow">What's inside</div>
+          <h2 class="section-title">The rest of what's in there.</h2>
           <p class="section-sub">Calendar, date conversion, reminders, notes, documents, timezone converter, holiday countdown, and deep customization — all covered.</p>
         </div>
 
@@ -727,7 +752,7 @@
           <h4>Product</h4>
           <ul>
             <li><a href="features.html">Features</a></li>
-            <li><a href="gallery.html">Screenshots</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
             <li><a href="download.html">Download</a></li>
             <li><a href="changelog.html">Changelog</a></li>
           </ul>

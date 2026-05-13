@@ -513,7 +513,62 @@
     window.addEventListener('resize', update);
   }
 
-  /* ---------- Feat-nav scroll spy (features page) ---------- */
+  /* ---------- Ambient glow canvas ----------
+     Injects 10 uniquely shaped, sized, positioned, coloured, and blurred
+     blobs as a fixed overlay on every page. Each blob is fully independent.
+     mix-blend-mode: soft-light means it blends through all section
+     backgrounds without obscuring text. pointer-events: none = no
+     interaction interference. z-index sits below the sticky header (100). */
+  function initAmbientGlow() {
+    var canvas = document.createElement('div');
+    canvas.className = 'glow-canvas';
+    canvas.setAttribute('aria-hidden', 'true');
+
+    /* Each entry: [width, height, top%, left%, color, blur, opacity] */
+    var blobs = [
+      /* 1  extreme wide flat ·  top-left   · warm accent */
+      ['1300px', '260px',  '2%',  '-5%', 'rgba(220,63,16,0.30)',  '60px', '0.55'],
+      /* 2  near-circle      ·  right 18%  · deep red */
+      ['480px',  '460px', '13%',  '72%', 'rgba(220,38,38,0.28)',  '40px', '0.50'],
+      /* 3  tall narrow      ·  left 37%   · cool slate */
+      ['300px',  '700px', '30%',   '5%', 'rgba(100,116,139,0.22)','50px', '0.45'],
+      /* 4  huge shallow     ·  right 52%  · vivid accent */
+      ['1100px', '380px', '48%',  '35%', 'rgba(220,63,16,0.25)',  '70px', '0.50'],
+      /* 5  small tight      ·  center 43% · punchy red */
+      ['260px',  '280px', '39%',  '43%', 'rgba(220,38,38,0.35)',  '30px', '0.55'],
+      /* 6  wide moderate    ·  far left 68% · slate */
+      ['780px',  '480px', '62%',  '-8%', 'rgba(71,85,105,0.20)',  '55px', '0.45'],
+      /* 7  extreme flat     ·  bottom     · accent breath */
+      ['1200px', '220px', '91%',  '10%', 'rgba(220,63,16,0.22)',  '65px', '0.50'],
+      /* 8  tall ellipse     ·  upper-right · red */
+      ['620px',  '820px', '22%',  '68%', 'rgba(220,38,38,0.20)',  '45px', '0.45'],
+      /* 9  medium circle    ·  lower-center · neutral */
+      ['540px',  '520px', '74%',  '52%', 'rgba(100,116,139,0.18)','50px', '0.42'],
+      /* 10 large soft haze  ·  mid-center  · faint accent */
+      ['900px',  '660px', '57%',  '20%', 'rgba(220,63,16,0.15)',  '80px', '0.40']
+    ];
+
+    blobs.forEach(function (b) {
+      var el = document.createElement('div');
+      el.style.cssText = [
+        'position:absolute',
+        'width:'  + b[0],
+        'height:' + b[1],
+        'top:'    + b[2],
+        'left:'   + b[3],
+        'background:radial-gradient(ellipse,' + b[4] + ' 0%,transparent 70%)',
+        'filter:blur(' + b[5] + ')',
+        'opacity:' + b[6],
+        'pointer-events:none',
+        'border-radius:50%'
+      ].join(';');
+      canvas.appendChild(el);
+    });
+
+    document.body.insertBefore(canvas, document.body.firstChild);
+  }
+
+
   function initFeatNav() {
     const nav = document.querySelector('.feat-nav');
     if (!nav) return;
@@ -535,6 +590,7 @@
 
   /* ---------- Init ---------- */
   function init() {
+    initAmbientGlow();
     initTheme();
     initStickyHeader();
     initHeroTaskbarDock();

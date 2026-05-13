@@ -18,11 +18,16 @@ Examples of behavior that contributes to a positive environment:
 - Gracefully accepting constructive criticism
 - Focusing on what is best for the community
 - Showing empathy towards other community members
+- Grounding discussions about festival dates, tithis, or public holidays in
+  verified sources or established cultural authorities
 
 Examples of unacceptable behavior:
 
 - The use of sexualized language or imagery
 - Trolling, insulting or derogatory comments, personal or political attacks
+- Cultural or regional chauvinism regarding ethnic festivals, calendar systems
+  (such as Bikram Sambat, Nepal Sambat, or Gregorian), or cultural sub-groups
+  represented in this project
 - Public or private harassment
 - Publishing others' private information without explicit permission
 - Other conduct which could reasonably be considered inappropriate in a
