@@ -83,16 +83,6 @@
 
   <main id="main">
 
-    <section class="hero" style="padding: 64px 0 24px;">
-      <div class="container">
-        <div style="max-width: 760px; margin: 0 auto; text-align: center;">
-          <div class="section-eyebrow">Screenshots</div>
-          <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 14px;">See NepDate Widget in action</h1>
-          <p class="lede" style="margin: 0 auto;">Every tab, every tool. Click any screenshot to view it full-size and use arrow keys to browse.</p>
-        </div>
-      </div>
-    </section>
-
     <!-- Gallery sticky tab nav -->
     <nav class="feat-nav" aria-label="Gallery sections">
       <div class="feat-nav-inner">
@@ -108,6 +98,21 @@
       </div>
     </nav>
 
+    <section class="hero page-hero" style="padding: 72px 0 24px;">
+      <div class="container">
+        <div style="max-width: 760px; margin: 0 auto; text-align: center;">
+          <div class="section-eyebrow">Screenshots</div>
+          <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 14px;">Every tab. In full detail.</h1>
+          <p class="lede" style="margin: 0 auto 24px;">30+ screenshots across 9 sections. Click any image to view full-size — arrow keys to browse.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+            <span class="chip">9 sections</span>
+            <span class="chip">30+ screenshots</span>
+            <span class="chip chip-accent">Click to enlarge</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="gal-mini-bar" class="gallery-section" style="background:var(--bg-alt);">
       <div class="container">
         <div class="gallery-head">
@@ -118,7 +123,9 @@
         <div class="gallery">
           <div class="shot" data-lightbox="assets/screenshots/Minibar.png" data-caption="Mini bar - day, time, BS date, AD date">
             <img src="assets/screenshots/Minibar.png" alt="Mini bar - day, time, BS date, AD date" />
-            <div class="cap">Mini bar</div>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/Minibar-ne.png" data-caption="Mini bar — नेपाली">
+            <img src="assets/screenshots/Minibar-ne.png" alt="Mini bar — नेपाली" />
           </div>
         </div>
       </div>
@@ -129,12 +136,14 @@
         <div class="gallery-head">
           <span class="gh-eyebrow">Home tab</span>
           <h2>Bikram Sambat Calendar</h2>
-          <p>Full BS month grid with English day numbers, tithi, public holidays, festivals, countdown banner, and the current fiscal quarter.</p>
+          <p>Full BS month grid with English day numbers, tithi, public holidays, festivals, countdown banner, and the current fiscal quarter. Available in English and नेपाली.</p>
         </div>
         <div class="gallery">
-          <div class="shot" data-lightbox="assets/screenshots/tab-calander.png" data-caption="Bikram Sambat month grid with tithi, holidays, and fiscal quarter">
-            <img src="assets/screenshots/tab-calander.png" alt="Calendar tab" />
-            <div class="cap">Calendar with tithi and festivals</div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-calander.png" data-caption="Bikram Sambat month grid — English">
+            <img src="assets/screenshots/tab-calander.png" alt="Calendar tab — English" />
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-calander-ne.png" data-caption="Bikram Sambat month grid — नेपाली">
+            <img src="assets/screenshots/tab-calander-ne.png" alt="Calendar tab — Nepali" />
           </div>
         </div>
       </div>
@@ -150,15 +159,12 @@
         <div class="gallery">
           <div class="shot" data-lightbox="assets/screenshots/tab-date-convert.png" data-caption="BS ↔ AD date conversion">
             <img src="assets/screenshots/tab-date-convert.png" alt="Date convert" />
-            <div class="cap">Convert BS ↔ AD</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-date-days.png" data-caption="Add, subtract, and difference between BS dates">
             <img src="assets/screenshots/tab-date-days.png" alt="Date days" />
-            <div class="cap">Add, subtract, and difference</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-date-time.png" data-caption="Timezone converter with compact dropdowns">
             <img src="assets/screenshots/tab-date-time.png" alt="Timezone conversion" />
-            <div class="cap">Timezone converter</div>
           </div>
         </div>
       </div>
@@ -174,11 +180,9 @@
         <div class="gallery">
           <div class="shot" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area conversion - Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri, plus metric">
             <img src="assets/screenshots/tab-unit-area.png" alt="Area" />
-            <div class="cap">Area conversion</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-unit-weight.png" data-caption="Weight conversion - Dharni, Pawa, Mana, Pathi, Muri - local and metric">
             <img src="assets/screenshots/tab-unit-weight.png" alt="Weight" />
-            <div class="cap">Weight conversion - Dharni, Pawa, Mana, Pathi, Muri</div>
           </div>
         </div>
       </div>
@@ -194,19 +198,15 @@
         <div class="gallery">
           <div class="shot" data-lightbox="assets/screenshots/tab-text-password.png" data-caption="Password generator with live strength meter">
             <img src="assets/screenshots/tab-text-password.png" alt="Password" />
-            <div class="cap">Password generator</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-text-word.png" data-caption="Word and character count">
             <img src="assets/screenshots/tab-text-word.png" alt="Word count" />
-            <div class="cap">Word count</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-text-unicode.png" data-caption="Unicode helpers">
             <img src="assets/screenshots/tab-text-unicode.png" alt="Unicode" />
-            <div class="cap">Preeti &harr; Unicode</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-text-script.png" data-caption="Devanagari ↔ Romanized script conversion">
             <img src="assets/screenshots/tab-text-script.png" alt="Script" />
-            <div class="cap">Script converter</div>
           </div>
         </div>
       </div>
@@ -222,11 +222,9 @@
         <div class="gallery">
           <div class="shot" data-lightbox="assets/screenshots/tab-bank-interest.png" data-caption="Multi-period simple interest calculator">
             <img src="assets/screenshots/tab-bank-interest.png" alt="Interest" />
-            <div class="cap">Multi-period interest</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="Loan EMI calculator with full amortization schedule">
             <img src="assets/screenshots/tab-bank-emi.png" alt="EMI" />
-            <div class="cap">EMI calculator</div>
           </div>
         </div>
       </div>
@@ -242,27 +240,21 @@
         <div class="gallery">
           <div class="shot" data-lightbox="assets/screenshots/tab-network-myip.png" data-caption="My IP - public, private, and ISP info">
             <img src="assets/screenshots/tab-network-myip.png" alt="My IP" />
-            <div class="cap">My IP</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-network-ping.png" data-caption="Ping a host with packet count and RTT summary">
             <img src="assets/screenshots/tab-network-ping.png" alt="Ping" />
-            <div class="cap">Ping</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-network-scan.png" data-caption="IP Scanner - parallel-ping subnet scan">
             <img src="assets/screenshots/tab-network-scan.png" alt="IP Scanner" />
-            <div class="cap">IP Scanner</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-network-trace.png" data-caption="Traceroute - hop-by-hop network path">
             <img src="assets/screenshots/tab-network-trace.png" alt="Traceroute" />
-            <div class="cap">Traceroute</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-network-whois.png" data-caption="Whois lookup">
             <img src="assets/screenshots/tab-network-whois.png" alt="Whois" />
-            <div class="cap">Whois</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-network-dns.png" data-caption="DNS Lookup">
             <img src="assets/screenshots/tab-network-dns.png" alt="DNS Lookup" />
-            <div class="cap">DNS Lookup</div>
           </div>
         </div>
       </div>
@@ -278,15 +270,12 @@
         <div class="gallery">
           <div class="shot" data-lightbox="assets/screenshots/tab-more-documents.png" data-caption="Documents - attach and organize local files">
             <img src="assets/screenshots/tab-more-documents.png" alt="Documents" />
-            <div class="cap">Documents</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-more-notes.png" data-caption="Quick local notes alongside your calendar">
             <img src="assets/screenshots/tab-more-notes.png" alt="Notes" />
-            <div class="cap">Notes</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-more-reminder.png" data-caption="One-shot or recurring reminders pinned to BS dates">
             <img src="assets/screenshots/tab-more-reminder.png" alt="Reminders" />
-            <div class="cap">Reminders</div>
           </div>
         </div>
       </div>
@@ -302,19 +291,15 @@
         <div class="gallery">
           <div class="shot" data-lightbox="assets/screenshots/runbox-daraz.png" data-caption="RunBox - Daraz quick access">
             <img src="assets/screenshots/runbox-daraz.png" alt="RunBox Daraz" />
-            <div class="cap">Daraz shortcut</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/runbox-map.png" data-caption="RunBox - map quick access">
             <img src="assets/screenshots/runbox-map.png" alt="RunBox map" />
-            <div class="cap">Map shortcut</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/runbox-custom-script.png" data-caption="RunBox - custom script execution">
             <img src="assets/screenshots/runbox-custom-script.png" alt="RunBox custom script" />
-            <div class="cap">Custom script</div>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/runbox-run.png" data-caption="RunBox - run a command or program">
             <img src="assets/screenshots/runbox-run.png" alt="RunBox run command" />
-            <div class="cap">Run a command</div>
           </div>
         </div>
       </div>

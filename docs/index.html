@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
   <title>NepDate Widget - Nepali Calendar for Your Windows Desktop</title>
-  <meta name="description" content="A tiny Nepali (Bikram Sambat) calendar that lives on your Windows taskbar. Date conversion, EMI, password generator, ping, unit conversion, notes, reminders, documents, command launcher, and more, all in one widget." />
+  <meta name="description" content="A Nepali desktop companion for Windows — Bikram Sambat calendar, BS↔AD conversion, Preeti↔Unicode document converter, EMI calculator, network toolkit, unit converter, RunBox launcher, reminders, and more. All offline, all free." />
   <link rel="canonical" href="https://rajuprasai.github.io/NepDateWidget/" />
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" href="assets/logo.png?v=2" />
@@ -13,7 +13,7 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="NepDate Widget - Nepali Calendar for Your Windows Desktop" />
-  <meta property="og:description" content="A tiny Nepali calendar on your taskbar, with every Nepali tool you actually use." />
+  <meta property="og:description" content="BS calendar, date conversion, Preeti↔Unicode, banking tools, network diagnostics, traditional units, and a global command launcher — one widget on your taskbar." />
   <meta property="og:image" content="https://rajuprasai.github.io/NepDateWidget/assets/screenshots/Minibar.png" />
   <meta property="og:url" content="https://rajuprasai.github.io/NepDateWidget/" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -127,14 +127,13 @@
                 Zero telemetry
               </span>
             </div><h1>
-              The नेपाली calendar that <span class="grad">lives on your taskbar</span>.
+              A Nepali desktop companion that <span class="grad">actually does everything</span>.
             </h1>
             <p class="lede">
-              NepDate Widget is a tiny, always-on-screen mini bar that shows the current Bikram Sambat
-              and Gregorian date, time, and timezone. Click it to expand into a full calendar plus
-              every Nepali tool you actually use, from BS&nbsp;&harr;&nbsp;AD conversion and EMI to
-              subnet scanning, Preeti&nbsp;&harr;&nbsp;Unicode conversion, reminders, documents, font
-              selection, and a global command launcher.
+              NepDate Widget sits on your taskbar showing the Bikram Sambat date, time,
+              and timezone. Expand it into a full calendar, date converter, financial
+              calculator, network toolkit, text converter, unit converter, and command
+              launcher — all in one widget, all offline, all in English or नेपाली.
             </p>
             <div class="hero-cta">
               <a class="btn btn-primary" href="download.html">Download for Windows
@@ -246,83 +245,272 @@
       </div>
     </section>
 
-    <!-- Features grid -->
-    <section class="section" id="features" style="background:var(--bg-alt);">
+    <!-- ── Feature Showcase ── -->
+    <section class="section" id="showcase">
       <div class="container">
         <div class="section-head">
-          <div class="section-eyebrow">What's inside</div>
-          <h2 class="section-title">One widget. Every Nepali tool you actually use.</h2>
+          <div class="section-eyebrow">What it actually does</div>
+          <h2 class="section-title">One widget. A lot of ground covered.</h2>
           <p class="section-sub">
-            Built around the Nepali calendar but doesn't stop there. Conversions, finance, network,
-            text utilities, units, notes, reminders, and documents, all without leaving the widget.
+            Built around the Nepali calendar, but it keeps going — document conversion,
+            finance, networking, text tools, traditional units, and a global command launcher.
           </p>
+        </div>
+
+        <!-- 7. English & Nepali -->
+        <div class="feat-block showcase-block reverse">
+          <div class="body">
+            <span class="eyebrow">Language · Accessibility</span>
+            <h3>English and नेपाली — your choice</h3>
+            <p>The entire UI switches between English and Nepali instantly from
+              Settings. Month names, day names, labels, holidays — everything
+              updates on the fly. No restart needed.</p>
+            <ul>
+              <li>Every string in the app available in both languages</li>
+              <li>Calendar shows BS month names in your chosen language</li>
+              <li>Localization stored in editable JSON — add your own translations</li>
+            </ul>
+          </div>
+          <!-- TODO: Replace with side-by-side EN/NE screenshot -->
+          <div class="lang-compare">
+            <div class="lang-shot">
+              <div class="shot" data-lightbox="assets/screenshots/tab-calander.png" data-caption="Calendar in English"><img src="assets/screenshots/tab-calander.png" alt="Calendar in English" loading="lazy" /></div>
+            </div>
+            <div class="lang-shot">
+              <!-- TODO: Replace with Nepali calendar screenshot -->
+              <div class="shot" data-lightbox="assets/screenshots/tab-calander-ne.png" data-caption="Calendar in Nepali"><img src="assets/screenshots/tab-calander-ne.png" alt="Calendar in Nepali" loading="lazy" /></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1. Preeti / Unicode conversion -->
+        <div class="feat-block showcase-block">
+          <div class="body">
+            <span class="eyebrow">Documents · Text</span>
+            <h3>Preeti ↔ Unicode conversion</h3>
+            <p>Drop a .docx or .txt file, pick the direction, and the entire document
+              converts — headers, footers, and font structure intact. Inline mode works
+              too: type on one side, see the result on the other.</p>
+            <ul>
+              <li>Supports Preeti, Kantipur, Himalaya, Sagarmatha, and 4 more legacy Nepali fonts</li>
+              <li>DOCX conversion preserves formatting — no manual cleanup</li>
+              <li>Devanagari ↔ Roman transliteration in the same tab</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-text-unicode.png" data-caption="Preeti to Unicode conversion"><img src="assets/screenshots/tab-text-unicode.png" alt="Preeti to Unicode conversion" loading="lazy" /></div>
+        </div>
+
+        <!-- 2. RunBox -->
+        <div class="feat-block showcase-block reverse">
+          <div class="body">
+            <span class="eyebrow">Launcher · Productivity</span>
+            <h3>RunBox — a global command bar</h3>
+            <p>Press <kbd>Ctrl+Shift+Space</kbd> from anywhere in Windows. Type
+              <code>yt nepal</code> to search YouTube, <code>= 500*1.13</code> to
+              calculate, <code>map pokhara</code> to open maps, or
+              <code>scr cleanup</code> to run your own script.</p>
+            <ul>
+              <li>22 built-in search prefixes — YouTube, Google, GitHub, DuckDuckGo, Daraz, and more</li>
+              <li>History with tab-completion and prefix locking</li>
+              <li>Add your own prefixes and scripts in plain JSON</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/runbox-daraz.png" data-caption="RunBox search prefix">
+            <!-- TODO: Replace with RunBox GIF when available (assets/screenshots/runbox-demo.gif) -->
+            <img src="assets/screenshots/runbox-daraz.png" alt="RunBox search prefix" loading="lazy" />
+          </div>
+        </div>
+
+        <!-- 3. Banking -->
+        <div class="feat-block showcase-block">
+          <div class="body">
+            <span class="eyebrow">Finance · Banking</span>
+            <h3>Interest and EMI with BS dates</h3>
+            <p>Simple interest with rate changes across multiple periods, broken down
+              per-row with Bikram Sambat dates. Or enter a loan amount and tenure
+              to get the full EMI schedule — month by month, with reducing balance.</p>
+            <ul>
+              <li>Multi-period interest: add as many rate-change rows as you need</li>
+              <li>EMI amortization table expandable from yearly to monthly detail</li>
+              <li>All dates in BS — the format your bank actually uses</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-bank-emi.png" data-caption="Loan EMI calculator with amortization schedule"><img src="assets/screenshots/tab-bank-emi.png" alt="Loan EMI calculator" loading="lazy" /></div>
+        </div>
+
+        <!-- 4. Network -->
+        <div class="feat-block showcase-block reverse">
+          <div class="body">
+            <span class="eyebrow">Networking · Diagnostics</span>
+            <h3>Six network tools, one tab</h3>
+            <p>Your public and local IP addresses, ping with RTT stats, LAN subnet
+              scanner with MAC address and manufacturer lookup, traceroute, whois,
+              and DNS — without installing anything extra or needing admin rights.</p>
+            <ul>
+              <li>Subnet scanner runs 64 parallel pings — finishes a /24 in seconds</li>
+              <li>MAC addresses matched against the IEEE OUI database for device identification</li>
+              <li>Works offline for local IP enumeration</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-network-scan.png" data-caption="LAN subnet scanner"><img src="assets/screenshots/tab-network-scan.png" alt="LAN subnet scanner" loading="lazy" /></div>
+        </div>
+
+        <!-- 5. Units -->
+        <div class="feat-block showcase-block">
+          <div class="body">
+            <span class="eyebrow">Conversion · Traditional units</span>
+            <h3>Bigha, Ropani, Dharni, and metric</h3>
+            <p>Bigha, Kattha, Dhur for Terai land. Ropani, Aana, Paisa, Dam for
+              hill land. Dharni, Pathi, Muri for traditional weight. Plus metric
+              and imperial — all bidirectional, instant.</p>
+            <ul>
+              <li>Both Terai and Hill measurement systems side by side</li>
+              <li>Traditional weight units as per Nepal Weights &amp; Measures Act</li>
+              <li>No button click needed — results update as you type</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-unit-area.png" data-caption="Area unit conversion"><img src="assets/screenshots/tab-unit-area.png" alt="Area unit conversion" loading="lazy" /></div>
+        </div>
+
+        <!-- 6. Text tools -->
+        <div class="feat-block showcase-block reverse">
+          <div class="body">
+            <span class="eyebrow">Text · Productivity</span>
+            <h3>Text tools and password generator</h3>
+            <p>Devanagari ↔ Roman transliteration, word count with six case
+              transformations (camelCase, snake_case, Title Case, and more), and
+              a password generator with Nepali character support and an entropy-based
+              strength meter.</p>
+            <ul>
+              <li>Cryptographically random password generation</li>
+              <li>Word, character, sentence, and line count in one view</li>
+              <li>Six text transformations with one-click copy</li>
+            </ul>
+          </div>
+          <div class="shot" data-lightbox="assets/screenshots/tab-text-password.png" data-caption="Password generator with strength meter"><img src="assets/screenshots/tab-text-password.png" alt="Password generator" loading="lazy" /></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Power Users ── -->
+    <section class="section section-power" id="power-users">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow" style="color:var(--accent);">For power users</div>
+          <h2 class="section-title" style="color:#e8ecf4;">Your data. Your rules. Plain JSON.</h2>
+          <p class="section-sub" style="color:#9aa3b8;">
+            All configuration lives in your AppData as readable JSON files. Edit them directly —
+            changes apply instantly without restarting the app.
+          </p>
+        </div>
+
+        <div class="power-grid">
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+              <span>shortcuts.json</span>
+            </div>
+            <p>Add, edit, or disable search prefixes. Each entry is a key, a URL template with <code>{query}</code>, and a display name. Your custom prefixes merge with the built-in 22.</p>
+          </div>
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+              <span>scripts.json</span>
+            </div>
+            <p>Define your own RunBox commands. Name, path, interpreter (PowerShell, Python, cmd, WSL). Type <code>scr yourscript</code> from anywhere in Windows to run it.</p>
+          </div>
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>run-history.json</span>
+            </div>
+            <p>Your RunBox command history — 500 entries, most-recent first. Edit it to seed frequently used commands or clean up entries you don't need.</p>
+          </div>
+          <div class="power-card">
+            <div class="power-card-header">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              <span>Import anything</span>
+            </div>
+            <p>Bring your own shortcuts, scripts, or history from other sources. Follow the JSON pattern, drop the file in AppData, and the app picks it up on the next launch.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── See it in action ── -->
+    <section class="section section-demo" id="demo">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">See it in action</div>
+          <h2 class="section-title">From taskbar to tool in seconds.</h2>
+          <p class="section-sub">Click the mini bar, navigate to any tab, or summon RunBox from anywhere with a single keystroke.</p>
+        </div>
+
+        <div class="demo-grid">
+          <div class="demo-card">
+            <div class="demo-media">
+              <!-- TODO: Replace with GIF showing RunBox flow: open → type prefix → search → close -->
+              <img src="assets/screenshots/runbox-demo.gif" alt="RunBox command launcher in action" loading="lazy" />
+            </div>
+            <h3>RunBox in action</h3>
+            <p><kbd>Ctrl+Shift+Space</kbd> → type a command → done. Search the web, calculate, run scripts — without touching the mouse.</p>
+          </div>
+          <div class="demo-card">
+            <div class="demo-media">
+              <!-- TODO: Replace with GIF showing widget expand: mini bar click → calendar → navigate tabs -->
+              <img src="assets/screenshots/widget-demo.gif" alt="Widget expanding from taskbar" loading="lazy" />
+            </div>
+            <h3>Always one click away</h3>
+            <p>The mini bar sits on your taskbar. Click it to expand into the full widget. Right-click from anywhere to jump directly to any tool.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── What else is inside (compact grid linking to features page) ── -->
+    <section class="section" id="more-tools">
+      <div class="container">
+        <div class="section-head">
+          <div class="section-eyebrow">And there's more</div>
+          <h2 class="section-title">Everything else packed inside.</h2>
+          <p class="section-sub">Calendar, date conversion, reminders, notes, documents, timezone converter, holiday countdown, and deep customization — all covered.</p>
         </div>
 
         <div class="features">
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-            <h3>Bikram Sambat Calendar</h3>
-            <p>Full BS month grid with English day numbers alongside, tithi, holidays, and the current fiscal quarter at a glance.</p>
+            <h3>BS Calendar &amp; Holidays</h3>
+            <p>Full Bikram Sambat month grid with tithi, festivals, public holidays, fiscal year, and a live countdown to the next holiday.</p>
           </div>
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4M3 11v-1a4 4 0 014-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 01-4 4H3"/></svg></div>
-            <h3>Date Conversion</h3>
-            <p>BS ↔ AD in either direction, instantly. Long and short formats. Remembers your last direction.</p>
+            <h3>BS ↔ AD Conversion</h3>
+            <p>Instant bidirectional date conversion. Accepts Nepali digits, month names, and flexible separators. Add/subtract days, find differences.</p>
           </div>
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
             <h3>Timezone Converter</h3>
-            <p>Compact labeled dropdowns like Kathmandu +05:45 and Singapore +08:00. One-click swap.</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-6 4 3 5-8"/></svg></div>
-            <h3>Loan EMI &amp; Interest</h3>
-            <p>Monthly EMI with full amortization schedule. Multi-period simple interest with rate changes over time.</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
-            <h3>Password Generator</h3>
-            <p>A–Z, a–z, 0–9, symbols, and Nepali characters. Live strength meter on any password you paste in.</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0114.08 0"/><path d="M1.42 9a16 16 0 0121.16 0"/><path d="M8.53 16.11a6 6 0 016.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg></div>
-            <h3>Network Utilities</h3>
-            <p>My IP, ping, port scan, traceroute, whois, and DNS lookup, all baked into the widget.</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
-            <h3>Unit Conversion</h3>
-            <p>Local Nepali units like Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, plus weight and metric conversions.</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
-            <h3>Text Tools</h3>
-            <p>Preeti &harr; Unicode conversion (file support), Devanagari &harr; Romanized script, word count, and a password generator with strength meter.</p>
+            <p>Pick any two system timezones, type a time, and see the conversion. One-click swap button. Handles 12h and 24h input.</p>
           </div>
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-            <h3>Notes, Reminders &amp; Documents</h3>
-            <p>One-shot or recurring reminders and quick notes pinned to BS dates. Attach and organize documents locally with tags and search. All stored on your machine.</p>
+            <h3>Reminders &amp; Notes</h3>
+            <p>One-shot or recurring reminders pinned to BS dates — daily, weekly, monthly, yearly. Quick notes per day, visible as dots on the calendar.</p>
           </div>
           <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg></div>
-            <h3>English &amp; नेपाली</h3>
-            <p>Switch the entire UI between English and Nepali instantly, no restart needed.</p>
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+            <h3>Document Library</h3>
+            <p>Attach and organize local files with tags, notes, and search. PDFs, Word, Excel, images — all metadata stored locally.</p>
           </div>
           <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/></svg></div>
-            <h3>20 Color Presets</h3>
-            <p>Forest, Ocean, Sunset, Cherry, Aurora, Midnight, Slate, Monochrome, Ember, Default. Each with light and dark variants.</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
-            <h3>RunBox</h3>
-            <p>Global hotkey (default Ctrl+Shift+Space) summons a command launcher. Run programs, open files, navigate URLs, or search the web without touching the mouse.</p>
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+            <h3>20 Themes &amp; 20 Fonts</h3>
+            <p>Dark and light mode with 10 palettes each. 17 bundled fonts plus 3 system fonts. Rounded or sharp corners. No restart needed.</p>
           </div>
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-            <h3>Two ways to get it</h3>
-            <p>Microsoft Store for auto-updates and zero setup, or a portable zip from GitHub Releases for full control. Per-user, no admin prompt, no telemetry.</p>
+            <h3>Two ways to install</h3>
+            <p>Microsoft Store for auto-updates, or a portable zip from GitHub Releases. Per-user, no admin prompt, no telemetry.</p>
           </div>
         </div>
 
@@ -330,6 +518,35 @@
           <a class="btn btn-secondary" href="features.html">See every feature in detail
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Trust strip ── -->
+    <section class="section section-trust" id="trust">
+      <div class="container">
+        <div class="trust-strip">
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-12V5l-8-3-8 3v5c0 8 8 12 8 12z"/></svg>
+            <div>
+              <strong>Zero telemetry</strong>
+              <span>No analytics, no tracking, no account required.</span>
+            </div>
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <div>
+              <strong>100% offline</strong>
+              <span>No cloud, no sync. Your data stays in <code>%LocalAppData%</code> as readable JSON.</span>
+            </div>
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div>
+              <strong>Source available</strong>
+              <span>Full source on GitHub. Read every line before you install.</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -367,41 +584,112 @@
     </section>
 
     <!-- FAQ -->
-    <section class="section" style="background:var(--bg-alt);">
+    <section class="section section-faq" style="background:var(--bg-alt);">
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">FAQ</div>
-          <h2 class="section-title">Quick answers</h2>
+          <h2 class="section-title">Common questions</h2>
+          <p class="section-sub">If something's not covered here, open a <a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">GitHub issue</a>.</p>
         </div>
 
-        <div class="faq">
-          <div class="faq-item">
-            <button class="faq-q" type="button">What does NepDate Widget cost?</button>
-            <div class="faq-a"><div class="faq-a-inner"><p>Nothing. It&rsquo;s free for personal use and source-available under the <a href="https://github.com/RajuPrasai/NepDateWidget/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Strict 1.0.0</a> license. If it saves you time, you can support development with the <strong>Buy me a momo</strong> button.</p></div></div>
+        <div class="faq-grid">
+
+          <!-- LEFT COLUMN -->
+          <div class="faq-col">
+
+            <div class="faq-group">
+              <div class="faq-group-label">General</div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">What does NepDate Widget cost?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Nothing. Free for personal use and source-available under <a href="https://github.com/RajuPrasai/NepDateWidget/blob/main/LICENSE" target="_blank" rel="noopener">PolyForm Strict 1.0.0</a>. If it saves you time, the <strong>Buy me a momo</strong> button supports continued development.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">What Windows versions does it support?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Windows 10 and Windows 11. Both 32-bit and 64-bit. The Store version requires a Microsoft account for installation only — the app itself runs with no account.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Does it work offline?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Almost entirely yes. The calendar, date tools, unit converter, text tools, EMI calculator, RunBox launcher, notes, reminders, and documents all work without internet. The only things that need a connection are My IP, web search prefixes in RunBox (which open your browser), and the Whois/DNS lookups.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">What is a Bikram Sambat (BS) date?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Bikram Sambat is Nepal's official calendar system, currently running about 56–57 years ahead of the Gregorian (AD) calendar. Most Nepali government documents, bank statements, and official dates use BS. NepDate Widget shows both calendars side by side and converts between them instantly.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Will it slow down my PC?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>No noticeable impact. It's a lightweight WinUI 3 app — the mini bar uses negligible CPU when idle. The only background work is checking for due reminders, which runs on a low-frequency timer.</p></div></div>
+              </div>
+            </div>
+
+            <div class="faq-group">
+              <div class="faq-group-label">Installation &amp; Updates</div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Do I need admin rights to install?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>No. It's a per-user install — no UAC prompt, nothing written to system folders. The Microsoft Store version handles everything silently. The portable ZIP just extracts and runs.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">How do I update?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Store version updates automatically in the background — you don't need to do anything. For the portable build, download the new ZIP from <a href="https://github.com/RajuPrasai/NepDateWidget/releases" target="_blank" rel="noopener">GitHub Releases</a>, extract, and replace. Your data in AppData is untouched.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">How is this different from the NepDate library?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p><a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate</a> is a .NET library developers embed in their own apps. NepDate Widget is the end-user desktop app — it uses NepDate internally for every BS date calculation.</p></div></div>
+              </div>
+            </div>
+
           </div>
-          <div class="faq-item">
-            <button class="faq-q" type="button">Does it phone home or send any data?</button>
-            <div class="faq-a"><div class="faq-a-inner"><p>No. There is no telemetry, no analytics, no account, and no network calls except when you explicitly use the network tools (My IP, ping, scan, trace, whois, DNS). Your settings, notes, reminders, and attached documents stay on your machine.</p></div></div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-q" type="button">Where is my data stored?</button>
-            <div class="faq-a"><div class="faq-a-inner"><p>In your local user profile. The unpackaged build stores data under <code>%LocalAppData%\NepDateWidget</code>; the Store version uses <code>%LocalAppData%\NepDateWidget.Store</code>. Settings, notes, reminders, and attached documents all live there. Nothing is written to system folders.</p></div></div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-q" type="button">Do I need to install anything?</button>
-            <div class="faq-a"><div class="faq-a-inner"><p>Just run the installer. It's a per-user install, so there's no UAC prompt, and the widget launches immediately. New versions arrive automatically in the background.</p></div></div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-q" type="button">What Windows versions are supported?</button>
-            <div class="faq-a"><div class="faq-a-inner"><p>Windows 10 and Windows 11.</p></div></div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-q" type="button">How is this different from the NepDate library?</button>
-            <div class="faq-a"><div class="faq-a-inner"><p><a href="https://rajuprasai.github.io/NepDate/" target="_blank" rel="noopener">NepDate</a> is a .NET library that other developers integrate into their own applications. NepDate Widget is the end-user desktop app for everyone else, and it uses NepDate internally for every BS date operation.</p></div></div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-q" type="button">Where can I report a bug or request a feature?</button>
-            <div class="faq-a"><div class="faq-a-inner"><p>On <a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">GitHub Issues</a>. Pull requests are welcome.</p></div></div>
+
+          <!-- RIGHT COLUMN -->
+          <div class="faq-col">
+
+            <div class="faq-group">
+              <div class="faq-group-label">Privacy &amp; Data</div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Does it send any data anywhere?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>No. Zero telemetry, no analytics, no account. The only outbound calls happen when you explicitly use a network tool (My IP, ping, scan, whois, DNS) or open a RunBox web search. Everything else stays on your machine.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Where is my data stored?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>All data lives in your user profile. The portable build uses <code>%LocalAppData%\NepDateWidget</code>; the Store version uses <code>%LocalAppData%\NepDateWidget.Store</code>. Settings, notes, reminders, documents, shortcuts, and run history are all plain JSON files there.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Can I back up or migrate my data?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Yes — just copy the AppData folder. Everything is plain JSON, so you can also edit individual files directly, merge data from another machine, or version-control your configuration.</p></div></div>
+              </div>
+            </div>
+
+            <div class="faq-group">
+              <div class="faq-group-label">RunBox</div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Can I use RunBox without opening the widget?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Yes. The global hotkey (<kbd>Ctrl+Shift+Space</kbd> by default) summons RunBox from anywhere in Windows — even when the widget is collapsed or the window is not visible. You never need to click the mini bar first.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Can I add my own shortcuts and scripts?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Yes. Search prefixes live in <code>shortcuts.json</code> and custom scripts in <code>scripts.json</code> in your AppData folder. Add, edit, or delete entries — changes take effect immediately, no restart needed. You can import entries from other sources by following the same JSON structure.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">What types of scripts can I run?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>PowerShell, batch files, cmd scripts, Python, and WSL — anything your machine can execute. Point the entry at the file path and assign a keyword. Use <code>{APPDIR}</code> in paths to reference scripts bundled with the app itself.</p></div></div>
+              </div>
+            </div>
+
+            <div class="faq-group">
+              <div class="faq-group-label">Customization</div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Does it support the Nepali language?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Yes. Switch the entire UI between English and नेपाली instantly from Settings — no restart. All labels, month names, day names, and strings update on the fly. The localization file is a plain JSON you can edit.</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">How much can I change the appearance?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p>Quite a bit. 20 color presets (10 light, 10 dark), 20 font choices, rounded or sharp corners, optional transparency when collapsed, and per-element calendar toggles (tithi, holidays, English day numbers, Saturday/Sunday highlights, and more).</p></div></div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Where can I report a bug or request a feature?</button>
+                <div class="faq-a"><div class="faq-a-inner"><p><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">GitHub Issues</a>. Pull requests are welcome too.</p></div></div>
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -433,7 +721,7 @@
             <img class="logo-img" src="assets/logo.png?v=2" alt="NepDate Widget logo" width="30" height="30" />
             <span>NepDate Widget</span>
           </a>
-          <p>A tiny Nepali calendar that lives on your Windows taskbar, with every Nepali tool you actually use.</p>
+          <p>A Nepali desktop companion with every tool you actually use — calendar, converter, banking, network, text, and more.</p>
         </div>
         <div class="footer-col">
           <h4>Product</h4>
