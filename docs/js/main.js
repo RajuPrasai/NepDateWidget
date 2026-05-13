@@ -1,7 +1,7 @@
 /* NepDate Documentation Site - main.js
  * Handles: theme toggle, mobile menu, code highlighting, copy buttons,
  *          sidebar search, sidebar collapse, scroll spy, right-side TOC,
- *          typing animation, FAQ accordion, install tabs.
+ *          typing animation, FAQ accordion, install tabs, shrinking header.
  */
 (function () {
   'use strict';
@@ -483,8 +483,9 @@
     var hdr = document.querySelector('.site-header');
     if (!hdr) return;
     var update = function () {
-      if (window.scrollY > 8) hdr.classList.add('is-scrolled');
-      else hdr.classList.remove('is-scrolled');
+      var scrolled = window.scrollY > 10;
+      hdr.classList.toggle('is-scrolled', scrolled);
+      hdr.classList.toggle('scrolled', scrolled);
     };
     update();
     window.addEventListener('scroll', update, { passive: true });

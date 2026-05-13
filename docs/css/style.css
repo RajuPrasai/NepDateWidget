@@ -26,7 +26,7 @@
 
 /* -------- Reset & Base -------- */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; font-size: clamp(11.7px, 0.81vw, 15.3px); }
 body { margin: 0; padding: 0; }
 img, svg { max-width: 100%; display: block; }
 a { color: var(--accent); text-decoration: none; transition: color var(--dur-fast) var(--ease-out); }
@@ -103,7 +103,7 @@ li { margin-bottom: .25em; }
   --header-h:      64px;
   --sidebar-w:     280px;
   --toc-w:         270px;
-  --content-max:   1500px;
+  --content-max:   clamp(960px, 88vw, 1700px);
 }
 
 /* Midnight dark: deep ink with a faint blue undertone, layered surfaces. */
@@ -147,12 +147,13 @@ body {
   font-family: var(--font-sans);
   background: var(--bg);
   color: var(--text);
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.65;
   font-feature-settings: 'ss01','cv11','cv03','cv05';
   transition: background var(--dur-med) var(--ease-out), color var(--dur-med) var(--ease-out);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 /* ===== Ambient glow canvas (injected by main.js on every page) =====
@@ -194,6 +195,11 @@ body {
   backdrop-filter: saturate(1.4) blur(12px);
   -webkit-backdrop-filter: saturate(1.4) blur(12px);
   border-bottom: 1px solid var(--border);
+  transition: height .3s var(--ease-out), box-shadow .3s var(--ease-out);
+}
+.site-header.scrolled {
+  height: 48px;
+  box-shadow: 0 2px 16px rgba(0,0,0,.10);
 }
 .site-header .inner {
   max-width: var(--content-max);
@@ -361,7 +367,7 @@ body {
 .hero {
   padding: 80px 0 72px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 .hero::before {
   content: "";
@@ -1308,7 +1314,7 @@ pre:hover .copy-btn { opacity: 1; }
    NepDate Widget extensions
    ========================================================================== */
 
-/* ----- Cross-link card for NepDate library ----- */
+/* ----- Cross-link card for NepDate ----- */
 .crosslink-card {
   display: flex;
   align-items: center;
@@ -3481,8 +3487,9 @@ kbd {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 40px;
-  max-width: 1400px;
+  max-width: 1257px;
   margin: 0 auto;
+  align-items: stretch;
 }
 @media (max-width: 800px) {
   .demo-grid { grid-template-columns: 1fr; }
@@ -3493,6 +3500,8 @@ kbd {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   transition: border-color .22s ease, transform .22s ease;
 }
 .demo-card:hover {
@@ -3501,29 +3510,23 @@ kbd {
 }
 
 .demo-media {
-  position: relative;
-  background: var(--bg-alt);
+  background: #000;
   border-bottom: 1px solid var(--border);
   overflow: hidden;
-  line-height: 0; /* collapse inline whitespace */
+  line-height: 0;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .demo-media img {
   width: 100%;
   height: auto;
   display: block;
-}
-/* Broken-image fallback: hide alt text and show placeholder bg */
-.demo-media img {
   color: transparent;
-  background: var(--bg-alt);
 }
 .demo-media::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, transparent 60%, var(--bg-elev) 100%);
-  pointer-events: none;
-  opacity: .3;
+  display: none;
 }
 
 .demo-card h3 {

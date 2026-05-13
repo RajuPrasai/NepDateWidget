@@ -83,7 +83,7 @@ public interface INepaliDateAdapter
     bool TryParseSmartBsDate(string rawText, out int year, out int month, out int day);
 
     /// <summary>
-    /// Returns calendar metadata for a given BS date from the NepDate library.
+    /// Returns calendar metadata for a given BS date from the NepDate.
     /// Covers 2001-2089 BS; returns empty/false values outside that range without throwing.
     /// </summary>
     (bool IsPublicHoliday, string TithiEn, string TithiNp, string[] EventsEn, string[] EventsNp)
