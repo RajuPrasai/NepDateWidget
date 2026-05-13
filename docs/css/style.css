@@ -1386,7 +1386,7 @@ pre:hover .copy-btn { opacity: 1; }
   content: "";
   position: absolute;
   inset: 16px;
-  background: url('assets/logo.png') no-repeat center;
+  background: url('../assets/logo.png') no-repeat center;
   background-size: 28% auto;
   opacity: .07;
   filter: grayscale(1);
