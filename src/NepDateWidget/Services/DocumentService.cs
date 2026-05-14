@@ -103,11 +103,60 @@ public sealed class DocumentService : IDocumentService, IDisposable
         {
             var json = File.ReadAllText(_filePath);
             _documents = JsonSerializer.Deserialize<List<DocumentEntry>>(json, SerializerOptions) ?? new();
+            MigrateVirtualPaths();
         }
         catch (Exception ex)
         {
             Log.Error("Failed to load documents", ex);
             _documents = new();
         }
+    }
+
+    /// <summary>
+    /// One-time migration for MSIX builds: rewrites any FilePath values that were stored
+    /// against the virtual %LOCALAPPDATA% path to the physical LocalCache path.
+    ///
+    /// Background: before the LocalCache fix in AppPaths, DocumentsFilesDirectory returned
+    /// the virtual AppData path (e.g., C:\Users\...\AppData\Local\NepDateWidget.Store\...).  
+    /// MSIX transparently redirected writes so the files physically landed in LocalCache,
+    /// but the stored path was the virtual one.  When that virtual path is passed to an
+    /// unpackaged process (Process.Start, explorer.exe) it cannot find the file because
+    /// unpackaged processes have no MSIX merge view.  Rewriting to the physical path fixes
+    /// open, show-in-explorer, and delete operations for all existing entries.
+    ///
+    /// The check is a no-op once all paths are physical (virtualBase != physicalBase is
+    /// the fast exit; the StartsWith loop exits immediately when nothing matches).
+    /// </summary>
+    private void MigrateVirtualPaths()
+    {
+        if (!AppEnvironment.IsPackaged) return;
+
+        // Reconstruct the OLD virtual Documents path that was used before the fix.
+        // Before: Path.Combine(GetFolderPath(LocalApplicationData), DataFolderName, DataSubfolder, "data", "Documents")
+        var virtualBase = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            AppEnvironment.DataFolderName,
+            AppPaths.DataSubfolder,
+            "data", "Documents");
+
+        var physicalBase = AppPaths.DocumentsFilesDirectory;
+
+        // Nothing to migrate when the two bases are the same (shouldn't happen in
+        // a correctly packaged build, but guards against edge cases such as a packaged
+        // debug sideload where the LocalCache path coincidentally matches the standard path).
+        if (string.Equals(virtualBase, physicalBase, StringComparison.OrdinalIgnoreCase)) return;
+
+        var changed = 0;
+        foreach (var doc in _documents)
+        {
+            if (string.IsNullOrEmpty(doc.FilePath)) continue;
+            if (!doc.FilePath.StartsWith(virtualBase, StringComparison.OrdinalIgnoreCase)) continue;
+            doc.FilePath = physicalBase + doc.FilePath.Substring(virtualBase.Length);
+            changed++;
+        }
+
+        if (changed == 0) return;
+        Save();
+        Log.Info($"documents.json: rewrote {changed} path(s) from virtual AppData to physical LocalCache.");
     }
 }

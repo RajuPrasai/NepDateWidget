@@ -179,6 +179,31 @@ public sealed class SearchHistoryServiceTests : IDisposable
     }
 
     [Fact]
+    public void Load_FileAbsentWithDefaultResource_HelpIsFirstEntry()
+    {
+        // "help" must be the first item in run-history.json defaults so new users
+        // see it at the top of the run box suggestion list before any commands are typed.
+        var svc = new SearchHistoryService(TempPath(), maxEntries: 500, defaultFilePath: TestPaths.DefaultRunHistoryPath);
+        svc.Load();
+        var all = svc.GetMatching("", int.MaxValue);
+        Assert.NotEmpty(all);
+        Assert.Equal("help", all[0], StringComparer.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void Load_FilePresent_MergesHelp_ForExistingUsers()
+    {
+        // Existing users whose run-history.json pre-dates the "help" entry get it
+        // appended via MergeNewDefaults on next launch.
+        var path = TempPath();
+        File.WriteAllText(path, System.Text.Json.JsonSerializer.Serialize(new[] { "notepad", "calc" }));
+        var svc = new SearchHistoryService(path, maxEntries: 500, defaultFilePath: TestPaths.DefaultRunHistoryPath);
+        svc.Load();
+        var all = svc.GetMatching("", int.MaxValue);
+        Assert.Contains("help", all, StringComparer.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void Load_FileAbsentNoDefaultResource_HistoryStaysEmpty()
     {
         var svc = new SearchHistoryService(TempPath(), maxEntries: 500, defaultFilePath: null);

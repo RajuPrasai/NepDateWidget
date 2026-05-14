@@ -392,7 +392,7 @@ public class TextToolsViewModelTests
     public void Strength_MixedMedium()
     {
         // 8 chars, upper + lower + number = 4 scoring criteria → medium (score 4 → medium if < 5?)
-        // Score: hasLength(1) + hasUpper(1) + hasLower(1) + hasNumber(1) = 4 → medium (3–4)
+        // Score: hasLength(1) + hasUpper(1) + hasLower(1) + hasNumber(1) = 4 → medium (3-4)
         var (level, _, _, _, _, _) = TextToolsViewModel.EvaluateStrength("Abc12345");
         Assert.Equal(2, level);
     }

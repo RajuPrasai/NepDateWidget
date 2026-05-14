@@ -1,26 +1,10 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SL9MWJW205"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-SL9MWJW205');
-  </script>
-  <!-- Microsoft Clarity -->
-  <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "wqfz83ws7i");
-  </script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
-  <title>NepDate Widget Changelog – Version History & Release Notes</title>
+  <title>NepDate Widget Changelog - Version History & Release Notes</title>
   <meta name="description" content="Full release history and version notes for NepDate Widget. Track new features, improvements, and bug fixes. Versions follow semantic versioning." />
   <link rel="canonical" href="https://nepdatewidget.rajuprasai.com.np/changelog.html" />
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
@@ -32,14 +16,14 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="NepDate Widget" />
   <meta property="og:locale" content="en_US" />
-  <meta property="og:title" content="NepDate Widget Changelog – Version History & Release Notes" />
+  <meta property="og:title" content="NepDate Widget Changelog - Version History & Release Notes" />
   <meta property="og:description" content="Full release history and version notes for NepDate Widget. Track new features, improvements, and bug fixes across all versions." />
   <meta property="og:image" content="https://nepdatewidget.rajuprasai.com.np/assets/logo.png" />
   <meta property="og:image:width" content="447" />
   <meta property="og:image:height" content="447" />
   <meta property="og:url" content="https://nepdatewidget.rajuprasai.com.np/changelog.html" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="NepDate Widget Changelog – Version History & Release Notes" />
+  <meta name="twitter:title" content="NepDate Widget Changelog - Version History & Release Notes" />
   <meta name="twitter:description" content="Full release history for NepDate Widget. Track features, improvements, and fixes across all versions." />
   <meta name="twitter:image" content="https://nepdatewidget.rajuprasai.com.np/assets/logo.png" />
   <meta property="og:image:alt" content="NepDate Widget logo" />
@@ -50,7 +34,7 @@
     "name": "NepDate Widget Changelog",
     "description": "Full release history and version notes for NepDate Widget. Track new features, improvements, and bug fixes across all versions.",
     "url": "https://nepdatewidget.rajuprasai.com.np/changelog.html",
-    "dateModified": "2026-05-13",
+    "dateModified": "2026-05-14",
     "inLanguage": "en-US",
     "author": {"@type": "Person", "name": "Raju Prasai", "url": "https://github.com/RajuPrasai"},
     "isPartOf": { "@type": "WebSite", "name": "NepDate Widget", "url": "https://nepdatewidget.rajuprasai.com.np/" },
@@ -63,7 +47,8 @@
     }
   }
   </script>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preload" as="font" href="assets/fonts/Inter-Variable.woff2" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/style.min.css" />
   <!-- Inline theme bootstrap. Resolves stored preference (light/dark/system)
        to a concrete data-theme so first paint matches the final state. -->
   <script>
@@ -84,10 +69,11 @@
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="inner">
       <a class="brand" href="index.html">
-        <img class="logo-img" src="assets/logo.png?v=2" alt="NepDate Widget logo" width="30" height="30" />
+        <img class="logo-img" src="assets/logo.webp?v=2" alt="NepDate Widget logo" width="30" height="30" />
         <span>NepDate Widget</span>
       </a>
       <nav class="nav-main" aria-label="Primary">
@@ -96,14 +82,14 @@
         <a href="gallery.html">Gallery</a>
         <a href="download.html">Download</a>
         <a href="changelog.html" class="active">Changelog</a>
-        <a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener">NepDate</a>
+        <a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener noreferrer">NepDate</a>
       </nav>
       <div class="header-right">
-                <a class="btn btn-momo btn-sm" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener" aria-label="Buy me a momo">
+                <a class="btn btn-momo btn-sm" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener noreferrer" aria-label="Buy me a momo">
           <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z"/><path d="M9 6.6c.4-1.1 1.5-1.9 2.7-1.9.4 0 .8.1 1.2.3-.4.4-.7.9-.9 1.5l-.2.7c-.4-.1-.8-.3-1.2-.3-.6 0-1.1.2-1.6.5l-.5-.4c.2-.2.3-.3.5-.4Zm6 0 .5-.4c.2.1.3.2.5.4-.4-.3-1-.5-1.6-.5-.4 0-.8.2-1.2.3l-.2-.7c-.2-.6-.5-1.1-.9-1.5.4-.2.8-.3 1.2-.3 1.2 0 2.3.8 2.7 1.9-.3.3-.6.6-1 .8Z"/><path d="M12 4.5c0-.7.6-1.3 1.3-1.3.4 0 .7.1 1 .4-.3.6-.5 1.3-.5 2 0 .3 0 .7.1 1l-.7-.1c-.7 0-1.3-.6-1.3-1.3 0-.3.1-.5.1-.7Z"/><path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z"/></svg></span>
           <span>Buy me a momo</span>
         </a>
-        <a class="github-btn" href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <a class="github-btn" href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener noreferrer" aria-label="GitHub repository">
           <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
           <span>GitHub</span>
         </a>
@@ -127,9 +113,9 @@
     <a href="gallery.html">Gallery</a>
     <a href="download.html">Download</a>
     <a href="changelog.html" class="active">Changelog</a>
-    <a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener">NepDate</a>
-    <a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">Buy me a momo</a>
+    <a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener noreferrer">NepDate</a>
+    <a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener noreferrer">Buy me a momo</a>
   </nav>
 
   <main id="main">
@@ -141,7 +127,7 @@
             <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 12px;">Changelog</h1>
             <p class="sub" style="color: var(--text-muted); font-size: 1.05rem;">
               All notable changes to NepDate Widget are documented here. Versions follow
-              <a href="https://semver.org" target="_blank" rel="noopener">semantic versioning</a>.
+              <a href="https://semver.org" target="_blank" rel="noopener noreferrer">semantic versioning</a>.
             </p>
           </div>
 
@@ -154,11 +140,11 @@
             </header>
 
             <div class="release-body">
-              <h4>Initial release</h4>
+              <h3>Initial release</h3>
               <p>The first public release of NepDate Widget. A tiny Nepali calendar that lives on your
               Windows taskbar, with every Nepali tool you actually use.</p>
 
-              <h4>Mini bar</h4>
+              <h3>Mini bar</h3>
               <ul>
                 <li>Always-on-screen collapsed bar with two configurable lines</li>
                 <li>Time row: 12h / 24h clock, timezone label, UTC offset</li>
@@ -167,7 +153,7 @@
                 <li>Fades transparent when not hovered - toggleable from Settings</li>
               </ul>
 
-              <h4>Calendar</h4>
+              <h3>Calendar</h3>
               <ul>
                 <li>Bikram Sambat month grid with English day numbers alongside</li>
                 <li>Tithi, public holidays, and festival data sourced from authoritative BS calendars</li>
@@ -181,20 +167,20 @@
                 <li><strong>Day popup:</strong> click any calendar day to see its note and reminders, and edit or delete them inline without opening the More tab</li>
               </ul>
 
-              <h4>Date tools</h4>
+              <h3>Date tools</h3>
               <ul>
                 <li><strong>Convert:</strong> instant BS ↔ AD with last-direction memory</li>
                 <li><strong>Days:</strong> add or subtract days, plus difference between two BS dates broken down into years, months, days</li>
                 <li><strong>Time:</strong> timezone converter with compact labeled dropdowns and one-click swap</li>
               </ul>
 
-              <h4>Bank tools</h4>
+              <h3>Bank tools</h3>
               <ul>
                 <li><strong>EMI:</strong> monthly EMI, total interest, and total payment with year-by-year and month-by-month amortization breakdown</li>
                 <li><strong>Interest:</strong> multi-period simple interest with rate changes over time, BS or AD input</li>
               </ul>
 
-              <h4>Text tools</h4>
+              <h3>Text tools</h3>
               <ul>
                 <li><strong>Password:</strong> generator with adjustable length, A&ndash;Z / a&ndash;z / 0&ndash;9 / symbols / Nepali toggles, and live strength meter</li>
                 <li><strong>Word:</strong> word, character, sentence, and line counts</li>
@@ -202,7 +188,7 @@
                 <li><strong>Script:</strong> Devanagari &harr; Romanized Nepali conversion with file support</li>
               </ul>
 
-              <h4>Network tools</h4>
+              <h3>Network tools</h3>
               <ul>
                 <li><strong>My IP:</strong> public and private addresses with geolocation</li>
                 <li><strong>Ping:</strong> per-packet RTT plus Min / Max / Avg summary</li>
@@ -210,21 +196,21 @@
                 <li><strong>Traceroute, Whois, DNS:</strong> additional network diagnostics</li>
               </ul>
 
-              <h4>Unit tools</h4>
+              <h3>Unit tools</h3>
               <ul>
                 <li><strong>Area:</strong> Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri, plus Sq. Metres and Sq. Feet</li>
                 <li><strong>Weight:</strong> Dharni, Pawa, Mana, Pathi, Muri, plus kilograms, grams, tola, pounds, litres etc.</li>
                 <li><strong>Script:</strong> Devanagari &harr; Romanized Nepali (same as Text tab, accessible from Unit tab directly)</li>
               </ul>
 
-              <h4>More</h4>
+              <h3>More</h3>
               <ul>
                 <li><strong>Documents:</strong> attach files (PDF, images, Word, Excel) with a title, tags, and optional notes. Open the file or jump to its folder directly from the widget. The Documents folder is automatically pinned to Windows Explorer Quick Access on startup so it appears in every file-upload dialog sidebar</li>
                 <li><strong>Notes:</strong> quick local notes pinned to BS dates</li>
                 <li><strong>Reminders:</strong> one-shot or recurring (daily, weekly, monthly, yearly), pinned to BS dates</li>
               </ul>
 
-              <h4>RunBox</h4>
+              <h3>RunBox</h3>
               <ul>
                 <li>Global hotkey (default Ctrl+Shift+Space) summons a compact command launcher from anywhere in Windows</li>
                 <li>Runs commands exactly like the Windows native Run dialog; detects URLs and opens them in the default browser; falls back to a Google search for anything else</li>
@@ -232,7 +218,7 @@
                 <li>Hotkey configurable from Settings</li>
               </ul>
 
-              <h4>Appearance &amp; settings</h4>
+              <h3>Appearance &amp; settings</h3>
               <ul>
                 <li>Light and Dark themes</li>
                 <li>10 color presets &times; 2 themes = 20 combinations (Forest, Ocean, Default, Sunset, Cherry, Aurora, Midnight, Slate, Monochrome, Ember)</li>
@@ -249,22 +235,22 @@
                 <li>Reset all settings to defaults with one click</li>
               </ul>
 
-              <h4>Backup &amp; restore</h4>
+              <h3>Backup &amp; restore</h3>
               <ul>
                 <li>Export all your data as a single ZIP - settings, notes, reminders, and documents included</li>
                 <li>Restore from a backup to move to a new machine or recover after a reinstall</li>
               </ul>
 
-              <h4>Distribution &amp; storage</h4>
+              <h3>Distribution &amp; storage</h3>
               <ul>
                 <li>Available through the Microsoft Store - per-user install, no admin prompt, auto-updates delivered by the Store</li>
                 <li>Settings, notes, and reminders stored under <code>%LOCALAPPDATA%</code></li>
                 <li>No telemetry, no network calls except for explicit network tools</li>
               </ul>
 
-              <h4>Under the hood</h4>
+              <h3>Under the hood</h3>
               <ul>
-                <li>Built on <a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener">NepDate</a> for every BS computation</li>
+                <li>Built on <a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener noreferrer">NepDate</a> for every BS computation</li>
                 <li>.NET 10 desktop, PolyForm Strict 1.0.0</li>
               </ul>
             </div>
@@ -283,13 +269,13 @@
       <div class="footer-grid">
         <div class="footer-brand">
           <a class="brand" href="index.html" style="margin-bottom:12px;">
-            <img class="logo-img" src="assets/logo.png?v=2" alt="NepDate Widget logo" width="30" height="30" />
+            <img class="logo-img" src="assets/logo.webp?v=2" alt="NepDate Widget logo" width="30" height="30" />
             <span>NepDate Widget</span>
           </a>
           <p>Free Nepali date converter and desktop companion for Windows - BS↔AD calendar, EMI calculator, network tools, and more. All offline.</p>
         </div>
         <div class="footer-col">
-          <h4>Product</h4>
+          <p class="footer-heading">Product</p>
           <ul>
             <li><a href="features.html#date">Date Converter</a></li>
             <li><a href="features.html">Features</a></li>
@@ -299,29 +285,44 @@
           </ul>
         </div>
         <div class="footer-col">
-          <h4>Project</h4>
+          <p class="footer-heading">Project</p>
           <ul>
-            <li><a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener">GitHub</a></li>
-            <li><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener">Issues &amp; Feedback</a></li>
-            <li><a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener">Sponsor</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener noreferrer">Issues &amp; Feedback</a></li>
+            <li><a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener noreferrer">Sponsor</a></li>
           </ul>
         </div>
         <div class="footer-col">
-          <h4>NepDate Family</h4>
+          <p class="footer-heading">NepDate Family</p>
           <ul>
-            <li><a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener">NepDate</a></li>
-            <li><a href="https://www.nuget.org/packages/NepDate/" target="_blank" rel="noopener">NepDate on NuGet</a></li>
-            <li><a href="https://github.com/RajuPrasai/NepDate" target="_blank" rel="noopener">NepDate on GitHub</a></li>
+            <li><a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener noreferrer">NepDate</a></li>
+            <li><a href="https://www.nuget.org/packages/NepDate/" target="_blank" rel="noopener noreferrer">NepDate on NuGet</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDate" target="_blank" rel="noopener noreferrer">NepDate on GitHub</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2025–2026 NepDate Widget. PolyForm Strict 1.0.0.</span>
+        <span>© 2025-2026 NepDate Widget. PolyForm Strict 1.0.0.</span>
         <span><a href="privacy.html">Privacy Policy</a> &middot; Built with care for the Nepali desktop.</span>
       </div>
     </div>
   </footer>
 
-  <script src="js/main.js" defer></script>
+  <script src="js/main.min.js" defer></script>
+  <script>
+    (function(){function l(){
+      window.dataLayer=window.dataLayer||[];function g(){dataLayer.push(arguments)}
+      g('js',new Date());g('config','G-SL9MWJW205');
+      var s=document.createElement('script');s.async=1;
+      s.src='https://www.googletagmanager.com/gtag/js?id=G-SL9MWJW205';
+      document.head.appendChild(s);
+      (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window,document,"clarity","script","wqfz83ws7i");
+    }
+    if('requestIdleCallback' in window){requestIdleCallback(l)}
+    else{setTimeout(l,3000)}})();
+  </script>
 </body>
 </html>

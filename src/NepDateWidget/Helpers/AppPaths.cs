@@ -8,9 +8,13 @@ namespace NepDateWidget.Helpers;
 /// Resolution rules (first match wins):
 ///   1. If a file named <c>portable.flag</c> exists beside the running EXE,
 ///      data lives in <c>{exeDir}\AppData\</c> (portable mode, single-folder install).
-///   2. Otherwise data lives in <c>%LOCALAPPDATA%\NepDateWidget\AppData\</c>
-///      (installed mode). The <c>AppData</c> subfolder keeps user data out of
-///      the install root so any future re-install does not touch user data.
+///   2. For MSIX packaged builds, data lives in the physical LocalCache path:
+///      <c>%LOCALAPPDATA%\Packages\{PackageFamilyName}\LocalCache\Local\NepDateWidget.Store\AppData\</c>
+///      The MSIX runtime transparently redirects %LOCALAPPDATA% writes to that path.
+///      Using the physical path directly ensures that unpackaged processes
+///      (Process.Start, Explorer, Shell.Application) can find the files.
+///   3. Otherwise data lives in <c>%LOCALAPPDATA%\NepDateWidget\AppData\</c>
+///      (installed/dev mode).
 ///
 /// On first Store launch, data from any prior GitHub Releases install
 /// is copied from <c>%LOCALAPPDATA%\NepDateWidget\AppData\</c> automatically.
@@ -82,7 +86,7 @@ public static class AppPaths
         string target = IsPortable
             ? Path.Combine(_exeDir.Value, DataSubfolder)
             : Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                ResolveLocalAppData(),
                 InstalledFolderName,
                 DataSubfolder);
 
@@ -90,6 +94,35 @@ public static class AppPaths
         Directory.CreateDirectory(Path.Combine(target, "config"));
         Directory.CreateDirectory(Path.Combine(target, "data"));
         return target;
+    }
+
+    /// <summary>
+    /// Returns the physical %LOCALAPPDATA% root that is addressable by unpackaged
+    /// processes (Process.Start, Explorer, Shell.Application).
+    ///
+    /// For MSIX packaged Desktop Bridge apps, the runtime transparently redirects all
+    /// %LOCALAPPDATA% writes to a private per-user, per-package location:
+    ///   <c>%LOCALAPPDATA%\Packages\{PackageFamilyName}\LocalCache\Local\</c>
+    /// This is true on Windows 10 1809 through Windows 11 (copy-on-write on 1809,
+    /// full redirect with merge on 1903+). The DESTINATION PATH is the same on all
+    /// supported versions.
+    ///
+    /// Computing the physical path directly and using it for every stored path and
+    /// every Process.Start / pintohome call ensures that unpackaged processes receive
+    /// a real filesystem path they can actually open.
+    ///
+    /// PackageFamilyName (publisher hash + app name, NO version/architecture) is
+    /// stable across app updates, so this path survives Store updates unchanged.
+    ///
+    /// For unpackaged builds (dev / portable) the standard folder is returned unchanged.
+    /// </summary>
+    private static string ResolveLocalAppData()
+    {
+        var standard = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        if (!AppEnvironment.IsPackaged) return standard;
+        var pfn = AppEnvironment.PackageFamilyName;
+        if (pfn is null) return standard; // defensive: packaged but PFN unavailable
+        return Path.Combine(standard, "Packages", pfn, "LocalCache", "Local");
     }
 
     /// <summary>

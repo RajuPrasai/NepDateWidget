@@ -223,4 +223,31 @@ public sealed class ShortcutsServiceTests : IDisposable
         Assert.True(svc.Prefixes.ContainsKey("SHOP"));
         Assert.True(svc.Prefixes.ContainsKey("Shop"));
     }
+
+    // ── One-time URL corrections ───────────────────────────────────────────────
+
+    [Fact]
+    public void MergeNewDefaults_CorrectsBadHbUrl_WhenUserHasOriginalDarazUrl()
+    {
+        // Simulate a user whose shortcuts.json was seeded from v1.0.0.0 defaults,
+        // which shipped with the wrong Daraz URL for the "hb" (HamroBazaar) entry.
+        WriteJson("""
+            [{"key":"hb","url":"https://daraz.com/search/product?q={query}","name":"HamroBazaar"}]
+            """);
+        using var svc = CreateAndLoad();
+        Assert.True(svc.Prefixes.TryGetValue("hb", out var url), "'hb' entry must exist");
+        Assert.Contains("hamrobazaar.com", url, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("daraz.com", url, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void MergeNewDefaults_DoesNotOverrideCustomizedHbUrl()
+    {
+        // If the user already replaced the hb URL with their own, it must not be touched.
+        const string custom = "https://custom-shop.com/q={query}";
+        WriteJson($$"""[{"key":"hb","url":"{{custom}}","name":"My Shop"}]""");
+        using var svc = CreateAndLoad();
+        Assert.True(svc.Prefixes.TryGetValue("hb", out var url));
+        Assert.Contains("custom-shop.com", url, StringComparison.OrdinalIgnoreCase);
+    }
 }

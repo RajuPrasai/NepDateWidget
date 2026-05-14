@@ -13,8 +13,8 @@
 		<!-- Assembly identity -->
 		<AssemblyName>NepDateWidget</AssemblyName>
 		<RootNamespace>NepDateWidget</RootNamespace>
-		<Version>1.0.0</Version>
-		<FileVersion>1.0.0.0</FileVersion>
+		<Version>1.0.1</Version>
+		<FileVersion>1.0.1.0</FileVersion>
 		<AssemblyTitle>NepDate Widget</AssemblyTitle>
 		<Company>RajuPrasai</Company>
 		<Authors>RajuPrasai</Authors>

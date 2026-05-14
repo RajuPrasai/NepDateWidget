@@ -589,8 +589,20 @@
     sections.forEach(s => observer.observe(s));
   }
 
+  /* ---------- Nav aria-current ---------- */
+  function initNavCurrent() {
+    var page = location.pathname.split('/').pop() || 'index.html';
+    document.querySelectorAll('.nav-main a, .mobile-nav a').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (href === page || (page === 'index.html' && href === 'index.html')) {
+        a.setAttribute('aria-current', 'page');
+      }
+    });
+  }
+
   /* ---------- Init ---------- */
   function init() {
+    initNavCurrent();
     initAmbientGlow();
     initTheme();
     initStickyHeader();
@@ -634,6 +646,9 @@
 
     const box = document.createElement('div');
     box.className = 'lightbox';
+    box.setAttribute('role', 'dialog');
+    box.setAttribute('aria-modal', 'true');
+    box.setAttribute('aria-label', 'Image viewer');
     box.innerHTML = ''
       + '<button class="lb-close" type="button" aria-label="Close">'
       + '  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>'
@@ -655,6 +670,7 @@
     const nextBtn = box.querySelector('.lb-next');
 
     let idx = 0;
+    let returnFocus = null;
     function show(i) {
       idx = (i + items.length) % items.length;
       img.src = items[idx].src;
@@ -662,13 +678,16 @@
       cap.textContent = items[idx].cap;
     }
     function open(i) {
+      returnFocus = document.activeElement;
       show(i);
       box.classList.add('show');
       document.body.style.overflow = 'hidden';
+      closeBtn.focus();
     }
     function close() {
       box.classList.remove('show');
       document.body.style.overflow = '';
+      if (returnFocus) returnFocus.focus();
     }
 
     triggers.forEach((t, i) => {
@@ -696,6 +715,12 @@
       if (e.key === 'Escape') close();
       else if (e.key === 'ArrowLeft') show(idx - 1);
       else if (e.key === 'ArrowRight') show(idx + 1);
+      else if (e.key === 'Tab') {
+        var focusable = [closeBtn, prevBtn, nextBtn];
+        var first = focusable[0], last = focusable[focusable.length - 1];
+        if (e.shiftKey) { if (document.activeElement === first) { e.preventDefault(); last.focus(); } }
+        else { if (document.activeElement === last) { e.preventDefault(); first.focus(); } }
+      }
     });
   }
 

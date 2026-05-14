@@ -191,6 +191,27 @@ public partial class App : Application
 
             skipIni:
             dynamic shell = Activator.CreateInstance(Type.GetTypeFromProgID("Shell.Application")!)!;
+
+            // Remove any stale Quick Access pin that may have been created with the old virtual
+            // AppData path (before the LocalCache fix).  On an in-place Store update the old
+            // empty directory still exists and appears as a duplicate "Documents" pin alongside
+            // the new correct one.  We unpin it first so users never see duplicates.
+            // Best-effort: silently skip if the verb is unavailable or the path is not pinned.
+            if (Helpers.AppEnvironment.IsPackaged)
+            {
+                var oldVirtualFolder = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    Helpers.AppEnvironment.DataFolderName,
+                    Helpers.AppPaths.DataSubfolder,
+                    "data", "Documents");
+                if (!string.Equals(oldVirtualFolder, folder, StringComparison.OrdinalIgnoreCase)
+                    && System.IO.Directory.Exists(oldVirtualFolder))
+                {
+                    try { shell.Namespace(oldVirtualFolder).Self.InvokeVerb("removefromhome"); }
+                    catch { /* verb may not exist on all Windows versions; ignore */ }
+                }
+            }
+
             shell.Namespace(folder).Self.InvokeVerb("pintohome");
             Log.Info($"Documents folder pinned to Quick Access: {folder}");
         }

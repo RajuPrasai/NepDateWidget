@@ -151,14 +151,34 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
                 .Where(d => !string.IsNullOrWhiteSpace(d.Key) && !existingKeys.Contains(d.Key))
                 .ToList();
 
-            if (toAdd.Count == 0) return;
+            // One-time corrections for known-bad URLs shipped in defaults before they were
+            // fixed.  Only fires when the user's URL is still the exact wrong shipped value,
+            // meaning they never customised the entry themselves.
+            var corrections = new Dictionary<string, (string OldUrl, string NewUrl, string NewName)>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["hb"] = ("https://daraz.com/search/product?q={query}",
+                          "https://hamrobazaar.com/search/product?q={query}",
+                          "HamroBazaar"),
+            };
+
+            var correctedCount = 0;
+            foreach (var item in userItems)
+            {
+                if (item.Key is null || !corrections.TryGetValue(item.Key, out var fix)) continue;
+                if (!string.Equals(item.Url, fix.OldUrl, StringComparison.OrdinalIgnoreCase)) continue;
+                item.Url  = fix.NewUrl;
+                item.Name = fix.NewName;
+                correctedCount++;
+            }
+
+            if (toAdd.Count == 0 && correctedCount == 0) return;
 
             userItems.AddRange(toAdd);
             var merged = JsonSerializer.Serialize(userItems, JsonOptions);
             if (!AtomicFile.WriteAllText(_path, merged))
                 Log.Warn("shortcuts.json: atomic write failed during merge.");
             else
-                Log.Info($"shortcuts.json: merged {toAdd.Count} new default shortcut(s).");
+                Log.Info($"shortcuts.json: merged {toAdd.Count} new, corrected {correctedCount} entry/entries.");
         }
         catch (Exception ex)
         {

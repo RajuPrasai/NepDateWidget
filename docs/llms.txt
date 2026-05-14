@@ -1,0 +1,50 @@
+# NepDate Widget
+
+> The most complete free Nepali date converter and desktop companion for Windows 10 & 11.
+
+NepDate Widget is a lightweight WPF/.NET desktop application that converts Bikram Sambat (BS) dates to Gregorian (AD) dates and AD to BS instantly. It runs from the Windows taskbar as a mini bar showing the current Nepali date, and expands into a full-featured productivity widget.
+
+## Key Features
+
+- **Nepali Date Converter**: Convert BS to AD and AD to BS instantly. Accepts Nepali digits, full month names, and flexible date separators. Also calculates date differences and adds/subtracts days from BS dates.
+- **Bikram Sambat Calendar**: Full month grid with tithi, public holidays, fiscal year markers, and both BS and AD dates side by side.
+- **Loan EMI Calculator**: Calculate monthly EMIs with a full amortization schedule displayed in Bikram Sambat dates. Includes a multi-period interest calculator.
+- **Preeti to Unicode Converter**: Convert Preeti-encoded Nepali text to Unicode and back. Supports bulk conversion.
+- **Network Toolkit**: Ping, traceroute, IP scan, Whois, DNS lookup, and My IP - all built in.
+- **RunBox Global Launcher**: A system-wide command launcher (Ctrl+Shift+Space) for web searches, calculations, file launching, and custom scripts (PowerShell, Python, batch).
+- **Unit Converter**: Convert traditional Nepali land units (Ropani, Bigha, Dhur) and weight units.
+- **Notes & Reminders**: Pin notes to specific BS dates. Set recurring reminders with snooze.
+- **Document Manager**: Organize and quick-access documents from within the widget.
+- **Dual Language UI**: Switch between English and Nepali (नेपाली) instantly - no restart needed.
+- **20 Color Themes**: 10 light and 10 dark presets, customizable fonts, rounded or sharp corners, optional transparency.
+
+## Technical Details
+
+- **Platform**: Windows 10 (1809+) and Windows 11, 64-bit
+- **Framework**: WPF on .NET
+- **Install**: [Microsoft Store](https://apps.microsoft.com/detail/9PG97WBJX1NQ) (no admin rights needed) or direct download
+- **Offline**: All features work offline except My IP, web searches, and network lookups
+- **Privacy**: Zero telemetry, no analytics, no account required
+- **Data Storage**: Local JSON files in %LOCALAPPDATA%
+- **License**: PolyForm Strict 1.0.0 (free for personal use, source-available)
+- **Author**: Raju Prasai (https://github.com/RajuPrasai)
+
+## Pages
+
+- [Home](https://nepdatewidget.rajuprasai.com.np/)
+- [Features](https://nepdatewidget.rajuprasai.com.np/features.html)
+- [Download](https://nepdatewidget.rajuprasai.com.np/download.html)
+- [Gallery](https://nepdatewidget.rajuprasai.com.np/gallery.html)
+- [Changelog](https://nepdatewidget.rajuprasai.com.np/changelog.html)
+
+## FAQ
+
+- **Cost**: Free for personal use. Source-available under PolyForm Strict 1.0.0.
+- **Windows versions**: Windows 10 (version 1809+) and Windows 11, 64-bit.
+- **Offline**: Yes - calendar, date converter, unit converter, text tools, EMI calculator, RunBox, notes, reminders, and documents all work without internet.
+- **Bikram Sambat**: Nepal's official calendar system, running about 56-57 years ahead of the Gregorian calendar. Used in government documents, banks, and official records.
+- **How to convert BS to AD**: Open the Date tab, select BS → AD, type the Bikram Sambat date. The Gregorian equivalent appears instantly.
+- **How to convert AD to BS**: Open the Date tab, select AD → BS, type the Gregorian date. The Bikram Sambat equivalent appears instantly.
+- **Performance**: Lightweight WPF app - negligible CPU when idle. Background work limited to a low-frequency reminder timer.
+- **Data privacy**: Zero telemetry, no analytics, no account. All data stays in local JSON files.
+- **Customization**: 20 color presets, 20 font choices, rounded/sharp corners, transparency, per-element calendar toggles.

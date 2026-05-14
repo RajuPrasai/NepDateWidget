@@ -16,10 +16,25 @@ internal static class AppEnvironment
     private static extern int GetCurrentPackageFullName(
         ref int packageFullNameLength, [Out] char[]? packageFullName);
 
+    [DllImport("kernel32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
+    private static extern int GetCurrentPackageFamilyName(
+        ref int familyNameLength, [Out] char[]? familyName);
+
     private static readonly Lazy<bool> _isPackaged = new(static () =>
     {
         int length = 0;
         return GetCurrentPackageFullName(ref length, null) != ErrorAppModelNoPackage;
+    });
+
+    private static readonly Lazy<string?> _packageFamilyName = new(static () =>
+    {
+        int length = 0;
+        if (GetCurrentPackageFamilyName(ref length, null) == ErrorAppModelNoPackage || length == 0)
+            return null;
+        var buf = new char[length];
+        return GetCurrentPackageFamilyName(ref length, buf) == 0
+            ? new string(buf, 0, length - 1) // length includes null terminator
+            : null;
     });
 
     /// <summary>
@@ -27,6 +42,13 @@ internal static class AppEnvironment
     /// False for unpackaged (dev/portable) builds.
     /// </summary>
     public static bool IsPackaged => _isPackaged.Value;
+
+    /// <summary>
+    /// The MSIX package family name (e.g., <c>Publisher.AppName_publisherhash</c>), or null
+    /// when running unpackaged. Stable across app version updates; does not include version
+    /// or architecture. Computed via GetCurrentPackageFamilyName (kernel32).
+    /// </summary>
+    internal static string? PackageFamilyName => _packageFamilyName.Value;
 
     /// <summary>
     /// Single-instance mutex name scoped to the distribution channel. Prevents the

@@ -1,8 +1,6 @@
 <div align="center">
 
-<img alt="NepDate Widget" src="docs/assets/screenshots/website-hero.png" />
-
-<hr>
+<img alt="NepDate Widget" src="docs/assets/screenshots/website-hero.png" width="720" />
 
 The नेपाली calendar that lives on your taskbar. Two lines on screen at all times. Click to expand into 25+ tools.
 
@@ -11,6 +9,7 @@ The नेपाली calendar that lives on your taskbar. Two lines on screen 
 [![Framework](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com)
 [![License](https://img.shields.io/badge/license-PolyForm%20Strict%201.0.0-blue?style=flat-square)](LICENSE)
 [![Telemetry](https://img.shields.io/badge/telemetry-none-success?style=flat-square)](https://nepdatewidget.rajuprasai.com.np/)
+[![Microsoft Store](https://img.shields.io/badge/Microsoft%20Store-Get-0078D4?style=flat-square&logo=microsoft)](https://apps.microsoft.com/detail/9PG97WBJX1NQ)
 
 **[Website](https://nepdatewidget.rajuprasai.com.np/) · [Screenshots](https://nepdatewidget.rajuprasai.com.np/gallery.html) · [Features](https://nepdatewidget.rajuprasai.com.np/features.html) · [Download](https://nepdatewidget.rajuprasai.com.np/download.html) · [Changelog](https://nepdatewidget.rajuprasai.com.np/changelog.html)**
 
@@ -20,7 +19,9 @@ The नेपाली calendar that lives on your taskbar. Two lines on screen 
 
 ## What it is
 
-NepDate Widget sits on your taskbar as a compact two-line bar showing the current Bikram Sambat and Gregorian date, time, and timezone. Click it to expand into a full BS calendar with tithi, public holidays, and fiscal year context, then further into tools built specifically for Nepali daily use: BS↔AD conversion, Preeti↔Unicode for converting legacy Nepali documents, traditional land and weight unit converters, BS-aware EMI and multi-rate interest calculators, network diagnostics, notes and reminders tied to BS dates, a local document library, and RunBox, a global hotkey command launcher. Everything stays local. No account, no cloud, no telemetry.
+NepDate Widget sits on your taskbar as a compact two-line bar showing the current Bikram Sambat and Gregorian date, time, and timezone. Click it to expand into a full BS calendar with tithi, public holidays, and fiscal year context, then further into tools built specifically for Nepali daily use.
+
+BS↔AD conversion, Preeti↔Unicode for converting legacy Nepali documents, traditional land and weight unit converters, BS-aware EMI and multi-rate interest calculators, network diagnostics, notes and reminders tied to BS dates, a local document library, and RunBox - a global hotkey command launcher. Everything stays local. No account, no cloud, no telemetry.
 
 <div align="center">
 <img src="docs/assets/screenshots/Minibar.png" alt="NepDate Widget mini bar on the Windows taskbar" width="500" />
@@ -80,7 +81,7 @@ Seven tabs, 25+ tools. The full tour is on the [website](https://nepdatewidget.r
 
 | Download | Notes |
 |---|---|
-| [**Microsoft Store**](https://apps.microsoft.com/detail/{appId}) | Auto-updates, no admin prompt, recommended |
+| [**Microsoft Store**](https://apps.microsoft.com/detail/9PG97WBJX1NQ) | Auto-updates, no admin prompt, recommended |
 
 Free for personal use. Per-user install, no admin rights required.
 
@@ -127,5 +128,5 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency and font att
 ---
 
 <div align="center">
-Made with care for the Nepali community &nbsp;|&nbsp; Copyright &copy; 2025&ndash;2026 RajuPrasai
+Made with care for the Nepali community &nbsp;|&nbsp; Copyright &copy; 2025-2026 Raju Prasai
 </div>
