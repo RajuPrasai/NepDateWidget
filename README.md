@@ -6,13 +6,13 @@
 
 The नेपाली calendar that lives on your taskbar. Two lines on screen at all times. Click to expand into 25+ tools.
 
-[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D4?style=flat-square&logo=windows)](https://rajuprasai.github.io/NepDateWidget/download.html)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=flat-square)](https://rajuprasai.github.io/NepDateWidget/changelog.html)
+[![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D4?style=flat-square&logo=windows)](https://nepdatewidget.rajuprasai.com.np/download.html)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen?style=flat-square)](https://nepdatewidget.rajuprasai.com.np/changelog.html)
 [![Framework](https://img.shields.io/badge/.NET-10.0-512BD4?style=flat-square&logo=dotnet)](https://dotnet.microsoft.com)
 [![License](https://img.shields.io/badge/license-PolyForm%20Strict%201.0.0-blue?style=flat-square)](LICENSE)
-[![Telemetry](https://img.shields.io/badge/telemetry-none-success?style=flat-square)](https://rajuprasai.github.io/NepDateWidget/)
+[![Telemetry](https://img.shields.io/badge/telemetry-none-success?style=flat-square)](https://nepdatewidget.rajuprasai.com.np/)
 
-**[Website](https://rajuprasai.github.io/NepDateWidget/) · [Screenshots](https://rajuprasai.github.io/NepDateWidget/gallery.html) · [Features](https://rajuprasai.github.io/NepDateWidget/features.html) · [Download](https://rajuprasai.github.io/NepDateWidget/download.html) · [Changelog](https://rajuprasai.github.io/NepDateWidget/changelog.html)**
+**[Website](https://nepdatewidget.rajuprasai.com.np/) · [Screenshots](https://nepdatewidget.rajuprasai.com.np/gallery.html) · [Features](https://nepdatewidget.rajuprasai.com.np/features.html) · [Download](https://nepdatewidget.rajuprasai.com.np/download.html) · [Changelog](https://nepdatewidget.rajuprasai.com.np/changelog.html)**
 
 </div>
 
@@ -46,13 +46,13 @@ NepDate Widget sits on your taskbar as a compact two-line bar showing the curren
 
 </div>
 
-[See all screenshots →](https://rajuprasai.github.io/NepDateWidget/gallery.html)
+[See all screenshots →](https://nepdatewidget.rajuprasai.com.np/gallery.html)
 
 ---
 
 ## Features
 
-Seven tabs, 25+ tools. The full tour is on the [website](https://rajuprasai.github.io/NepDateWidget/features.html). Here is what each tab does.
+Seven tabs, 25+ tools. The full tour is on the [website](https://nepdatewidget.rajuprasai.com.np/features.html). Here is what each tab does.
 
 **Mini Bar** - Two configurable lines pinned to the taskbar. Time row: 12h/24h clock, timezone label, UTC offset. Date row: day of week, BS date, AD date. Each element toggles independently. Fades when not hovered.
 

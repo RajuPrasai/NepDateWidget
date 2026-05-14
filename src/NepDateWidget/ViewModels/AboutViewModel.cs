@@ -63,8 +63,8 @@ public sealed class AboutViewModel : ViewModelBase
         OpenSupportCommand   = new RelayCommand(() => OpenUrl("https://buymemomo.com/rajuprasai"));
         OpenRepoCommand      = new RelayCommand(() => OpenUrl("https://github.com/RajuPrasai/NepDateWidget"));
         OpenBugReportCommand = new RelayCommand(() => OpenUrl("https://github.com/RajuPrasai/NepDateWidget/issues/new"));
-        OpenChangelogCommand = new RelayCommand(() => OpenUrl("https://rajuprasai.github.io/NepDateWidget/changelog.html"));
-        OpenWebsiteCommand   = new RelayCommand(() => OpenUrl("https://rajuprasai.github.io/NepDateWidget/"));
+        OpenChangelogCommand = new RelayCommand(() => OpenUrl("https://nepdatewidget.rajuprasai.com.np/changelog.html"));
+        OpenWebsiteCommand   = new RelayCommand(() => OpenUrl("https://nepdatewidget.rajuprasai.com.np/"));
 
         RefreshLabels();
     }

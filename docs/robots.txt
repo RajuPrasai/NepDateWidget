@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://rajuprasai.github.io/NepDateWidget/sitemap.xml
+Sitemap: https://nepdatewidget.rajuprasai.com.np/sitemap.xml
