@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
+  <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system')}()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
   <title>NepDate Widget - Free Nepali Date Converter & Calendar for Windows</title>
@@ -10,8 +11,8 @@
     content="Free Nepali date converter for Windows. Convert BS to AD and AD to BS instantly, view the Bikram Sambat calendar, calculate loan EMIs, and 25+ more tools. All offline, zero telemetry." />
   <link rel="canonical" href="https://nepdatewidget.rajuprasai.com.np/" />
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
-  <link rel="icon" type="image/png" href="assets/logo.png?v=2" />
-  <link rel="apple-touch-icon" href="assets/logo.png?v=2" />
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/favicon.png" />
   <meta name="color-scheme" content="light dark" />
   <link rel="dns-prefetch" href="https://github.com" />
   <link rel="dns-prefetch" href="https://buymemomo.com" />
@@ -279,24 +280,6 @@
   }
   </script>
   <link rel="stylesheet" href="css/style.min.css" />
-  <!-- Inline theme bootstrap. Resolves stored preference (light/dark/system)
-       to a concrete data-theme so first paint matches the final state. -->
-  <script>
-    (function () {
-      try {
-        var p = localStorage.getItem('nepdate-theme');
-        if (p !== 'light' && p !== 'dark' && p !== 'system') p = 'system';
-        var resolved = p === 'system'
-          ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-          : p;
-        document.documentElement.setAttribute('data-theme', resolved);
-        document.documentElement.setAttribute('data-theme-pref', p);
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
-        document.documentElement.setAttribute('data-theme-pref', 'system');
-      }
-    })();
-  </script>
 </head>
 
 <body>

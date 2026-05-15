@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace NepDateWidget.Services;
 
@@ -19,6 +19,13 @@ namespace NepDateWidget.Services;
 /// </summary>
 public static class DocumentConverterService
 {
+    private static readonly XNamespace _w = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+    private static readonly XmlWriterSettings _xmlWriterSettings = new()
+    {
+        Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+        Indent   = false
+    };
+
     // Common legacy Nepali font name fragments (all lowercase for comparison).
     private static readonly string[] _legacyNepaliFonts =
         ["preeti", "kantipur", "himalaya", "sagarmatha", "sabdatara", "nagarjuna", "shangrila", "pcs"];
@@ -93,7 +100,7 @@ public static class DocumentConverterService
         File.WriteAllText(outputPath, converted, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
     }
 
-    // ── .docx (DocumentFormat.OpenXml) ───────────────────────────────────────
+    // ── .docx (ZipArchive + XDocument) ──────────────────────────────────────
 
     private static void ConvertDocx(
         string inputPath,
@@ -104,65 +111,69 @@ public static class DocumentConverterService
         // Work on a copy so the original is never touched.
         File.Copy(inputPath, outputPath, overwrite: true);
 
-        using var doc = WordprocessingDocument.Open(outputPath, isEditable: true);
+        using var zip = ZipFile.Open(outputPath, ZipArchiveMode.Update);
 
-        var main = doc.MainDocumentPart;
-        if (main is null) return;
+        // Collect target entries before modifying the archive.
+        var targets = zip.Entries
+            .Where(e => e.FullName == "word/document.xml"
+                     || (e.FullName.StartsWith("word/header", StringComparison.OrdinalIgnoreCase) && e.FullName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase))
+                     || (e.FullName.StartsWith("word/footer", StringComparison.OrdinalIgnoreCase) && e.FullName.EndsWith(".xml", StringComparison.OrdinalIgnoreCase)))
+            .ToList();
 
-        // Body
-        if (main.Document?.Body is { } body)
-            ProcessOpenXmlTexts(body.Descendants<Text>(), transform, fontMapper);
-
-        // Headers
-        foreach (var hp in main.HeaderParts)
+        foreach (var entry in targets)
         {
-            if (hp.Header is { } header)
-                ProcessOpenXmlTexts(header.Descendants<Text>(), transform, fontMapper);
-        }
+            XDocument xdoc;
+            using (var s = entry.Open())
+                xdoc = XDocument.Load(s);
 
-        // Footers
-        foreach (var fp in main.FooterParts)
-        {
-            if (fp.Footer is { } footer)
-                ProcessOpenXmlTexts(footer.Descendants<Text>(), transform, fontMapper);
-        }
+            if (!ProcessXmlTexts(xdoc, transform, fontMapper)) continue;
 
-        doc.Save();
+            // Replace the entry: delete then re-create with the same name.
+            string entryName = entry.FullName;
+            entry.Delete();
+            var updated = zip.CreateEntry(entryName);
+            using var outStream = updated.Open();
+            using var writer    = XmlWriter.Create(outStream, _xmlWriterSettings);
+            xdoc.Save(writer);
+        }
     }
 
-    private static void ProcessOpenXmlTexts(
-        IEnumerable<Text> elements,
+    private static bool ProcessXmlTexts(
+        XDocument xdoc,
         Func<string, string?, string> transform,
         Func<string?, string?>? fontMapper)
     {
-        foreach (var textEl in elements)
+        bool changed = false;
+
+        foreach (var textEl in xdoc.Descendants(_w + "t").ToList())
         {
-            string original = textEl.Text ?? string.Empty;
+            string original = textEl.Value;
             if (original.Length == 0) continue;
 
-            // Resolve font name from the parent Run's properties.
+            // Resolve font name from the parent w:r > w:rPr > w:rFonts.
             string? fontName = null;
-            Run? run = null;
-            if (textEl.Parent is Run r)
+            XElement? run = null;
+            if (textEl.Parent?.Name == _w + "r")
             {
-                run = r;
-                var rf = run.RunProperties?.RunFonts;
-                fontName = rf?.Ascii?.Value
-                        ?? rf?.HighAnsi?.Value
-                        ?? rf?.EastAsia?.Value
-                        ?? rf?.ComplexScript?.Value
+                run = textEl.Parent;
+                var rFonts = run.Element(_w + "rPr")?.Element(_w + "rFonts");
+                fontName = (string?)rFonts?.Attribute(_w + "ascii")
+                        ?? (string?)rFonts?.Attribute(_w + "hAnsi")
+                        ?? (string?)rFonts?.Attribute(_w + "eastAsia")
+                        ?? (string?)rFonts?.Attribute(_w + "cs")
                         ?? string.Empty;  // explicitly "" = inherit (not null = no-info)
             }
 
             string converted = transform(original, fontName);
             if (converted == original) continue;
 
-            textEl.Text = converted;
+            textEl.Value = converted;
+            changed = true;
 
             // Update the run font when the text encoding changed.  fontMapper returns:
             //   null          → leave font unchanged
             //   string.Empty  → remove explicit run font (inherits document/style default)
-            //   "FontName"    → set Ascii + HighAnsi to that font
+            //   "FontName"    → set w:ascii + w:hAnsi to that font
             if (run is not null && fontMapper is not null)
             {
                 string? newFont = fontMapper(fontName);
@@ -170,34 +181,36 @@ public static class DocumentConverterService
                     ApplyRunFont(run, newFont);
             }
         }
+
+        return changed;
     }
 
-    private static void ApplyRunFont(Run run, string font)
+    private static void ApplyRunFont(XElement run, string font)
     {
-        var rp = run.RunProperties;
-        if (rp == null)
+        var rPr = run.Element(_w + "rPr");
+        if (rPr == null)
         {
-            rp = new RunProperties();
-            run.PrependChild(rp);
+            rPr = new XElement(_w + "rPr");
+            run.AddFirst(rPr);
         }
 
         if (font.Length == 0)
         {
-            // Remove the explicit RunFonts element so the run inherits the document default.
-            // After a P2U conversion the legacy font declaration is no longer correct;
-            // modern Word will apply appropriate Unicode/Devanagari font fallback automatically.
-            rp.RunFonts?.Remove();
+            // Remove the explicit font element so the run inherits the document default.
+            // After a Preeti-to-Unicode conversion the legacy font declaration is wrong;
+            // Word will apply the correct Devanagari font via Unicode fallback.
+            rPr.Element(_w + "rFonts")?.Remove();
         }
         else
         {
-            var rf = rp.RunFonts;
-            if (rf == null)
+            var rFonts = rPr.Element(_w + "rFonts");
+            if (rFonts == null)
             {
-                rf = new RunFonts();
-                rp.PrependChild(rf);
+                rFonts = new XElement(_w + "rFonts");
+                rPr.AddFirst(rFonts);
             }
-            rf.Ascii   = font;
-            rf.HighAnsi = font;
+            rFonts.SetAttributeValue(_w + "ascii",  font);
+            rFonts.SetAttributeValue(_w + "hAnsi", font);
         }
     }
 }

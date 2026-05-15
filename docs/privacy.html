@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system')}()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
   <title>Privacy Policy - NepDate Widget</title>
   <meta name="description" content="Privacy policy for NepDate Widget. No personal data is collected. Everything stays on your device." />
   <link rel="canonical" href="https://nepdatewidget.rajuprasai.com.np/privacy.html" />
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
-  <link rel="icon" type="image/png" href="assets/logo.png?v=2" />
-  <link rel="apple-touch-icon" href="assets/logo.png?v=2" />
+  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/favicon.png" />
   <meta name="color-scheme" content="light dark" />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Raju Prasai" />
@@ -52,22 +53,6 @@
     .prose a  { color: var(--accent); }
     .prose code { font-family: monospace; background: var(--surface-2, rgba(0,0,0,.06)); padding: 1px 5px; border-radius: 3px; font-size: .9em; }
   </style>
-  <script>
-    (function () {
-      try {
-        var p = localStorage.getItem('nepdate-theme');
-        if (p !== 'light' && p !== 'dark' && p !== 'system') p = 'system';
-        var resolved = p === 'system'
-          ? (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
-          : p;
-        document.documentElement.setAttribute('data-theme', resolved);
-        document.documentElement.setAttribute('data-theme-pref', p);
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
-        document.documentElement.setAttribute('data-theme-pref', 'system');
-      }
-    })();
-  </script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>

@@ -37,12 +37,10 @@
 	</PropertyGroup>
 
 	<!-- Release-mode optimisations -->
-	<!-- DebugType=embedded ships PDBs inside the assembly so user crash logs
-	     contain file/line info for support, at the cost of ~1-2 MB EXE size.
-	     This is much more useful than DebugType=none (no symbols at all). -->
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
 		<Optimize>true</Optimize>
-		<DebugType>embedded</DebugType>
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
 		<RunAnalyzers>true</RunAnalyzers>
 	</PropertyGroup>
 
@@ -64,8 +62,7 @@
 		<Content Include="Resources\configs\scripts\organize-desktop.ps1" CopyToOutputDirectory="PreserveNewest" />
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="DocumentFormat.OpenXml" Version="3.5.1" />
-	  <PackageReference Include="NepDate" Version="2.0.7" />
+		<PackageReference Include="NepDate" Version="2.0.7" />
 	</ItemGroup>
 
 	<!-- Embedded font families. All fonts are bundled (OFL licensed) so they work regardless of OS install state.
@@ -107,5 +104,27 @@
 		<Resource Include="Assets\Fonts\Rubik\Rubik.ttf" />
 		<Resource Include="Assets\Fonts\DMSans\DMSans.ttf" />
 	</ItemGroup>
+
+	<!-- ReadyToRun exclusions: these NuGet DLLs are not on the startup hot path.
+	     Keeping them as IL-only saves ~30 MB in the publish folder. -->
+	<ItemGroup>
+		<PublishReadyToRunExclude Include="Microsoft.Windows.SDK.NET.dll" />
+		<PublishReadyToRunExclude Include="WinRT.Runtime.dll" />
+		<PublishReadyToRunExclude Include="NepDate.dll" />
+	</ItemGroup>
+
+	<!-- Strip debugger-support files from the publish output. These are only needed
+	     when attaching a debugger or analysing crash dumps; they must not ship in
+	     a Store MSIX. Total savings: ~6.2 MB uncompressed, ~2.4 MB MSIX. -->
+	<Target Name="RemoveDiagnosticFiles" AfterTargets="Publish">
+		<ItemGroup>
+			<_DiagFiles Include="$(PublishDir)mscordbi.dll" />
+			<_DiagFiles Include="$(PublishDir)mscordaccore*.dll" />
+			<_DiagFiles Include="$(PublishDir)Microsoft.DiaSymReader.Native.*.dll" />
+			<_DiagFiles Include="$(PublishDir)clretwrc.dll" />
+			<_DiagFiles Include="$(PublishDir)createdump.exe" />
+		</ItemGroup>
+		<Delete Files="@(_DiagFiles)" ContinueOnError="true" />
+	</Target>
 
 </Project>
