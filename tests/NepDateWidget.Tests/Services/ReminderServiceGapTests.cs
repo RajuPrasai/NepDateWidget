@@ -224,7 +224,9 @@ public sealed class ReminderServiceGapTests : IDisposable
     public void HasRemindersForDateExpanded_Monthly_ReturnsTrueOnMonthlyDate()
     {
         var svc = CreateService();
-        // Monthly from 2082/06/10. AddMonths(2082,6,10,1) in fake => (2082,7,1)
+        // Monthly from 2082/06/10. WouldRecurOnDate uses O(1) math:
+        // expected day in any future month = min(origDay=10, daysInMonth(targetM)).
+        // For month 7: min(10, 30) = 10, so recurrence lands on 2082/07/10.
         svc.Add(new ReminderEntry
         {
             Title = "Monthly",
@@ -233,8 +235,8 @@ public sealed class ReminderServiceGapTests : IDisposable
             Time = "09:00",
         });
 
-        // First monthly recurrence: (2082, 7, 1) per fake adapter
-        Assert.True(svc.HasRemindersForDateExpanded(2082, 7, 1));
+        Assert.True(svc.HasRemindersForDateExpanded(2082, 7, 10));
+        Assert.False(svc.HasRemindersForDateExpanded(2082, 7, 1));
     }
 
     // ── EndDate boundary ──────────────────────────────────────────────────────

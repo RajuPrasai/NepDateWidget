@@ -23,6 +23,7 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
     private readonly string _defaultFilePath;  // Shipped default file path
     private readonly SynchronizationContext? _syncContext;
     private Dictionary<string, Dictionary<string, string>> _strings = new();
+    private Dictionary<string, Dictionary<string, string>>? _loadedDefaults;
     private DebouncedFileReloader? _reloader;
     private string _language = "en";
 
@@ -147,21 +148,29 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
     /// </summary>
     private void MergeMissingFromDefaults()
     {
-        if (string.IsNullOrEmpty(_defaultFilePath) || !File.Exists(_defaultFilePath)) return;
+        var defaults = GetLoadedDefaults();
+        if (defaults is null) return;
+        foreach (var kvp in defaults)
+        {
+            if (!_strings.ContainsKey(kvp.Key))
+                _strings[kvp.Key] = kvp.Value;
+        }
+    }
+
+    private Dictionary<string, Dictionary<string, string>>? GetLoadedDefaults()
+    {
+        if (_loadedDefaults is not null) return _loadedDefaults;
+        if (string.IsNullOrEmpty(_defaultFilePath) || !File.Exists(_defaultFilePath)) return null;
         try
         {
-            var json     = File.ReadAllText(_defaultFilePath);
-            var defaults = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json, SerializerOptions);
-            if (defaults is null) return;
-            foreach (var kvp in defaults)
-            {
-                if (!_strings.ContainsKey(kvp.Key))
-                    _strings[kvp.Key] = kvp.Value;
-            }
+            var json = File.ReadAllText(_defaultFilePath);
+            _loadedDefaults = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json, SerializerOptions);
+            return _loadedDefaults;
         }
         catch (Exception ex)
         {
-            Log.Error("LocalizationService: failed to merge default strings", ex);
+            Log.Error("LocalizationService: failed to load default strings", ex);
+            return null;
         }
     }
 }

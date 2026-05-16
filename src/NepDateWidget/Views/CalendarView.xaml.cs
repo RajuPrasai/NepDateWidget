@@ -21,6 +21,23 @@ public partial class CalendarView : UserControl
         InitializeComponent();
         DaysGrid.RenderTransform = new TranslateTransform();
         DataContextChanged += OnDataContextChanged;
+        Unloaded += OnUnloaded;
+    }
+
+    private void OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        // The CalendarViewModel is a singleton owned by MainViewModel and outlives
+        // this CalendarView. When ExpandedShellWindow is destroyed and recreated,
+        // WPF may not fire DataContextChanged with the old value during teardown,
+        // leaving stale subscriptions. Each subsequent expand would add another
+        // subscriber, causing navigation to jump multiple months per click.
+        // Unloaded fires reliably on window close and cleans up unconditionally.
+        if (DataContext is CalendarViewModel vm)
+        {
+            vm.NavigationRequested -= OnNavigationRequested;
+            vm.OpenDayInfoRequested -= OnOpenDayInfoRequested;
+            DaysGrid.SizeChanged -= OnDaysGridSizeChanged;
+        }
     }
 
     /// <summary>

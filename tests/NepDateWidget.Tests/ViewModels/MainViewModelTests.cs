@@ -64,10 +64,12 @@ public class MainViewModelTests
     // ── Construction ──────────────────────────────────────────────────────────
 
     [Fact]
-    public void Constructor_CallsLoad_Once()
+    public void Constructor_DoesNotCallLoad()
     {
+        // Load() is the caller's responsibility (App.xaml.cs calls it before creating
+        // the VM). The constructor must not call it again to avoid double-loading.
         var (_, svc, _) = Create();
-        Assert.Equal(1, svc.LoadCount);
+        Assert.Equal(0, svc.LoadCount);
     }
 
     [Fact]

@@ -94,4 +94,13 @@ public interface INepaliDateAdapter
     /// Returns null if input is invalid or result is out of range.
     /// </summary>
     (int Year, int Month, int Day)? AddMonths(int bsYear, int bsMonth, int bsDay, int months);
+
+    /// <summary>
+    /// Returns all data needed for a single calendar cell in one NepaliDate allocation.
+    /// Combines GetCalendarInfo, BsToAd, and all four BS format strings.
+    /// Returns a zeroed/empty tuple on invalid input or out-of-range dates.
+    /// </summary>
+    (bool IsPublicHoliday, string TithiEn, string TithiNp, string[] EventsEn, string[] EventsNp,
+     DateTime? AdDate, string BsShortEn, string BsShortNe, string BsLongEn, string BsLongNe)
+        GetCellData(int bsYear, int bsMonth, int bsDay);
 }

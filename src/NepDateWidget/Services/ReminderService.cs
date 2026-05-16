@@ -66,6 +66,34 @@ public sealed class ReminderService : IReminderService, IDisposable
         return false;
     }
 
+    public HashSet<int> GetHasRemindersForMonth(int bsYear, int bsMonth)
+    {
+        var result = new HashSet<int>();
+        int daysInMonth = _adapter.GetDaysInMonth(bsYear, bsMonth);
+        if (daysInMonth <= 0) return result;
+
+        foreach (var r in _reminders)
+        {
+            if (r.IsCompleted) continue;
+            var d = ReminderEntry.ParseDate(r.BsDate);
+            if (d is not null && d.Value.Year == bsYear && d.Value.Month == bsMonth)
+            {
+                result.Add(d.Value.Day);
+                if (result.Count == daysInMonth) return result; // early exit: all days covered
+            }
+
+            if (r.Recurrence == ReminderRecurrence.None) continue;
+            // Check each day of the month against this recurring reminder.
+            for (int day = 1; day <= daysInMonth; day++)
+            {
+                if (!result.Contains(day) && WouldRecurOnDate(r, bsYear, bsMonth, day))
+                    result.Add(day);
+            }
+            if (result.Count == daysInMonth) return result;
+        }
+        return result;
+    }
+
     public IReadOnlyList<ReminderEntry> GetRecurringForDate(int bsYear, int bsMonth, int bsDay)
     {
         var results = new List<ReminderEntry>();
@@ -214,7 +242,7 @@ public sealed class ReminderService : IReminderService, IDisposable
         var toRemove = new List<string>();
         bool changed = false;
 
-        foreach (var r in _reminders.ToList())
+        foreach (var r in _reminders)
         {
             if (r.IsCompleted) continue;
 
@@ -400,7 +428,7 @@ public sealed class ReminderService : IReminderService, IDisposable
 
     /// <summary>
     /// Checks whether a recurring reminder would occur on the target date.
-    /// Uses O(1) math for Daily/Weekly, simulation from original date for Monthly.
+    /// Uses O(1) math for all recurrence types.
     /// </summary>
     private bool WouldRecurOnDate(ReminderEntry r, int targetY, int targetM, int targetD)
     {
@@ -445,9 +473,12 @@ public sealed class ReminderService : IReminderService, IDisposable
                 return daysDiff % 7 == 0;
 
             case ReminderRecurrence.Monthly:
-                // Monthly is complex due to BS month day count variations (day clamping).
-                // Simulate from original date using AddMonths(orig, n) to avoid drift.
-                return WouldRecurMonthlyOnDate(origY, origM, origD, targetY, targetM, targetD, targetAd.Value);
+                // O(1): the expected BS day in any future month is min(origDay, daysInMonth(targetY, targetM)).
+                // This mirrors AdvanceToNextOccurrence which already uses this same formula.
+                if (targetY < origY || (targetY == origY && targetM <= origM)) return false;
+                int maxDayM = _adapter.GetDaysInMonth(targetY, targetM);
+                if (maxDayM <= 0) return false;
+                return targetD == Math.Min(origD, maxDayM);
 
             case ReminderRecurrence.Yearly:
                 // Same month every year, day clamped to what that month supports.
@@ -462,23 +493,4 @@ public sealed class ReminderService : IReminderService, IDisposable
         }
     }
 
-    private bool WouldRecurMonthlyOnDate(int origY, int origM, int origD,
-                                          int targetY, int targetM, int targetD,
-                                          DateTime targetAd)
-    {
-        for (int n = 1; n <= 36; n++)
-        {
-            var next = _adapter.AddMonths(origY, origM, origD, n);
-            if (next is null) break;
-
-            if (next.Value.Year == targetY && next.Value.Month == targetM && next.Value.Day == targetD)
-                return true;
-
-            // Overshot the target date: stop early
-            var nextAd = _adapter.BsToAd(next.Value.Year, next.Value.Month, next.Value.Day);
-            if (nextAd is not null && nextAd.Value.Date > targetAd.Date)
-                break;
-        }
-        return false;
-    }
 }

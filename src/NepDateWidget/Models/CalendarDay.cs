@@ -49,4 +49,24 @@ public sealed class CalendarDay
 
     /// <summary>Event names in Nepali for this date. Empty array if none or outside data range.</summary>
     public string[] EventsNp { get; init; } = Array.Empty<string>();
+
+    // ── Pre-computed format strings ────────────────────────────────────────────
+    // Populated by CalendarService.GetMonth() from a single GetCellData adapter call.
+    // Stored here so CalendarDayViewModel and DateFormatter never need to re-allocate
+    // a NepaliDate just to format the date for the copy-date context menu.
+
+    /// <summary>Corresponding AD date. Null for padding cells or on conversion error.</summary>
+    public DateTime? AdDate { get; init; }
+
+    /// <summary>BS short English (e.g. "2082/12/20"). Empty for padding cells.</summary>
+    public string BsShortEn { get; init; } = string.Empty;
+
+    /// <summary>BS short Nepali (e.g. "२०८२/१२/२०"). Empty for padding cells.</summary>
+    public string BsShortNe { get; init; } = string.Empty;
+
+    /// <summary>BS long English (e.g. "Chaitra 20, 2082"). Empty for padding cells.</summary>
+    public string BsLongEn { get; init; } = string.Empty;
+
+    /// <summary>BS long Nepali (e.g. "चैत २०, २०८२"). Empty for padding cells.</summary>
+    public string BsLongNe { get; init; } = string.Empty;
 }

@@ -74,7 +74,16 @@ public sealed class SettingsService : ISettingsService, IDisposable
     /// </summary>
     public void Load()
     {
-        _cachedDefaults = LoadDefaultSettings();
+        // Read the default file once and pass it to both methods that need it,
+        // eliminating a second file read inside MergeNewSettingKeys.
+        string defaultJson = string.Empty;
+        if (File.Exists(_defaultFilePath))
+        {
+            try { defaultJson = File.ReadAllText(_defaultFilePath); }
+            catch (Exception ex) { Helpers.Log.Warn($"SettingsService: could not read default file: {ex.Message}"); }
+        }
+
+        _cachedDefaults = ParseDefaultSettings(defaultJson);
 
         if (!File.Exists(_settingsPath))
         {
@@ -90,7 +99,7 @@ public sealed class SettingsService : ISettingsService, IDisposable
         }
         else
         {
-            MergeNewSettingKeys();
+            MergeNewSettingKeys(defaultJson);
             LoadAndValidateFromDisk();
         }
 
@@ -102,13 +111,27 @@ public sealed class SettingsService : ISettingsService, IDisposable
         });
     }
 
+    private WidgetSettings? ParseDefaultSettings(string json)
+    {
+        if (string.IsNullOrEmpty(json)) return null;
+        try
+        {
+            return JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
+        }
+        catch (Exception ex)
+        {
+            Helpers.Log.Warn($"SettingsService: failed to parse defaults: {ex.Message}");
+            return null;
+        }
+    }
+
     private WidgetSettings? LoadDefaultSettings()
     {
         try
         {
             if (!File.Exists(_defaultFilePath)) return null;
             var json = File.ReadAllText(_defaultFilePath);
-            return JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
+            return ParseDefaultSettings(json);
         }
         catch (Exception ex)
         {
@@ -141,13 +164,12 @@ public sealed class SettingsService : ISettingsService, IDisposable
     /// back atomically.  Runs at every launch so updates automatically provision
     /// new settings with their intended default values.
     /// </summary>
-    private void MergeNewSettingKeys()
+    private void MergeNewSettingKeys(string defaultJson)
     {
-        if (!File.Exists(_defaultFilePath)) return;
+        if (string.IsNullOrEmpty(defaultJson)) return;
         try
         {
             var userJson    = File.ReadAllText(_settingsPath);
-            var defaultJson = File.ReadAllText(_defaultFilePath);
 
             using var userDoc    = JsonDocument.Parse(userJson);
             using var defaultDoc = JsonDocument.Parse(defaultJson);

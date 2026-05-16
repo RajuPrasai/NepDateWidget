@@ -282,6 +282,36 @@ public sealed class NepaliDateAdapter : INepaliDateAdapter
         catch { return null; }
     }
 
+    public (bool IsPublicHoliday, string TithiEn, string TithiNp, string[] EventsEn, string[] EventsNp,
+            DateTime? AdDate, string BsShortEn, string BsShortNe, string BsLongEn, string BsLongNe)
+        GetCellData(int bsYear, int bsMonth, int bsDay)
+    {
+        try
+        {
+            // ONE NepaliDate allocation covers all six data needs:
+            // calendar info, AD date, and all four BS format strings.
+            var n = new NepaliDate(bsYear, bsMonth, bsDay);
+            var info = n.GetCalendarInfo();
+            return (
+                info.IsPublicHoliday,
+                info.TithiEn  ?? string.Empty,
+                info.TithiNp  ?? string.Empty,
+                info.EventsEn ?? Array.Empty<string>(),
+                info.EventsNp ?? Array.Empty<string>(),
+                n.EnglishDate,
+                n.ToString(),
+                n.ToUnicodeString(),
+                n.ToLongDateString(),
+                n.ToLongDateUnicodeString());
+        }
+        catch
+        {
+            return (false, string.Empty, string.Empty,
+                    Array.Empty<string>(), Array.Empty<string>(),
+                    null, string.Empty, string.Empty, string.Empty, string.Empty);
+        }
+    }
+
     // ── Private helpers ───────────────────────────────────────────────────────
 
     private static void ValidateBsYearMonth(int year, int month)

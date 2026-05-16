@@ -48,6 +48,7 @@ public sealed class MoreViewModelTests
 
         public IReadOnlyList<ReminderEntry> CheckAndFireDueReminders(DateTime nowUtc) => Array.Empty<ReminderEntry>();
         public IReadOnlyList<ReminderEntry> GetMissedReminders() => Array.Empty<ReminderEntry>();
+        public HashSet<int> GetHasRemindersForMonth(int bsYear, int bsMonth) => new();
 
         public void RaiseRemindersChanged() => RemindersChanged?.Invoke(this, EventArgs.Empty);
     }

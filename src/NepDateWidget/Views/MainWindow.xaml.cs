@@ -58,6 +58,7 @@ public partial class MainWindow : Window
     // ── Shell window (lazy) ──────────────────────────────────────────────────
     private ExpandedShellWindow? _shell;
     private RunBoxSpotlightWindow? _spotlight;
+    private IntPtr _cachedShellTrayHwnd;
 
     private readonly ISettingsService _settingsService;
     private readonly IAppStateService _appStateService;
@@ -274,7 +275,21 @@ public partial class MainWindow : Window
         else
         {
             if (_shell is not null)
-                _shell.AnimateAndHide();
+            {
+                // Detach and destroy the shell once the hide animation finishes.
+                // Nulling _shell immediately so the expand path can recreate it fresh
+                // without waiting for the animation. ForceClose() inside the handler
+                // triggers OnClosing (which persists size/position and saves settings)
+                // and then tears down the window for real.
+                var dying = _shell;
+                _shell = null;
+                dying.IsVisibleChanged += (_, e) =>
+                {
+                    if ((bool)e.NewValue == false)
+                        dying.ForceClose();
+                };
+                dying.AnimateAndHide();
+            }
 
             if (ViewModel.AnimationEnabled)
                 PlayPillBounce();
@@ -459,11 +474,24 @@ public partial class MainWindow : Window
 
     // ── Shell owner / topmost recovery ───────────────────────────────────────
 
+    /// <summary>
+    /// Returns the Shell_TrayWnd HWND, using a cached value after the first lookup.
+    /// IsWindow is an O(1) kernel handle check; FindWindow is only called on cache miss
+    /// (first call, or after explorer.exe restart).
+    /// </summary>
+    private IntPtr GetShellTrayWnd()
+    {
+        if (_cachedShellTrayHwnd != IntPtr.Zero && Win32Interop.IsWindow(_cachedShellTrayHwnd))
+            return _cachedShellTrayHwnd;
+        _cachedShellTrayHwnd = Win32Interop.FindWindow("Shell_TrayWnd", null);
+        return _cachedShellTrayHwnd;
+    }
+
     private void EnsureShellOwner()
     {
         if (_hwnd == IntPtr.Zero) return;
 
-        IntPtr shellTray = Win32Interop.FindWindow("Shell_TrayWnd", null);
+        IntPtr shellTray = GetShellTrayWnd();
         if (shellTray == IntPtr.Zero) return;
 
         var interop = new WindowInteropHelper(this);
@@ -475,7 +503,7 @@ public partial class MainWindow : Window
     {
         if (_hwnd == IntPtr.Zero) return;
 
-        IntPtr shellTray = Win32Interop.FindWindow("Shell_TrayWnd", null);
+        IntPtr shellTray = GetShellTrayWnd();
         if (shellTray == IntPtr.Zero) return;
 
         for (IntPtr h = Win32Interop.GetWindow(_hwnd, Win32Interop.GW_HWNDPREV);
