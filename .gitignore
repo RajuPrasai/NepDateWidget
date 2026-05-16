@@ -88,3 +88,4 @@ $RECYCLE.BIN/
 
 # ── Local working notes (AI scratchpad, prep checklists, etc.) ───────────────
 AI/
+*.lscache
