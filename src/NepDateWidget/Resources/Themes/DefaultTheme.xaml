@@ -20,6 +20,7 @@
 
     <!-- Accent (today highlight, active state) -->
     <SolidColorBrush x:Key="WidgetAccentBrush" Color="#89B4FA" />
+  <SolidColorBrush x:Key="WidgetHoverBrushLight" Color="#cfe1fd" />
 
     <!-- Saturday / holiday highlight -->
     <SolidColorBrush x:Key="WidgetHolidayBrush" Color="#F38BA8" />

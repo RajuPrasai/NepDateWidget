@@ -269,6 +269,71 @@
         <Setter Property="Foreground" Value="{DynamicResource WidgetMutedForegroundBrush}" />
     </Style>
 
+    <!-- iOS-style toggle CheckBox - use everywhere instead of the default WPF CheckBox -->
+    <Style x:Key="WidgetCheckBox" TargetType="CheckBox">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+        <Setter Property="Cursor"     Value="Hand" />
+        <Setter Property="Margin"     Value="0,2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border x:Name="Track"
+                                Width="34" Height="18"
+                                CornerRadius="9"
+                                Background="{DynamicResource WidgetInputBrush}"
+                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                BorderThickness="0.7">
+                            <Border x:Name="Thumb"
+                                    Width="14" Height="14"
+                                    CornerRadius="7"
+                                    Background="{DynamicResource WidgetInputBorderBrush}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    Margin="1,0,0,0" />
+                        </Border>
+                        <ContentPresenter Margin="6,0,0,0" VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Track" Property="Background"         Value="{DynamicResource WidgetAccentBrush}" />
+                            <Setter TargetName="Track" Property="BorderBrush"        Value="{DynamicResource WidgetAccentBrush}" />
+                            <Setter TargetName="Thumb" Property="Background"         Value="White" />
+                            <Setter TargetName="Thumb" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="Thumb" Property="Margin"             Value="0,0,1,0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Thin themed progress bar for job progress indicators -->
+    <Style x:Key="WidgetProgressBar" TargetType="ProgressBar">
+        <Setter Property="Height"          Value="5" />
+        <Setter Property="Minimum"         Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Background"      Value="{DynamicResource WidgetInputBorderBrush}" />
+        <Setter Property="Foreground"      Value="{DynamicResource WidgetAccentBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ProgressBar">
+                    <Grid SnapsToDevicePixels="True">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="3" />
+                        <Grid x:Name="PART_Track" ClipToBounds="True">
+                            <Border x:Name="PART_Indicator"
+                                    Background="{TemplateBinding Foreground}"
+                                    CornerRadius="3"
+                                    HorizontalAlignment="Left" />
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="InfoPillBadgeStyle" TargetType="Button">
         <Setter Property="Width"           Value="20" />
         <Setter Property="Height"          Value="20" />

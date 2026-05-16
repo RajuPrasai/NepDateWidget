@@ -80,7 +80,7 @@ public class CalendarDayViewModelUpdateTests
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    // EVENTS: clearing — core regression for "events repeating after navigation"
+    // EVENTS: clearing - core regression for "events repeating after navigation"
     // When a cell transitions from a day WITH events to one WITHOUT (or to a
     // padding cell), VisibleEvents must be empty and WPF bindings must be notified.
     // ════════════════════════════════════════════════════════════════════════
@@ -148,7 +148,7 @@ public class CalendarDayViewModelUpdateTests
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    // EVENTS: populating — transition from no-events to events
+    // EVENTS: populating - transition from no-events to events
     // ════════════════════════════════════════════════════════════════════════
 
     [Fact]
@@ -220,7 +220,7 @@ public class CalendarDayViewModelUpdateTests
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    // EVENTS: content-same optimisation — no unnecessary PropertyChanged
+    // EVENTS: content-same optimisation - no unnecessary PropertyChanged
     // ════════════════════════════════════════════════════════════════════════
 
     [Fact]
@@ -240,7 +240,7 @@ public class CalendarDayViewModelUpdateTests
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    // TITHI: clearing — core regression for "tithi repeating after navigation"
+    // TITHI: clearing - core regression for "tithi repeating after navigation"
     // ════════════════════════════════════════════════════════════════════════
 
     [Fact]
@@ -320,7 +320,7 @@ public class CalendarDayViewModelUpdateTests
     public void Update_SameTithiContent_DoesNotFirePropertyChanged_TithiText()
     {
         var vm = new CalendarDayViewModel(CurrentMonth(tithiEn: "Dashami"), showTithi: true);
-        // Same tithi in new day — SetProperty should suppress the notification.
+        // Same tithi in new day - SetProperty should suppress the notification.
         var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth(tithiEn: "Dashami")));
         Assert.DoesNotContain(nameof(vm.TithiText), fired);
     }
@@ -494,7 +494,7 @@ public class CalendarDayViewModelUpdateTests
     [Fact]
     public void Update_Nepali_CurrentMonthToPadding_ClearsDayText()
     {
-        // Nepali day text uses Unicode digits — must also clear to empty on padding.
+        // Nepali day text uses Unicode digits - must also clear to empty on padding.
         var vm = new CalendarDayViewModel(CurrentMonth(day: 7), isNepali: true);
         Assert.Equal("७", vm.DayText);
         DoUpdate(vm, Padding(), isNepali: true);
@@ -511,7 +511,7 @@ public class CalendarDayViewModelUpdateTests
     public void Update_AlwaysFiresPropertyChanged_IsCurrentMonth()
     {
         var vm = new CalendarDayViewModel(CurrentMonth());
-        // Navigate to a cell with the same IsCurrentMonth=true — must still notify.
+        // Navigate to a cell with the same IsCurrentMonth=true - must still notify.
         var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth()));
         Assert.Contains(nameof(vm.IsCurrentMonth), fired);
     }

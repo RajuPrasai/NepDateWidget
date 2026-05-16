@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Helpers;
+using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using NepDateWidget.Services;
 using System.Collections.ObjectModel;
@@ -617,8 +617,6 @@ public sealed class CalendarViewModel : ViewModelBase
             : $"{bsPart} | {month.AdMonthLabel}";
 
         AdMonthLabel = month.AdMonthLabel ?? string.Empty;
-
-        IsShowingToday = month.ContainsToday;
         RefreshNavState();
         RefreshFiscalFooter();
 
@@ -629,6 +627,8 @@ public sealed class CalendarViewModel : ViewModelBase
         if (_visibleEventCount > 1)
             foreach (var dayVm in Days)
                 dayVm.UpdateVisibleEventCount(_visibleEventCount);
+
+        IsShowingToday = month.ContainsToday;
     }
 
     private void RefreshLabels()

@@ -2,6 +2,7 @@
 using NepDateWidget.Services;
 using NepDateWidget.ViewModels;
 using NepDateWidget.Views;
+using ImageMagick;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -59,8 +60,9 @@ public partial class App : Application
             System.Diagnostics.Debug.WriteLine($"Log init failed: {logEx}");
         }
 
-        // ── Single-instance guard (skipped under dotnet watch) ──────────────
-        bool isDev = Environment.GetEnvironmentVariable("DOTNET_WATCH") == "1";
+        // ── Single-instance guard (skipped under dotnet watch or VS debugger) ─
+        bool isDev = Environment.GetEnvironmentVariable("DOTNET_WATCH") == "1"
+                  || System.Diagnostics.Debugger.IsAttached;
         bool isFirstInstance;
         try
         {
@@ -101,6 +103,11 @@ public partial class App : Application
                  $" lang={settingsService.Current.Language}" +
                  $" portable={Helpers.AppPaths.IsPortable}" +
                  $" data={Helpers.AppPaths.DataDirectory}");
+
+        // ImageMagick resource limits - applied once at startup.
+        // Limit pixel cache to 50% of available RAM. Do NOT call TrimMemory() - throws on Windows.
+        ResourceLimits.LimitMemory(new Percentage(50));
+        ResourceLimits.Thread = 2;
 
         var nepDateAdapter = new NepaliDateAdapter();
         var calendarService = new CalendarService(nepDateAdapter);
@@ -150,7 +157,12 @@ public partial class App : Application
         _scriptService = new ScriptService(Helpers.AppPaths.ScriptsPath, Helpers.AppPaths.DefaultScriptsPath);
         _scriptService.Load();
 
-        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, runHistoryService: runHistoryService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!, scriptService: _scriptService);
+        var fileTypeService          = new FileTypeService();
+        var imageCompressionService  = new ImageCompressionService();
+        var pdfCompressionService    = new PdfCompressionService();
+        var jobOrchestrationService  = new JobOrchestrationService(imageCompressionService, pdfCompressionService);
+
+        var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, runHistoryService: runHistoryService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!, scriptService: _scriptService, fileTypeService: fileTypeService, jobOrchestrationService: jobOrchestrationService);
         var mainWindow = new MainWindow(mainViewModel, settingsService, _appStateService!);
         mainWindow.SetupReminders(_reminderService, localizationService, nepDateAdapter, _notesService);
 

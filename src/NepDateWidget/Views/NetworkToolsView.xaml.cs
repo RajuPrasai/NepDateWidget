@@ -26,6 +26,11 @@ public partial class NetworkToolsView : UserControl
             if (e.NewValue is NetworkToolsViewModel vm)
                 vm.PropertyChanged += OnVmPropertyChanged;
         };
+
+        Unloaded += (_, _) =>
+        {
+            if (DataContext is NetworkToolsViewModel vm) vm.PropertyChanged -= OnVmPropertyChanged;
+        };
     }
 
     private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)

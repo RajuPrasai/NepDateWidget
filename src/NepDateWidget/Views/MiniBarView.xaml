@@ -57,7 +57,7 @@
             <TextBlock Text="{Binding Line1Text}"
                        Style="{StaticResource MiniBarText}"
                        FontSize="13"
-                       Opacity="0.9"
+                       Opacity="1"
                        FontWeight="Medium"
                        LineHeight="17">
                 <TextBlock.Visibility>

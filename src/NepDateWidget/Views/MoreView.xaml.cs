@@ -17,6 +17,11 @@ public partial class MoreView : UserControl
             _vm = e.NewValue as MoreViewModel;
             if (_vm is not null) _vm.PropertyChanged += OnVmPropertyChanged;
         };
+
+        Unloaded += (_, _) =>
+        {
+            if (_vm is not null) _vm.PropertyChanged -= OnVmPropertyChanged;
+        };
     }
 
     private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)

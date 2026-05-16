@@ -1,4 +1,6 @@
 ﻿using NepDateWidget.ViewModels;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -17,17 +19,23 @@ public partial class ConverterView : UserControl
                     new Action(FocusActiveInput));
         };
 
-        // Also re-focus when the mode changes
-        DataContextChanged += (_, _) =>
+        DataContextChanged += (_, e) =>
         {
-            if (DataContext is ConverterViewModel vm)
-                vm.PropertyChanged += (_, pe) =>
-                {
-                    if (pe.PropertyName is nameof(ConverterViewModel.ActiveMode))
-                        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input,
-                            new Action(FocusActiveInput));
-                };
+            if (e.OldValue is ConverterViewModel oldVm) oldVm.PropertyChanged -= OnVmPropertyChanged;
+            if (e.NewValue is ConverterViewModel vm)    vm.PropertyChanged  += OnVmPropertyChanged;
         };
+
+        Unloaded += (_, _) =>
+        {
+            if (DataContext is ConverterViewModel vm) vm.PropertyChanged -= OnVmPropertyChanged;
+        };
+    }
+
+    private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(ConverterViewModel.ActiveMode))
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input,
+                new Action(FocusActiveInput));
     }
 
     private void FocusActiveInput()

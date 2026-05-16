@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<OutputType Condition="'$(Configuration)' == 'Release'">WinExe</OutputType>
-		<OutputType Condition="'$(Configuration)' != 'Release'">Exe</OutputType>
+		<OutputType>WinExe</OutputType>
 		<TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
-		<SignAssembly>true</SignAssembly>
+		<SignAssembly Condition="'$(Configuration)' == 'Release'">true</SignAssembly>
 		<AssemblyOriginatorKeyFile>NepDateWidget.snk</AssemblyOriginatorKeyFile>
 
 		<!-- Assembly identity -->
@@ -34,6 +33,12 @@
 		<ApplicationIcon>Assets\icon.ico</ApplicationIcon>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 
+	</PropertyGroup>
+
+	<!-- Debug-mode: ensure XAML source info is embedded so VS XAML Hot Reload can match
+	     saved .xaml files to live BAML resources in the running process. -->
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<XamlDebuggingInformation>True</XamlDebuggingInformation>
 	</PropertyGroup>
 
 	<!-- Release-mode optimisations -->
@@ -63,6 +68,8 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="NepDate" Version="2.0.7" />
+		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.*" />
+		<PackageReference Include="QPdfNet" Version="1.5.*" />
 	</ItemGroup>
 
 	<!-- Embedded font families. All fonts are bundled (OFL licensed) so they work regardless of OS install state.

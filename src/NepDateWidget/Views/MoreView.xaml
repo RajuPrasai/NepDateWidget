@@ -1,10 +1,12 @@
 <UserControl x:Class="NepDateWidget.Views.MoreView"
+             x:Name="RootMoreView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
              xmlns:conv="clr-namespace:NepDateWidget.Converters"
+             xmlns:views="clr-namespace:NepDateWidget.Views"
              mc:Ignorable="d"
              UseLayoutRounding="True"
              TextOptions.TextFormattingMode="Display"
@@ -15,6 +17,24 @@
     <UserControl.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
         <conv:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True" />
+
+        <!-- Defined locally so StaticResource resolves at InitializeComponent time,
+             not dependent on the parent window's resource scope. -->
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="Margin"     Value="0,0,0,8" />
+        </Style>
+
+        <Style x:Key="CardPanel" TargetType="Border">
+            <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="CornerRadius"    Value="8" />
+            <Setter Property="Padding"         Value="10,8" />
+            <Setter Property="Margin"          Value="0,0,0,8" />
+        </Style>
 
         <Style x:Key="SectionHeading" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
@@ -114,6 +134,40 @@
             </Style.Triggers>
         </Style>
 
+        <!-- Icon grid button: large square tile with icon + label below -->
+        <Style x:Key="GridIconBtnStyle" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Width"           Value="72" />
+            <Setter Property="Margin"          Value="0,0,8,0" />
+            <Setter Property="Padding"         Value="4" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Tile"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="8"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Tile" Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Tile" Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+                                <Setter TargetName="Tile" Property="Opacity" Value="0.7" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- Slim themed ComboBox (matches Settings dropdowns) -->
         <Style x:Key="ThemedComboBoxStyle" TargetType="ComboBox">
             <Setter Property="Height"          Value="28" />
@@ -179,7 +233,7 @@
                                         MaxHeight="{TemplateBinding MaxDropDownHeight}"
                                         Background="{DynamicResource WidgetInputBrush}"
                                         BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                        BorderThickness="0.7"
+                                        BorderThickness="0.8"
                                         CornerRadius="4"
                                         Margin="0,2,0,0">
                                     <Border.Resources>
@@ -230,125 +284,182 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="6,4">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12,8">
         <StackPanel MaxWidth="1024">
 
-            <!-- Mode selector: Documents | Notes | Reminders -->
-            <Border Background="{DynamicResource WidgetInputBrush}"
+            <!-- ── Icon grid (home screen) ──────────────────────────── -->
+            <StackPanel Visibility="{Binding IsGridVisible, Converter={StaticResource BoolToVis}}"
+                        Margin="0,0,0,8">
+                <!-- Essentials -->
+                <Border Style="{StaticResource CardPanel}" Margin="0,0,0,8">
+                    <StackPanel>
+                        <TextBlock Text="{Binding EssentialsHeadingLabel}" Style="{StaticResource SectionLabel}" />
+                        <WrapPanel>
+                            <Button Command="{Binding NavigateToCommand}" CommandParameter="Documents"
+                                    Style="{StaticResource GridIconBtnStyle}">
+                                <Button.Content>
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                                BorderThickness="0.8" CornerRadius="8" Padding="10"
+                                                HorizontalAlignment="Center" Margin="0,0,0,5">
+                                            <Path Data="{StaticResource IconFiles}"
+                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                  StrokeThickness="1.2" Stretch="Uniform"
+                                                  Width="22" Height="22" />
+                                        </Border>
+                                        <TextBlock Text="{Binding DocsHeadingLabel}"
+                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                   FontSize="11" TextAlignment="Center"
+                                                   HorizontalAlignment="Center" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                            <Button Command="{Binding NavigateToCommand}" CommandParameter="Notes"
+                                    Style="{StaticResource GridIconBtnStyle}">
+                                <Button.Content>
+                                    <StackPanel HorizontalAlignment="Center">
+                    <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                                BorderThickness="0.8" CornerRadius="8" Padding="10"
+                                                HorizontalAlignment="Center" Margin="0,0,0,5">
+                                            <Path Data="{StaticResource IconText}"
+                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                  StrokeThickness="1.2" Stretch="Uniform"
+                                                  Width="22" Height="22" />
+                                        </Border>
+                                        <TextBlock Text="{Binding NotesHeadingLabel}"
+                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                   FontSize="11" TextAlignment="Center"
+                                                   HorizontalAlignment="Center" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                            <Button Command="{Binding NavigateToCommand}" CommandParameter="Reminders"
+                                    Style="{StaticResource GridIconBtnStyle}">
+                                <Button.Content>
+                                    <StackPanel HorizontalAlignment="Center">
+                    <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                                BorderThickness="0.8" CornerRadius="8" Padding="10"
+                                                HorizontalAlignment="Center" Margin="0,0,0,5">
+                                            <Path Data="{StaticResource IconBell}"
+                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                  StrokeThickness="1.2" Stretch="Uniform"
+                                                  Width="22" Height="22" />
+                                        </Border>
+                                        <TextBlock Text="{Binding RemindersHeadingLabel}"
+                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                   FontSize="11" TextAlignment="Center"
+                                                   HorizontalAlignment="Center" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+                <!-- Tools -->
+                <Border Style="{StaticResource CardPanel}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding ToolsHeadingLabel}" Style="{StaticResource SectionLabel}" />
+                        <WrapPanel>
+                            <Button Command="{Binding NavigateToCommand}" CommandParameter="Compression"
+                                    Style="{StaticResource GridIconBtnStyle}">
+                                <Button.Content>
+                                    <StackPanel HorizontalAlignment="Center">
+                    <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                                BorderThickness="0.8" CornerRadius="8" Padding="10"
+                                                HorizontalAlignment="Center" Margin="0,0,0,5">
+                                            <Path Data="{StaticResource IconCompress}"
+                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                  StrokeThickness="1.2" Stretch="Uniform"
+                                                  Width="22" Height="22" />
+                                        </Border>
+                                        <TextBlock Text="{Binding CompressNavLabel}"
+                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                   FontSize="11" TextAlignment="Center"
+                                                   HorizontalAlignment="Center" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                            <Button Command="{Binding NavigateToCommand}" CommandParameter="Resize"
+                                    Style="{StaticResource GridIconBtnStyle}">
+                                <Button.Content>
+                                    <StackPanel HorizontalAlignment="Center">
+                                        <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                                BorderThickness="0.8" CornerRadius="8" Padding="10"
+                                                HorizontalAlignment="Center" Margin="0,0,0,5">
+                                            <Path Data="{StaticResource IconResize}"
+                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                                  StrokeThickness="1.2" Stretch="Uniform"
+                                                  Width="22" Height="22" />
+                                        </Border>
+                                        <TextBlock Text="{Binding ResizeNavLabel}"
+                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                                   FontSize="11" TextAlignment="Center"
+                                                   HorizontalAlignment="Center" TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Button.Content>
+                            </Button>
+                        </WrapPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- ── Back button (shown when a sub-view is active) ─────── -->
+            <Border Visibility="{Binding IsGridVisible, Converter={StaticResource InverseBoolToVis}}"
+                    Background="{DynamicResource WidgetInputBrush}"
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.7"
-                    CornerRadius="7"
-                    Padding="3"
+                    BorderThickness="0.8" CornerRadius="7" Padding="4,2"
                     Margin="0,0,0,8">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <Grid Grid.Column="0">
-                        <Button Command="{Binding SetModeDocumentsCommand}">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsModeDocuments}" Value="True">
-                                            <Setter Property="Opacity"         Value="1" />
-                                            <Setter Property="FontWeight"      Value="SemiBold" />
-                                            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                            <Setter Property="BorderThickness" Value="0.7" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="{StaticResource IconFiles}"
-                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                      StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                                      VerticalAlignment="Center" Margin="0,0,5,0" />
-                                <TextBlock Text="{Binding DocsHeadingLabel}" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
-                              Style="{StaticResource HoverGateStyle}">
-                            <Button Style="{StaticResource InfoPillBadgeStyle}"
-                                    Visibility="{Binding IsModeDocuments, Converter={StaticResource BoolToVis}}"
-                                    Command="{Binding OpenHelpCommand}" CommandParameter="help.more.documents" />
-                        </Grid>
-                    </Grid>
-
-                    <Grid Grid.Column="1">
-                        <Button Command="{Binding SetModeNotesCommand}">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsModeNotes}" Value="True">
-                                            <Setter Property="Opacity"         Value="1" />
-                                            <Setter Property="FontWeight"      Value="SemiBold" />
-                                            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                            <Setter Property="BorderThickness" Value="0.7" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="{StaticResource IconText}"
-                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                      StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                                      VerticalAlignment="Center" Margin="0,0,5,0" />
-                                <TextBlock Text="{Binding NotesHeadingLabel}" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
-                              Style="{StaticResource HoverGateStyle}">
-                            <Button Style="{StaticResource InfoPillBadgeStyle}"
-                                    Visibility="{Binding IsModeNotes, Converter={StaticResource BoolToVis}}"
-                                    Command="{Binding OpenHelpCommand}" CommandParameter="help.more.notes" />
-                        </Grid>
-                    </Grid>
-
-                    <Grid Grid.Column="2">
-                        <Button Command="{Binding SetModeRemindersCommand}">
-                            <Button.Style>
-                                <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsModeReminders}" Value="True">
-                                            <Setter Property="Opacity"         Value="1" />
-                                            <Setter Property="FontWeight"      Value="SemiBold" />
-                                            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                                            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-                                            <Setter Property="BorderThickness" Value="0.7" />
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                            <StackPanel Orientation="Horizontal">
-                                <Path Data="{StaticResource IconBell}"
-                                      Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                      StrokeThickness="1.1" Stretch="Uniform" Width="13" Height="13"
-                                      VerticalAlignment="Center" Margin="0,0,5,0" />
-                                <TextBlock Text="{Binding RemindersHeadingLabel}" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-                        <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
-                              Style="{StaticResource HoverGateStyle}">
-                            <Button Style="{StaticResource InfoPillBadgeStyle}"
-                                    Visibility="{Binding IsModeReminders, Converter={StaticResource BoolToVis}}"
-                                    Command="{Binding OpenHelpCommand}" CommandParameter="help.more.reminders" />
-                        </Grid>
-                    </Grid>
-                </Grid>
+                <Button Command="{Binding GoBackCommand}"
+                        Background="Transparent" BorderThickness="0"
+                        Cursor="Hand" HorizontalAlignment="Left"
+                        Padding="4,6">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background"      Value="Transparent" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Cursor"          Value="Hand" />
+                            <Setter Property="Padding"         Value="4,6" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                Padding="{TemplateBinding Padding}" CornerRadius="5">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Path Data="M10,3 L4,8 L10,13"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.5" Stretch="None"
+                              Width="10" Height="16"
+                              VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="{Binding CurrentSubView}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </Border>
 
             <!-- ── Notes Section ──────────────────────────────────────── -->
-            <Border Visibility="{Binding IsModeNotes, Converter={StaticResource BoolToVis}}"
+            <Border Visibility="{Binding IsSubViewNotes, Converter={StaticResource BoolToVis}}"
                     Background="{DynamicResource WidgetBackgroundBrush}"
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.7" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
+                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
                 <StackPanel>
                     <!-- Search bar + Add button in same row -->
                     <Grid Margin="0,0,0,14">
@@ -359,7 +470,7 @@
                         <Border Grid.Column="0"
                                 Background="{DynamicResource WidgetInputBrush}"
                                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                BorderThickness="0.7" CornerRadius="6" Height="34">
+                                BorderThickness="0.8" CornerRadius="6" Height="34">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -554,10 +665,10 @@
             </Border>
 
             <!-- ── Reminders Section ──────────────────────────────────── -->
-            <Border Visibility="{Binding IsModeReminders, Converter={StaticResource BoolToVis}}"
+            <Border Visibility="{Binding IsSubViewReminders, Converter={StaticResource BoolToVis}}"
                     Background="{DynamicResource WidgetBackgroundBrush}"
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.7" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
+                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
                 <StackPanel>
                     <!-- Search bar + Add button in same row -->
                     <Grid Margin="0,0,0,14">
@@ -568,7 +679,7 @@
                         <Border Grid.Column="0"
                                 Background="{DynamicResource WidgetInputBrush}"
                                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                BorderThickness="0.7" CornerRadius="6" Height="34">
+                                BorderThickness="0.8" CornerRadius="6" Height="34">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -882,10 +993,10 @@
             </Border>
 
             <!-- ── Documents Section ─────────────────────────────────── -->
-            <Border Visibility="{Binding IsModeDocuments, Converter={StaticResource BoolToVis}}"
+            <Border Visibility="{Binding IsSubViewDocuments, Converter={StaticResource BoolToVis}}"
                     Background="{DynamicResource WidgetBackgroundBrush}"
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.7" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
+                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
                 <StackPanel>
 
                     <!-- Search bar + Add button in same row -->
@@ -899,7 +1010,7 @@
                             <Border x:Name="DocSearchBorder"
                                     Background="{DynamicResource WidgetInputBrush}"
                                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                    BorderThickness="0.7" CornerRadius="6" Height="34">
+                                    BorderThickness="0.8" CornerRadius="6" Height="34">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -968,7 +1079,7 @@
                                    Width="{Binding ActualWidth, ElementName=DocSearchBorder}">
                                 <Border Background="{DynamicResource WidgetInputBrush}"
                                         BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                        BorderThickness="0.7" CornerRadius="0,0,5,5" Padding="3">
+                                        BorderThickness="0.8" CornerRadius="0,0,5,5" Padding="3">
                                     <ItemsControl x:Name="DocSuggestionList"
                                                   ItemsSource="{Binding DocSearchSuggestions}"
                                                   MaxHeight="150">
@@ -1215,7 +1326,7 @@
                                 <Border Grid.Column="0"
                                         Background="{DynamicResource WidgetBackgroundBrush}"
                                         BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                        BorderThickness="0.7" CornerRadius="6"
+                                        BorderThickness="0.8" CornerRadius="6"
                                         Height="34" Padding="8,0" Margin="0,0,4,0">
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                         <TextBlock Text="{Binding DocNoFileHintLabel}"
@@ -1452,6 +1563,22 @@
 
                 </StackPanel>
             </Border>
+
+            <!-- ── Compression Sub-view ──────────────────────────────── -->
+            <views:CompressionView
+                DataContext="{Binding Compression}"
+                Visibility="{Binding DataContext.IsSubViewCompression,
+                             ElementName=RootMoreView,
+                             Converter={StaticResource BoolToVis},
+                             FallbackValue=Collapsed}" />
+
+            <!-- ── Resize Sub-view ───────────────────────────────────── -->
+            <views:ResizeView
+                DataContext="{Binding Resize}"
+                Visibility="{Binding DataContext.IsSubViewResize,
+                             ElementName=RootMoreView,
+                             Converter={StaticResource BoolToVis},
+                             FallbackValue=Collapsed}" />
 
         </StackPanel>
     </ScrollViewer>

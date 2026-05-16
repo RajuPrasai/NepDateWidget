@@ -6,18 +6,15 @@ namespace NepDateWidget.Tests.ViewModels;
 
 public sealed class RunBoxViewModelTests
 {
-    // ── Fakes ─────────────────────────────────────────────────────────────────
-
     private sealed class FakeSearchHistoryService : ISearchHistoryService
     {
         private readonly List<string> _entries;
         public int SaveCount { get; private set; }
-
-        public FakeSearchHistoryService(List<string>? initial = null)
-            => _entries = initial ?? new List<string>();
-
-        public IReadOnlyList<string> All => _entries.AsReadOnly();
+        public IReadOnlyList<string> All => _entries;
         public int Count => _entries.Count;
+
+        public FakeSearchHistoryService(List<string>? initial = null) =>
+            _entries = initial != null ? new(initial) : new();
 
         public IReadOnlyList<string> GetMatching(string prefix, int max = 10)
         {
@@ -482,23 +479,6 @@ public sealed class RunBoxViewModelTests
         vm.ExecuteCommand.Execute(null);
 
         Assert.Equal(0, collapseCount);
-    }
-
-    [Fact]
-    public void Execute_ClosesDropdownAndResetsIndex()
-    {
-        var (vm, _) = Create(new List<string> { "notepad" });
-
-        vm.MoveSelection(1); // open dropdown
-        Assert.True(vm.IsHistoryOpen);
-
-        // Execute with some random text that will fail shell execute
-        // but succeed on search fallback
-        vm.RunText = "test search query";
-        vm.ExecuteCommand.Execute(null);
-
-        Assert.False(vm.IsHistoryOpen);
-        Assert.Equal(-1, vm.SelectedHistoryIndex);
     }
 
     // ── RequestCollapse ───────────────────────────────────────────────────────

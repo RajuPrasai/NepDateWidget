@@ -2410,5 +2410,257 @@
   "help.runbox.key.scr": {
     "en": "Run a registered script - type scr then Space",
     "ne": "दर्ता गरिएको स्क्रिप्ट चलाउनुहोस् (scr टाइप गर्नुहोस् त्यसपछि Space)"
+  },
+  "compress.drop_images_pdf": {
+    "en": "Drop images or PDFs here",
+    "ne": "यहाँ तस्वीर वा PDF छोड्नुहोस्"
+  },
+  "compress.drop_images": {
+    "en": "Drop images here",
+    "ne": "यहाँ तस्वीर छोड्नुहोस्"
+  },
+  "compress.browse": {
+    "en": "or click to browse",
+    "ne": "वा क्लिक गरेर खोज्नुहोस्"
+  },
+  "compress.compress_btn": {
+    "en": "Compress",
+    "ne": "कम्प्रेस"
+  },
+  "compress.resize_btn": {
+    "en": "Resize",
+    "ne": "साइज"
+  },
+  "compress.cancel_btn": {
+    "en": "Cancel",
+    "ne": "रद्द"
+  },
+  "compress.level_section": {
+    "en": "Compression level",
+    "ne": "कम्प्रेसन स्तर"
+  },
+  "compress.level_smallest": {
+    "en": "Smallest",
+    "ne": "सबैभन्दा सानो"
+  },
+  "compress.level_low": {
+    "en": "Low",
+    "ne": "कम"
+  },
+  "compress.level_balanced": {
+    "en": "Balanced",
+    "ne": "सन्तुलित"
+  },
+  "compress.level_high": {
+    "en": "High",
+    "ne": "धेरै"
+  },
+  "compress.level_best": {
+    "en": "Best",
+    "ne": "सबैभन्दा राम्रो"
+  },
+  "compress.advanced_btn": {
+    "en": "Advanced options",
+    "ne": "थप विकल्प"
+  },
+  "compress.compressing": {
+    "en": "Compressing…",
+    "ne": "कम्प्रेस हुँदैछ…"
+  },
+  "compress.resizing": {
+    "en": "Resizing…",
+    "ne": "साइज मिलाउँदैछ…"
+  },
+  "compress.progress_of": {
+    "en": "of",
+    "ne": "मध्ये"
+  },
+  "compress.dimensions_section": {
+    "en": "Target dimensions",
+    "ne": "लक्षित आकार"
+  },
+  "compress.also_compress": {
+    "en": "Also compress after resizing",
+    "ne": "साइज मिलाएपछि कम्प्रेस पनि गर्नुहोस्"
+  },
+  "compress.width_label": {
+    "en": "Width (px)",
+    "ne": "चौडाइ (px)"
+  },
+  "compress.height_label": {
+    "en": "Height (px)",
+    "ne": "उचाइ (px)"
+  },
+  "compress.aspect_ratio_hint": {
+    "en": "Leave blank to keep ratio",
+    "ne": "अनुपात राख्न खाली छोड्नुहोस्"
+  },
+  "compress.stretch_warning": {
+    "en": "Both dimensions set - aspect ratio will not be preserved.",
+    "ne": "दुवै आयाम तोकियो - अनुपात जोगाइनेछैन।"
+  },
+  "compress.pdf_not_supported": {
+    "en": "Resize is not supported for PDF files. Use the Compress tool instead.",
+    "ne": "PDF को साइज मिलाउन मिल्दैन। Compress उपकरण प्रयोग गर्नुहोस्।"
+  },
+  "compress.adv_image": {
+    "en": "Image",
+    "ne": "तस्वीर"
+  },
+  "compress.adv_optional_resize": {
+    "en": "Optional resize",
+    "ne": "वैकल्पिक साइज"
+  },
+  "compress.adv_strip_meta": {
+    "en": "Strip EXIF metadata (recommended)",
+    "ne": "EXIF मेटाडेटा हटाउनुहोस् (सुझाव)"
+  },
+  "compress.adv_to_webp": {
+    "en": "Convert to WebP format",
+    "ne": "WebP ढाँचामा बदल्नुहोस्"
+  },
+  "compress.adv_lossless_webp": {
+    "en": "Lossless WebP (larger, no quality loss)",
+    "ne": "Lossless WebP (ठूलो, गुणस्तर हानि छैन)"
+  },
+  "compress.adv_gif": {
+    "en": "GIF",
+    "ne": "GIF"
+  },
+  "compress.adv_optimize_gif": {
+    "en": "Optimize animation frames",
+    "ne": "एनिमेसन फ्रेम सुधार गर्नुहोस्"
+  },
+  "compress.adv_tiff": {
+    "en": "TIFF compression",
+    "ne": "TIFF कम्प्रेसन"
+  },
+  "compress.adv_pdf": {
+    "en": "PDF",
+    "ne": "PDF"
+  },
+  "compress.adv_linearize": {
+    "en": "Linearize (optimize for web / fast open)",
+    "ne": "Linearize गर्नुहोस् (वेब / छिटो खोल्न)"
+  },
+  "compress.adv_resize_width_hint": {
+    "en": "Width px",
+    "ne": "चौडाइ px"
+  },
+  "compress.adv_resize_height_hint": {
+    "en": "Height px",
+    "ne": "उचाइ px"
+  },
+  "compress.adv_aspect_hint": {
+    "en": "Leave either side blank to preserve aspect ratio",
+    "ne": "अनुपात जोगाउन कुनै एक पाटो खाली राख्नुहोस्"
+  },
+  "compress.mixed_type_warning": {
+    "en": "Mixed file types detected. Please select files of the same type.",
+    "ne": "मिश्रित फाइल प्रकार भेटियो। एकै प्रकारका फाइलहरू छान्नुहोस्।"
+  },
+  "compress.summary_done_one": {
+    "en": "1 file done - saved {0} in total, new size is {1}",
+    "ne": "१ फाइल सम्पन्न - कुल {0} बचत, नयाँ आकार {1}"
+  },
+  "compress.summary_done_many": {
+    "en": "{0} files done - saved {1} in total, new size is {2}",
+    "ne": "{0} फाइल सम्पन्न - कुल {1} बचत, नयाँ आकार {2}"
+  },
+  "compress.summary_partial": {
+    "en": "{0} done, {1} failed - saved {2} in total, new size is {3}",
+    "ne": "{0} सम्पन्न, {1} असफल - कुल {2} बचत, नयाँ आकार {3}"
+  },
+  "compress.remove_file": {
+    "en": "Remove",
+    "ne": "हटाउनुहोस्"
+  },
+  "compress.tooltip_resize_width": {
+    "en": "Resize width in pixels (leave blank to preserve original)",
+    "ne": "चौडाइ pixels मा (मूल राख्न खाली छोड्नुहोस्)"
+  },
+  "compress.tooltip_resize_height": {
+    "en": "Resize height in pixels (leave blank to preserve original)",
+    "ne": "उचाइ pixels मा (मूल राख्न खाली छोड्नुहोस्)"
+  },
+  "more.essentials_heading": {
+    "en": "Essentials",
+    "ne": "आवश्यक"
+  },
+  "more.tools_heading": {
+    "en": "Tools",
+    "ne": "उपकरण"
+  },
+  "more.compress_label": {
+    "en": "Compress",
+    "ne": "कम्प्रेस"
+  },
+  "more.resize_label": {
+    "en": "Resize",
+    "ne": "साइज"
+  },
+  "help.compress.title": {
+    "en": "File Compression",
+    "ne": "फाइल कम्प्रेसन"
+  },
+  "help.compress.desc": {
+    "en": "Reduce file size for images and PDFs without compromising quality.",
+    "ne": "गुणस्तरमा सम्झौता नगरी छवि र PDF को आकार घटाउनुहोस्।"
+  },
+  "help.compress.how1": {
+    "en": "Drop images or PDFs onto the drop zone, or click Browse to select files.",
+    "ne": "Drop zone मा छवि वा PDF राख्नुहोस्, वा फाइल छान्न Browse थिच्नुहोस्।"
+  },
+  "help.compress.how2": {
+    "en": "Adjust the compression level from Smallest File to Best Quality.",
+    "ne": "Smallest File देखि Best Quality सम्म कम्प्रेसन स्तर मिलाउनुहोस्।"
+  },
+  "help.compress.how3": {
+    "en": "Click Compress and choose an output folder to save results.",
+    "ne": "Compress थिच्नुहोस् र नतिजा बचत गर्न आउटपुट फोल्डर छान्नुहोस्।"
+  },
+  "help.compress.why1": {
+    "en": "Saves storage space and speeds up file transfers and uploads.",
+    "ne": "भण्डारण ठाउँ बचत गर्छ र फाइल ट्रान्सफर तथा अपलोड छिटो बनाउँछ।"
+  },
+  "help.compress.why2": {
+    "en": "Supports JPEG, PNG, WebP, GIF, TIFF, and PDF formats.",
+    "ne": "JPEG, PNG, WebP, GIF, TIFF र PDF ढाँचाहरू समर्थन गर्छ।"
+  },
+  "help.compress.why3": {
+    "en": "Advanced options let you strip metadata, convert to WebP, or resize while compressing.",
+    "ne": "उन्नत विकल्पले metadata हटाउन, WebP मा रूपान्तरण गर्न, वा कम्प्रेस गर्दा Resize गर्न दिन्छ।"
+  },
+  "help.resize.title": {
+    "en": "Image Resize",
+    "ne": "छवि साइज मिलाउनुहोस्"
+  },
+  "help.resize.desc": {
+    "en": "Resize images to exact pixel dimensions with optional compression.",
+    "ne": "वैकल्पिक कम्प्रेसनसहित छविहरूलाई सटीक pixel आयाममा Resize गर्नुहोस्।"
+  },
+  "help.resize.how1": {
+    "en": "Drop images onto the drop zone, or click Browse to select files.",
+    "ne": "Drop zone मा छवि राख्नुहोस्, वा फाइल छान्न Browse थिच्नुहोस्।"
+  },
+  "help.resize.how2": {
+    "en": "Enter the desired width and/or height in pixels.",
+    "ne": "इच्छित चौडाइ र/वा उचाइ pixels मा लेख्नुहोस्।"
+  },
+  "help.resize.how3": {
+    "en": "Click Resize and choose an output folder to save results.",
+    "ne": "Resize थिच्नुहोस् र नतिजा बचत गर्न आउटपुट फोल्डर छान्नुहोस्।"
+  },
+  "help.resize.why1": {
+    "en": "Leave one dimension blank to automatically preserve the aspect ratio.",
+    "ne": "अनुपात स्वचालित जोगाउन एउटा आयाम खाली राख्नुहोस्।"
+  },
+  "help.resize.why2": {
+    "en": "Enable 'Also Compress' to reduce file size while resizing.",
+    "ne": "Resize गर्दा आकार घटाउन 'Also Compress' सक्षम गर्नुहोस्।"
+  },
+  "help.resize.why3": {
+    "en": "Supports JPEG, PNG, WebP, GIF, and TIFF formats.",
+    "ne": "JPEG, PNG, WebP, GIF र TIFF ढाँचाहरू समर्थन गर्छ।"
   }
 }

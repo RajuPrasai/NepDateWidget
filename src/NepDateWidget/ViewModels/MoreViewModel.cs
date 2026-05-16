@@ -16,16 +16,56 @@ public sealed class MoreViewModel : ViewModelBase
     private readonly IReminderService? _reminderService;
     private readonly IDocumentService? _documentService;
 
-    // ── Mode toggle (Documents | Notes | Reminders) ──────────────────────────
+    // ── Sub-view navigation (null = icon grid) ───────────────────────────────
 
-    private int _modeIndex = 1; // default to Notes tab
+    private string? _currentSubView;
+    public string? CurrentSubView
+    {
+        get => _currentSubView;
+        private set
+        {
+            if (SetProperty(ref _currentSubView, value))
+            {
+                OnPropertyChanged(nameof(IsGridVisible));
+                OnPropertyChanged(nameof(IsSubViewDocuments));
+                OnPropertyChanged(nameof(IsSubViewNotes));
+                OnPropertyChanged(nameof(IsSubViewReminders));
+                OnPropertyChanged(nameof(IsSubViewCompression));
+                OnPropertyChanged(nameof(IsSubViewResize));
+            }
+        }
+    }
+
+    public bool IsGridVisible        => _currentSubView is null;
+    public bool IsSubViewDocuments   => _currentSubView == "Documents";
+    public bool IsSubViewNotes       => _currentSubView == "Notes";
+    public bool IsSubViewReminders   => _currentSubView == "Reminders";
+    public bool IsSubViewCompression => _currentSubView == "Compression";
+    public bool IsSubViewResize      => _currentSubView == "Resize";
+
+    public ICommand NavigateToCommand { get; private set; } = null!;
+    public ICommand GoBackCommand     { get; private set; } = null!;
+
+    // ── Compression / Resize sub-ViewModels ──────────────────────────────────
+
+    public CompressionViewModel Compression { get; private set; } = null!;
+    public ResizeViewModel      Resize      { get; private set; } = null!;
+
+    // ── Mode toggle (Documents | Notes | Reminders) ──────────────────────────
+    // Kept for cancel-on-navigate logic. Not used by MoreView.xaml directly -
+    // IsSubViewXxx properties drive visibility instead.
+
+    private int _modeIndex = 1; // 1 = Notes (default visible sub-view when navigating directly)
     public bool IsModeDocuments => _modeIndex == 0;
     public bool IsModeNotes     => _modeIndex == 1;
     public bool IsModeReminders => _modeIndex == 2;
 
     private void SetMode(int index)
     {
-        if (_modeIndex == index) return;
+        // Skip re-entry only when this sub-view is ALREADY visible (CurrentSubView is set).
+        // When the grid is showing (CurrentSubView == null) always execute, even if modeIndex
+        // already matches - otherwise the initial grid → Notes tile click never navigates.
+        if (_modeIndex == index && _currentSubView is not null) return;
         if (_modeIndex == 0) DoCancelDocumentEdit();
         if (_modeIndex == 1) DoCancelNoteForm();
         if (_modeIndex == 2) DoCancelReminderForm();
@@ -33,6 +73,8 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsModeDocuments));
         OnPropertyChanged(nameof(IsModeNotes));
         OnPropertyChanged(nameof(IsModeReminders));
+        // Sync navigation state so CurrentSubView always reflects the active mode.
+        CurrentSubView = index switch { 0 => "Documents", 1 => "Notes", 2 => "Reminders", _ => null };
     }
 
     public ICommand SetModeDocumentsCommand { get; }
@@ -495,6 +537,11 @@ public sealed class MoreViewModel : ViewModelBase
     public string DeleteLabel          { get; private set; } = string.Empty;
     public string EditLabel            { get; private set; } = string.Empty;
 
+    public string EssentialsHeadingLabel { get; private set; } = string.Empty;
+    public string ToolsHeadingLabel      { get; private set; } = string.Empty;
+    public string CompressNavLabel       { get; private set; } = string.Empty;
+    public string ResizeNavLabel         { get; private set; } = string.Empty;
+
     public string DocsHeadingLabel      { get; private set; } = string.Empty;
     public string NoDocsLabel           { get; private set; } = string.Empty;
     public string NoDocsHintLabel       { get; private set; } = string.Empty;
@@ -567,13 +614,46 @@ public sealed class MoreViewModel : ViewModelBase
         INotesService? notesService = null,
         IReminderService? reminderService = null,
         IDocumentService? documentService = null,
-        INepaliDateAdapter? adapter = null)
+        INepaliDateAdapter? adapter = null,
+        IFileTypeService? fileTypeService = null,
+        IJobOrchestrationService? jobOrchestrationService = null)
     {
         _loc            = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _notesService   = notesService;
         _reminderService = reminderService;
         _documentService = documentService;
         _adapter        = adapter;
+
+        // Navigation
+        NavigateToCommand = new RelayCommand<string>(name =>
+        {
+            if (name is null) return;
+            switch (name)
+            {
+                case "Documents": SetMode(0); break;
+                case "Notes":     SetMode(1); break;
+                case "Reminders": SetMode(2); break;
+                default:          CurrentSubView = name; break;
+            }
+        });
+        GoBackCommand = new RelayCommand(() =>
+        {
+            if (_currentSubView == "Documents") DoCancelDocumentEdit();
+            else if (_currentSubView == "Notes") DoCancelNoteForm();
+            else if (_currentSubView == "Reminders") DoCancelReminderForm();
+            _modeIndex = -1;
+            OnPropertyChanged(nameof(IsModeDocuments));
+            OnPropertyChanged(nameof(IsModeNotes));
+            OnPropertyChanged(nameof(IsModeReminders));
+            CurrentSubView = null;
+        });
+
+        // Compression / Resize (optional: may be null when services are unavailable)
+        if (fileTypeService is not null && jobOrchestrationService is not null)
+        {
+            Compression = new CompressionViewModel(fileTypeService, jobOrchestrationService, localizationService);
+            Resize      = new ResizeViewModel(fileTypeService, jobOrchestrationService, localizationService);
+        }
 
         DeleteNoteCommand        = new RelayCommand<string>(DoDeleteNote);
         StartEditNoteCommand     = new RelayCommand<string>(DoStartEditNote);
@@ -683,6 +763,8 @@ public sealed class MoreViewModel : ViewModelBase
         RefreshNotes();
         RefreshReminders();
         RefreshDocuments();
+        Compression?.OnLanguageChanged();
+        Resize?.OnLanguageChanged();
     }
 
     /// <summary>
@@ -769,6 +851,10 @@ public sealed class MoreViewModel : ViewModelBase
         EditLabel            = _loc.Get("more.edit");
 
         DocsHeadingLabel      = _loc.Get("docs.heading");
+        EssentialsHeadingLabel = _loc.Get("more.essentials_heading");
+        ToolsHeadingLabel      = _loc.Get("more.tools_heading");
+        CompressNavLabel       = _loc.Get("more.compress_label");
+        ResizeNavLabel         = _loc.Get("more.resize_label");
         NoDocsLabel           = _loc.Get("docs.no_docs");
         NoDocsHintLabel       = _loc.Get("docs.no_docs_hint");
         NoDocsResultsLabel    = _loc.Get("docs.no_results");
@@ -824,6 +910,10 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(DeleteLabel));
         OnPropertyChanged(nameof(EditLabel));
         OnPropertyChanged(nameof(DocsHeadingLabel));
+        OnPropertyChanged(nameof(EssentialsHeadingLabel));
+        OnPropertyChanged(nameof(ToolsHeadingLabel));
+        OnPropertyChanged(nameof(CompressNavLabel));
+        OnPropertyChanged(nameof(ResizeNavLabel));
         OnPropertyChanged(nameof(NoDocsLabel));
         OnPropertyChanged(nameof(NoDocsHintLabel));
         OnPropertyChanged(nameof(NoDocsResultsLabel));

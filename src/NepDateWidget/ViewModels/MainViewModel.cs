@@ -469,7 +469,9 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         INepaliDateAdapter? adapter = null,
         IShortcutsService? shortcutsService = null,
         IAppStateService? appStateService = null,
-        IScriptService? scriptService = null)
+        IScriptService? scriptService = null,
+        IFileTypeService? fileTypeService = null,
+        IJobOrchestrationService? jobOrchestrationService = null)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
@@ -536,7 +538,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         TextTools = new TextToolsViewModel(localizationService);
         RunBox = new RunBoxViewModel(runHistoryService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly(AppPaths.DefaultShortcutsPath), scriptService);
         About = new AboutViewModel(localizationService);
-        More = new MoreViewModel(localizationService, notesService, reminderService, documentService, adapter: adapter);
+        More = new MoreViewModel(localizationService, notesService, reminderService, documentService, adapter: adapter, fileTypeService: fileTypeService, jobOrchestrationService: jobOrchestrationService);
 
         // When settings are applied from the Settings tab, sync live state
         Settings.SettingsApplied += (_, _) => SyncFromSettings();
@@ -887,6 +889,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         {
             _syncingFromSettings = false;
         }
+
+        // Theme and background preset were assigned above but their setters were
+        // blocked by _syncingFromSettings. Apply the palette explicitly now that
+        // all properties are committed and the guard is cleared.
+        _themeService.Apply(_theme, _backgroundPreset);
     }
 
     private void RequestExit()

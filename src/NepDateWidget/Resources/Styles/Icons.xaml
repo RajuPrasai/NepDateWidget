@@ -70,5 +70,9 @@
     <StreamGeometry x:Key="IconCheck">M2,8 L6,12 L14,4</StreamGeometry>
     <!-- Plus sign (add) -->
     <StreamGeometry x:Key="IconPlus">M8,2 L8,14 M2,8 L14,8</StreamGeometry>
+    <!-- Compress: file with downward arrow (shrink/save) -->
+    <StreamGeometry x:Key="IconCompress">M4,2 L10,2 L13,5 L13,14 L4,14 Z M10,2 L10,5 L13,5 M8,7 L8,11 M6,9 L8,11 L10,9</StreamGeometry>
+    <!-- Resize: corner arrows pointing outward -->
+    <StreamGeometry x:Key="IconResize">M2,6 L2,2 L6,2 M10,2 L14,2 L14,6 M14,10 L14,14 L10,14 M6,14 L2,14 L2,10</StreamGeometry>
 
 </ResourceDictionary>
