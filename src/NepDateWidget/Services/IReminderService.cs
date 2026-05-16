@@ -40,4 +40,11 @@ public interface IReminderService
 
     /// <summary>Fired when reminders change (add/update/delete/auto-cleanup).</summary>
     event EventHandler? RemindersChanged;
+
+    /// <summary>
+    /// Returns a set of BS day numbers (1-based) within the given BS month that have
+    /// at least one reminder (direct or expanded recurring). One pass over all reminders;
+    /// avoids the O(cells × reminders) per-cell query pattern for calendar dot rendering.
+    /// </summary>
+    HashSet<int> GetHasRemindersForMonth(int bsYear, int bsMonth);
 }

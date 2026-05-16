@@ -61,4 +61,36 @@ internal static class DateFormatter
             new DateFormatOption("ad_long",  adLong,  adLong),
         };
     }
+
+    /// <summary>
+    /// Builds copy options from pre-computed strings already stored on a <see cref="CalendarDay"/>.
+    /// No adapter calls; zero NepaliDate allocations.
+    /// Returns an empty list for padding cells or when required fields are missing.
+    /// </summary>
+    public static IReadOnlyList<DateFormatOption> Build(
+        CalendarDay day,
+        ILocalizationService loc,
+        bool isNepali)
+    {
+        if (loc is null) throw new ArgumentNullException(nameof(loc));
+        if (!day.IsCurrentMonth || !day.AdDate.HasValue) return Array.Empty<DateFormatOption>();
+
+        string bsShort = isNepali ? day.BsShortNe : day.BsShortEn;
+        string bsLong  = isNepali ? day.BsLongNe  : day.BsLongEn;
+
+        if (string.IsNullOrEmpty(bsShort) || string.IsNullOrEmpty(bsLong))
+            return Array.Empty<DateFormatOption>();
+
+        var ad = day.AdDate.Value;
+        string adIso  = ad.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        string adLong = ad.ToString("d MMM yyyy", CultureInfo.InvariantCulture);
+
+        return new[]
+        {
+            new DateFormatOption("bs_short", bsShort, bsShort),
+            new DateFormatOption("bs_long",  bsLong,  bsLong),
+            new DateFormatOption("ad_iso",   adIso,   adIso),
+            new DateFormatOption("ad_long",  adLong,  adLong),
+        };
+    }
 }

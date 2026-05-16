@@ -30,6 +30,12 @@ public partial class TextToolsView : UserControl
                 FocusModeInput(vm.ActiveMode);
             }
         };
+
+        Unloaded += (_, _) =>
+        {
+            if (DataContext is TextToolsViewModel vm)
+                vm.PropertyChanged -= OnVmPropertyChanged;
+        };
     }
 
     private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)

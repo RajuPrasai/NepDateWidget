@@ -601,9 +601,6 @@
 
                 <!-- ── Day grid ──────────────────────────────────────────────────── -->
                 <ItemsControl Grid.Row="1" x:Name="DaysGrid" ItemsSource="{Binding Days}">
-                    <ItemsControl.CacheMode>
-                        <BitmapCache />
-                    </ItemsControl.CacheMode>
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="7" />
@@ -644,18 +641,6 @@
                                                 <Setter Property="BorderBrush" Value="{DynamicResource WidgetGridLineBrush}" />
                                                 <Setter Property="BorderThickness" Value="0,0,1,1" />
                                             </DataTrigger>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding IsPadding}" Value="False" />
-                                                    <Condition Binding="{Binding IsToday}" Value="False" />
-                                                    <Condition Binding="{Binding ShowSaturdayHighlight}" Value="False" />
-                                                    <Condition Binding="{Binding ShowSundayHighlight}" Value="False" />
-                                                    <Condition Binding="{Binding ShowHolidayHighlight}" Value="False" />
-                                                </MultiDataTrigger.Conditions>
-                                                <MultiDataTrigger.Setters>
-                                                    <Setter Property="Background" Value="Transparent" />
-                                                </MultiDataTrigger.Setters>
-                                            </MultiDataTrigger>
                                             <!-- Suppress the right-click menu on padding cells (no date data). -->
                                             <DataTrigger Binding="{Binding HasCopyOptions}" Value="False">
                                                 <Setter Property="ContextMenu" Value="{x:Null}" />

@@ -91,4 +91,17 @@ internal sealed class HolidayWalkingFakeAdapter : INepaliDateAdapter
     public (string FyLabel, int Quarter, int DaysToQuarterEnd, int DaysToYearEnd) GetFiscalYearInfo(int y, int m, int d) => (string.Empty, 1, 0, 0);
     public bool TryParseSmartBsDate(string rawText, out int year, out int month, out int day) { year = month = day = 0; return false; }
     public (int Year, int Month, int Day)? AddMonths(int y, int m, int d, int months) => (y, m, d);
+
+    public (bool IsPublicHoliday, string TithiEn, string TithiNp, string[] EventsEn, string[] EventsNp,
+            DateTime? AdDate, string BsShortEn, string BsShortNe, string BsLongEn, string BsLongNe)
+        GetCellData(int bsYear, int bsMonth, int bsDay)
+    {
+        var (isHoliday, tithiEn, tithiNp, evEn, evNp) = GetCalendarInfo(bsYear, bsMonth, bsDay);
+        return (isHoliday, tithiEn, tithiNp, evEn, evNp,
+                BsToAd(bsYear, bsMonth, bsDay),
+                FormatBsShortEn(bsYear, bsMonth, bsDay),
+                FormatBsShortNe(bsYear, bsMonth, bsDay),
+                FormatBsLongEn(bsYear, bsMonth, bsDay),
+                FormatBsLongNe(bsYear, bsMonth, bsDay));
+    }
 }

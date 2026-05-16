@@ -85,15 +85,17 @@ public sealed class CalendarService : ICalendarService
                               && bsMonth == today.Month
                               && dayNumber == today.Day;
 
-                var (isHoliday, tithiEn, tithiNp, eventsEn, eventsNp) =
-                    _adapter.GetCalendarInfo(bsYear, bsMonth, dayNumber);
+                var (isHoliday, tithiEn, tithiNp, eventsEn, eventsNp,
+                     adDate, bsShortEn, bsShortNe, bsLongEn, bsLongNe) =
+                    _adapter.GetCellData(bsYear, bsMonth, dayNumber);
 
                 cells.Add(new CalendarDay
                 {
                     Year = bsYear,
                     Month = bsMonth,
                     Day = dayNumber,
-                    AdDay = _adapter.BsToAd(bsYear, bsMonth, dayNumber)?.Day ?? 0,
+                    AdDay = adDate?.Day ?? 0,
+                    AdDate = adDate,
                     DayOfWeek = dow,
                     IsCurrentMonth = true,
                     IsToday = isToday,
@@ -103,15 +105,19 @@ public sealed class CalendarService : ICalendarService
                     TithiNp = tithiNp,
                     EventsEn = eventsEn,
                     EventsNp = eventsNp,
+                    BsShortEn = bsShortEn,
+                    BsShortNe = bsShortNe,
+                    BsLongEn = bsLongEn,
+                    BsLongNe = bsLongNe,
                 });
             }
         }
 
         bool containsToday = bsYear == today.Year && bsMonth == today.Month;
 
-        // Compute which AD months this BS month spans (e.g. "Mar/Apr 2026")
-        var firstAd = _adapter.BsToAd(bsYear, bsMonth, 1);
-        var lastAd = _adapter.BsToAd(bsYear, bsMonth, daysInMonth);
+        // Reuse the AdDate already computed in each cell; no extra adapter calls needed.
+        var firstAd = cells.FirstOrDefault(c => c.IsCurrentMonth)?.AdDate;
+        var lastAd  = cells.LastOrDefault(c => c.IsCurrentMonth)?.AdDate;
         string adMonthLabel = string.Empty;
         if (firstAd.HasValue && lastAd.HasValue)
         {

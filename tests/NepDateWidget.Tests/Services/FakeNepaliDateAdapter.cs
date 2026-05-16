@@ -171,4 +171,17 @@ internal sealed class FakeNepaliDateAdapter : INepaliDateAdapter
     public (bool IsPublicHoliday, string TithiEn, string TithiNp, string[] EventsEn, string[] EventsNp)
         GetCalendarInfo(int bsYear, int bsMonth, int bsDay)
             => (false, string.Empty, string.Empty, Array.Empty<string>(), Array.Empty<string>());
+
+    public (bool IsPublicHoliday, string TithiEn, string TithiNp, string[] EventsEn, string[] EventsNp,
+            DateTime? AdDate, string BsShortEn, string BsShortNe, string BsLongEn, string BsLongNe)
+        GetCellData(int bsYear, int bsMonth, int bsDay)
+    {
+        var ad = BsToAd(bsYear, bsMonth, bsDay);
+        return (false, string.Empty, string.Empty, Array.Empty<string>(), Array.Empty<string>(),
+                ad,
+                FormatBsShortEn(bsYear, bsMonth, bsDay),
+                FormatBsShortNe(bsYear, bsMonth, bsDay),
+                FormatBsLongEn(bsYear, bsMonth, bsDay),
+                FormatBsLongNe(bsYear, bsMonth, bsDay));
+    }
 }

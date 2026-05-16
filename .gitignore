@@ -86,6 +86,10 @@ $RECYCLE.BIN/
 .envrc
 !.env.example
 
+# ── Package manager local installs ───────────────────────────────────────────
+winget/
+chocolatey/
+
 # ── Local working notes (AI scratchpad, prep checklists, etc.) ───────────────
 AI/
 *.lscache

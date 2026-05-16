@@ -26,6 +26,12 @@ public partial class UnitView : UserControl
             if (e.NewValue is UnitViewModel vm)
                 vm.PropertyChanged += OnVmPropertyChanged;
         };
+
+        Unloaded += (_, _) =>
+        {
+            if (DataContext is UnitViewModel vm)
+                vm.PropertyChanged -= OnVmPropertyChanged;
+        };
     }
 
     private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)

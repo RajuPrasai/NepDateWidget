@@ -553,17 +553,58 @@ public sealed class CalendarViewModel : ViewModelBase
 
         bool isNepali = string.Equals(_loc.CurrentLanguage, "ne", StringComparison.OrdinalIgnoreCase);
 
-        Days.Clear();
-        foreach (var day in month.Days)
+        // Batch reminder-dot query: one pass over all reminders for the month rather
+        // than calling HasRemindersForDateExpanded per cell (O(cells × reminders)).
+        var reminderDays = _reminderService is not null
+            ? _reminderService.GetHasRemindersForMonth(_displayYear, _displayMonth)
+            : null;
+
+        if (Days.Count == month.Days.Count)
         {
-            var vm = new CalendarDayViewModel(day, isNepali, _showEnglishDayNumbers, _highlightSaturdays,
-                _highlightSundays, _showTithi, _showEvents, _highlightPublicHolidays,
-                _adapter, _loc);
-            if (_reminderService is not null && day.IsCurrentMonth)
-                vm.HasReminders = _reminderService.HasRemindersForDateExpanded(day.Year, day.Month, day.Day);
-            if (_notesService is not null && day.IsCurrentMonth)
-                vm.HasNote = _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
-            Days.Add(vm);
+            // Fast path: update all cells in-place, preserving container elements.
+            // Zero ItemsControl teardown/creation events; only changed bindings re-render.
+            for (int i = 0; i < month.Days.Count; i++)
+            {
+                var day = month.Days[i];
+                Days[i].Update(day, isNepali, _showEnglishDayNumbers, _highlightSaturdays,
+                    _highlightSundays, _showTithi, _showEvents, _highlightPublicHolidays,
+                    _adapter, _loc, _visibleEventCount);
+                if (reminderDays is not null)
+                    Days[i].HasReminders = day.IsCurrentMonth && reminderDays.Contains(day.Day);
+                if (_notesService is not null)
+                    Days[i].HasNote = day.IsCurrentMonth && _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
+            }
+        }
+        else
+        {
+            // Slow path: cell count changed (month has different total rows).
+            // Update overlap in-place, add extras or trim excess.
+            int overlap = Math.Min(Days.Count, month.Days.Count);
+            for (int i = 0; i < overlap; i++)
+            {
+                var day = month.Days[i];
+                Days[i].Update(day, isNepali, _showEnglishDayNumbers, _highlightSaturdays,
+                    _highlightSundays, _showTithi, _showEvents, _highlightPublicHolidays,
+                    _adapter, _loc, _visibleEventCount);
+                if (reminderDays is not null)
+                    Days[i].HasReminders = day.IsCurrentMonth && reminderDays.Contains(day.Day);
+                if (_notesService is not null)
+                    Days[i].HasNote = day.IsCurrentMonth && _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
+            }
+            for (int i = overlap; i < month.Days.Count; i++)
+            {
+                var day = month.Days[i];
+                var vm = new CalendarDayViewModel(day, isNepali, _showEnglishDayNumbers, _highlightSaturdays,
+                    _highlightSundays, _showTithi, _showEvents, _highlightPublicHolidays,
+                    _adapter, _loc);
+                if (reminderDays is not null && day.IsCurrentMonth)
+                    vm.HasReminders = reminderDays.Contains(day.Day);
+                if (_notesService is not null && day.IsCurrentMonth)
+                    vm.HasNote = _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
+                Days.Add(vm);
+            }
+            for (int i = Days.Count - 1; i >= month.Days.Count; i--)
+                Days.RemoveAt(i);
         }
 
         // Dual-format header: "Chaitra 2082 | Mar/Apr 2026"
@@ -581,10 +622,10 @@ public sealed class CalendarViewModel : ViewModelBase
         RefreshNavState();
         RefreshFiscalFooter();
 
-        // Re-apply the current visible-event count to all newly created VMs.
-        // RefreshGrid is called after popup close (OnLanguageChanged), navigation,
-        // and settings changes - all of which rebuild the Days collection. Without
-        // this, cells revert to 1 event row until the next SizeChanged fires.
+        // For VMs created via the slow path (count change), re-apply the current visible-event
+        // count since the constructor defaults to 1. In-place-updated VMs already got the
+        // correct count from Update(). The loop is a no-op for them (UpdateVisibleEventCount
+        // is idempotent).
         if (_visibleEventCount > 1)
             foreach (var dayVm in Days)
                 dayVm.UpdateVisibleEventCount(_visibleEventCount);
@@ -831,11 +872,16 @@ public sealed class CalendarViewModel : ViewModelBase
     private void RefreshReminderDots()
     {
         if (_reminderService is null) return;
+
+        // One batch query for the whole month instead of a per-cell call.
+        var reminderDays = _reminderService.GetHasRemindersForMonth(
+            _displayYear, _displayMonth);
+
         foreach (var dayVm in Days)
         {
             if (dayVm.IsCurrentMonth)
             {
-                bool has = _reminderService.HasRemindersForDateExpanded(dayVm.BsYear, dayVm.BsMonth, dayVm.Day);
+                bool has = reminderDays.Contains(dayVm.Day);
                 dayVm.HasReminders = has;
 
                 if (has)

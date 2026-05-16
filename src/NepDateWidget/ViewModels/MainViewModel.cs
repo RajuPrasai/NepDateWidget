@@ -1,4 +1,5 @@
 using NepDateWidget.Helpers;
+using NepDateWidget.Models;
 using NepDateWidget.Services;
 using System.Windows.Input;
 
@@ -26,6 +27,14 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         get => _isExpanded;
         private set => SetProperty(ref _isExpanded, value);
     }
+
+    // Guards saves and redundant side-effects when SyncFromSettings re-hydrates
+    // property setters after SettingsViewModel.Apply() has already persisted.
+    private bool _syncingFromSettings;
+
+    // Cached today info for the copy-date context menu. Only recomputed when the
+    // AD date changes (i.e. once per day), not on every context-menu open.
+    private CurrentDateInfo? _todayInfo;
 
     // ── Window dimensions ────────────────────────────────────────────────────
 
@@ -89,10 +98,10 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     public bool IsLanguageNe => string.Equals(_language, "ne", StringComparison.OrdinalIgnoreCase);
 
     // ── Copy-today labels (fetched live so they're always today's date) ────────
-    public string CopyTodayBsShortLabel => _calendarService.GetCurrentDateInfo().BsShortEn;
-    public string CopyTodayBsLongLabel => _calendarService.GetCurrentDateInfo().BsLongEn;
-    public string CopyTodayAdShortLabel => _calendarService.GetCurrentDateInfo().AdDate.ToString("yyyy-MM-dd");
-    public string CopyTodayAdLongLabel => _calendarService.GetCurrentDateInfo().AdLong;
+    public string CopyTodayBsShortLabel => GetTodayInfo().BsShortEn;
+    public string CopyTodayBsLongLabel  => GetTodayInfo().BsLongEn;
+    public string CopyTodayAdShortLabel => GetTodayInfo().AdDate.ToString("yyyy-MM-dd");
+    public string CopyTodayAdLongLabel  => GetTodayInfo().AdLong;
     public string MenuCopyTodayLabel { get; private set; } = string.Empty;
 
     // ── Context menu labels (localized) ──────────────────────────────────────
@@ -183,10 +192,10 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _theme, value))
             {
                 _settingsService.Current.Theme = value;
-                _themeService.Apply(value, _backgroundPreset);
+                if (!_syncingFromSettings) _themeService.Apply(value, _backgroundPreset);
                 OnPropertyChanged(nameof(IsThemeDark));
                 OnPropertyChanged(nameof(IsThemeLight));
-                _settingsService.Save();
+                if (!_syncingFromSettings) _settingsService.Save();
             }
         }
     }
@@ -202,9 +211,9 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _backgroundPreset, value))
             {
                 _settingsService.Current.BackgroundPreset = value;
-                _themeService.Apply(_theme, value);
+                if (!_syncingFromSettings) _themeService.Apply(_theme, value);
                 NotifyPresetSelection();
-                _settingsService.Save();
+                if (!_syncingFromSettings) _settingsService.Save();
             }
         }
     }
@@ -231,7 +240,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
                 OnPropertyChanged(nameof(CornerRadiusValue));
                 OnPropertyChanged(nameof(IsCornerRounded));
                 OnPropertyChanged(nameof(IsCornerSharp));
-                _settingsService.Save();
+                if (!_syncingFromSettings) _settingsService.Save();
             }
         }
     }
@@ -249,7 +258,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _animationEnabled, value))
             {
                 _settingsService.Current.AnimationEnabled = value;
-                _settingsService.Save();
+                if (!_syncingFromSettings) _settingsService.Save();
             }
         }
     }
@@ -264,7 +273,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             {
                 _settingsService.Current.TransparentWhenCollapsed = value;
                 OnPropertyChanged(nameof(IsCollapsedTransparent));
-                _settingsService.Save();
+                if (!_syncingFromSettings) _settingsService.Save();
             }
         }
     }
@@ -282,7 +291,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             {
                 _settingsService.Current.AutoStart = value;
                 _autoStartService.SetEnabled(value);
-                _settingsService.Save();
+                if (!_syncingFromSettings) _settingsService.Save();
             }
         }
     }
@@ -468,8 +477,6 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         _autoStartService = autoStartService ?? throw new ArgumentNullException(nameof(autoStartService));
         _calendarService = calendarService ?? throw new ArgumentNullException(nameof(calendarService));
         _ = conversionService ?? throw new ArgumentNullException(nameof(conversionService));
-
-        _settingsService.Load();
 
         var s = _settingsService.Current;
         // Widget always starts in collapsed mode (desktop widget convention).
@@ -833,45 +840,53 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void SyncFromSettings()
     {
-        var s = _settingsService.Current;
-        Language = s.Language;
-        Theme = s.Theme;
-        BackgroundPreset = s.BackgroundPreset;
-        CornerStyle = s.CornerStyle;
-        AnimationEnabled = s.AnimationEnabled;
-        AutoStart = s.AutoStart;
-        TransparentWhenCollapsed = s.TransparentWhenCollapsed;
-        ApplyFont(s.FontFamily);
-        ApplyHelpBadgeVisibility(s.ShowHelpBadges);
+        _syncingFromSettings = true;
+        try
+        {
+            var s = _settingsService.Current;
+            Language = s.Language;
+            Theme = s.Theme;
+            BackgroundPreset = s.BackgroundPreset;
+            CornerStyle = s.CornerStyle;
+            AnimationEnabled = s.AnimationEnabled;
+            AutoStart = s.AutoStart;
+            TransparentWhenCollapsed = s.TransparentWhenCollapsed;
+            ApplyFont(s.FontFamily);
+            ApplyHelpBadgeVisibility(s.ShowHelpBadges);
 
-        // Sync collapsed display toggles to mini bar
-        MiniBar.ShowTimezone = s.ShowTimezone;
-        MiniBar.ClockFormat = s.ClockFormat;
-        MiniBar.SelectedTimezoneId = s.SelectedTimezoneId;
-        MiniBar.ShowOffset = s.ShowOffset;
-        MiniBar.ShowDayOfWeek = s.ShowDayOfWeek;
-        MiniBar.ShowEnglishDate = s.ShowEnglishDate;
+            // Sync collapsed display toggles to mini bar
+            MiniBar.ShowTimezone = s.ShowTimezone;
+            MiniBar.ClockFormat = s.ClockFormat;
+            MiniBar.SelectedTimezoneId = s.SelectedTimezoneId;
+            MiniBar.ShowOffset = s.ShowOffset;
+            MiniBar.ShowDayOfWeek = s.ShowDayOfWeek;
+            MiniBar.ShowEnglishDate = s.ShowEnglishDate;
 
-        // Sync calendar display settings
-        Calendar.UpdateDisplaySettings(s.ShowEnglishDayNumbers, s.HighlightSaturdays, s.HighlightSundays,
-            s.ShowTithi, s.ShowEvents, s.HighlightPublicHolidays);
-        Calendar.ShowHolidayCountdown = s.ShowHolidayCountdown;
-        _themeService.OverrideHighlightColor(s.HighlightColor);
+            // Sync calendar display settings
+            Calendar.UpdateDisplaySettings(s.ShowEnglishDayNumbers, s.HighlightSaturdays, s.HighlightSundays,
+                s.ShowTithi, s.ShowEvents, s.HighlightPublicHolidays);
+            Calendar.ShowHolidayCountdown = s.ShowHolidayCountdown;
+            _themeService.OverrideHighlightColor(s.HighlightColor);
 
-        // Sync new settings
-        ShowSecondsInClock = s.ShowSecondsInClock;
-        ShowFiscalYear = s.ShowFiscalYear;
-        NotificationDurationSeconds = s.NotificationDurationSeconds;
-        NotificationSound = s.NotificationSound;
+            // Sync new settings
+            ShowSecondsInClock = s.ShowSecondsInClock;
+            ShowFiscalYear = s.ShowFiscalYear;
+            NotificationDurationSeconds = s.NotificationDurationSeconds;
+            NotificationSound = s.NotificationSound;
 
-        // Sync show seconds to mini bar
-        MiniBar.ShowSeconds = s.ShowSecondsInClock;
+            // Sync show seconds to mini bar
+            MiniBar.ShowSeconds = s.ShowSecondsInClock;
 
-        // Sync show fiscal year to calendar
-        Calendar.ShowFiscalYear = s.ShowFiscalYear;
+            // Sync show fiscal year to calendar
+            Calendar.ShowFiscalYear = s.ShowFiscalYear;
 
-        // Sync timezone to the Time converter so it reflects the latest setting
-        Calendar.Converter.UpdateHomeTimezone(s.SelectedTimezoneId);
+            // Sync timezone to the Time converter so it reflects the latest setting
+            Calendar.Converter.UpdateHomeTimezone(s.SelectedTimezoneId);
+        }
+        finally
+        {
+            _syncingFromSettings = false;
+        }
     }
 
     private void RequestExit()
@@ -901,11 +916,19 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     public void RefreshCopyLabels()
     {
+        // Recompute the cache only if the AD date has rolled over since last call.
+        var today = DateTime.Today;
+        if (_todayInfo is null || _todayInfo.AdDate.Date != today)
+            _todayInfo = _calendarService.GetCurrentDateInfo();
+
         OnPropertyChanged(nameof(CopyTodayBsShortLabel));
         OnPropertyChanged(nameof(CopyTodayBsLongLabel));
         OnPropertyChanged(nameof(CopyTodayAdShortLabel));
         OnPropertyChanged(nameof(CopyTodayAdLongLabel));
     }
+
+    private CurrentDateInfo GetTodayInfo()
+        => _todayInfo ??= _calendarService.GetCurrentDateInfo();
 
     private void RefreshMenuLabels()
     {
