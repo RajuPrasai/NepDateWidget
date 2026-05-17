@@ -599,6 +599,9 @@ public sealed class MoreViewModel : ViewModelBase
     public string HintReminderTime { get; private set; } = string.Empty;
     public string HintReminderNotes { get; private set; } = string.Empty;
     public string SaveLabel { get; private set; } = string.Empty;
+    public string SaveNoteLabel { get; private set; } = string.Empty;
+    public string SaveReminderLabel { get; private set; } = string.Empty;
+    public string SaveDocLabel { get; private set; } = string.Empty;
     public string CancelLabel { get; private set; } = string.Empty;
     public string DeleteLabel { get; private set; } = string.Empty;
     public string EditLabel { get; private set; } = string.Empty;
@@ -929,6 +932,9 @@ public sealed class MoreViewModel : ViewModelBase
             _loc.Get("reminder.recurrence_yearly"),
         };
         SaveLabel = _loc.Get("more.save");
+        SaveNoteLabel = _loc.Get("more.save_note");
+        SaveReminderLabel = _loc.Get("more.save_reminder");
+        SaveDocLabel = _loc.Get("more.save_doc");
         CancelLabel = _loc.Get("more.cancel");
         DeleteLabel = _loc.Get("more.delete");
         EditLabel = _loc.Get("more.edit");
@@ -989,6 +995,9 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(HintReminderNotes));
         OnPropertyChanged(nameof(ReminderRecurrenceOptions));
         OnPropertyChanged(nameof(SaveLabel));
+        OnPropertyChanged(nameof(SaveNoteLabel));
+        OnPropertyChanged(nameof(SaveReminderLabel));
+        OnPropertyChanged(nameof(SaveDocLabel));
         OnPropertyChanged(nameof(CancelLabel));
         OnPropertyChanged(nameof(DeleteLabel));
         OnPropertyChanged(nameof(EditLabel));

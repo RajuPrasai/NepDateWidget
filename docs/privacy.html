@@ -111,13 +111,13 @@
 
         <div class="prose">
           <h2>Summary</h2>
-          <p>NepDate Widget does not collect, store, or transmit any personal data. There are no analytics, no telemetry, no accounts, and no advertising. Everything the app does stays on your device.</p>
+          <p>NepDate Widget does not collect, store, or transmit any personal data. There are no analytics, no telemetry, no accounts, and no advertising. All calendar, conversion, notes, reminders, and document features work entirely offline. The optional Network Tools tab makes internet connections only when you explicitly use it.</p>
 
           <h2>What the app does not do</h2>
           <ul>
             <li>Does not collect names, email addresses, or any personally identifiable information.</li>
             <li>Does not track your usage, behavior, or device fingerprint.</li>
-            <li>Does not send any data to the developer or any third party.</li>
+            <li>Does not send any data to the developer or any third party, except when you explicitly use Network Tools features (My IP, WHOIS) which contact external servers to perform the requested lookup.</li>
             <li>Does not use analytics services, crash reporting services, or advertising networks.</li>
           </ul>
 
@@ -126,6 +126,15 @@
 
           <h2>Log files</h2>
           <p>The app writes a local log file (<code>nepdate.log</code>) for diagnostic purposes. This file is stored on your device only. It is never uploaded. If you contact support and choose to share it manually, that is your decision.</p>
+
+          <h2>Network Tools (optional, user-initiated)</h2>
+          <p>The Network Tools tab includes features that require an internet connection. These connections are made only when you actively trigger the feature — never automatically or in the background.</p>
+          <ul>
+            <li><strong>My IP:</strong> Contacts <code>api.ipify.org</code> and <code>api64.ipify.org</code> to retrieve your public IP address. Only a standard HTTPS request is made; no identifying data beyond your IP is sent.</li>
+            <li><strong>WHOIS:</strong> Sends a WHOIS query to <code>whois.iana.org</code> and the relevant registrar WHOIS server over port 43 using the standard WHOIS protocol (RFC 3912). The only data sent is the domain name you entered.</li>
+            <li><strong>Ping, Traceroute, IP Scanner, DNS:</strong> These features operate entirely on your local network or system and do not contact external servers.</li>
+          </ul>
+          <p>Results from Network Tools are displayed in the app only. Nothing is stored beyond the session or transmitted to the developer.</p>
 
           <h2>Third-party libraries</h2>
           <p>NepDate Widget uses open-source libraries listed in <a href="https://github.com/RajuPrasai/NepDateWidget/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener noreferrer">THIRD_PARTY_NOTICES.md</a>. None of these libraries are configured to collect or transmit data.</p>
@@ -145,7 +154,7 @@
             <img class="logo-img" src="assets/logo.webp?v=2" alt="NepDate Widget logo" width="30" height="30" />
             <span>NepDate Widget</span>
           </a>
-          <p>Free Nepali date converter and desktop companion for Windows - BS↔AD calendar, EMI calculator, network tools, and more. All offline.</p>
+          <p>Free Nepali date converter and desktop companion for Windows - BS&harr;AD calendar, EMI calculator, network tools, and more. Core features work fully offline.</p>
         </div>
         <div class="footer-col">
           <p class="footer-heading">Product</p>

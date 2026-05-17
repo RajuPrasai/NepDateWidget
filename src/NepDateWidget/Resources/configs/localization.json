@@ -1403,6 +1403,18 @@
     "en": "Save",
     "ne": "सेभ"
   },
+  "more.save_note": {
+    "en": "Save Note",
+    "ne": "नोट सेभ"
+  },
+  "more.save_reminder": {
+    "en": "Save Reminder",
+    "ne": "रिमाइन्डर सेभ"
+  },
+  "more.save_doc": {
+    "en": "Save Document",
+    "ne": "कागजात सेभ"
+  },
   "more.cancel": {
     "en": "Cancel",
     "ne": "रद्द"

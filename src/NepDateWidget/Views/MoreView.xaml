@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:conv="clr-namespace:NepDateWidget.Converters"
              xmlns:views="clr-namespace:NepDateWidget.Views"
              mc:Ignorable="d"
              UseLayoutRounding="True"
@@ -14,6 +15,34 @@
              d:Width="380">
 
     <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <conv:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True" />
+
+        <!-- Defined locally so StaticResource resolves at InitializeComponent time,
+             not dependent on the parent window's resource scope. -->
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="Margin"     Value="0,0,0,8" />
+        </Style>
+
+        <Style x:Key="CardPanel" TargetType="Border">
+            <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="CornerRadius"    Value="8" />
+            <Setter Property="Padding"         Value="10,8" />
+            <Setter Property="Margin"          Value="0,0,0,8" />
+        </Style>
+
+        <Style x:Key="SectionHeading" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,6" />
+        </Style>
+
         <Style x:Key="ItemCard" TargetType="Border">
             <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
             <Setter Property="CornerRadius" Value="6" />
@@ -74,6 +103,37 @@
             <Setter Property="FontSize" Value="12" />
         </Style>
 
+        <Style x:Key="PillButton" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderBrush"     Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Padding"         Value="14,0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Opacity"         Value="0.55" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
+                    <Setter Property="Opacity" Value="0.9" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <!-- Icon grid button: large square tile with icon + label below -->
         <Style x:Key="GridIconBtnStyle" TargetType="Button">
             <Setter Property="Background"      Value="Transparent" />
@@ -96,7 +156,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Tile" Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                <Setter TargetName="Tile" Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="Tile" Property="Background" Value="{DynamicResource WidgetInputBrush}" />
@@ -108,6 +168,120 @@
             </Setter>
         </Style>
 
+        <!-- Slim themed ComboBox (matches Settings dropdowns) -->
+        <Style x:Key="ThemedComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height"          Value="28" />
+            <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="FontSize"        Value="12" />
+            <Setter Property="Padding"         Value="6,0" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility"   Value="Auto" />
+            <Setter Property="ScrollViewer.CanContentScroll"              Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <Border x:Name="MainBorder"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4" />
+                            <ToggleButton Focusable="False"
+                                          Background="Transparent"
+                                          BorderThickness="0"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
+                                                       RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <Border Background="Transparent" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                            <ContentPresenter x:Name="ContentSite"
+                                              Margin="8,0,28,0"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                              IsHitTestVisible="False" />
+                            <TextBlock Text="▾"
+                                       FontSize="11"
+                                       Foreground="{TemplateBinding Foreground}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,8,0"
+                                       IsHitTestVisible="False" />
+                            <Popup x:Name="PART_Popup"
+                                   Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Border MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Background="{DynamicResource WidgetInputBrush}"
+                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                        BorderThickness="0.8"
+                                        CornerRadius="4"
+                                        Margin="0,2,0,0">
+                                    <Border.Resources>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="OverridesDefaultStyle" Value="True" />
+                                            <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
+                                            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+                                            <Setter Property="Padding"         Value="8,5" />
+                                            <Setter Property="BorderThickness" Value="0" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ComboBoxItem">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                TextElement.Foreground="{TemplateBinding Foreground}"
+                                                                Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter />
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <Trigger Property="IsHighlighted" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                </Trigger>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
+                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Resources>
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="MainBorder" Property="Background"
+                                        Value="{DynamicResource WidgetAccentBrushLight}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12,8">
@@ -145,7 +319,7 @@
                                     Style="{StaticResource GridIconBtnStyle}">
                                 <Button.Content>
                                     <StackPanel HorizontalAlignment="Center">
-                                        <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                    <Border Background="{DynamicResource WidgetBackgroundBrush}"
                                                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                                                 BorderThickness="0.8" CornerRadius="8" Padding="10"
                                                 HorizontalAlignment="Center" Margin="0,0,0,5">
@@ -165,7 +339,7 @@
                                     Style="{StaticResource GridIconBtnStyle}">
                                 <Button.Content>
                                     <StackPanel HorizontalAlignment="Center">
-                                        <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                    <Border Background="{DynamicResource WidgetBackgroundBrush}"
                                                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                                                 BorderThickness="0.8" CornerRadius="8" Padding="10"
                                                 HorizontalAlignment="Center" Margin="0,0,0,5">
@@ -193,7 +367,7 @@
                                     Style="{StaticResource GridIconBtnStyle}">
                                 <Button.Content>
                                     <StackPanel HorizontalAlignment="Center">
-                                        <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                    <Border Background="{DynamicResource WidgetBackgroundBrush}"
                                                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                                                 BorderThickness="0.8" CornerRadius="8" Padding="10"
                                                 HorizontalAlignment="Center" Margin="0,0,0,5">
@@ -240,51 +414,45 @@
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                     BorderThickness="0.8" CornerRadius="7" Padding="4,2"
                     Margin="0,0,0,8">
-                <Grid Background="Transparent">
-                    <Button Command="{Binding GoBackCommand}"
-                            HorizontalAlignment="Left">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Background"      Value="Transparent" />
-                                <Setter Property="BorderThickness" Value="0" />
-                                <Setter Property="Cursor"          Value="Hand" />
-                                <Setter Property="Padding"         Value="4,6" />
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}"
-                                                    Padding="{TemplateBinding Padding}" CornerRadius="5">
-                                                <ContentPresenter />
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Path Data="M10,3 L4,8 L10,13"
-                                  Stroke="{DynamicResource WidgetForegroundBrush}"
-                                  StrokeThickness="1.5" Stretch="None"
-                                  Width="10" Height="16"
-                                  VerticalAlignment="Center" Margin="0,0,6,0" />
-                            <TextBlock Text="{Binding CurrentSubViewTitle}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="13" FontWeight="SemiBold"
-                                       VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,4,0"
-                          Style="{StaticResource HoverGateStyle}">
-                        <Button Style="{StaticResource InfoPillBadgeStyle}"
-                                Command="{Binding OpenHelpCommand}"
-                                CommandParameter="{Binding CurrentSubViewHelpKey}" />
-                    </Grid>
-                </Grid>
+                <Button Command="{Binding GoBackCommand}"
+                        Background="Transparent" BorderThickness="0"
+                        Cursor="Hand" HorizontalAlignment="Left"
+                        Padding="4,6">
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background"      Value="Transparent" />
+                            <Setter Property="BorderThickness" Value="0" />
+                            <Setter Property="Cursor"          Value="Hand" />
+                            <Setter Property="Padding"         Value="4,6" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                                Padding="{TemplateBinding Padding}" CornerRadius="5">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Path Data="M10,3 L4,8 L10,13"
+                              Stroke="{DynamicResource WidgetForegroundBrush}"
+                              StrokeThickness="1.5" Stretch="None"
+                              Width="10" Height="16"
+                              VerticalAlignment="Center" Margin="0,0,6,0" />
+                        <TextBlock Text="{Binding CurrentSubView}"
+                                   Foreground="{DynamicResource WidgetForegroundBrush}"
+                                   FontSize="13" FontWeight="SemiBold"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Button>
             </Border>
 
             <!-- ── Notes Section ──────────────────────────────────────── -->
@@ -373,8 +541,7 @@
 
                     <!-- Add / Edit inline form -->
                     <Border Visibility="{Binding IsNoteFormOpen, Converter={StaticResource BoolToVis}}"
-                            Background="{DynamicResource WidgetBackgroundBrush}"
-                            BorderBrush="{DynamicResource WidgetInputBorderBrush}" BorderThickness="0.7"
+                            Background="{DynamicResource WidgetInputBrush}"
                             CornerRadius="7" Padding="10,10" Margin="0,0,0,8">
                         <StackPanel>
                             <TextBlock Text="{Binding NoteFormTitleLabel}"
@@ -592,8 +759,7 @@
 
                     <!-- Add / Edit inline form -->
                     <Border Visibility="{Binding IsReminderFormOpen, Converter={StaticResource BoolToVis}}"
-                            Background="{DynamicResource WidgetBackgroundBrush}"
-                            BorderBrush="{DynamicResource WidgetInputBorderBrush}" BorderThickness="0.7"
+                            Background="{DynamicResource WidgetInputBrush}"
                             CornerRadius="7" Padding="10,10" Margin="0,0,0,8">
                         <StackPanel>
                             <TextBlock Text="{Binding ReminderFormTitleLabel}"
@@ -674,7 +840,7 @@
                                        Margin="0,0,0,2" />
                             <ComboBox ItemsSource="{Binding ReminderRecurrenceOptions}"
                                       SelectedIndex="{Binding ReminderFormRecurrenceIndex}"
-                                      Style="{StaticResource CompactComboBoxStyle}"
+                                      Style="{StaticResource ThemedComboBoxStyle}"
                                       Margin="0,0,0,8" />
 
                             <!-- End Date (only shown when recurrence is set) -->
@@ -943,7 +1109,7 @@
                                                                         </Border>
                                                                         <ControlTemplate.Triggers>
                                                                             <Trigger Property="IsMouseOver" Value="True">
-                                                                                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                                                                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
                                                                             </Trigger>
                                                                         </ControlTemplate.Triggers>
                                                                     </ControlTemplate>
@@ -975,8 +1141,7 @@
 
                     <!-- Add / Edit inline form -->
                     <Border Visibility="{Binding IsDocFormOpen, Converter={StaticResource BoolToVis}}"
-                            Background="{DynamicResource WidgetBackgroundBrush}"
-                            BorderBrush="{DynamicResource WidgetInputBorderBrush}" BorderThickness="0.7"
+                            Background="{DynamicResource WidgetInputBrush}"
                             CornerRadius="7" Padding="10,10" Margin="0,0,0,8">
                         <StackPanel>
                             <TextBlock Text="{Binding DocFormTitleLabel}"

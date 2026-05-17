@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
              mc:Ignorable="d"
              UseLayoutRounding="True"
              TextOptions.TextFormattingMode="Display"
@@ -12,6 +13,8 @@
              d:Width="300" d:Height="420">
 
     <UserControl.Resources>
+
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis" Invert="False" />
 
         <!-- Chevron geometries for nav buttons -->
         <StreamGeometry x:Key="ChevronLeft">M10,2 L4,8 L10,14</StreamGeometry>

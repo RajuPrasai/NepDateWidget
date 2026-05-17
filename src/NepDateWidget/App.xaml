@@ -13,6 +13,7 @@
             </ResourceDictionary.MergedDictionaries>
             <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
             <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
+            <cvt:StringToImageSourceConverter x:Key="FilePathToImage" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

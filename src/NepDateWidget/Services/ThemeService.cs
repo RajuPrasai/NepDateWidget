@@ -58,6 +58,10 @@ public sealed class ThemeService : IThemeService
     public string CurrentPreset { get; private set; } = "Default";
 
     private string _highlightColorOverride = string.Empty;
+    // Holds the ResourceDictionary currently injected into Application.Current.Resources.MergedDictionaries.
+    // Brushes are batched into this dict and swapped in one operation, firing a single ResourcesChanged
+    // event instead of one per key (22+). This is null before the first Apply() call.
+    private ResourceDictionary? _themeResources;
     // ── Public API ────────────────────────────────────────────────────────────
 
     public void Apply(string theme, string preset)
@@ -72,28 +76,20 @@ public sealed class ThemeService : IThemeService
             string.Equals(k, preset, StringComparison.OrdinalIgnoreCase));
 
         if (canonicalKey is null)
-        {
             canonicalKey = "Default";
-        }
 
         CurrentPreset = canonicalKey;
         ApplyPalette(isDark, palettes[canonicalKey]);
 
         // Re-apply user color override so theme changes don't revert it
         if (!string.IsNullOrEmpty(_highlightColorOverride))
-        {
             ApplyHighlightColorOverride(_highlightColorOverride);
-        }
     }
 
     public void OverrideHighlightColor(string colorHex)
     {
         _highlightColorOverride = colorHex ?? string.Empty;
-        if (string.IsNullOrEmpty(_highlightColorOverride))
-        {
-            return;
-        }
-
+        if (string.IsNullOrEmpty(_highlightColorOverride)) return;
         ApplyHighlightColorOverride(_highlightColorOverride);
     }
 
@@ -110,16 +106,16 @@ public sealed class ThemeService : IThemeService
 
     // ── Private helpers ───────────────────────────────────────────────────────
 
-    private static void ApplyPalette(bool isDark, Palette p)
+    private void ApplyPalette(bool isDark, Palette p)
     {
-        var bg = p.Background;
-        var fg = p.Foreground;
+        var bg  = p.Background;
+        var fg  = p.Foreground;
         var acc = p.Accent;
 
         // Derived colours computed algorithmically
         Color border = Blend(bg, fg, 0.20f);
         Color hover = Blend(bg, fg, 0.10f);
-        Color headerHover = hover;
+        Color accentLight = Blend(bg, acc, 0.15f);
         Color input = Blend(bg, fg, 0.08f);
         Color inputBdr = Blend(bg, fg, 0.25f);
         Color divider = Blend(bg, fg, 0.18f);
@@ -137,39 +133,64 @@ public sealed class ThemeService : IThemeService
         // Padding cells dimmed
         Color padding = Blend(bg, fg, 0.30f);
 
-        SetBrush("WidgetBackgroundBrush", bg);
-        SetBrush("WidgetForegroundBrush", fg);
-        SetBrush("WidgetBorderBrush", border);
-        SetBrush("WidgetAccentBrush", acc);
-        SetBrush("WidgetHolidayBrush", holiday);
-        SetBrush("WidgetHoverBrush", hover);
-        SetBrush("WidgetCalHeaderHoverBrush", headerHover);
-        SetBrush("WidgetDayTodayBrush", acc);
-        SetBrush("WidgetDayTodayTextBrush", todayText);
-        SetBrush("WidgetDaySaturdayBrush", holiday);
-        SetBrush("WidgetDayHolidayTextBrush", HolidayText(holiday));
-        SetBrush("WidgetDayHighlightedBrush", success);
-        SetBrush("WidgetDayWeekendTintBrush", Color.FromArgb(0x10, holiday.R, holiday.G, holiday.B));
-        SetBrush("WidgetDayPaddingBrush", Colors.Transparent);
-        SetBrush("WidgetDayPaddingTextBrush", padding);
-        SetBrush("WidgetInputBrush", input);
-        SetBrush("WidgetInputBorderBrush", inputBdr);
-        SetBrush("WidgetSuccessBrush", success);
-        SetBrush("WidgetErrorBrush", error);
-        SetBrush("WidgetDividerBrush", divider);
+        // Build all brushes into a fresh ResourceDictionary, then swap it in
+        // Application.Current.Resources.MergedDictionaries as a single operation.
+        // This fires ONE ResourcesChanged event instead of 22 sequential ones.
+        if (Application.Current is null) return;
 
-        // Muted foreground - toolbar icons, secondary text
-        Color muted = Blend(bg, fg, 0.40f);
-        SetBrush("WidgetMutedForegroundBrush", muted);
+        var dict = new ResourceDictionary
+        {
+            ["WidgetBackgroundBrush"]       = new SolidColorBrush(bg),
+            ["WidgetForegroundBrush"]       = new SolidColorBrush(fg),
+            ["WidgetBorderBrush"]           = new SolidColorBrush(border),
+            ["WidgetAccentBrush"]           = new SolidColorBrush(acc),
+            ["WidgetAccentBrushLight"]       = new SolidColorBrush(accentLight),
+            ["WidgetHolidayBrush"]          = new SolidColorBrush(holiday),
+            ["WidgetHoverBrush"]            = new SolidColorBrush(hover),
+            ["WidgetCalHeaderHoverBrush"]   = new SolidColorBrush(hover),
+            ["WidgetDayTodayBrush"]         = new SolidColorBrush(acc),
+            ["WidgetDayTodayTextBrush"]     = new SolidColorBrush(todayText),
+            ["WidgetDaySaturdayBrush"]      = new SolidColorBrush(holiday),
+            ["WidgetDayHolidayTextBrush"]   = new SolidColorBrush(HolidayText(holiday)),
+            ["WidgetDayHighlightedBrush"]   = new SolidColorBrush(success),
+            ["WidgetDayWeekendTintBrush"]   = new SolidColorBrush(Color.FromArgb(0x10, holiday.R, holiday.G, holiday.B)),
+            ["WidgetDayPaddingBrush"]       = new SolidColorBrush(Colors.Transparent),
+            ["WidgetDayPaddingTextBrush"]   = new SolidColorBrush(padding),
+            ["WidgetInputBrush"]            = new SolidColorBrush(input),
+            ["WidgetInputBorderBrush"]      = new SolidColorBrush(inputBdr),
+            ["WidgetSuccessBrush"]          = new SolidColorBrush(success),
+            ["WidgetErrorBrush"]            = new SolidColorBrush(error),
+            ["WidgetDividerBrush"]          = new SolidColorBrush(divider),
+            ["WidgetMutedForegroundBrush"]  = new SolidColorBrush(Blend(bg, fg, 0.40f)),
+            ["WidgetGridLineBrush"]         = new SolidColorBrush(Blend(bg, fg, 0.08f)),
+        };
 
-        // Calendar grid lines - very subtle, just enough to separate cells
-        Color gridLine = Blend(bg, fg, 0.08f);
-        SetBrush("WidgetGridLineBrush", gridLine);
+        // If there is no active color override, remove any stale direct-resource
+        // entries that were written by a previous ApplyHighlightColorOverride call.
+        // Those direct entries have higher lookup priority than MergedDictionaries,
+        // so without this cleanup they would shadow the new palette values even after
+        // the user has cleared their custom color.
+        if (string.IsNullOrEmpty(_highlightColorOverride))
+        {
+            var res = Application.Current.Resources;
+            if (res.Contains("WidgetDaySaturdayBrush"))    res.Remove("WidgetDaySaturdayBrush");
+            if (res.Contains("WidgetDayHolidayTextBrush")) res.Remove("WidgetDayHolidayTextBrush");
+        }
 
-        // Accent-tinted surface: 15% accent into background, used for subtle
-        // hover/active states that carry colour (e.g. tab hover).
-        Color accentLight = Blend(bg, acc, 0.15f);
-        SetBrush("WidgetAccentBrushLight", accentLight);
+        var merged = Application.Current.Resources.MergedDictionaries;
+        if (_themeResources is null)
+        {
+            merged.Add(dict);
+        }
+        else
+        {
+            int idx = merged.IndexOf(_themeResources);
+            if (idx >= 0)
+                merged[idx] = dict;
+            else
+                merged.Add(dict);
+        }
+        _themeResources = dict;
     }
 
     /// <summary>
@@ -181,9 +202,7 @@ public sealed class ThemeService : IThemeService
     private static void SetBrush(string key, Color color)
     {
         if (Application.Current is null)
-        {
             return;   // unit-test context - skip WPF resource update
-        }
 
         // Always replace with a new mutable brush so that DynamicResource bindings
         // re-evaluate via ResourceDictionary.Changed notification.

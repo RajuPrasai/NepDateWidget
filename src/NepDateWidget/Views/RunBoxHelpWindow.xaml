@@ -13,7 +13,44 @@
         Width="520"
         Opacity="0">
 
-    <Window.Resources />
+    <Window.Resources>
+        <Style x:Key="RbHelpCloseBtn" TargetType="Button">
+            <Setter Property="Background"      Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor"          Value="Hand" />
+            <Setter Property="Padding"         Value="5,5" />
+            <Setter Property="Width"           Value="26" />
+            <Setter Property="Height"          Value="26" />
+            <Setter Property="Opacity"         Value="0.48" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Background"
+                                        Value="{DynamicResource WidgetAccentBrushLight}" />
+                                <Setter Property="Opacity" Value="1.0" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RbSectionLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="FontSize"   Value="10.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Opacity"    Value="0.45" />
+            <Setter Property="Margin"     Value="0,0,0,6" />
+        </Style>
+    </Window.Resources>
 
     <Border Background="{DynamicResource WidgetBackgroundBrush}"
             BorderBrush="{DynamicResource WidgetBorderBrush}"
@@ -40,7 +77,7 @@
                                TextTrimming="CharacterEllipsis"
                                Margin="0,0,8,0" />
                     <Button Grid.Column="1"
-                            Style="{StaticResource PopupCloseBtn}"
+                            Style="{StaticResource RbHelpCloseBtn}"
                             Click="CloseBtn_Click">
                         <Path Data="{StaticResource IconWindowClose}"
                               Stroke="{DynamicResource WidgetForegroundBrush}"
@@ -65,7 +102,7 @@
 
                 <!-- Keyboard shortcuts section -->
                 <TextBlock x:Name="KeysHeading"
-                           Style="{StaticResource PopupSectionLabel}" />
+                           Style="{StaticResource RbSectionLabel}" />
                 <Border Background="{DynamicResource WidgetInputBrush}"
                         BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                         BorderThickness="0.7"
@@ -98,7 +135,7 @@
 
                 <!-- Active shortcuts section -->
                 <TextBlock x:Name="ShortcutsHeading"
-                           Style="{StaticResource PopupSectionLabel}" />
+                           Style="{StaticResource RbSectionLabel}" />
                 <Border x:Name="ShortcutsPanel"
                         Background="{DynamicResource WidgetInputBrush}"
                         BorderBrush="{DynamicResource WidgetInputBorderBrush}"
@@ -137,7 +174,7 @@
 
                 <!-- Scripts section -->
                 <TextBlock x:Name="ScriptsHeading"
-                           Style="{StaticResource PopupSectionLabel}" />
+                           Style="{StaticResource RbSectionLabel}" />
                 <Border x:Name="ScriptsPanel"
                         Background="{DynamicResource WidgetInputBrush}"
                         BorderBrush="{DynamicResource WidgetInputBorderBrush}"

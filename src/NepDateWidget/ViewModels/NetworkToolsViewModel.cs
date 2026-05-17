@@ -864,7 +864,7 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             }
         }
 
-        if (!string.IsNullOrEmpty(referServer) && referServer != ianaServer)
+        if (!string.IsNullOrEmpty(referServer) && referServer != ianaServer && IsValidHostOrIp(referServer))
         {
             try
             {

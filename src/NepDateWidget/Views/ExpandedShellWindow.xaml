@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+        xmlns:cvt="clr-namespace:NepDateWidget.Converters"
         xmlns:views="clr-namespace:NepDateWidget.Views"
         xmlns:h="clr-namespace:NepDateWidget.Helpers"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
@@ -39,7 +40,10 @@
                             UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
 
-    <Window.Resources />
+    <Window.Resources>
+        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
+        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
+    </Window.Resources>
 
     <Border x:Name="ShellRoot"
             Background="{DynamicResource WidgetBackgroundBrush}"
@@ -571,7 +575,7 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="StripBd" Property="Background"
-                                        Value="{DynamicResource WidgetHoverBrush}" />
+                                        Value="{DynamicResource WidgetAccentBrushLight}" />
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter TargetName="StripBd" Property="Opacity" Value="0.7" />

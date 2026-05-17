@@ -7,10 +7,10 @@ namespace NepDateWidget.Services;
 public sealed class ImageCompressionService : IImageCompressionService
 {
     // 5-point profile from smallest output (0) to best quality (4).
-    private static readonly int[] JpegQuality = { 45, 60, 72, 85, 95 };
-    private static readonly int[] WebpQuality = { 40, 58, 70, 82, 93 };
-    private static readonly int[] AvifQuality = { 40, 55, 65, 80, 92 };
-    private static readonly int[] PngFlate = { 9, 8, 6, 4, 2 };
+    private static readonly int[] JpegQuality = { 30, 50, 70, 85, 95 };
+    private static readonly int[] WebpQuality = { 26, 46, 68, 82, 93 };
+    private static readonly int[] AvifQuality = { 26, 44, 63, 80, 92 };
+    private static readonly int[] PngFlate    = { 9, 9, 8, 4, 2 };
 
     public CompressionResult Compress(string inputPath, string outputPath, string mimeType, CompressionSettings settings)
     {

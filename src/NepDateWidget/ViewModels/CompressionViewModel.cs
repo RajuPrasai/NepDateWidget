@@ -299,8 +299,7 @@ public sealed class CompressionViewModel : ViewModelBase
     public ICommand CancelCommand { get; }
     public ICommand ToggleAdvancedPanelCommand { get; }
     public ICommand OpenHelpCommand { get; }
-
-    private CancellationTokenSource? _autoResetCts;
+    public ICommand DismissSummaryCommand { get; }
 
     // ── Construction ─────────────────────────────────────────────────────────
 
@@ -315,6 +314,7 @@ public sealed class CompressionViewModel : ViewModelBase
         CompressCommand = new RelayCommand(DoCompress, () => CanCompress);
         CancelCommand = new RelayCommand(DoCancel, () => _isJobRunning);
         ToggleAdvancedPanelCommand = new RelayCommand(DoToggleAdvanced, () => CanOpenAdvancedPanel);
+        DismissSummaryCommand = new RelayCommand(ResetForNextJob);
         OpenHelpCommand = new RelayCommand<string>(key =>
         {
             var shell = System.Windows.Application.Current.Windows
@@ -351,6 +351,12 @@ public sealed class CompressionViewModel : ViewModelBase
             return;
         }
 
+        if (_isJobComplete)
+        {
+            IsJobComplete = false;
+            JobSummary = string.Empty;
+        }
+
         // Validate same-type constraint across new + existing paths.
         var allPaths = Files.Select(f => f.FilePath).Concat(paths).ToList();
         var error = _fileTypeService.ValidateSameType(allPaths);
@@ -363,8 +369,6 @@ public sealed class CompressionViewModel : ViewModelBase
         {
             MixedTypeWarning = string.Empty;
         }
-
-        CancelPendingAutoReset();
 
         foreach (var path in paths)
         {
@@ -437,8 +441,6 @@ public sealed class CompressionViewModel : ViewModelBase
             return;
         }
 
-        CancelPendingAutoReset();
-
         // Show output dialog.
         var outputDir = PickOutputDirectory(out var singleOutputPath);
         if (outputDir is null && singleOutputPath is null)
@@ -485,8 +487,6 @@ public sealed class CompressionViewModel : ViewModelBase
                 : string.Format(_loc.Get("compress.summary_done_many"), doneCount, FormatBytes(totalSaved), FormatBytes(totalOut)))
             : string.Format(_loc.Get("compress.summary_partial"), doneCount, failedCount, FormatBytes(totalSaved), FormatBytes(totalOut));
 
-        // Keep failures visible longer so users can inspect status, then reset.
-        ScheduleAutoReset(failedCount == 0 ? TimeSpan.FromSeconds(3) : TimeSpan.FromSeconds(8));
     }
 
     private void DoCancel()
@@ -525,46 +525,6 @@ public sealed class CompressionViewModel : ViewModelBase
         OnPropertyChanged(nameof(DetectedMimeType));
         OnPropertyChanged(nameof(DetectedCategory));
         RefreshMimeFlags();
-    }
-
-    private void CancelPendingAutoReset()
-    {
-        if (_autoResetCts is null)
-        {
-            return;
-        }
-
-        try { _autoResetCts.Cancel(); } catch { }
-        _autoResetCts.Dispose();
-        _autoResetCts = null;
-    }
-
-    private void ScheduleAutoReset(TimeSpan delay)
-    {
-        CancelPendingAutoReset();
-        _autoResetCts = new CancellationTokenSource();
-        var token = _autoResetCts.Token;
-
-        _ = Task.Run(async () =>
-        {
-            try
-            {
-                await Task.Delay(delay, token).ConfigureAwait(false);
-                if (token.IsCancellationRequested)
-                {
-                    return;
-                }
-
-                await Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    if (!token.IsCancellationRequested)
-                    {
-                        ResetForNextJob();
-                    }
-                });
-            }
-            catch (TaskCanceledException) { }
-        }, token);
     }
 
     // ── Progress handler ─────────────────────────────────────────────────────

@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
+             xmlns:conv="clr-namespace:NepDateWidget.Converters"
              mc:Ignorable="d"
              UseLayoutRounding="True"
              TextOptions.TextFormattingMode="Display"
@@ -12,33 +13,54 @@
              d:DataContext="{d:DesignInstance vm:ResizeViewModel}"
              d:Width="380">
 
-    <UserControl.Resources />
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
+        <conv:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
+        <conv:StringToImageSourceConverter x:Key="StringToImageSource" />
+        <Style x:Key="LevelLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="10.5" />
+            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="Opacity"    Value="0.65" />
+        </Style>
+        <Style x:Key="CompactInputStyle" TargetType="TextBox">
+            <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="Height"          Value="30" />
+            <Setter Property="FontSize"        Value="13" />
+            <Setter Property="Padding"         Value="6,0" />
+            <Setter Property="CaretBrush"      Value="{DynamicResource WidgetForegroundBrush}" />
+            <Setter Property="SelectionBrush"  Value="{DynamicResource WidgetAccentBrush}" />
+            <Setter Property="ContextMenu"     Value="{StaticResource ThemedTextBoxContextMenu}" />
+            <Setter Property="Template"        Value="{StaticResource PlaceholderTextBoxTemplate}" />
+        </Style>
+    </UserControl.Resources>
 
     <Grid x:Name="ResizeViewRoot">
     <StackPanel>
-        <!-- Drop zone (hidden once files loaded) -->
-        <Border Background="{DynamicResource WidgetInputBrush}"
+      <!-- Drop zone (hidden once files loaded) -->
+      <Border Background="{DynamicResource WidgetAccentBrushLight}"
                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                BorderThickness="1.5"
+                BorderThickness="0.8"
                 CornerRadius="8"
                 Padding="12,20"
                 Margin="0,0,0,8"
                 Cursor="Hand"
-                Visibility="{Binding HasFiles, Converter={StaticResource InverseBoolToVis}}"
                 MouseLeftButtonDown="DropZone_MouseLeftButtonDown"
                 MouseLeftButtonUp="DropZone_Click">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-            <StackPanel HorizontalAlignment="Center">
-        <Path
+        <Border.Style>
+          <Style TargetType="Border">
+            <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+            <Style.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
+              </Trigger>
+            </Style.Triggers>
+          </Style>
+        </Border.Style>
+        <StackPanel HorizontalAlignment="Center">
+          <Path
     Data="M14,3 L14,15
           M9,10 L14,15 L19,10
           M6,21 L22,21"
@@ -51,334 +73,354 @@
     HorizontalAlignment="Center"
     Margin="0,0,0,6"
     Opacity="0.45" />
-        <TextBlock Text="{Binding DropLabel}"
+          <TextBlock Text="{Binding DropLabel}"
                            Foreground="{DynamicResource WidgetForegroundBrush}"
                            FontSize="13" HorizontalAlignment="Center" Opacity="0.7" />
-                <TextBlock Text="{Binding BrowseLabel}"
+          <TextBlock Text="{Binding BrowseLabel}"
                            Foreground="{DynamicResource WidgetForegroundBrush}"
                            FontSize="11" HorizontalAlignment="Center" Opacity="0.45" Margin="0,2,0,0" />
-            </StackPanel>
-        </Border>
+        </StackPanel>
+      </Border>
 
-        <!-- Mixed-type warning -->
-        <Border Background="{DynamicResource WidgetErrorBrush}"
+      <!-- Mixed-type warning -->
+      <Border Background="{DynamicResource WidgetErrorBrush}"
                 CornerRadius="6" Padding="10,7" Margin="0,0,0,8"
                 Visibility="{Binding HasMixedTypeWarning, Converter={StaticResource BoolToVis}}">
-            <TextBlock Text="{Binding MixedTypeWarning}"
+        <TextBlock Text="{Binding MixedTypeWarning}"
                        Foreground="White" FontSize="12" TextWrapping="Wrap" />
-        </Border>
+      </Border>
 
-        <!-- PDF not supported notice -->
-        <Border Background="{DynamicResource WidgetInputBrush}"
+      <!-- PDF not supported notice -->
+      <Border Background="{DynamicResource WidgetInputBrush}"
                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                 BorderThickness="0.7" CornerRadius="6" Padding="10,8" Margin="0,0,0,8"
                 Visibility="{Binding IsPdfLoaded, Converter={StaticResource BoolToVis}}">
-            <TextBlock Text="{Binding PdfNotSupportedLabel}"
+        <TextBlock Text="{Binding PdfNotSupportedLabel}"
                        Foreground="{DynamicResource WidgetForegroundBrush}"
                        FontSize="12" TextWrapping="Wrap" Opacity="0.75" />
-        </Border>
+      </Border>
 
-        <!-- File list -->
-        <Border Background="{DynamicResource WidgetBackgroundBrush}"
+      <!-- File list -->
+      <Border Background="{DynamicResource WidgetBackgroundBrush}"
                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                 BorderThickness="0.7" CornerRadius="8" Padding="8,6" Margin="0,0,0,8"
                 Visibility="{Binding HasFiles, Converter={StaticResource BoolToVis}}">
-            <ItemsControl ItemsSource="{Binding Files}" MaxHeight="130">
-                <ItemsControl.Template>
-                    <ControlTemplate>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
-                            <ItemsPresenter />
-                        </ScrollViewer>
-                    </ControlTemplate>
-                </ItemsControl.Template>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type vm:CompressionFileItemViewModel}">
-                        <Grid Margin="0,0,0,3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <!-- Status icon -->
-                            <Border Grid.Column="0" Width="18" Height="18" CornerRadius="9" Margin="0,0,6,0"
-                                    VerticalAlignment="Center">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding StatusText}" Value="Done">
-                                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding StatusText}" Value="Error">
-                                                <Setter Property="Background" Value="{DynamicResource WidgetErrorBrush}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding StatusText}" Value="Running">
-                                                <Setter Property="Background" Value="{DynamicResource WidgetInputBorderBrush}" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                                <TextBlock Text="{Binding StatusGlyph}"
-                                           Foreground="White"
-                                           FontSize="10" FontWeight="SemiBold"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <!-- File name + size -->
-                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                <TextBlock Text="{Binding FileName}"
+        <ItemsControl ItemsSource="{Binding Files}" MaxHeight="130">
+          <ItemsControl.Template>
+            <ControlTemplate>
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsPresenter />
+              </ScrollViewer>
+            </ControlTemplate>
+          </ItemsControl.Template>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type vm:CompressionFileItemViewModel}">
+              <Grid Margin="0,0,0,3">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <!-- Thumbnail -->
+                <Border Grid.Column="0" CornerRadius="6" ClipToBounds="True"
+                                    Height="30" VerticalAlignment="Center" Margin="0,0,6,0">
+                  <Image Source="{Binding FilePath, Converter={StaticResource StringToImageSource}}"
+                                       Height="30" Stretch="Uniform" />
+                </Border>
+                <!-- File name + size -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding FileName}"
                                            Foreground="{DynamicResource WidgetForegroundBrush}"
                                            FontSize="12" TextTrimming="CharacterEllipsis" />
-                                <TextBlock Text="{Binding FileSizeLabel}"
+                  <TextBlock Text="{Binding FileSizeLabel}"
                                            Foreground="{DynamicResource WidgetForegroundBrush}"
                                            Opacity="0.55" FontSize="10.5" />
-                            </StackPanel>
-                            <!-- Output size -->
-                            <TextBlock Grid.Column="2"
+                </StackPanel>
+                <!-- Output size -->
+                <TextBlock Grid.Column="2"
                                        Text="{Binding OutputSizeLabel}"
                                        Foreground="{DynamicResource WidgetAccentBrush}"
                                        FontSize="11" VerticalAlignment="Center" Margin="6,0,6,0"
                                        Visibility="{Binding IsDone, Converter={StaticResource BoolToVis}}" />
-                            <!-- Remove button -->
-                            <Button Grid.Column="3"
+                <!-- Remove button -->
+                <Button Grid.Column="3"
                                     Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                     CommandParameter="{Binding FilePath}"
                                     Visibility="{Binding DataContext.IsJobRunning, RelativeSource={RelativeSource AncestorType=UserControl},
                                                  Converter={StaticResource InverseBoolToVis}}"
                                     ToolTip="{Binding DataContext.RemoveFileTooltipLabel, RelativeSource={RelativeSource AncestorType=UserControl}}">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Background"      Value="Transparent" />
-                                        <Setter Property="BorderThickness" Value="0" />
-                                        <Setter Property="Padding"         Value="4" />
-                                        <Setter Property="Cursor"          Value="Hand" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Border Background="{TemplateBinding Background}"
+                  <Button.Style>
+                    <Style TargetType="Button">
+                      <Setter Property="Background"      Value="Transparent" />
+                      <Setter Property="BorderThickness" Value="0" />
+                      <Setter Property="Padding"         Value="4" />
+                      <Setter Property="Cursor"          Value="Hand" />
+                      <Setter Property="Template">
+                        <Setter.Value>
+                          <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}"
                                                             Padding="{TemplateBinding Padding}" CornerRadius="4">
-                                                        <ContentPresenter />
-                                                    </Border>
-                                                    <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                                                        </Trigger>
-                                                    </ControlTemplate.Triggers>
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </Button.Style>
-                                <Path Data="M6 18L18 6M6 6l12 12"
+                              <ContentPresenter />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                              <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
+                              </Trigger>
+                            </ControlTemplate.Triggers>
+                          </ControlTemplate>
+                        </Setter.Value>
+                      </Setter>
+                    </Style>
+                  </Button.Style>
+                  <Path Data="M6 18L18 6M6 6l12 12"
                                       Stroke="{DynamicResource WidgetForegroundBrush}"
                                       StrokeThickness="1.3" Stretch="Uniform"
                                       Width="9" Height="9" />
-                            </Button>
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Border>
+                </Button>
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Border>
 
-        <!-- Add more button removed - AllowDrop on the UserControl handles additional files via drag -->
+      <!-- Add more button removed - AllowDrop on the UserControl handles additional files via drag -->
 
-        <!-- Resize dimensions -->
-        <Border Background="{DynamicResource WidgetBackgroundBrush}"
+      <!-- Resize dimensions -->
+      <Border Background="{DynamicResource WidgetBackgroundBrush}"
                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                 BorderThickness="0.7" CornerRadius="8" Padding="10,8" Margin="0,0,0,8"
                 Visibility="{Binding IsPdfLoaded, Converter={StaticResource InverseBoolToVis}}">
-            <StackPanel>
-                <TextBlock Text="{Binding DimensionsSectionLabel}"
+        <StackPanel>
+          <TextBlock Text="{Binding DimensionsSectionLabel}"
                            Foreground="{DynamicResource WidgetForegroundBrush}"
                            FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8" />
-                <!-- Width × Height inputs -->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="{Binding WidthLabel}" Style="{StaticResource FieldLabel}" Margin="0,0,0,4" />
-            <TextBox Style="{StaticResource CompactInputStyle}"
+          <!-- Width × Height inputs -->
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+              <TextBlock Text="{Binding WidthLabel}" Style="{StaticResource FieldLabel}" Margin="0,0,0,4" />
+              <TextBox Style="{StaticResource CompactInputStyle}"
                                  TextAlignment="Center"
                                  Text="{Binding WidthText, UpdateSourceTrigger=PropertyChanged}"
                                  MaxLength="5" />
-                    </StackPanel>
-                    <TextBlock Grid.Column="1" Text="×"
+            </StackPanel>
+            <TextBlock Grid.Column="1" Text="×"
                                Foreground="{DynamicResource WidgetForegroundBrush}"
                                FontSize="16" Opacity="0.5"
                                VerticalAlignment="Bottom" Margin="8,0,8,2" />
-                    <StackPanel Grid.Column="2">
-                        <TextBlock Text="{Binding HeightLabel}" Style="{StaticResource FieldLabel}" Margin="0,0,0,4" />
-            <TextBox Style="{StaticResource CompactInputStyle}"
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="{Binding HeightLabel}" Style="{StaticResource FieldLabel}" Margin="0,0,0,4" />
+              <TextBox Style="{StaticResource CompactInputStyle}"
                                  TextAlignment="Center"
                                  Text="{Binding HeightText, UpdateSourceTrigger=PropertyChanged}"
                                  MaxLength="5" />
-                    </StackPanel>
-                    <TextBlock Grid.Column="3"
+            </StackPanel>
+            <TextBlock Grid.Column="3"
                                Foreground="{DynamicResource WidgetForegroundBrush}"
                                FontSize="10.5" Opacity="0.45"
                                VerticalAlignment="Bottom" Margin="8,0,0,3"
                                Text="{Binding AspectRatioHintLabel}" />
-                </Grid>
-                <!-- Stretch warning -->
-                <Border Background="{DynamicResource WidgetErrorBrush}"
+          </Grid>
+          <!-- Stretch warning -->
+          <Border Background="{DynamicResource WidgetErrorBrush}"
                         CornerRadius="5" Padding="8,5" Margin="0,6,0,0"
                         Visibility="{Binding ShowStretchWarning, Converter={StaticResource BoolToVis}}">
-                    <TextBlock Text="{Binding StretchWarningLabel}"
+            <TextBlock Text="{Binding StretchWarningLabel}"
                                Foreground="White" FontSize="11" TextWrapping="Wrap" />
-                </Border>
-            </StackPanel>
-        </Border>
+          </Border>
+        </StackPanel>
+      </Border>
 
-        <!-- Also compress + quality level -->
-        <Border Background="{DynamicResource WidgetBackgroundBrush}"
+      <!-- Also compress + quality level -->
+      <Border Background="{DynamicResource WidgetBackgroundBrush}"
                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                 BorderThickness="0.7" CornerRadius="8" Padding="10,8" Margin="0,0,0,8"
                 Visibility="{Binding IsPdfLoaded, Converter={StaticResource InverseBoolToVis}}">
-            <StackPanel>
-                <CheckBox Content="{Binding AlsoCompressLabel}"
+        <StackPanel>
+          <CheckBox Content="{Binding AlsoCompressLabel}"
                           IsChecked="{Binding AlsoCompress}"
                           Style="{StaticResource WidgetCheckBox}" />
-                <StackPanel Visibility="{Binding ShowQualitySlider, Converter={StaticResource BoolToVis}}"
+          <StackPanel Visibility="{Binding ShowQualitySlider, Converter={StaticResource BoolToVis}}"
                             Margin="0,8,0,0">
-                    <TextBlock Text="{Binding LevelSectionLabel}" Style="{StaticResource FieldLabel}" Margin="0,0,0,6" />
-                    <Slider Minimum="0" Maximum="4"
+            <TextBlock Text="{Binding LevelSectionLabel}" Style="{StaticResource FieldLabel}" Margin="0,0,0,6" />
+            <Slider Minimum="0" Maximum="4"
                             Value="{Binding QualityLevel}"
                             Style="{DynamicResource IosSlider}"
                             IsSnapToTickEnabled="True" TickFrequency="1"
                             SmallChange="1" LargeChange="1"
                             Margin="0,0,0,4" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding LevelSmallestLabel}" Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Left" />
-                        <TextBlock Grid.Column="1" Text="{Binding LevelLowLabel}"      Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="2" Text="{Binding LevelBalancedLabel}" Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="3" Text="{Binding LevelHighLabel}"     Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Center" />
-                        <TextBlock Grid.Column="4" Text="{Binding LevelBestLabel}"     Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Right" />
-                    </Grid>
-                </StackPanel>
-            </StackPanel>
-        </Border>
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <TextBlock Grid.Column="0" Text="{Binding LevelSmallestLabel}" Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Left" />
+              <TextBlock Grid.Column="1" Text="{Binding LevelLowLabel}"      Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="2" Text="{Binding LevelBalancedLabel}" Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="3" Text="{Binding LevelHighLabel}"     Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Center" />
+              <TextBlock Grid.Column="4" Text="{Binding LevelBestLabel}"     Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Right" />
+            </Grid>
+          </StackPanel>
+        </StackPanel>
+      </Border>
 
-        <!-- Progress bar -->
-        <Border Background="{DynamicResource WidgetInputBrush}"
-                CornerRadius="8" Padding="10,8" Margin="0,0,0,8"
+      <!-- Progress bar -->
+      <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                BorderThickness="0.7" CornerRadius="8" Padding="10,8" Margin="0,0,0,8"
                 Visibility="{Binding IsJobRunning, Converter={StaticResource BoolToVis}}">
-            <StackPanel>
-                <Grid Margin="0,0,0,5">
-                    <TextBlock Text="{Binding ProgressTitleLabel}"
+        <StackPanel>
+          <Grid Margin="0,0,0,5">
+            <TextBlock Text="{Binding ProgressTitleLabel}"
                                Foreground="{DynamicResource WidgetForegroundBrush}"
                                FontSize="12" FontWeight="SemiBold" />
-                    <TextBlock Text="{Binding ProgressLabel}"
+            <TextBlock Text="{Binding ProgressLabel}"
                                Foreground="{DynamicResource WidgetForegroundBrush}"
                                FontSize="11" Opacity="0.6" HorizontalAlignment="Right" />
-                </Grid>
-                <ProgressBar Minimum="0"
+          </Grid>
+          <ProgressBar Minimum="0"
                              Maximum="{Binding TotalCount}"
                              Value="{Binding CompletedCount, Mode=OneWay}"
                              Style="{StaticResource WidgetProgressBar}" />
-            </StackPanel>
-        </Border>
+        </StackPanel>
+      </Border>
 
-        <!-- Summary banner -->
-        <Border Background="{DynamicResource WidgetBackgroundBrush}"
+      <!-- Summary banner -->
+      <Border Background="{DynamicResource WidgetBackgroundBrush}"
                 BorderBrush="{DynamicResource WidgetAccentBrush}"
                 BorderThickness="0.7" CornerRadius="8" Padding="10,8" Margin="0,0,0,8"
                 Visibility="{Binding ShowSummary, Converter={StaticResource BoolToVis}}">
-            <TextBlock Text="{Binding JobSummary}"
-                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                       FontSize="13" FontWeight="SemiBold"
-                       TextWrapping="Wrap" />
-        </Border>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0"
+                           Text="{Binding JobSummary}"
+                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                           FontSize="13" FontWeight="SemiBold"
+                           TextWrapping="Wrap" VerticalAlignment="Center" />
+          <Button Grid.Column="1"
+                        Command="{Binding DismissSummaryCommand}"
+                        VerticalAlignment="Center" Margin="8,0,0,0"
+                        Cursor="Hand" ToolTip="Dismiss">
+            <Button.Style>
+              <Style TargetType="Button">
+                <Setter Property="Background"      Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding"         Value="0" />
+                <Setter Property="Opacity"         Value="0.55" />
+                <Setter Property="Template">
+                  <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                      <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                      </Border>
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                  <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="1" />
+                  </Trigger>
+                </Style.Triggers>
+              </Style>
+            </Button.Style>
+            <Path Data="M0,0 L8,8 M8,0 L0,8"
+                          Stroke="{DynamicResource WidgetForegroundBrush}"
+                          StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                          Width="10" Height="10" Stretch="Fill" />
+          </Button>
+        </Grid>
+      </Border>
 
-        <!-- Resize / Cancel button -->
-        <Grid Visibility="{Binding ShowSummary, Converter={StaticResource InverseBoolToVis}}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="0"
+      <!-- Resize / Cancel button -->
+      <Grid Visibility="{Binding ShowSummary, Converter={StaticResource InverseBoolToVis}}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="0"
                     Command="{Binding ResizeCommand}"
                     IsEnabled="{Binding CanResize}"
                     Content="{Binding ResizeButtonLabel}"
                     Height="36" FontSize="13" FontWeight="SemiBold"
-                    Cursor="Hand"
-                    Visibility="{Binding IsJobRunning, Converter={StaticResource InverseBoolToVis}}">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-                        <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                        <Setter Property="BorderThickness" Value="0" />
-                        <Setter Property="Cursor"          Value="Hand" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}"
+                    Cursor="Hand" Margin="0,0,6,0">
+          <Button.Style>
+            <Style TargetType="Button">
+              <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
+              <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
+              <Setter Property="BorderThickness" Value="0" />
+              <Setter Property="Cursor"          Value="Hand" />
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
                                             CornerRadius="7"
                                             Padding="{TemplateBinding Padding}"
                                             Opacity="{TemplateBinding Opacity}">
-                                        <ContentPresenter HorizontalAlignment="Center"
+                      <ContentPresenter HorizontalAlignment="Center"
                                                           VerticalAlignment="Center" />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsEnabled" Value="False">
-                                            <Setter Property="Opacity" Value="0.4" />
-                                        </Trigger>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Opacity" Value="0.85" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Style>
-            </Button>
-            <Button Grid.Column="0"
+                    </Border>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Opacity" Value="0.4" />
+                      </Trigger>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Opacity" Value="0.85" />
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+            </Style>
+          </Button.Style>
+        </Button>
+        <Button Grid.Column="1"
                     Command="{Binding CancelCommand}"
                     Content="{Binding CancelLabel}"
-                    Height="36" FontSize="13"
+                    Height="36" FontSize="12"
                     Cursor="Hand"
                     Visibility="{Binding IsJobRunning, Converter={StaticResource BoolToVis}}">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
-                        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-                        <Setter Property="BorderThickness" Value="0.7" />
-                        <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-                        <Setter Property="Cursor"          Value="Hand" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}"
+          <Button.Style>
+            <Style TargetType="Button">
+              <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
+              <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+              <Setter Property="BorderThickness" Value="0.7" />
+              <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+              <Setter Property="Cursor"          Value="Hand" />
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
                                             BorderBrush="{TemplateBinding BorderBrush}"
                                             BorderThickness="{TemplateBinding BorderThickness}"
                                             CornerRadius="7"
                                             Padding="{TemplateBinding Padding}">
-                                        <ContentPresenter HorizontalAlignment="Center"
+                      <ContentPresenter HorizontalAlignment="Center"
                                                           VerticalAlignment="Center" />
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter Property="Opacity" Value="0.7" />
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </Button.Style>
-            </Button>
-        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Opacity" Value="0.7" />
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+            </Style>
+          </Button.Style>
+        </Button>
+      </Grid>
     </StackPanel>
-    </Grid>
+  </Grid>
 </UserControl>
