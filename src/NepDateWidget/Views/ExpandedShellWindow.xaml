@@ -48,7 +48,18 @@
     <Border x:Name="ShellRoot"
             Background="{DynamicResource WidgetBackgroundBrush}"
             BorderBrush="{DynamicResource WidgetBorderBrush}"
-            BorderThickness="0.7">
+            BorderThickness="0.7"
+            ClipToBounds="True">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="0" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsCornerRounded}" Value="True">
+                        <Setter Property="CornerRadius" Value="8" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
         <Grid x:Name="ShellContentGrid">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />

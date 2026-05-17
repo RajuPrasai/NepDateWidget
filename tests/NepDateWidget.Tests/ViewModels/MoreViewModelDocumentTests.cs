@@ -461,4 +461,131 @@ public class MoreViewModelDocumentTests
         Assert.Contains("Passport", MoreViewModel.DocTitlePresets);
         Assert.Contains("PAN Card", MoreViewModel.DocTitlePresets);
     }
+
+    // ── DeleteDocumentCommand ─────────────────────────────────────────────────
+
+    [Fact]
+    public void DeleteDocumentCommand_KnownId_RemovesFromService()
+    {
+        var (vm, svc) = CreateDocs();
+        var entry = MakeEntry("Citizenship Front");
+        svc.Add(entry);
+        Assert.Single(svc.GetAll()); // precondition
+
+        vm.DeleteDocumentCommand.Execute(entry.Id);
+
+        Assert.Empty(svc.GetAll());
+    }
+
+    [Fact]
+    public void DeleteDocumentCommand_KnownId_RefreshesDocuments()
+    {
+        var (vm, svc) = CreateDocs();
+        var entry = MakeEntry("Passport");
+        svc.Add(entry);
+        Assert.True(vm.HasDocuments); // precondition
+
+        vm.DeleteDocumentCommand.Execute(entry.Id);
+
+        Assert.False(vm.HasDocuments);
+    }
+
+    [Fact]
+    public void DeleteDocumentCommand_NullId_IsNoOp()
+    {
+        var (vm, svc) = CreateDocs();
+        svc.Add(MakeEntry("Passport"));
+
+        vm.DeleteDocumentCommand.Execute(null);
+
+        Assert.Single(svc.GetAll());
+    }
+
+    [Fact]
+    public void DeleteDocumentCommand_UnknownId_IsNoOp()
+    {
+        var (vm, svc) = CreateDocs();
+        svc.Add(MakeEntry("Passport"));
+
+        vm.DeleteDocumentCommand.Execute("non-existent-id-abc");
+
+        Assert.Single(svc.GetAll());
+    }
+
+    // ── EditDocumentCommand ───────────────────────────────────────────────────
+
+    [Fact]
+    public void EditDocumentCommand_KnownId_OpensFormWithPrefill()
+    {
+        var (vm, svc) = CreateDocs();
+        var entry = MakeEntry("Citizenship Front");
+        svc.Add(entry);
+
+        vm.EditDocumentCommand.Execute(entry.Id);
+
+        Assert.True(vm.IsDocFormOpen);
+        Assert.True(vm.IsEditingDoc);
+        Assert.Equal("Citizenship Front", vm.DocEditTitle);
+        Assert.Equal(entry.FilePath, vm.DocEditFilePath);
+    }
+
+    [Fact]
+    public void EditDocumentCommand_KnownId_FormLabelIsEdit()
+    {
+        var (vm, svc) = CreateDocs();
+        var entry = MakeEntry("Visa");
+        svc.Add(entry);
+
+        vm.EditDocumentCommand.Execute(entry.Id);
+
+        Assert.NotEmpty(vm.DocFormTitleLabel);
+        // IsEditingDoc is true → label should be the "edit" label not "add" label
+        Assert.True(vm.IsEditingDoc);
+    }
+
+    [Fact]
+    public void EditDocumentCommand_KnownId_PreFillsTags()
+    {
+        var (vm, svc) = CreateDocs();
+        var entry = MakeEntry("PAN Card", tags: ["Government", "Financial"]);
+        svc.Add(entry);
+
+        vm.EditDocumentCommand.Execute(entry.Id);
+
+        Assert.Equal(2, vm.DocEditTags.Count);
+        Assert.Contains("Government", vm.DocEditTags);
+        Assert.Contains("Financial", vm.DocEditTags);
+    }
+
+    [Fact]
+    public void EditDocumentCommand_NullId_DoesNotOpenForm()
+    {
+        var (vm, _) = CreateDocs();
+        vm.EditDocumentCommand.Execute(null);
+        Assert.False(vm.IsDocFormOpen);
+    }
+
+    [Fact]
+    public void EditDocumentCommand_UnknownId_DoesNotOpenForm()
+    {
+        var (vm, _) = CreateDocs();
+        vm.EditDocumentCommand.Execute("bad-id");
+        Assert.False(vm.IsDocFormOpen);
+    }
+
+    // ── Duplicate title validation ────────────────────────────────────────────
+
+    [Fact]
+    public void SaveDocumentCommand_DuplicateTitle_SetsDocEditError()
+    {
+        var (vm, svc) = CreateDocs();
+        svc.Add(MakeEntry("Passport"));
+        vm.ShowAddDocumentCommand.Execute(null);
+        vm.DocEditTitle = "Passport";
+        vm.DocEditFilePath = "C:\\test\\doc2.pdf";
+
+        vm.SaveDocumentCommand.Execute(null);
+
+        Assert.True(vm.HasDocEditError);
+    }
 }

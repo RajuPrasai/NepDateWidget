@@ -44,10 +44,12 @@
         </Style>
 
         <Style x:Key="ItemCard" TargetType="Border">
-            <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
-            <Setter Property="CornerRadius" Value="6" />
-            <Setter Property="Padding" Value="10,8" />
-            <Setter Property="Margin" Value="0,0,0,4" />
+            <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+            <Setter Property="BorderThickness" Value="0.7" />
+            <Setter Property="CornerRadius"    Value="6" />
+            <Setter Property="Padding"         Value="10,8" />
+            <Setter Property="Margin"          Value="0,0,0,4" />
         </Style>
 
         <Style x:Key="MItemBtn" TargetType="Button">
@@ -142,7 +144,7 @@
             <Setter Property="Cursor"          Value="Hand" />
             <Setter Property="Width"           Value="72" />
             <Setter Property="Margin"          Value="0,0,8,0" />
-            <Setter Property="Padding"         Value="4" />
+            <Setter Property="Padding"         Value="4,12,4,4" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -282,6 +284,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12,8">
@@ -293,7 +296,15 @@
                 <!-- Essentials -->
                 <Border Style="{StaticResource CardPanel}" Margin="0,0,0,8">
                     <StackPanel>
-                        <TextBlock Text="{Binding EssentialsHeadingLabel}" Style="{StaticResource SectionLabel}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Path Data="{StaticResource IconPin}"
+                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                  StrokeThickness="1.2" Stretch="Uniform"
+                                  Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                            <TextBlock Text="{Binding EssentialsHeadingLabel}"
+                                       FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                        </StackPanel>
                         <WrapPanel>
                             <Button Command="{Binding NavigateToCommand}" CommandParameter="Documents"
                                     Style="{StaticResource GridIconBtnStyle}">
@@ -361,7 +372,15 @@
                 <!-- Tools -->
                 <Border Style="{StaticResource CardPanel}">
                     <StackPanel>
-                        <TextBlock Text="{Binding ToolsHeadingLabel}" Style="{StaticResource SectionLabel}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <Path Data="{StaticResource IconSettings}"
+                                  Stroke="{DynamicResource WidgetForegroundBrush}"
+                                  StrokeThickness="1.2" Stretch="Uniform"
+                                  Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                            <TextBlock Text="{Binding ToolsHeadingLabel}"
+                                       FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource WidgetForegroundBrush}" />
+                        </StackPanel>
                         <WrapPanel>
                             <Button Command="{Binding NavigateToCommand}" CommandParameter="Compression"
                                     Style="{StaticResource GridIconBtnStyle}">
@@ -412,55 +431,95 @@
             <Border Visibility="{Binding IsGridVisible, Converter={StaticResource InverseBoolToVis}}"
                     Background="{DynamicResource WidgetInputBrush}"
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.8" CornerRadius="7" Padding="4,2"
+                    BorderThickness="0.7" CornerRadius="7" Padding="3"
                     Margin="0,0,0,8">
-                <Button Command="{Binding GoBackCommand}"
-                        Background="Transparent" BorderThickness="0"
-                        Cursor="Hand" HorizontalAlignment="Left"
-                        Padding="4,6">
-                    <Button.Style>
-                        <Style TargetType="Button">
-                            <Setter Property="Background"      Value="Transparent" />
-                            <Setter Property="BorderThickness" Value="0" />
-                            <Setter Property="Cursor"          Value="Hand" />
-                            <Setter Property="Padding"         Value="4,6" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="{TemplateBinding Background}"
-                                                Padding="{TemplateBinding Padding}" CornerRadius="5">
-                                            <ContentPresenter />
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </Button.Style>
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <Path Data="M10,3 L4,8 L10,13"
-                              Stroke="{DynamicResource WidgetForegroundBrush}"
-                              StrokeThickness="1.5" Stretch="None"
-                              Width="10" Height="16"
-                              VerticalAlignment="Center" Margin="0,0,6,0" />
-                        <TextBlock Text="{Binding CurrentSubView}"
-                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                   FontSize="13" FontWeight="SemiBold"
-                                   VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
+                <!-- Accent pill (Border not Button — nested buttons need separate hit areas) -->
+                <Border Background="{DynamicResource WidgetAccentBrush}"
+                        CornerRadius="5" Height="28">
+                    <!-- Transparent bg forces WPF hit-testing to cover the full grid area -->
+                    <Grid Margin="4,0,2,0" Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="26" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="26" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- iOS-style bare chevron back button -->
+                        <Button Grid.Column="0" Command="{Binding GoBackCommand}" VerticalAlignment="Center">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Background"      Value="Transparent" />
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="Padding"         Value="0,4" />
+                                    <Setter Property="Cursor"          Value="Hand" />
+                                    <Setter Property="Opacity"         Value="0.6" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Opacity" Value="1" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Path Data="M10,3 L4,8 L10,13"
+                                  Stroke="{DynamicResource WidgetDayTodayTextBrush}"
+                                  StrokeThickness="2" StrokeLineJoin="Round"
+                                  StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                  Stretch="None" Width="14" Height="16" VerticalAlignment="Center" />
+                        </Button>
+
+                        <!-- Sub-view title — column width is fixed so it never shifts -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Path Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,5,0"
+                                  Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.3"
+                                  Fill="Transparent" Stretch="Uniform">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Data" Value="{StaticResource IconNote}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSubViewReminders}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconBell}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSubViewDocuments}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconFiles}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSubViewCompression}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconCompress}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsSubViewResize}" Value="True">
+                                                <Setter Property="Data" Value="{StaticResource IconResize}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                            <TextBlock Text="{Binding CurrentSubViewTitle}"
+                                       Foreground="{DynamicResource WidgetDayTodayTextBrush}"
+                                       FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <!-- Info badge — visible only when mouse is over the pill row -->
+                        <Grid Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"
+                              Margin="0,0,2,0" Style="{StaticResource HoverGateStyle}">
+                            <Button Style="{StaticResource InfoPillBadgeStyle}"
+                                    Command="{Binding OpenHelpCommand}"
+                                    CommandParameter="{Binding CurrentSubViewHelpKey}" />
+                        </Grid>
+                    </Grid>
+                </Border>
             </Border>
 
             <!-- ── Notes Section ──────────────────────────────────────── -->
-            <Border Visibility="{Binding IsSubViewNotes, Converter={StaticResource BoolToVis}}"
-                    Background="{DynamicResource WidgetBackgroundBrush}"
-                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
-                <StackPanel>
+            <StackPanel Visibility="{Binding IsSubViewNotes, Converter={StaticResource BoolToVis}}">
                     <!-- Search bar + Add button in same row -->
                     <Grid Margin="0,0,0,14">
                         <Grid.ColumnDefinitions>
@@ -468,7 +527,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0"
-                                Background="{DynamicResource WidgetInputBrush}"
+                                Background="{DynamicResource WidgetBackgroundBrush}"
                                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                                 BorderThickness="0.8" CornerRadius="6" Height="34">
                             <Grid>
@@ -525,9 +584,9 @@
                                 </Button>
                             </Grid>
                         </Border>
-                        <Button Grid.Column="1" Style="{StaticResource MItemBtnAccent}"
+                        <Button Grid.Column="1" Style="{StaticResource AccentButton}"
                                 Command="{Binding AddNoteCommand}"
-                                Height="34" Margin="6,0,0,0"
+                                Margin="6,0,0,0"
                                 Visibility="{Binding IsNoteFormOpen, Converter={StaticResource InverseBoolToVis}}">
                             <StackPanel Orientation="Horizontal">
                                 <Path Data="{StaticResource IconPlus}"
@@ -541,12 +600,20 @@
 
                     <!-- Add / Edit inline form -->
                     <Border Visibility="{Binding IsNoteFormOpen, Converter={StaticResource BoolToVis}}"
-                            Background="{DynamicResource WidgetInputBrush}"
+                            Background="{DynamicResource WidgetBackgroundBrush}"
+                            BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                            BorderThickness="0.7"
                             CornerRadius="7" Padding="10,10" Margin="0,0,0,8">
                         <StackPanel>
-                            <TextBlock Text="{Binding NoteFormTitleLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="13" FontWeight="SemiBold" Margin="0,0,0,10" />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Path Data="{StaticResource IconNote}"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.2"
+                                      Fill="Transparent" Stretch="Uniform"
+                                      Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding NoteFormTitleLabel}"
+                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                           FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
 
                             <!-- Date field -->
                             <TextBlock Text="{Binding NoteFieldDateLabel}"
@@ -576,10 +643,14 @@
                                        Visibility="{Binding HasNoteFormError, Converter={StaticResource BoolToVis}}" />
 
                             <!-- Form actions -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Style="{StaticResource MItemBtnSecondary}"
-                                        Command="{Binding CancelNoteFormCommand}"
-                                        Margin="0,0,4,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding CancelNoteFormCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Path Data="{StaticResource IconWindowClose}"
                                               Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.3"
@@ -588,7 +659,7 @@
                                         <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
-                                <Button Style="{StaticResource MItemBtnAccent}"
+                                <Button Grid.Column="2" Style="{StaticResource AccentButton}"
                                         Command="{Binding SaveNoteFormCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Path Data="{StaticResource IconCheck}"
@@ -598,7 +669,7 @@
                                         <TextBlock Text="{Binding SaveLabel}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
-                            </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </Border>
 
@@ -661,15 +732,10 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </StackPanel>
-            </Border>
+            </StackPanel>
 
             <!-- ── Reminders Section ──────────────────────────────────── -->
-            <Border Visibility="{Binding IsSubViewReminders, Converter={StaticResource BoolToVis}}"
-                    Background="{DynamicResource WidgetBackgroundBrush}"
-                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
-                <StackPanel>
+            <StackPanel Visibility="{Binding IsSubViewReminders, Converter={StaticResource BoolToVis}}">
                     <!-- Search bar + Add button in same row -->
                     <Grid Margin="0,0,0,14">
                         <Grid.ColumnDefinitions>
@@ -677,7 +743,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Border Grid.Column="0"
-                                Background="{DynamicResource WidgetInputBrush}"
+                                Background="{DynamicResource WidgetBackgroundBrush}"
                                 BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                                 BorderThickness="0.8" CornerRadius="6" Height="34">
                             <Grid>
@@ -734,9 +800,9 @@
                                 </Button>
                             </Grid>
                         </Border>
-                        <Button Grid.Column="1" Style="{StaticResource MItemBtnAccent}"
+                        <Button Grid.Column="1" Style="{StaticResource AccentButton}"
                                 Command="{Binding AddNewReminderCommand}"
-                                Height="34" Margin="6,0,0,0"
+                                Margin="6,0,0,0"
                                 Visibility="{Binding IsReminderFormOpen, Converter={StaticResource InverseBoolToVis}}">
                             <StackPanel Orientation="Horizontal">
                                 <Path Data="{StaticResource IconPlus}"
@@ -752,19 +818,33 @@
                     <Button HorizontalAlignment="Right"
                             Margin="0,0,0,10"
                             Command="{Binding ToggleShowCompletedCommand}"
-                            Style="{StaticResource MItemBtnSecondary}"
+                            Style="{StaticResource SecondaryButton}"
                             Visibility="{Binding HasCompletedReminders, Converter={StaticResource BoolToVis}}">
-                        <TextBlock Text="{Binding ToggleCompletedLabel}" FontSize="11" />
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource IconCheck}"
+                                  Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.3"
+                                  Fill="Transparent" Stretch="Uniform"
+                                  Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,5,0" />
+                            <TextBlock Text="{Binding ToggleCompletedLabel}" FontSize="11" VerticalAlignment="Center" />
+                        </StackPanel>
                     </Button>
 
                     <!-- Add / Edit inline form -->
                     <Border Visibility="{Binding IsReminderFormOpen, Converter={StaticResource BoolToVis}}"
-                            Background="{DynamicResource WidgetInputBrush}"
+                            Background="{DynamicResource WidgetBackgroundBrush}"
+                            BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                            BorderThickness="0.7"
                             CornerRadius="7" Padding="10,10" Margin="0,0,0,8">
                         <StackPanel>
-                            <TextBlock Text="{Binding ReminderFormTitleLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="13" FontWeight="SemiBold" Margin="0,0,0,10" />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Path Data="{StaticResource IconBell}"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.2"
+                                      Fill="Transparent" Stretch="Uniform"
+                                      Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding ReminderFormTitleLabel}"
+                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                           FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
 
                             <!-- Title -->
                             <TextBlock Text="{Binding ReminderFieldTitleLabel}"
@@ -822,7 +902,7 @@
                                         <Button Grid.Column="1"
                                                 Command="{Binding ToggleReminderAmPmCommand}"
                                                 Height="34" Width="48"
-                                                Style="{StaticResource MItemBtnAccent}">
+                                                Style="{StaticResource AccentButton}">
                                             <TextBlock Text="{Binding ReminderAmPmLabel}"
                                                        FontSize="12" FontWeight="SemiBold" />
                                         </Button>
@@ -876,10 +956,14 @@
                                        Margin="0,0,0,6" />
 
                             <!-- Form actions -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Style="{StaticResource MItemBtnSecondary}"
-                                        Command="{Binding CancelReminderFormCommand}"
-                                        Margin="0,0,4,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding CancelReminderFormCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Path Data="{StaticResource IconWindowClose}"
                                               Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.3"
@@ -888,7 +972,7 @@
                                         <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
-                                <Button Style="{StaticResource MItemBtnAccent}"
+                                <Button Grid.Column="2" Style="{StaticResource AccentButton}"
                                         Command="{Binding SaveReminderFormCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Path Data="{StaticResource IconCheck}"
@@ -898,7 +982,7 @@
                                         <TextBlock Text="{Binding SaveLabel}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
-                            </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </Border>
 
@@ -989,15 +1073,10 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                </StackPanel>
-            </Border>
+            </StackPanel>
 
             <!-- ── Documents Section ─────────────────────────────────── -->
-            <Border Visibility="{Binding IsSubViewDocuments, Converter={StaticResource BoolToVis}}"
-                    Background="{DynamicResource WidgetBackgroundBrush}"
-                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4">
-                <StackPanel>
+            <StackPanel Visibility="{Binding IsSubViewDocuments, Converter={StaticResource BoolToVis}}">
 
                     <!-- Search bar + Add button in same row -->
                     <Grid Margin="0,0,0,14">
@@ -1008,7 +1087,7 @@
                         <!-- Search bar -->
                         <Grid Grid.Column="0">
                             <Border x:Name="DocSearchBorder"
-                                    Background="{DynamicResource WidgetInputBrush}"
+                                    Background="{DynamicResource WidgetBackgroundBrush}"
                                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
                                     BorderThickness="0.8" CornerRadius="6" Height="34">
                                 <Grid>
@@ -1125,9 +1204,9 @@
                             </Popup>
                         </Grid>
                         <!-- Add button (hidden while form is open) -->
-                        <Button Grid.Column="1" Style="{StaticResource MItemBtnAccent}"
+                        <Button Grid.Column="1" Style="{StaticResource AccentButton}"
                                 Command="{Binding ShowAddDocumentCommand}"
-                                Height="34" Margin="6,0,0,0"
+                                Margin="6,0,0,0"
                                 Visibility="{Binding IsDocFormOpen, Converter={StaticResource InverseBoolToVis}}">
                             <StackPanel Orientation="Horizontal">
                                 <Path Data="{StaticResource IconPlus}"
@@ -1141,12 +1220,20 @@
 
                     <!-- Add / Edit inline form -->
                     <Border Visibility="{Binding IsDocFormOpen, Converter={StaticResource BoolToVis}}"
-                            Background="{DynamicResource WidgetInputBrush}"
+                            Background="{DynamicResource WidgetBackgroundBrush}"
+                            BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                            BorderThickness="0.7"
                             CornerRadius="7" Padding="10,10" Margin="0,0,0,8">
                         <StackPanel>
-                            <TextBlock Text="{Binding DocFormTitleLabel}"
-                                       Foreground="{DynamicResource WidgetForegroundBrush}"
-                                       FontSize="13" FontWeight="SemiBold" Margin="0,0,0,10" />
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Path Data="{StaticResource IconFiles}"
+                                      Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.2"
+                                      Fill="Transparent" Stretch="Uniform"
+                                      Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBlock Text="{Binding DocFormTitleLabel}"
+                                           Foreground="{DynamicResource WidgetForegroundBrush}"
+                                           FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            </StackPanel>
 
                             <!-- Title -->
                             <TextBlock Text="{Binding DocFieldTitleLabel}"
@@ -1348,8 +1435,7 @@
                                                    Visibility="{Binding DocEditHasFile, Converter={StaticResource BoolToVis}}" />
                                     </StackPanel>
                                 </Border>
-                                <Button Grid.Column="1" Style="{StaticResource MItemBtnSecondary}"
-                                        Height="34"
+                                <Button Grid.Column="1" Style="{StaticResource SecondaryButton}"
                                         Command="{Binding BrowseDocumentFileCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Path Data="{StaticResource IconFolderOpen}"
@@ -1387,10 +1473,14 @@
                                        Visibility="{Binding HasDocEditError, Converter={StaticResource BoolToVis}}" />
 
                             <!-- Form actions -->
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                <Button Style="{StaticResource MItemBtnSecondary}"
-                                        Command="{Binding CancelDocumentEditCommand}"
-                                        Margin="0,0,4,0">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="8" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" Style="{StaticResource SecondaryButton}"
+                                        Command="{Binding CancelDocumentEditCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Path Data="{StaticResource IconWindowClose}"
                                               Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.3"
@@ -1399,7 +1489,7 @@
                                         <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
-                                <Button Style="{StaticResource MItemBtnAccent}"
+                                <Button Grid.Column="2" Style="{StaticResource AccentButton}"
                                         Command="{Binding SaveDocumentCommand}">
                                     <StackPanel Orientation="Horizontal">
                                         <Path Data="{StaticResource IconCheck}"
@@ -1409,7 +1499,7 @@
                                         <TextBlock Text="{Binding SaveLabel}" VerticalAlignment="Center" />
                                     </StackPanel>
                                 </Button>
-                            </StackPanel>
+                            </Grid>
                         </StackPanel>
                     </Border>
 
@@ -1561,24 +1651,29 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 
-                </StackPanel>
-            </Border>
+            </StackPanel>
 
             <!-- ── Compression Sub-view ──────────────────────────────── -->
-            <views:CompressionView
-                DataContext="{Binding Compression}"
-                Visibility="{Binding DataContext.IsSubViewCompression,
-                             ElementName=RootMoreView,
-                             Converter={StaticResource BoolToVis},
-                             FallbackValue=Collapsed}" />
+            <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4"
+                    Visibility="{Binding DataContext.IsSubViewCompression,
+                                 ElementName=RootMoreView,
+                                 Converter={StaticResource BoolToVis},
+                                 FallbackValue=Collapsed}">
+                <views:CompressionView DataContext="{Binding Compression}" />
+            </Border>
 
             <!-- ── Resize Sub-view ───────────────────────────────────── -->
-            <views:ResizeView
-                DataContext="{Binding Resize}"
-                Visibility="{Binding DataContext.IsSubViewResize,
-                             ElementName=RootMoreView,
-                             Converter={StaticResource BoolToVis},
-                             FallbackValue=Collapsed}" />
+            <Border Background="{DynamicResource WidgetBackgroundBrush}"
+                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4"
+                    Visibility="{Binding DataContext.IsSubViewResize,
+                                 ElementName=RootMoreView,
+                                 Converter={StaticResource BoolToVis},
+                                 FallbackValue=Collapsed}">
+                <views:ResizeView DataContext="{Binding Resize}" />
+            </Border>
 
         </StackPanel>
     </ScrollViewer>

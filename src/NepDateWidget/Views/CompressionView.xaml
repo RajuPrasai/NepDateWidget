@@ -22,23 +22,16 @@
       <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
       <Setter Property="Opacity"    Value="0.65" />
     </Style>
-    <Style x:Key="CompactInputStyle" TargetType="TextBox">
-      <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
-      <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-      <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-      <Setter Property="BorderThickness" Value="0.7" />
-      <Setter Property="Height"          Value="30" />
-      <Setter Property="FontSize"        Value="13" />
-      <Setter Property="Padding"         Value="6,0" />
-      <Setter Property="CaretBrush"      Value="{DynamicResource WidgetForegroundBrush}" />
-      <Setter Property="SelectionBrush"  Value="{DynamicResource WidgetAccentBrush}" />
-      <Setter Property="ContextMenu"     Value="{StaticResource ThemedTextBoxContextMenu}" />
-      <Setter Property="Template"        Value="{StaticResource PlaceholderTextBoxTemplate}" />
-    </Style>
+
+
   </UserControl.Resources>
 
   <Grid x:Name="CompressionViewRoot">
-    <StackPanel>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <StackPanel Grid.Row="0">
       <!-- Drop zone -->
       <Border x:Name="DropZone"
                 Background="{DynamicResource WidgetAccentBrushLight}"
@@ -92,11 +85,8 @@
       </Border>
 
       <!-- File list -->
-      <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                BorderThickness="0.7" CornerRadius="8" Padding="8,6" Margin="0,0,0,8"
-                Visibility="{Binding HasFiles, Converter={StaticResource BoolToVis}}">
-        <ItemsControl ItemsSource="{Binding Files}" MaxHeight="140">
+      <ItemsControl ItemsSource="{Binding Files}" MaxHeight="140" Margin="0,0,0,8"
+                    Visibility="{Binding ShowFileList, Converter={StaticResource BoolToVis}}">
           <ItemsControl.Template>
             <ControlTemplate>
               <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -114,10 +104,14 @@
                   <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <!-- Thumbnail -->
-                <Border Grid.Column="0" CornerRadius="6" ClipToBounds="True"
+                <Border Grid.Column="0"
                             Height="30" VerticalAlignment="Center" Margin="0,0,6,0">
                   <Image Source="{Binding FilePath, Converter={StaticResource StringToImageSource}}"
-                             Height="30" Stretch="Uniform" />
+                             Height="30" Stretch="Uniform">
+                    <Image.Clip>
+                      <RectangleGeometry RadiusX="6" RadiusY="6" Rect="0,0,30,30" />
+                    </Image.Clip>
+                  </Image>
                 </Border>
                 <!-- File name + info -->
                 <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -172,17 +166,19 @@
               </Grid>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
-        </ItemsControl>
-      </Border>
+      </ItemsControl>
 
       <!-- Compression level -->
-      <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                BorderThickness="0.7" CornerRadius="8" Padding="10,8" Margin="0,0,0,8">
-        <StackPanel>
-          <TextBlock Text="{Binding LevelSectionLabel}"
-                           Foreground="{DynamicResource WidgetForegroundBrush}"
-                           FontSize="12" FontWeight="SemiBold" Margin="0,0,0,8" />
+      <StackPanel Margin="0,0,0,12">
+          <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+              <Path Data="{StaticResource IconSettings}"
+                    Stroke="{DynamicResource WidgetForegroundBrush}"
+                    StrokeThickness="1.2" Stretch="Uniform"
+                    Width="11" Height="11" VerticalAlignment="Center" Margin="0,0,5,0" />
+              <TextBlock Text="{Binding LevelSectionLabel}"
+                         Foreground="{DynamicResource WidgetForegroundBrush}"
+                         FontSize="12" FontWeight="SemiBold" />
+          </StackPanel>
           <Slider Minimum="0" Maximum="4"
                         Value="{Binding CompressionLevel}"
                         Style="{DynamicResource IosSlider}"
@@ -203,8 +199,7 @@
             <TextBlock Grid.Column="3" Text="{Binding LevelHighLabel}"     Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Center" />
             <TextBlock Grid.Column="4" Text="{Binding LevelBestLabel}"     Style="{StaticResource LevelLabelStyle}" HorizontalAlignment="Right" />
           </Grid>
-        </StackPanel>
-      </Border>
+      </StackPanel>
 
       <!-- Advanced options toggle -->
       <Button Command="{Binding ToggleAdvancedPanelCommand}"
@@ -264,11 +259,8 @@
       </Button>
 
       <!-- Advanced panel -->
-      <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                BorderThickness="0.7" CornerRadius="8" Padding="10,8" Margin="0,0,0,8"
-                Visibility="{Binding IsAdvancedPanelOpen, Converter={StaticResource BoolToVis}}">
-        <StackPanel>
+      <StackPanel Margin="0,0,0,12"
+                  Visibility="{Binding IsAdvancedPanelOpen, Converter={StaticResource BoolToVis}}">
           <!-- JPEG/WebP/AVIF options -->
           <StackPanel Visibility="{Binding IsImageType, Converter={StaticResource BoolToVis}}">
             <TextBlock Text="{Binding AdvImageLabel}" Style="{StaticResource FieldLabel}" Margin="0,0,0,6" />
@@ -293,7 +285,7 @@
                 <ColumnDefinition Width="Auto" />
               </Grid.ColumnDefinitions>
               <TextBox Grid.Column="0"
-                                 Style="{StaticResource CompactInputStyle}"
+                                 Style="{StaticResource InputBoxStyle}"
                                  Text="{Binding ResizeWidthText, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,6,0"
                                  MaxLength="5"
@@ -304,7 +296,7 @@
                                    Opacity="0.5" FontSize="14"
                                    VerticalAlignment="Center" Margin="0,0,6,0" />
               <TextBox Grid.Column="2"
-                                 Style="{StaticResource CompactInputStyle}"
+                                 Style="{StaticResource InputBoxStyle}"
                                  Text="{Binding ResizeHeightText, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,6,0"
                                  MaxLength="5"
@@ -342,14 +334,11 @@
                               IsChecked="{Binding LinearizePdf}"
                               Style="{StaticResource WidgetCheckBox}" />
           </StackPanel>
-        </StackPanel>
-      </Border>
+      </StackPanel>
 
       <!-- Progress area -->
-      <Border Background="{DynamicResource WidgetInputBrush}"
-                CornerRadius="8" Padding="10,8" Margin="0,0,0,8"
-                Visibility="{Binding IsJobRunning, Converter={StaticResource BoolToVis}}">
-        <StackPanel>
+      <StackPanel Margin="0,0,0,8"
+                  Visibility="{Binding IsJobRunning, Converter={StaticResource BoolToVis}}">
           <Grid Margin="0,0,0,5">
             <TextBlock Text="{Binding ProgressTitleLabel}"
                              Foreground="{DynamicResource WidgetForegroundBrush}"
@@ -360,57 +349,7 @@
           </Grid>
           <ProgressBar Value="{Binding CompletedCount, Mode=OneWay}" Maximum="{Binding TotalCount}"
                              Style="{StaticResource WidgetProgressBar}" />
-        </StackPanel>
-      </Border>
-
-      <!-- Summary banner -->
-      <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                BorderBrush="{DynamicResource WidgetAccentBrush}"
-                BorderThickness="0.7" CornerRadius="8" Padding="10,8" Margin="0,0,0,8"
-                Visibility="{Binding ShowSummary, Converter={StaticResource BoolToVis}}">
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-          </Grid.ColumnDefinitions>
-          <TextBlock Grid.Column="0"
-                         Text="{Binding JobSummary}"
-                         Foreground="{DynamicResource WidgetForegroundBrush}"
-                         FontSize="13" FontWeight="SemiBold"
-                         TextWrapping="Wrap" VerticalAlignment="Center" />
-          <Button Grid.Column="1"
-                      Command="{Binding DismissSummaryCommand}"
-                      VerticalAlignment="Center" Margin="8,0,0,0"
-                      Cursor="Hand" ToolTip="Dismiss">
-            <Button.Style>
-              <Style TargetType="Button">
-                <Setter Property="Background"      Value="Transparent" />
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Padding"         Value="0" />
-                <Setter Property="Opacity"         Value="0.55" />
-                <Setter Property="Template">
-                  <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                      <Border Background="Transparent" Padding="{TemplateBinding Padding}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                      </Border>
-                    </ControlTemplate>
-                  </Setter.Value>
-                </Setter>
-                <Style.Triggers>
-                  <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Opacity" Value="1" />
-                  </Trigger>
-                </Style.Triggers>
-              </Style>
-            </Button.Style>
-            <Path Data="M0,0 L8,8 M8,0 L0,8"
-                      Stroke="{DynamicResource WidgetForegroundBrush}"
-                      StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                      Width="10" Height="10" Stretch="Fill" />
-          </Button>
-        </Grid>
-      </Border>
+      </StackPanel>
 
       <!-- Action buttons row -->
       <Grid Visibility="{Binding ShowSummary, Converter={StaticResource InverseBoolToVis}}">
@@ -419,75 +358,115 @@
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Button Grid.Column="0"
+                    Style="{StaticResource AccentButton}"
                     Command="{Binding CompressCommand}"
                     IsEnabled="{Binding CanCompress}"
-                    Height="36"
-                    Cursor="Hand"
                     Visibility="{Binding IsJobRunning, Converter={StaticResource InverseBoolToVis}}">
-          <Button.Style>
-            <Style TargetType="Button">
-              <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-              <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-              <Setter Property="BorderThickness" Value="0" />
-              <Setter Property="FontSize"        Value="13" />
-              <Setter Property="FontWeight"      Value="SemiBold" />
-              <Setter Property="Template">
-                <Setter.Value>
-                  <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}"
-                                            CornerRadius="7"
-                                            Opacity="{TemplateBinding Opacity}">
-                      <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                      <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Opacity" Value="0.85" />
-                      </Trigger>
-                      <Trigger Property="IsEnabled" Value="False">
-                        <Setter Property="Opacity" Value="0.4" />
-                      </Trigger>
-                    </ControlTemplate.Triggers>
-                  </ControlTemplate>
-                </Setter.Value>
-              </Setter>
-            </Style>
-          </Button.Style>
-          <TextBlock Text="{Binding CompressButtonLabel}" VerticalAlignment="Center" />
+          <StackPanel Orientation="Horizontal">
+              <Path Data="{StaticResource IconCompress}"
+                    Stroke="{DynamicResource WidgetDayTodayTextBrush}" StrokeThickness="1.3"
+                    Fill="Transparent" Stretch="Uniform"
+                    Width="12" Height="12" VerticalAlignment="Center" Margin="0,0,6,0" />
+              <TextBlock Text="{Binding CompressButtonLabel}" VerticalAlignment="Center" />
+          </StackPanel>
         </Button>
         <Button Grid.Column="0"
+                    Style="{StaticResource SecondaryButton}"
                     Command="{Binding CancelCommand}"
-                    Height="36"
-                    Cursor="Hand"
                     Visibility="{Binding IsJobRunning, Converter={StaticResource BoolToVis}}">
-          <Button.Style>
-            <Style TargetType="Button">
-              <Setter Property="Background"      Value="{DynamicResource WidgetInputBrush}" />
-              <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-              <Setter Property="BorderThickness" Value="0.7" />
-              <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-              <Setter Property="FontSize"        Value="13" />
-              <Setter Property="Template">
-                <Setter.Value>
-                  <ControlTemplate TargetType="Button">
-                    <Border Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="7">
-                      <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                    </Border>
-                    <ControlTemplate.Triggers>
-                      <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Opacity" Value="0.75" />
-                      </Trigger>
-                    </ControlTemplate.Triggers>
-                  </ControlTemplate>
-                </Setter.Value>
-              </Setter>
-            </Style>
-          </Button.Style>
-          <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
+          <StackPanel Orientation="Horizontal">
+              <Path Data="{StaticResource IconWindowClose}"
+                    Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.3"
+                    Fill="Transparent" Stretch="Uniform"
+                    Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,5,0" />
+              <TextBlock Text="{Binding CancelLabel}" VerticalAlignment="Center" />
+          </StackPanel>
         </Button>
       </Grid>
     </StackPanel>
+
+    <!-- Summary banner -->
+    <Border Grid.Row="1"
+            Background="{DynamicResource WidgetAccentBrushLight}"
+            BorderBrush="{DynamicResource WidgetAccentBrush}"
+            BorderThickness="1.5"
+            CornerRadius="8"
+            Padding="10,9"
+            Margin="0,8,0,0"
+            Visibility="{Binding ShowSummary, Converter={StaticResource BoolToVis}}">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+          <Path Data="{StaticResource IconCheck}"
+                Stroke="{DynamicResource WidgetAccentBrush}"
+                StrokeThickness="1.8"
+                Fill="Transparent" Stretch="Uniform"
+                Width="13" Height="13"
+                VerticalAlignment="Center" Margin="0,0,8,0" />
+          <TextBlock Text="{Binding SummaryFilesSegment}"
+                     Foreground="{DynamicResource WidgetForegroundBrush}"
+                     FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
+          <TextBlock Text=" | "
+                     Foreground="{DynamicResource WidgetForegroundBrush}"
+                     Opacity="0.35" FontSize="12" VerticalAlignment="Center" />
+          <TextBlock Text="{Binding SummaryOrigSizeSegment}"
+                     Foreground="{DynamicResource WidgetForegroundBrush}"
+                     FontSize="12" VerticalAlignment="Center" />
+          <TextBlock Text=" | "
+                     Foreground="{DynamicResource WidgetForegroundBrush}"
+                     Opacity="0.35" FontSize="12" VerticalAlignment="Center" />
+          <TextBlock Text="{Binding SummaryNewSizeSegment}"
+                     Foreground="{DynamicResource WidgetForegroundBrush}"
+                     FontSize="12" VerticalAlignment="Center" />
+          <TextBlock Text=" | "
+                     Foreground="{DynamicResource WidgetForegroundBrush}"
+                     Opacity="0.35" FontSize="12" VerticalAlignment="Center" />
+          <TextBlock Text="{Binding SummarySavedSegment}"
+                     Foreground="{DynamicResource WidgetForegroundBrush}"
+                     FontSize="12" VerticalAlignment="Center" />
+        </StackPanel>
+        <!-- Dismiss -->
+        <Button Grid.Column="1"
+                Command="{Binding DismissSummaryCommand}"
+                VerticalAlignment="Center" Margin="10,0,0,0"
+                Cursor="Hand">
+          <Button.Style>
+            <Style TargetType="Button">
+              <Setter Property="Background"      Value="Transparent" />
+              <Setter Property="BorderThickness" Value="0" />
+              <Setter Property="Padding"         Value="5" />
+              <Setter Property="Opacity"         Value="0.55" />
+              <Setter Property="Template">
+                <Setter.Value>
+                  <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            CornerRadius="4" Padding="{TemplateBinding Padding}">
+                      <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </Setter.Value>
+              </Setter>
+              <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                  <Setter Property="Opacity" Value="1" />
+                </Trigger>
+              </Style.Triggers>
+            </Style>
+          </Button.Style>
+          <Path Data="M0,0 L8,8 M8,0 L0,8"
+                Stroke="{DynamicResource WidgetForegroundBrush}"
+                StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                Width="10" Height="10" Stretch="Fill" />
+        </Button>
+      </Grid>
+    </Border>
   </Grid>
 </UserControl>

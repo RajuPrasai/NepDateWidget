@@ -2583,6 +2583,30 @@
     "en": "{0} done, {1} failed - saved {2} in total, new size is {3}",
     "ne": "{0} सम्पन्न, {1} असफल - कुल {2} बचत, नयाँ आकार {3}"
   },
+  "compress.summary_seg_files_one": {
+    "en": "1 file done",
+    "ne": "१ फाइल सम्पन्न"
+  },
+  "compress.summary_seg_files_many": {
+    "en": "{0} files done",
+    "ne": "{0} फाइल सम्पन्न"
+  },
+  "compress.summary_seg_partial": {
+    "en": "{0} done, {1} failed",
+    "ne": "{0} सम्पन्न, {1} असफल"
+  },
+  "compress.summary_seg_new_size": {
+    "en": "New size {0}",
+    "ne": "नयाँ आकार {0}"
+  },
+  "compress.summary_seg_orig_size": {
+    "en": "Was {0}",
+    "ne": "थियो {0}"
+  },
+  "compress.summary_seg_saved": {
+    "en": "Saved {0}",
+    "ne": "{0} बचत"
+  },
   "compress.remove_file": {
     "en": "Remove",
     "ne": "हटाउनुहोस्"

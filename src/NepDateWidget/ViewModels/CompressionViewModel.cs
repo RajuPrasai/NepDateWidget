@@ -180,6 +180,7 @@ public sealed class CompressionViewModel : ViewModelBase
             if (SetProperty(ref _isJobComplete, value))
             {
                 OnPropertyChanged(nameof(ShowSummary));
+                OnPropertyChanged(nameof(ShowFileList));
             }
         }
     }
@@ -219,6 +220,34 @@ public sealed class CompressionViewModel : ViewModelBase
         private set => SetProperty(ref _jobSummary, value);
     }
 
+    private string _summaryFilesSegment = string.Empty;
+    public string SummaryFilesSegment
+    {
+        get => _summaryFilesSegment;
+        private set => SetProperty(ref _summaryFilesSegment, value);
+    }
+
+    private string _summaryNewSizeSegment = string.Empty;
+    public string SummaryNewSizeSegment
+    {
+        get => _summaryNewSizeSegment;
+        private set => SetProperty(ref _summaryNewSizeSegment, value);
+    }
+
+    private string _summaryOrigSizeSegment = string.Empty;
+    public string SummaryOrigSizeSegment
+    {
+        get => _summaryOrigSizeSegment;
+        private set => SetProperty(ref _summaryOrigSizeSegment, value);
+    }
+
+    private string _summarySavedSegment = string.Empty;
+    public string SummarySavedSegment
+    {
+        get => _summarySavedSegment;
+        private set => SetProperty(ref _summarySavedSegment, value);
+    }
+
     public bool ShowSummary => _isJobComplete;
 
     // ── Mixed-type warning ───────────────────────────────────────────────────
@@ -253,6 +282,8 @@ public sealed class CompressionViewModel : ViewModelBase
     public bool IsMimeJpegOrPng => IsMimeJpeg || IsMimePng;
     // True when there is at least one file loaded (drives drop-zone vs file-list visibility)
     public bool HasFiles => Files.Count > 0;
+    // Hides the file list once the job completes and the summary banner is shown
+    public bool ShowFileList => HasFiles && !ShowSummary;
 
     // TIFF compression algorithm choices presented in the advanced panel
     public static IReadOnlyList<string> TiffCompressionOptions { get; } =
@@ -353,8 +384,13 @@ public sealed class CompressionViewModel : ViewModelBase
 
         if (_isJobComplete)
         {
+            Files.Clear();
             IsJobComplete = false;
             JobSummary = string.Empty;
+            SummaryFilesSegment = string.Empty;
+            SummaryNewSizeSegment = string.Empty;
+            SummaryOrigSizeSegment = string.Empty;
+            SummarySavedSegment = string.Empty;
         }
 
         // Validate same-type constraint across new + existing paths.
@@ -399,6 +435,7 @@ public sealed class CompressionViewModel : ViewModelBase
         OnPropertyChanged(nameof(CanOpenAdvancedPanel));
         OnPropertyChanged(nameof(CanCompress));
         OnPropertyChanged(nameof(HasFiles));
+        OnPropertyChanged(nameof(ShowFileList));
     }
 
     private void DoRemoveFile(string? filePath)
@@ -431,6 +468,7 @@ public sealed class CompressionViewModel : ViewModelBase
         OnPropertyChanged(nameof(CanOpenAdvancedPanel));
         OnPropertyChanged(nameof(CanCompress));
         OnPropertyChanged(nameof(HasFiles));
+        OnPropertyChanged(nameof(ShowFileList));
     }
 
     private async void DoCompress()
@@ -480,6 +518,7 @@ public sealed class CompressionViewModel : ViewModelBase
         int failedCount = Files.Count - doneCount;
         long totalSaved = jobs.Sum(j => EstimateSaved(j.OutputPath, j.InputPath));
         long totalOut = jobs.Sum(j => GetFileSizeBytes(j.OutputPath));
+        long totalIn = jobs.Sum(j => GetFileSizeBytes(j.InputPath));
 
         JobSummary = failedCount == 0
             ? (doneCount == 1
@@ -487,6 +526,14 @@ public sealed class CompressionViewModel : ViewModelBase
                 : string.Format(_loc.Get("compress.summary_done_many"), doneCount, FormatBytes(totalSaved), FormatBytes(totalOut)))
             : string.Format(_loc.Get("compress.summary_partial"), doneCount, failedCount, FormatBytes(totalSaved), FormatBytes(totalOut));
 
+        SummaryFilesSegment = failedCount == 0
+            ? (doneCount == 1
+                ? _loc.Get("compress.summary_seg_files_one")
+                : string.Format(_loc.Get("compress.summary_seg_files_many"), doneCount))
+            : string.Format(_loc.Get("compress.summary_seg_partial"), doneCount, failedCount);
+        SummaryNewSizeSegment = string.Format(_loc.Get("compress.summary_seg_new_size"), FormatBytes(totalOut));
+        SummaryOrigSizeSegment = string.Format(_loc.Get("compress.summary_seg_orig_size"), FormatBytes(totalIn));
+        SummarySavedSegment = string.Format(_loc.Get("compress.summary_seg_saved"), FormatBytes(totalSaved));
     }
 
     private void DoCancel()
@@ -516,12 +563,17 @@ public sealed class CompressionViewModel : ViewModelBase
         CompletedCount = 0;
         TotalCount = 0;
         JobSummary = string.Empty;
+        SummaryFilesSegment = string.Empty;
+        SummaryNewSizeSegment = string.Empty;
+        SummaryOrigSizeSegment = string.Empty;
+        SummarySavedSegment = string.Empty;
         ResizeWidthText = string.Empty;
         ResizeHeightText = string.Empty;
 
         OnPropertyChanged(nameof(CanOpenAdvancedPanel));
         OnPropertyChanged(nameof(CanCompress));
         OnPropertyChanged(nameof(HasFiles));
+        OnPropertyChanged(nameof(ShowFileList));
         OnPropertyChanged(nameof(DetectedMimeType));
         OnPropertyChanged(nameof(DetectedCategory));
         RefreshMimeFlags();

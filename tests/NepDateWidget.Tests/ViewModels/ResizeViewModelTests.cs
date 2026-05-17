@@ -377,4 +377,66 @@ public class ResizeViewModelTests
         vm.AddFiles(["C:\\file.exe"]);
         Assert.False(vm.HasFiles);
     }
+
+    // ── Job lifecycle: IsJobRunning / IsJobComplete / ShowSummary ─────────────
+
+    [Fact]
+    public void Constructor_IsJobRunning_False()
+    {
+        var vm = Create();
+        Assert.False(vm.IsJobRunning);
+    }
+
+    [Fact]
+    public void Constructor_IsJobComplete_False()
+    {
+        var vm = Create();
+        Assert.False(vm.IsJobComplete);
+    }
+
+    [Fact]
+    public void Constructor_ShowSummary_False()
+    {
+        var vm = Create();
+        Assert.False(vm.ShowSummary);
+    }
+
+    [Fact]
+    public void CompletedCount_StartsAtZero()
+    {
+        var vm = Create();
+        Assert.Equal(0, vm.CompletedCount);
+    }
+
+    [Fact]
+    public void TotalCount_StartsAtZero()
+    {
+        var vm = Create();
+        Assert.Equal(0, vm.TotalCount);
+    }
+
+    [Fact]
+    public void DismissSummaryCommand_NotNull()
+    {
+        var vm = Create();
+        Assert.NotNull(vm.DismissSummaryCommand);
+    }
+
+    [Fact]
+    public void DismissSummaryCommand_WhenJobComplete_ResetsJobCompleteToFalse()
+    {
+        var vm = Create();
+        // DoResize opens a file picker dialog which cannot be driven in unit tests.
+        // Set _isJobComplete directly via reflection to simulate a completed job.
+        typeof(ResizeViewModel)
+            .GetField("_isJobComplete", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+            .SetValue(vm, true);
+
+        Assert.True(vm.IsJobComplete);
+
+        vm.DismissSummaryCommand.Execute(null);
+
+        Assert.False(vm.IsJobComplete);
+        Assert.False(vm.ShowSummary);
+    }
 }

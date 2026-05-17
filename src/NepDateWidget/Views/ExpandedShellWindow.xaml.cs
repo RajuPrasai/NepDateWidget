@@ -58,7 +58,16 @@ public partial class ExpandedShellWindow : Window
             ViewModel.SaveSettings();
         };
 
-        IsVisibleChanged += (_, e) => { if (e.NewValue is true) { PlayOpenAnimation(); } };
+        IsVisibleChanged += (_, e) =>
+        {
+            if (e.NewValue is true)
+            {
+                // Re-apply after WPF WindowChrome has finished its own DWM setup,
+                // which can reset the corner preference set in OnSourceInitialized.
+                ApplyCornerPreference();
+                PlayOpenAnimation();
+            }
+        };
 
         // React to the user toggling Rounded / Sharp at runtime.
         viewModel.PropertyChanged += (_, e) =>

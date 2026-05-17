@@ -28,6 +28,7 @@ public sealed class ResizeViewModel : ViewModelBase
     public bool IsPdfLoaded => _detectedCategory == FileCategory.Pdf;
     public bool IsImageLoaded => _detectedCategory == FileCategory.Image && Files.Count > 0;
     public bool HasFiles => Files.Count > 0;
+    public bool ShowFileList => HasFiles && !ShowSummary;
 
     // ── Resize dimensions ────────────────────────────────────────────────────
 
@@ -144,6 +145,7 @@ public sealed class ResizeViewModel : ViewModelBase
             if (SetProperty(ref _isJobComplete, value))
             {
                 OnPropertyChanged(nameof(ShowSummary));
+                OnPropertyChanged(nameof(ShowFileList));
             }
         }
     }
@@ -182,6 +184,34 @@ public sealed class ResizeViewModel : ViewModelBase
     {
         get => _jobSummary;
         private set => SetProperty(ref _jobSummary, value);
+    }
+
+    private string _summaryFilesSegment = string.Empty;
+    public string SummaryFilesSegment
+    {
+        get => _summaryFilesSegment;
+        private set => SetProperty(ref _summaryFilesSegment, value);
+    }
+
+    private string _summaryNewSizeSegment = string.Empty;
+    public string SummaryNewSizeSegment
+    {
+        get => _summaryNewSizeSegment;
+        private set => SetProperty(ref _summaryNewSizeSegment, value);
+    }
+
+    private string _summaryOrigSizeSegment = string.Empty;
+    public string SummaryOrigSizeSegment
+    {
+        get => _summaryOrigSizeSegment;
+        private set => SetProperty(ref _summaryOrigSizeSegment, value);
+    }
+
+    private string _summarySavedSegment = string.Empty;
+    public string SummarySavedSegment
+    {
+        get => _summarySavedSegment;
+        private set => SetProperty(ref _summarySavedSegment, value);
     }
 
     // ── Mixed-type warning ───────────────────────────────────────────────────
@@ -298,8 +328,13 @@ public sealed class ResizeViewModel : ViewModelBase
 
         if (_isJobComplete)
         {
+            Files.Clear();
             IsJobComplete = false;
             JobSummary = string.Empty;
+            SummaryFilesSegment = string.Empty;
+            SummaryNewSizeSegment = string.Empty;
+            SummaryOrigSizeSegment = string.Empty;
+            SummarySavedSegment = string.Empty;
         }
 
         var allPaths = Files.Select(f => f.FilePath).Concat(paths).ToList();
@@ -334,6 +369,8 @@ public sealed class ResizeViewModel : ViewModelBase
         RefreshDetectedType();
         OnPropertyChanged(nameof(CanResize));
         OnPropertyChanged(nameof(ShowStretchWarning));
+        OnPropertyChanged(nameof(HasFiles));
+        OnPropertyChanged(nameof(ShowFileList));
     }
 
     private void DoRemoveFile(string? filePath)
@@ -359,6 +396,7 @@ public sealed class ResizeViewModel : ViewModelBase
         OnPropertyChanged(nameof(CanResize));
         OnPropertyChanged(nameof(ShowStretchWarning));
         OnPropertyChanged(nameof(HasFiles));
+        OnPropertyChanged(nameof(ShowFileList));
     }
 
     private async void DoResize()
@@ -405,11 +443,21 @@ public sealed class ResizeViewModel : ViewModelBase
         int failedCount = Files.Count - doneCount;
         long totalSaved = jobs.Sum(j => EstimateSaved(j.OutputPath, j.InputPath));
         long totalOut = jobs.Sum(j => GetFileSizeBytes(j.OutputPath));
+        long totalIn = jobs.Sum(j => GetFileSizeBytes(j.InputPath));
         JobSummary = failedCount == 0
             ? (doneCount == 1
                 ? string.Format(_loc.Get("compress.summary_done_one"), FormatBytes(totalSaved), FormatBytes(totalOut))
                 : string.Format(_loc.Get("compress.summary_done_many"), doneCount, FormatBytes(totalSaved), FormatBytes(totalOut)))
             : string.Format(_loc.Get("compress.summary_partial"), doneCount, failedCount, FormatBytes(totalSaved), FormatBytes(totalOut));
+
+        SummaryFilesSegment = failedCount == 0
+            ? (doneCount == 1
+                ? _loc.Get("compress.summary_seg_files_one")
+                : string.Format(_loc.Get("compress.summary_seg_files_many"), doneCount))
+            : string.Format(_loc.Get("compress.summary_seg_partial"), doneCount, failedCount);
+        SummaryNewSizeSegment = string.Format(_loc.Get("compress.summary_seg_new_size"), FormatBytes(totalOut));
+        SummaryOrigSizeSegment = string.Format(_loc.Get("compress.summary_seg_orig_size"), FormatBytes(totalIn));
+        SummarySavedSegment = string.Format(_loc.Get("compress.summary_seg_saved"), FormatBytes(totalSaved));
 
         }
 
@@ -429,6 +477,10 @@ public sealed class ResizeViewModel : ViewModelBase
         CompletedCount = 0;
         TotalCount = 0;
         JobSummary = string.Empty;
+        SummaryFilesSegment = string.Empty;
+        SummaryNewSizeSegment = string.Empty;
+        SummaryOrigSizeSegment = string.Empty;
+        SummarySavedSegment = string.Empty;
         WidthText = string.Empty;
         HeightText = string.Empty;
         AlsoCompress = false;
@@ -436,6 +488,7 @@ public sealed class ResizeViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsPdfLoaded));
         OnPropertyChanged(nameof(IsImageLoaded));
         OnPropertyChanged(nameof(HasFiles));
+        OnPropertyChanged(nameof(ShowFileList));
     }
 
     // ── Progress handler ─────────────────────────────────────────────────────
@@ -473,6 +526,7 @@ public sealed class ResizeViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsPdfLoaded));
         OnPropertyChanged(nameof(IsImageLoaded));
         OnPropertyChanged(nameof(HasFiles));
+        OnPropertyChanged(nameof(ShowFileList));
     }
 
     private string? PickOutputDirectory(out string? singleOutputPath)
