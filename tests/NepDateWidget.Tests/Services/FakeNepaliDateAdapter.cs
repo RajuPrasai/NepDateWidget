@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Models;
+using NepDateWidget.Models;
 using NepDateWidget.Services;
 
 namespace NepDateWidget.Tests.Services;
@@ -58,17 +58,37 @@ internal sealed class FakeNepaliDateAdapter : INepaliDateAdapter
     public DateTime? BsToAd(int bsYear, int bsMonth, int bsDay)
     {
         // Simulate NepDate validation: return null for out-of-range inputs
-        if (bsYear < 1901 || bsYear > 2199) return null;
-        if (bsMonth < 1 || bsMonth > 12) return null;
-        if (bsDay < 1 || bsDay > 32) return null;
+        if (bsYear < 1901 || bsYear > 2199)
+        {
+            return null;
+        }
 
-        if (bsYear == 2082 && bsMonth == 12 && bsDay == 20) return new DateTime(2026, 4, 3);
-        if (bsYear == 2082 && bsMonth == 1  && bsDay == 1 ) return new DateTime(2025, 4, 14);
+        if (bsMonth < 1 || bsMonth > 12)
+        {
+            return null;
+        }
+
+        if (bsDay < 1 || bsDay > 32)
+        {
+            return null;
+        }
+
+        if (bsYear == 2082 && bsMonth == 12 && bsDay == 20)
+        {
+            return new DateTime(2026, 4, 3);
+        }
+
+        if (bsYear == 2082 && bsMonth == 1  && bsDay == 1 )
+        {
+            return new DateTime(2025, 4, 14);
+        }
 
         // For month 12, produce sequential AD dates anchored to the 2082/12/20 special case.
         // This ensures BsToAd(2082, 12, 21) = Apr 4, BsToAd(2082, 12, 22) = Apr 5, etc.
         if (bsYear == 2082 && bsMonth == 12)
+        {
             return new DateTime(2026, 4, 3).AddDays(bsDay - 20);
+        }
 
         // Return distinct AD dates based on BS inputs so recurrence math works correctly
         int totalDays = (bsMonth - 1) * 30 + (bsDay - 1);
@@ -77,9 +97,21 @@ internal sealed class FakeNepaliDateAdapter : INepaliDateAdapter
 
     public (int Year, int Month, int Day)? AdToBs(DateTime adDate)
     {
-        if (adDate == new DateTime(2026, 4, 3))  return (2082, 12, 20);
-        if (adDate == new DateTime(2025, 4, 14)) return (2082, 1, 1);
-        if (adDate.Year < 1) return null;
+        if (adDate == new DateTime(2026, 4, 3))
+        {
+            return (2082, 12, 20);
+        }
+
+        if (adDate == new DateTime(2025, 4, 14))
+        {
+            return (2082, 1, 1);
+        }
+
+        if (adDate.Year < 1)
+        {
+            return null;
+        }
+
         return (2082, 4, 10); // generic stand-in
     }
 
@@ -106,23 +138,40 @@ internal sealed class FakeNepaliDateAdapter : INepaliDateAdapter
     public (int Year, int Month, int Day)? AddDays(int bsYear, int bsMonth, int bsDay, int days)
     {
         if (bsYear < 1901 || bsYear > 2199 || bsMonth < 1 || bsMonth > 12 || bsDay < 1 || bsDay > 32)
+        {
             return null;
+        }
         // Simple stub: return a fixed result
         return (bsYear, bsMonth, Math.Max(1, Math.Min(30, bsDay + (days % 30))));
     }
 
     public int? DiffTotalDays(int y1, int m1, int d1, int y2, int m2, int d2)
     {
-        if (y1 < 1901 || y1 > 2199 || m1 < 1 || m1 > 12 || d1 < 1 || d1 > 32) return null;
-        if (y2 < 1901 || y2 > 2199 || m2 < 1 || m2 > 12 || d2 < 1 || d2 > 32) return null;
+        if (y1 < 1901 || y1 > 2199 || m1 < 1 || m1 > 12 || d1 < 1 || d1 > 32)
+        {
+            return null;
+        }
+
+        if (y2 < 1901 || y2 > 2199 || m2 < 1 || m2 > 12 || d2 < 1 || d2 > 32)
+        {
+            return null;
+        }
         // Approximate: 365 days/year, 30 days/month
         return (y2 - y1) * 365 + (m2 - m1) * 30 + (d2 - d1);
     }
 
     public (int Years, int Months, int Days)? DiffBreakdown(int y1, int m1, int d1, int y2, int m2, int d2)
     {
-        if (y1 < 1901 || y1 > 2199 || m1 < 1 || m1 > 12 || d1 < 1 || d1 > 32) return null;
-        if (y2 < 1901 || y2 > 2199 || m2 < 1 || m2 > 12 || d2 < 1 || d2 > 32) return null;
+        if (y1 < 1901 || y1 > 2199 || m1 < 1 || m1 > 12 || d1 < 1 || d1 > 32)
+        {
+            return null;
+        }
+
+        if (y2 < 1901 || y2 > 2199 || m2 < 1 || m2 > 12 || d2 < 1 || d2 > 32)
+        {
+            return null;
+        }
+
         int years  = y2 - y1;
         int months = m2 - m1;
         int days   = d2 - d1;
@@ -143,7 +192,11 @@ internal sealed class FakeNepaliDateAdapter : INepaliDateAdapter
     public bool TryParseSmartBsDate(string rawText, out int year, out int month, out int day)
     {
         year = month = day = 0;
-        if (string.IsNullOrWhiteSpace(rawText)) return false;
+        if (string.IsNullOrWhiteSpace(rawText))
+        {
+            return false;
+        }
+
         var parts = rawText.Trim().Split('-', '/', '.');
         if (parts.Length == 3
             && int.TryParse(parts[0], out year)
@@ -161,7 +214,11 @@ internal sealed class FakeNepaliDateAdapter : INepaliDateAdapter
 
     public (int Year, int Month, int Day)? AddMonths(int y, int m, int d, int months)
     {
-        if (y < 1901 || y > 2199 || m < 1 || m > 12 || d < 1 || d > 32) return null;
+        if (y < 1901 || y > 2199 || m < 1 || m > 12 || d < 1 || d > 32)
+        {
+            return null;
+        }
+
         m += months;
         while (m > 12) { m -= 12; y++; }
         while (m < 1)  { m += 12; y--; }

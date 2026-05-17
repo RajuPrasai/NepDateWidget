@@ -35,7 +35,10 @@ public sealed class CachedTabControl : TabControl
         // them to the visual tree. Non-selected tabs remain Visibility.Collapsed so
         // there is no rendering or layout cost.
         foreach (TabItem tabItem in Items.OfType<TabItem>())
+        {
             EnsureTabLoaded(tabItem);
+        }
+
         ShowSelectedTab();
     }
 
@@ -53,18 +56,26 @@ public sealed class CachedTabControl : TabControl
 
     private Border? EnsureTabLoaded(TabItem tabItem)
     {
-        if (_contentPanel is null) return null;
+        if (_contentPanel is null)
+        {
+            return null;
+        }
 
         foreach (Border b in _contentPanel.Children.OfType<Border>())
-            if (ReferenceEquals(b.Tag, tabItem)) return b;
+        {
+            if (ReferenceEquals(b.Tag, tabItem))
+            {
+                return b;
+            }
+        }
 
         var content = tabItem.Content as UIElement;
         tabItem.Content = null;
 
         var border = new Border
         {
-            Child      = content,
-            Tag        = tabItem,
+            Child = content,
+            Tag = tabItem,
             Visibility = Visibility.Collapsed,
         };
         _contentPanel.Children.Add(border);
@@ -73,16 +84,31 @@ public sealed class CachedTabControl : TabControl
 
     private void ShowSelectedTab()
     {
-        if (_contentPanel is null) return;
+        if (_contentPanel is null)
+        {
+            return;
+        }
 
         foreach (UIElement child in _contentPanel.Children)
+        {
             child.Visibility = Visibility.Collapsed;
+        }
 
-        if (SelectedIndex < 0 || SelectedIndex >= Items.Count) return;
-        if (Items[SelectedIndex] is not TabItem tabItem) return;
+        if (SelectedIndex < 0 || SelectedIndex >= Items.Count)
+        {
+            return;
+        }
+
+        if (Items[SelectedIndex] is not TabItem tabItem)
+        {
+            return;
+        }
 
         var border = EnsureTabLoaded(tabItem);
-        if (border is null) return;
+        if (border is null)
+        {
+            return;
+        }
 
         border.Visibility = Visibility.Visible;
         border.BeginAnimation(OpacityProperty, FadeIn);

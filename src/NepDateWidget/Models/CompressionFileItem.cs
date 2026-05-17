@@ -13,10 +13,10 @@ public enum CompressionFileStatus
 /// </summary>
 public sealed class CompressionFileItem
 {
-    public required string FilePath      { get; init; }
-    public required string FileName      { get; init; }
-    public long            FileSizeBytes { get; init; }
-    public CompressionFileStatus Status  { get; set; } = CompressionFileStatus.Pending;
-    public string? ErrorMessage          { get; set; }
-    public long    OutputSizeBytes       { get; set; }
+    public required string FilePath { get; init; }
+    public required string FileName { get; init; }
+    public long FileSizeBytes { get; init; }
+    public CompressionFileStatus Status { get; set; } = CompressionFileStatus.Pending;
+    public string? ErrorMessage { get; set; }
+    public long OutputSizeBytes { get; set; }
 }

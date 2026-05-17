@@ -33,7 +33,10 @@ internal static class FirstRunBootstrap
         IAutoStartService autoStart,
         bool isDev)
     {
-        if (isDev) return AutoStartAction.SkippedDevMode;
+        if (isDev)
+        {
+            return AutoStartAction.SkippedDevMode;
+        }
 
         if (settings.IsFirstLaunch)
         {

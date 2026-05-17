@@ -10,8 +10,8 @@ public sealed class CompressionSettings
     public int CompressionLevel { get; set; } = 1;
 
     // Resize
-    public uint? ResizeWidth    { get; set; }
-    public uint? ResizeHeight   { get; set; }
+    public uint? ResizeWidth { get; set; }
+    public uint? ResizeHeight { get; set; }
 
     // Populated from the advanced panel when open
     public AdvancedCompressionSettings Advanced { get; set; } = new();

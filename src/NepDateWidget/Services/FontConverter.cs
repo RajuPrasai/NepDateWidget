@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 
 namespace NepDateWidget.Services;
@@ -90,16 +89,22 @@ public static class FontConverter
     static FontConverter()
     {
         if (_preetiSource.Length != _unicodeTarget.Length)
+        {
             throw new InvalidOperationException("Preeti to Unicode mapping arrays must have the same length.");
+        }
 
         if (_unicodeSource.Length != _preetiTarget.Length)
+        {
             throw new InvalidOperationException("Unicode to Preeti mapping arrays must have the same length.");
+        }
     }
 
     public static string ConvertToUnicode(string preetiText)
     {
         if (string.IsNullOrWhiteSpace(preetiText))
+        {
             return string.Empty;
+        }
 
         string text = preetiText.Normalize(NormalizationForm.FormC);
         text = ApplyMappings(text, _preetiSource, _unicodeTarget);
@@ -109,7 +114,9 @@ public static class FontConverter
     public static string ConvertToPreeti(string unicodeText)
     {
         if (string.IsNullOrWhiteSpace(unicodeText))
+        {
             return string.Empty;
+        }
 
         string text = unicodeText.Normalize(NormalizationForm.FormC);
         text = ReorderPreposedIMatra(text);
@@ -126,7 +133,9 @@ public static class FontConverter
             string target = targets[i];
 
             if (string.IsNullOrEmpty(source))
+            {
                 continue;
+            }
 
             text = ReplaceAllSequentially(text, source, target);
         }
@@ -164,7 +173,9 @@ public static class FontConverter
             while (pos > 0 && text[pos - 1] == halant)
             {
                 if (pos < 2)
+                {
                     break;
+                }
 
                 char consonant = text[pos - 2];
                 text = text.Remove(pos - 2, 3).Insert(pos - 2, "l" + consonant + halant);
@@ -193,7 +204,9 @@ public static class FontConverter
             int end = start;
 
             while (end < text.Length && IsRephFollower(text[end], matras))
+            {
                 end++;
+            }
 
             int rightPos = end + 1;
             while (rightPos < text.Length && text[rightPos] == halant)
@@ -204,7 +217,9 @@ public static class FontConverter
 
             int segmentLength = end - start;
             if (segmentLength <= 0)
+            {
                 break;
+            }
 
             string segment = text.Substring(start, segmentLength);
             text = text.Remove(pos, reph.Length + segmentLength).Insert(pos, segment + "{");

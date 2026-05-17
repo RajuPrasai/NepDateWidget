@@ -1,5 +1,4 @@
-﻿using NepDateWidget.Models;
-using NepDateWidget.Services;
+using NepDateWidget.Models;
 
 namespace NepDateWidget.Services;
 
@@ -117,16 +116,22 @@ public sealed class CalendarService : ICalendarService
 
         // Reuse the AdDate already computed in each cell; no extra adapter calls needed.
         var firstAd = cells.FirstOrDefault(c => c.IsCurrentMonth)?.AdDate;
-        var lastAd  = cells.LastOrDefault(c => c.IsCurrentMonth)?.AdDate;
+        var lastAd = cells.LastOrDefault(c => c.IsCurrentMonth)?.AdDate;
         string adMonthLabel = string.Empty;
         if (firstAd.HasValue && lastAd.HasValue)
         {
             if (firstAd.Value.Month == lastAd.Value.Month)
+            {
                 adMonthLabel = firstAd.Value.ToString("MMM yyyy");
+            }
             else if (firstAd.Value.Year == lastAd.Value.Year)
+            {
                 adMonthLabel = $"{firstAd.Value:MMM} / {lastAd.Value:MMM} {firstAd.Value.Year}";
+            }
             else
+            {
                 adMonthLabel = $"{firstAd.Value:MMM yyyy} / {lastAd.Value:MMM yyyy}";
+            }
         }
 
         return new CalendarMonth

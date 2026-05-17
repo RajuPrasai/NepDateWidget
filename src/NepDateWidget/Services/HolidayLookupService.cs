@@ -44,7 +44,10 @@ public sealed class HolidayLookupService : IHolidayLookupService
         lock (_gate)
         {
             EnsureCacheFresh();
-            if (_cachedNext is not null) return _cachedNext;
+            if (_cachedNext is not null)
+            {
+                return _cachedNext;
+            }
 
             _cachedNext = WalkForFirstHoliday();
             return _cachedNext;
@@ -53,13 +56,18 @@ public sealed class HolidayLookupService : IHolidayLookupService
 
     public IReadOnlyList<UpcomingHoliday> GetUpcomingHolidays(int maxCount)
     {
-        if (maxCount <= 0) return Array.Empty<UpcomingHoliday>();
+        if (maxCount <= 0)
+        {
+            return Array.Empty<UpcomingHoliday>();
+        }
 
         lock (_gate)
         {
             EnsureCacheFresh();
             if (_cachedUpcoming is not null && _cachedUpcomingMaxCount >= maxCount)
+            {
                 return _cachedUpcoming.Take(maxCount).ToList();
+            }
 
             _cachedUpcoming = WalkForUpcoming(maxCount);
             _cachedUpcomingMaxCount = maxCount;
@@ -103,7 +111,11 @@ public sealed class HolidayLookupService : IHolidayLookupService
             else
             {
                 var next = _adapter.AddDays(y, m, d, offset);
-                if (next is null) return null;
+                if (next is null)
+                {
+                    return null;
+                }
+
                 (cy, cm, cd) = next.Value;
             }
 
@@ -132,7 +144,11 @@ public sealed class HolidayLookupService : IHolidayLookupService
             else
             {
                 var next = _adapter.AddDays(y, m, d, offset);
-                if (next is null) break;
+                if (next is null)
+                {
+                    break;
+                }
+
                 (cy, cm, cd) = next.Value;
             }
 
@@ -164,11 +180,19 @@ public sealed class HolidayLookupService : IHolidayLookupService
 
     private static IReadOnlyList<string> NormalizeNames(string[] events)
     {
-        if (events is null || events.Length == 0) return Array.Empty<string>();
+        if (events is null || events.Length == 0)
+        {
+            return Array.Empty<string>();
+        }
+
         var list = new List<string>(events.Length);
         for (int i = 0; i < events.Length; i++)
         {
-            if (string.IsNullOrWhiteSpace(events[i])) continue;
+            if (string.IsNullOrWhiteSpace(events[i]))
+            {
+                continue;
+            }
+
             list.Add(events[i].Trim());
         }
         return list.Count == 0 ? Array.Empty<string>() : list;

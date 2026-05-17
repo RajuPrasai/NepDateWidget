@@ -5,8 +5,8 @@ namespace NepDateWidget.Models;
 /// </summary>
 public sealed class JobProgressState
 {
-    public int    CompletedCount  { get; init; }
-    public int    TotalCount      { get; init; }
+    public int CompletedCount { get; init; }
+    public int TotalCount { get; init; }
     public string CurrentFileName { get; init; } = string.Empty;
-    public long   TotalSavedBytes { get; init; }
+    public long TotalSavedBytes { get; init; }
 }

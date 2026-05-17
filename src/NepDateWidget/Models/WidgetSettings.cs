@@ -1,4 +1,4 @@
-﻿namespace NepDateWidget.Models;
+namespace NepDateWidget.Models;
 
 /// <summary>
 /// Persisted user preferences. Schema version allows future migrations.
@@ -14,7 +14,7 @@ public sealed class WidgetSettings
     public double WindowLeft { get; set; } = 0;
     public double WindowTop { get; set; } = 0;
     public double? ExpandedWindowLeft { get; set; }
-    public double? ExpandedWindowTop  { get; set; }
+    public double? ExpandedWindowTop { get; set; }
     public double ExpandedWidth { get; set; } = 840;
     public double ExpandedHeight { get; set; } = 750;
     public bool IsExpanded { get; set; } = false;

@@ -14,9 +14,9 @@ namespace NepDateWidget.ViewModels;
 /// </summary>
 public sealed class CompressionViewModel : ViewModelBase
 {
-    private readonly IFileTypeService         _fileTypeService;
+    private readonly IFileTypeService _fileTypeService;
     private readonly IJobOrchestrationService _orchestrator;
-    private readonly ILocalizationService     _loc;
+    private readonly ILocalizationService _loc;
 
     // ── File list ────────────────────────────────────────────────────────────
 
@@ -78,7 +78,13 @@ public sealed class CompressionViewModel : ViewModelBase
     public bool StripMetadata
     {
         get => _stripMetadata;
-        set { if (SetProperty(ref _stripMetadata, value)) _advancedSettings.StripMetadata = value; }
+        set
+        {
+            if (SetProperty(ref _stripMetadata, value))
+            {
+                _advancedSettings.StripMetadata = value;
+            }
+        }
     }
 
     private bool _convertToWebP;
@@ -108,27 +114,45 @@ public sealed class CompressionViewModel : ViewModelBase
         }
     }
 
-    public bool ShowLosslessWebP  => string.Equals(_detectedMimeType, "image/webp", StringComparison.OrdinalIgnoreCase)
+    public bool ShowLosslessWebP => string.Equals(_detectedMimeType, "image/webp", StringComparison.OrdinalIgnoreCase)
                                     || (_detectedMimeType == "image/png" && _convertToWebP);
     private bool _optimizeGifFrames = true;
     public bool OptimizeGifFrames
     {
         get => _optimizeGifFrames;
-        set { if (SetProperty(ref _optimizeGifFrames, value)) _advancedSettings.OptimizeGifFrames = value; }
+        set
+        {
+            if (SetProperty(ref _optimizeGifFrames, value))
+            {
+                _advancedSettings.OptimizeGifFrames = value;
+            }
+        }
     }
 
     private string _tiffCompression = "LZW";
     public string TiffCompression
     {
         get => _tiffCompression;
-        set { if (SetProperty(ref _tiffCompression, value)) _advancedSettings.TiffCompression = value; }
+        set
+        {
+            if (SetProperty(ref _tiffCompression, value))
+            {
+                _advancedSettings.TiffCompression = value;
+            }
+        }
     }
 
     private bool _linearizePdf = true;
     public bool LinearizePdf
     {
         get => _linearizePdf;
-        set { if (SetProperty(ref _linearizePdf, value)) _advancedSettings.LinearizePdf = value; }
+        set
+        {
+            if (SetProperty(ref _linearizePdf, value))
+            {
+                _advancedSettings.LinearizePdf = value;
+            }
+        }
     }
 
     // ── Job state ────────────────────────────────────────────────────────────
@@ -154,7 +178,9 @@ public sealed class CompressionViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _isJobComplete, value))
+            {
                 OnPropertyChanged(nameof(ShowSummary));
+            }
         }
     }
 
@@ -165,7 +191,9 @@ public sealed class CompressionViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _completedCount, value))
+            {
                 OnPropertyChanged(nameof(ProgressLabel));
+            }
         }
     }
 
@@ -176,7 +204,9 @@ public sealed class CompressionViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _totalCount, value))
+            {
                 OnPropertyChanged(nameof(ProgressLabel));
+            }
         }
     }
 
@@ -200,22 +230,24 @@ public sealed class CompressionViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _mixedTypeWarning, value))
+            {
                 OnPropertyChanged(nameof(HasMixedTypeWarning));
+            }
         }
     }
     public bool HasMixedTypeWarning => !string.IsNullOrEmpty(_mixedTypeWarning);
 
     // ── Labels ───────────────────────────────────────────────────────────────
 
-    public bool IsMimeJpeg  => _detectedMimeType == "image/jpeg";
-    public bool IsMimePng   => _detectedMimeType == "image/png";
-    public bool IsMimeWebP  => _detectedMimeType == "image/webp";
-    public bool IsMimeGif   => _detectedMimeType == "image/gif";
-    public bool IsMimeTiff  => _detectedMimeType == "image/tiff";
-    public bool IsMimeBmp   => _detectedMimeType == "image/bmp";
-    public bool IsMimeHeif  => _detectedMimeType == "image/heif";
-    public bool IsMimeAvif  => _detectedMimeType == "image/avif";
-    public bool IsMimePdf   => _detectedMimeType == "application/pdf";
+    public bool IsMimeJpeg => _detectedMimeType == "image/jpeg";
+    public bool IsMimePng => _detectedMimeType == "image/png";
+    public bool IsMimeWebP => _detectedMimeType == "image/webp";
+    public bool IsMimeGif => _detectedMimeType == "image/gif";
+    public bool IsMimeTiff => _detectedMimeType == "image/tiff";
+    public bool IsMimeBmp => _detectedMimeType == "image/bmp";
+    public bool IsMimeHeif => _detectedMimeType == "image/heif";
+    public bool IsMimeAvif => _detectedMimeType == "image/avif";
+    public bool IsMimePdf => _detectedMimeType == "application/pdf";
     public bool IsImageType => _detectedCategory == FileCategory.Image;
     // Convenience flag: formats that support WebP conversion
     public bool IsMimeJpegOrPng => IsMimeJpeg || IsMimePng;
@@ -227,46 +259,46 @@ public sealed class CompressionViewModel : ViewModelBase
         new[] { "LZW", "ZIP", "JPEG", "None" };
 
     public string CompressButtonLabel => _isJobRunning ? _loc.Get("compress.cancel_btn") : _loc.Get("compress.compress_btn");
-    public bool   CanCompress         => Files.Count > 0 && !_isJobRunning && !_isJobComplete && !HasMixedTypeWarning;
+    public bool CanCompress => Files.Count > 0 && !_isJobRunning && !_isJobComplete && !HasMixedTypeWarning;
 
     // ── Localized labels ─────────────────────────────────────────────────────
 
-    public string DropLabel              => _loc.Get("compress.drop_images_pdf");
-    public string BrowseLabel            => _loc.Get("compress.browse");
-    public string CancelLabel            => _loc.Get("compress.cancel_btn");
-    public string ProgressTitleLabel     => _loc.Get("compress.compressing");
-    public string LevelSectionLabel      => _loc.Get("compress.level_section");
-    public string LevelSmallestLabel     => _loc.Get("compress.level_smallest");
-    public string LevelLowLabel          => _loc.Get("compress.level_low");
-    public string LevelBalancedLabel     => _loc.Get("compress.level_balanced");
-    public string LevelHighLabel         => _loc.Get("compress.level_high");
-    public string LevelBestLabel         => _loc.Get("compress.level_best");
-    public string AdvancedBtnLabel       => _loc.Get("compress.advanced_btn");
-    public string AdvImageLabel          => _loc.Get("compress.adv_image");
+    public string DropLabel => _loc.Get("compress.drop_images_pdf");
+    public string BrowseLabel => _loc.Get("compress.browse");
+    public string CancelLabel => _loc.Get("compress.cancel_btn");
+    public string ProgressTitleLabel => _loc.Get("compress.compressing");
+    public string LevelSectionLabel => _loc.Get("compress.level_section");
+    public string LevelSmallestLabel => _loc.Get("compress.level_smallest");
+    public string LevelLowLabel => _loc.Get("compress.level_low");
+    public string LevelBalancedLabel => _loc.Get("compress.level_balanced");
+    public string LevelHighLabel => _loc.Get("compress.level_high");
+    public string LevelBestLabel => _loc.Get("compress.level_best");
+    public string AdvancedBtnLabel => _loc.Get("compress.advanced_btn");
+    public string AdvImageLabel => _loc.Get("compress.adv_image");
     public string AdvOptionalResizeLabel => _loc.Get("compress.adv_optional_resize");
-    public string AdvStripMetaLabel      => _loc.Get("compress.adv_strip_meta");
-    public string AdvToWebPLabel         => _loc.Get("compress.adv_to_webp");
-    public string AdvLosslessWebPLabel   => _loc.Get("compress.adv_lossless_webp");
-    public string AdvGifLabel            => _loc.Get("compress.adv_gif");
-    public string AdvOptimizeGifLabel    => _loc.Get("compress.adv_optimize_gif");
-    public string AdvTiffLabel           => _loc.Get("compress.adv_tiff");
-    public string AdvPdfLabel            => _loc.Get("compress.adv_pdf");
-    public string AdvLinearizeLabel      => _loc.Get("compress.adv_linearize");
-    public string AdvResizeWidthHint         => _loc.Get("compress.adv_resize_width_hint");
-    public string AdvResizeHeightHint        => _loc.Get("compress.adv_resize_height_hint");
-    public string RemoveFileTooltipLabel     => _loc.Get("compress.remove_file");
-    public string AdvResizeWidthTooltip      => _loc.Get("compress.tooltip_resize_width");
-    public string AdvResizeHeightTooltip     => _loc.Get("compress.tooltip_resize_height");
-    public string AdvAspectHintLabel     => _loc.Get("compress.adv_aspect_hint");
+    public string AdvStripMetaLabel => _loc.Get("compress.adv_strip_meta");
+    public string AdvToWebPLabel => _loc.Get("compress.adv_to_webp");
+    public string AdvLosslessWebPLabel => _loc.Get("compress.adv_lossless_webp");
+    public string AdvGifLabel => _loc.Get("compress.adv_gif");
+    public string AdvOptimizeGifLabel => _loc.Get("compress.adv_optimize_gif");
+    public string AdvTiffLabel => _loc.Get("compress.adv_tiff");
+    public string AdvPdfLabel => _loc.Get("compress.adv_pdf");
+    public string AdvLinearizeLabel => _loc.Get("compress.adv_linearize");
+    public string AdvResizeWidthHint => _loc.Get("compress.adv_resize_width_hint");
+    public string AdvResizeHeightHint => _loc.Get("compress.adv_resize_height_hint");
+    public string RemoveFileTooltipLabel => _loc.Get("compress.remove_file");
+    public string AdvResizeWidthTooltip => _loc.Get("compress.tooltip_resize_width");
+    public string AdvResizeHeightTooltip => _loc.Get("compress.tooltip_resize_height");
+    public string AdvAspectHintLabel => _loc.Get("compress.adv_aspect_hint");
 
     // ── Commands ─────────────────────────────────────────────────────────────
 
-    public ICommand LoadFilesCommand           { get; }
-    public ICommand RemoveFileCommand          { get; }
-    public ICommand CompressCommand            { get; }
-    public ICommand CancelCommand              { get; }
+    public ICommand LoadFilesCommand { get; }
+    public ICommand RemoveFileCommand { get; }
+    public ICommand CompressCommand { get; }
+    public ICommand CancelCommand { get; }
     public ICommand ToggleAdvancedPanelCommand { get; }
-    public ICommand OpenHelpCommand            { get; }
+    public ICommand OpenHelpCommand { get; }
 
     private CancellationTokenSource? _autoResetCts;
 
@@ -275,13 +307,13 @@ public sealed class CompressionViewModel : ViewModelBase
     public CompressionViewModel(IFileTypeService fileTypeService, IJobOrchestrationService orchestrator, ILocalizationService loc)
     {
         _fileTypeService = fileTypeService ?? throw new ArgumentNullException(nameof(fileTypeService));
-        _orchestrator    = orchestrator    ?? throw new ArgumentNullException(nameof(orchestrator));
-        _loc             = loc             ?? throw new ArgumentNullException(nameof(loc));
+        _orchestrator = orchestrator ?? throw new ArgumentNullException(nameof(orchestrator));
+        _loc = loc ?? throw new ArgumentNullException(nameof(loc));
 
-        LoadFilesCommand           = new RelayCommand(DoLoadFiles);
-        RemoveFileCommand          = new RelayCommand<string>(DoRemoveFile);
-        CompressCommand            = new RelayCommand(DoCompress,  () => CanCompress);
-        CancelCommand              = new RelayCommand(DoCancel,    () => _isJobRunning);
+        LoadFilesCommand = new RelayCommand(DoLoadFiles);
+        RemoveFileCommand = new RelayCommand<string>(DoRemoveFile);
+        CompressCommand = new RelayCommand(DoCompress, () => CanCompress);
+        CancelCommand = new RelayCommand(DoCancel, () => _isJobRunning);
         ToggleAdvancedPanelCommand = new RelayCommand(DoToggleAdvanced, () => CanOpenAdvancedPanel);
         OpenHelpCommand = new RelayCommand<string>(key =>
         {
@@ -304,17 +336,24 @@ public sealed class CompressionViewModel : ViewModelBase
             Multiselect = true,
             Filter = "Supported files|*.jpg;*.jpeg;*.png;*.webp;*.gif;*.tif;*.tiff;*.bmp;*.heic;*.heif;*.avif;*.pdf|All files (*.*)|*.*",
         };
-        if (dlg.ShowDialog() != true) return;
+        if (dlg.ShowDialog() != true)
+        {
+            return;
+        }
+
         AddFiles(dlg.FileNames);
     }
 
     public void AddFiles(IReadOnlyList<string> paths)
     {
-        if (paths.Count == 0) return;
+        if (paths.Count == 0)
+        {
+            return;
+        }
 
         // Validate same-type constraint across new + existing paths.
         var allPaths = Files.Select(f => f.FilePath).Concat(paths).ToList();
-        var error    = _fileTypeService.ValidateSameType(allPaths);
+        var error = _fileTypeService.ValidateSameType(allPaths);
         if (error is not null)
         {
             MixedTypeWarning = _loc.Get("compress.mixed_type_warning");
@@ -329,20 +368,26 @@ public sealed class CompressionViewModel : ViewModelBase
 
         foreach (var path in paths)
         {
-            var ext  = Path.GetExtension(path);
+            var ext = Path.GetExtension(path);
             var mime = _fileTypeService.GetMimeType(ext);
-            if (mime is null) continue;  // silently skip unsupported extensions
+            if (mime is null)
+            {
+                continue;  // silently skip unsupported extensions
+            }
 
             // If the same path is already in the list, replace it with a fresh entry.
             var existing = Files.FirstOrDefault(f => string.Equals(f.FilePath, path, StringComparison.OrdinalIgnoreCase));
-            if (existing is not null) Files.Remove(existing);
+            if (existing is not null)
+            {
+                Files.Remove(existing);
+            }
 
             Files.Add(new CompressionFileItemViewModel
             {
-                FilePath      = path,
-                FileName      = Path.GetFileName(path),
+                FilePath = path,
+                FileName = Path.GetFileName(path),
                 FileSizeBytes = GetFileSizeBytes(path),
-                Status        = CompressionFileStatus.Pending,
+                Status = CompressionFileStatus.Pending,
             });
         }
 
@@ -354,9 +399,17 @@ public sealed class CompressionViewModel : ViewModelBase
 
     private void DoRemoveFile(string? filePath)
     {
-        if (filePath is null) return;
+        if (filePath is null)
+        {
+            return;
+        }
+
         var item = Files.FirstOrDefault(f => f.FilePath == filePath);
-        if (item is null) return;
+        if (item is null)
+        {
+            return;
+        }
+
         Files.Remove(item);
 
         RefreshDetectedType();
@@ -379,24 +432,36 @@ public sealed class CompressionViewModel : ViewModelBase
     private async void DoCompress()
     {
         if (_isJobRunning) { DoCancel(); return; }
-        if (!CanCompress) return;
+        if (!CanCompress)
+        {
+            return;
+        }
 
         CancelPendingAutoReset();
 
         // Show output dialog.
         var outputDir = PickOutputDirectory(out var singleOutputPath);
-        if (outputDir is null && singleOutputPath is null) return;  // user dismissed
+        if (outputDir is null && singleOutputPath is null)
+        {
+            return;  // user dismissed
+        }
 
         // Build jobs.
         var jobs = BuildJobs(outputDir, singleOutputPath);
-        if (jobs.Count == 0) return;
+        if (jobs.Count == 0)
+        {
+            return;
+        }
 
-        IsJobRunning  = true;
+        IsJobRunning = true;
         IsJobComplete = false;
         CompletedCount = 0;
-        TotalCount     = jobs.Count;
+        TotalCount = jobs.Count;
 
-        foreach (var f in Files) f.Status = CompressionFileStatus.Pending;
+        foreach (var f in Files)
+        {
+            f.Status = CompressionFileStatus.Pending;
+        }
 
         await _orchestrator.StartJobAsync(jobs);
 
@@ -409,10 +474,10 @@ public sealed class CompressionViewModel : ViewModelBase
 
         // Build summary from actual results (not planned job count) so users see
         // a truthful outcome when some files fail.
-        int doneCount   = Files.Count(f => f.IsDone);
+        int doneCount = Files.Count(f => f.IsDone);
         int failedCount = Files.Count - doneCount;
         long totalSaved = jobs.Sum(j => EstimateSaved(j.OutputPath, j.InputPath));
-        long totalOut   = jobs.Sum(j => GetFileSizeBytes(j.OutputPath));
+        long totalOut = jobs.Sum(j => GetFileSizeBytes(j.OutputPath));
 
         JobSummary = failedCount == 0
             ? (doneCount == 1
@@ -431,7 +496,11 @@ public sealed class CompressionViewModel : ViewModelBase
 
     private void DoToggleAdvanced()
     {
-        if (!CanOpenAdvancedPanel) return;
+        if (!CanOpenAdvancedPanel)
+        {
+            return;
+        }
+
         IsAdvancedPanelOpen = !_isAdvancedPanelOpen;
     }
 
@@ -440,15 +509,15 @@ public sealed class CompressionViewModel : ViewModelBase
         Files.Clear();
         _detectedMimeType = string.Empty;
         _detectedCategory = FileCategory.Unsupported;
-        MixedTypeWarning  = string.Empty;
+        MixedTypeWarning = string.Empty;
         IsAdvancedPanelOpen = false;
-        IsJobComplete     = false;
-        IsJobRunning      = false;
-        CompletedCount    = 0;
-        TotalCount        = 0;
-        JobSummary        = string.Empty;
-        ResizeWidthText   = string.Empty;
-        ResizeHeightText  = string.Empty;
+        IsJobComplete = false;
+        IsJobRunning = false;
+        CompletedCount = 0;
+        TotalCount = 0;
+        JobSummary = string.Empty;
+        ResizeWidthText = string.Empty;
+        ResizeHeightText = string.Empty;
 
         OnPropertyChanged(nameof(CanOpenAdvancedPanel));
         OnPropertyChanged(nameof(CanCompress));
@@ -460,7 +529,11 @@ public sealed class CompressionViewModel : ViewModelBase
 
     private void CancelPendingAutoReset()
     {
-        if (_autoResetCts is null) return;
+        if (_autoResetCts is null)
+        {
+            return;
+        }
+
         try { _autoResetCts.Cancel(); } catch { }
         _autoResetCts.Dispose();
         _autoResetCts = null;
@@ -477,12 +550,17 @@ public sealed class CompressionViewModel : ViewModelBase
             try
             {
                 await Task.Delay(delay, token).ConfigureAwait(false);
-                if (token.IsCancellationRequested) return;
+                if (token.IsCancellationRequested)
+                {
+                    return;
+                }
 
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     if (!token.IsCancellationRequested)
+                    {
                         ResetForNextJob();
+                    }
                 });
             }
             catch (TaskCanceledException) { }
@@ -496,11 +574,15 @@ public sealed class CompressionViewModel : ViewModelBase
         // Fired from thread pool. Only process if this VM started the current job.
         // Both CompressVM and ResizeVM subscribe to the shared orchestrator; the guard
         // prevents the idle VM from updating its state during the other VM's job.
-        if (!_isJobRunning) return;
+        if (!_isJobRunning)
+        {
+            return;
+        }
+
         Application.Current?.Dispatcher.InvokeAsync(() =>
         {
             CompletedCount = state.CompletedCount;
-            TotalCount     = state.TotalCount;
+            TotalCount = state.TotalCount;
         });
     }
 
@@ -515,7 +597,7 @@ public sealed class CompressionViewModel : ViewModelBase
         }
         else
         {
-            var ext  = Path.GetExtension(Files[0].FilePath);
+            var ext = Path.GetExtension(Files[0].FilePath);
             _detectedMimeType = _fileTypeService.GetMimeType(ext) ?? string.Empty;
             _detectedCategory = _fileTypeService.GetCategory(_detectedMimeType);
         }
@@ -525,15 +607,15 @@ public sealed class CompressionViewModel : ViewModelBase
         RefreshMimeFlags();
 
         // Reset advanced settings when type changes.
-        AdvancedSettings   = new AdvancedCompressionSettings();
-        _stripMetadata     = true;
-        _convertToWebP     = false;
-        _losslessWebP      = false;
+        AdvancedSettings = new AdvancedCompressionSettings();
+        _stripMetadata = true;
+        _convertToWebP = false;
+        _losslessWebP = false;
         _optimizeGifFrames = true;
-        _tiffCompression   = "LZW";
-        _linearizePdf      = true;
-        _resizeWidthText   = string.Empty;
-        _resizeHeightText  = string.Empty;
+        _tiffCompression = "LZW";
+        _linearizePdf = true;
+        _resizeWidthText = string.Empty;
+        _resizeHeightText = string.Empty;
         OnPropertyChanged(nameof(StripMetadata));
         OnPropertyChanged(nameof(ConvertToWebP));
         OnPropertyChanged(nameof(LosslessWebP));
@@ -568,15 +650,19 @@ public sealed class CompressionViewModel : ViewModelBase
         {
             var inputPath = Files[0].FilePath;
             var suggested = GetOutputFileName(inputPath, _detectedMimeType, isResize: false, convertToWebP: _convertToWebP);
-            var saveDir   = Path.GetDirectoryName(inputPath) ?? string.Empty;
+            var saveDir = Path.GetDirectoryName(inputPath) ?? string.Empty;
 
             var dlg = new Microsoft.Win32.SaveFileDialog
             {
-                FileName         = Path.GetFileName(suggested),
+                FileName = Path.GetFileName(suggested),
                 InitialDirectory = saveDir,
-                Filter           = BuildSaveFilter(suggested),
+                Filter = BuildSaveFilter(suggested),
             };
-            if (dlg.ShowDialog() != true) return null;
+            if (dlg.ShowDialog() != true)
+            {
+                return null;
+            }
+
             singleOutputPath = dlg.FileName;
             return null; // signals single-file mode
         }
@@ -587,7 +673,11 @@ public sealed class CompressionViewModel : ViewModelBase
             {
                 Title = "Select Output Folder",
             };
-            if (dlg.ShowDialog() != true) return null;
+            if (dlg.ShowDialog() != true)
+            {
+                return null;
+            }
+
             return dlg.FolderName;
         }
     }
@@ -595,14 +685,14 @@ public sealed class CompressionViewModel : ViewModelBase
     private IReadOnlyList<CompressionJob> BuildJobs(string? outputDir, string? singleOutputPath)
     {
         var settings = BuildSettings();
-        var jobs     = new List<CompressionJob>();
+        var jobs = new List<CompressionJob>();
 
         for (int i = 0; i < Files.Count; i++)
         {
-            var f    = Files[i];
-            var ext  = Path.GetExtension(f.FilePath);
+            var f = Files[i];
+            var ext = Path.GetExtension(f.FilePath);
             var mime = _fileTypeService.GetMimeType(ext) ?? string.Empty;
-            var cat  = _fileTypeService.GetCategory(mime);
+            var cat = _fileTypeService.GetCategory(mime);
 
             string outPath;
             if (singleOutputPath is not null)
@@ -612,16 +702,16 @@ public sealed class CompressionViewModel : ViewModelBase
             else
             {
                 var outName = GetOutputFileName(f.FilePath, mime, isResize: false, convertToWebP: _convertToWebP);
-                outPath     = Path.Combine(outputDir!, Path.GetFileName(outName));
+                outPath = Path.Combine(outputDir!, Path.GetFileName(outName));
             }
 
             jobs.Add(new CompressionJob
             {
                 InputPath = f.FilePath,
                 OutputPath = outPath,
-                Settings   = settings,
-                Category   = cat,
-                MimeType   = mime,
+                Settings = settings,
+                Category = cat,
+                MimeType = mime,
             });
         }
 
@@ -633,16 +723,16 @@ public sealed class CompressionViewModel : ViewModelBase
         return new CompressionSettings
         {
             CompressionLevel = _compressionLevel,
-            ResizeWidth      = _detectedCategory == FileCategory.Image ? ParsePositiveUInt(_resizeWidthText) : null,
-            ResizeHeight     = _detectedCategory == FileCategory.Image ? ParsePositiveUInt(_resizeHeightText) : null,
-            Advanced         = new AdvancedCompressionSettings
+            ResizeWidth = _detectedCategory == FileCategory.Image ? ParsePositiveUInt(_resizeWidthText) : null,
+            ResizeHeight = _detectedCategory == FileCategory.Image ? ParsePositiveUInt(_resizeHeightText) : null,
+            Advanced = new AdvancedCompressionSettings
             {
-                StripMetadata      = _stripMetadata,
-                ConvertToWebP      = _convertToWebP,
-                LosslessWebP       = _losslessWebP,
-                OptimizeGifFrames  = _optimizeGifFrames,
-                TiffCompression    = _tiffCompression,
-                LinearizePdf       = _linearizePdf,
+                StripMetadata = _stripMetadata,
+                ConvertToWebP = _convertToWebP,
+                LosslessWebP = _losslessWebP,
+                OptimizeGifFrames = _optimizeGifFrames,
+                TiffCompression = _tiffCompression,
+                LinearizePdf = _linearizePdf,
             },
         };
     }
@@ -651,9 +741,13 @@ public sealed class CompressionViewModel : ViewModelBase
     {
         for (int i = 0; i < jobs.Count && i < Files.Count; i++)
         {
-            var job  = jobs[i];
+            var job = jobs[i];
             var item = Files.FirstOrDefault(f => f.FilePath == job.InputPath);
-            if (item is null) continue;
+            if (item is null)
+            {
+                continue;
+            }
+
             item.Status = File.Exists(job.OutputPath) ? CompressionFileStatus.Done : CompressionFileStatus.Error;
             item.OutputSizeBytes = item.Status == CompressionFileStatus.Done ? GetFileSizeBytes(job.OutputPath) : 0;
             item.NotifyStatus();
@@ -664,17 +758,17 @@ public sealed class CompressionViewModel : ViewModelBase
 
     internal static string GetOutputFileName(string inputPath, string mimeType, bool isResize, bool convertToWebP = false)
     {
-        var dir    = Path.GetDirectoryName(inputPath) ?? string.Empty;
-        var stem   = Path.GetFileNameWithoutExtension(inputPath);
+        var dir = Path.GetDirectoryName(inputPath) ?? string.Empty;
+        var stem = Path.GetFileNameWithoutExtension(inputPath);
         var suffix = isResize ? "_Resized" : "_Compressed";
 
         string ext = mimeType.ToLowerInvariant() switch
         {
-            "image/bmp"  => ".jpg",
+            "image/bmp" => ".jpg",
             "image/heif" => ".jpg",
             "image/jpeg" when convertToWebP => ".webp",
-            "image/png"  when convertToWebP => ".webp",
-            _            => Path.GetExtension(inputPath).ToLowerInvariant(),
+            "image/png" when convertToWebP => ".webp",
+            _ => Path.GetExtension(inputPath).ToLowerInvariant(),
         };
 
         return Path.Combine(dir, stem + suffix + ext);
@@ -693,22 +787,38 @@ public sealed class CompressionViewModel : ViewModelBase
 
     private static long EstimateSaved(string outputPath, string inputPath)
     {
-        long original   = GetFileSizeBytes(inputPath);
+        long original = GetFileSizeBytes(inputPath);
         long compressed = GetFileSizeBytes(outputPath);
         return Math.Max(0L, original - compressed);
     }
 
     private static uint? ParsePositiveUInt(string text)
     {
-        if (uint.TryParse(text, out var v) && v > 0) return v;
+        if (uint.TryParse(text, out var v) && v > 0)
+        {
+            return v;
+        }
+
         return null;
     }
 
     private static string FormatBytes(long bytes)
     {
-        if (bytes < 0) return "0 B";
-        if (bytes < 1024) return $"{bytes} B";
-        if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+        if (bytes < 0)
+        {
+            return "0 B";
+        }
+
+        if (bytes < 1024)
+        {
+            return $"{bytes} B";
+        }
+
+        if (bytes < 1024 * 1024)
+        {
+            return $"{bytes / 1024.0:F1} KB";
+        }
+
         return $"{bytes / (1024.0 * 1024):F1} MB";
     }
 
@@ -753,10 +863,10 @@ public sealed class CompressionViewModel : ViewModelBase
 /// </summary>
 public sealed class CompressionFileItemViewModel : ViewModelBase
 {
-    public required string FilePath      { get; init; }
-    public required string FileName      { get; init; }
-    public long            FileSizeBytes { get; init; }
-    public long            OutputSizeBytes { get; set; }
+    public required string FilePath { get; init; }
+    public required string FileName { get; init; }
+    public long FileSizeBytes { get; init; }
+    public long OutputSizeBytes { get; set; }
 
     private CompressionFileStatus _status = CompressionFileStatus.Pending;
     public CompressionFileStatus Status
@@ -777,23 +887,23 @@ public sealed class CompressionFileItemViewModel : ViewModelBase
 
     public bool IsPending => _status == CompressionFileStatus.Pending;
     public bool IsRunning => _status == CompressionFileStatus.Running;
-    public bool IsDone    => _status == CompressionFileStatus.Done;
-    public bool IsError   => _status == CompressionFileStatus.Error;
+    public bool IsDone => _status == CompressionFileStatus.Done;
+    public bool IsError => _status == CompressionFileStatus.Error;
 
     public string StatusText => _status switch
     {
-        CompressionFileStatus.Done    => "Done",
-        CompressionFileStatus.Error   => "Error",
+        CompressionFileStatus.Done => "Done",
+        CompressionFileStatus.Error => "Error",
         CompressionFileStatus.Running => "Running",
-        _                             => "Pending",
+        _ => "Pending",
     };
 
     public string StatusGlyph => _status switch
     {
-        CompressionFileStatus.Done    => "✓",
-        CompressionFileStatus.Error   => "✗",
+        CompressionFileStatus.Done => "✓",
+        CompressionFileStatus.Error => "✗",
         CompressionFileStatus.Running => "…",
-        _                             => "·",
+        _ => "·",
     };
 
     public string SavingsLabel
@@ -801,7 +911,10 @@ public sealed class CompressionFileItemViewModel : ViewModelBase
         get
         {
             if (_status != CompressionFileStatus.Done || FileSizeBytes <= 0 || OutputSizeBytes <= 0)
+            {
                 return string.Empty;
+            }
+
             var pct = (1.0 - (double)OutputSizeBytes / FileSizeBytes) * 100;
             return pct > 0.5 ? $"-{pct:F0}%" : pct < -0.5 ? $"+{-pct:F0}%" : "≈0%";
         }
@@ -827,9 +940,21 @@ public sealed class CompressionFileItemViewModel : ViewModelBase
 
     private static string FormatBytes(long bytes)
     {
-        if (bytes <= 0) return "0 B";
-        if (bytes < 1024) return $"{bytes} B";
-        if (bytes < 1024 * 1024) return $"{bytes / 1024.0:F1} KB";
+        if (bytes <= 0)
+        {
+            return "0 B";
+        }
+
+        if (bytes < 1024)
+        {
+            return $"{bytes} B";
+        }
+
+        if (bytes < 1024 * 1024)
+        {
+            return $"{bytes / 1024.0:F1} KB";
+        }
+
         return $"{bytes / (1024.0 * 1024):F1} MB";
     }
 }

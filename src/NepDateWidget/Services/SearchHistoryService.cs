@@ -15,15 +15,17 @@ public sealed class SearchHistoryService : ISearchHistoryService
 
     public SearchHistoryService(string filePath, int maxEntries = 100, string? defaultFilePath = null)
     {
-        _filePath        = filePath ?? throw new ArgumentNullException(nameof(filePath));
-        _maxEntries      = maxEntries > 0 ? maxEntries : 100;
+        _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
+        _maxEntries = maxEntries > 0 ? maxEntries : 100;
         _defaultFilePath = defaultFilePath;
     }
 
     public IReadOnlyList<string> GetMatching(string prefix, int max = 10)
     {
         if (string.IsNullOrWhiteSpace(prefix))
+        {
             return _history.Take(max).ToList();
+        }
 
         return _history
             .Where(h => h.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
@@ -34,7 +36,10 @@ public sealed class SearchHistoryService : ISearchHistoryService
     public void Record(string term)
     {
         term = term.Trim();
-        if (string.IsNullOrEmpty(term)) return;
+        if (string.IsNullOrEmpty(term))
+        {
+            return;
+        }
 
         // Remove existing entry (dedup), add to front
         _history.RemoveAll(h => string.Equals(h, term, StringComparison.OrdinalIgnoreCase));
@@ -42,7 +47,9 @@ public sealed class SearchHistoryService : ISearchHistoryService
 
         // Cap at configured limit
         if (_history.Count > _maxEntries)
+        {
             _history.RemoveRange(_maxEntries, _history.Count - _maxEntries);
+        }
 
         Save();
     }
@@ -50,16 +57,27 @@ public sealed class SearchHistoryService : ISearchHistoryService
     public void Remove(string term)
     {
         term = term.Trim();
-        if (string.IsNullOrEmpty(term)) return;
+        if (string.IsNullOrEmpty(term))
+        {
+            return;
+        }
+
         int removed = _history.RemoveAll(h => string.Equals(h, term, StringComparison.OrdinalIgnoreCase));
-        if (removed > 0) Save();
+        if (removed > 0)
+        {
+            Save();
+        }
     }
 
     public void Load()
     {
         if (!File.Exists(_filePath))
         {
-            if (_defaultFilePath is not null) SeedFromDefaults();
+            if (_defaultFilePath is not null)
+            {
+                SeedFromDefaults();
+            }
+
             Save();
             return;
         }
@@ -82,7 +100,9 @@ public sealed class SearchHistoryService : ISearchHistoryService
         {
             var json = JsonSerializer.Serialize(_history, Options);
             if (!AtomicFile.WriteAllText(_filePath, json))
+            {
                 Log.Error("Failed to save search history (atomic write returned false)");
+            }
         }
         catch (Exception ex)
         {
@@ -98,7 +118,11 @@ public sealed class SearchHistoryService : ISearchHistoryService
     {
         try
         {
-            if (!File.Exists(filePath)) return Array.Empty<string>();
+            if (!File.Exists(filePath))
+            {
+                return Array.Empty<string>();
+            }
+
             var json = File.ReadAllText(filePath);
             return JsonSerializer.Deserialize<List<string>>(json, Options) ?? new();
         }
@@ -122,19 +146,31 @@ public sealed class SearchHistoryService : ISearchHistoryService
     /// </summary>
     private void MergeNewDefaults()
     {
-        if (_defaultFilePath is null) return;
+        if (_defaultFilePath is null)
+        {
+            return;
+        }
+
         var defaults = LoadDefaultEntries(_defaultFilePath);
-        if (defaults.Count == 0) return;
+        if (defaults.Count == 0)
+        {
+            return;
+        }
 
         var existingSet = new HashSet<string>(_history, StringComparer.OrdinalIgnoreCase);
         var toAdd = defaults.Where(d => !existingSet.Contains(d)).ToList();
-        if (toAdd.Count == 0) return;
+        if (toAdd.Count == 0)
+        {
+            return;
+        }
 
         _history.AddRange(toAdd);
 
         // Cap at max entries - newly added defaults have lowest priority so they get dropped first.
         if (_history.Count > _maxEntries)
+        {
             _history.RemoveRange(_maxEntries, _history.Count - _maxEntries);
+        }
 
         Save();
     }

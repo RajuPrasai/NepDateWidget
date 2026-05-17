@@ -233,18 +233,18 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         }
     }
     public bool IsHighlightColorDefault => string.IsNullOrEmpty(_highlightColor);
-    public bool IsHighlightColorRed     => _highlightColor == "#E53935";
-    public bool IsHighlightColorOrange  => _highlightColor == "#F4511E";
-    public bool IsHighlightColorPink    => _highlightColor == "#EC407A";
-    public bool IsHighlightColorPurple  => _highlightColor == "#AB47BC";
-    public bool IsHighlightColorBlue    => _highlightColor == "#1E88E5";
-    public bool IsHighlightColorTeal    => _highlightColor == "#26A69A";
-    public bool IsHighlightColorGreen   => _highlightColor == "#43A047";
-    public bool IsHighlightColorYellow  => _highlightColor == "#FDD835";
-    public bool IsHighlightColorAmber   => _highlightColor == "#FFB300";
-    public bool IsHighlightColorCyan    => _highlightColor == "#00ACC1";
-    public bool IsHighlightColorIndigo  => _highlightColor == "#3949AB";
-    public bool IsHighlightColorBrown   => _highlightColor == "#6D4C41";
+    public bool IsHighlightColorRed => _highlightColor == "#E53935";
+    public bool IsHighlightColorOrange => _highlightColor == "#F4511E";
+    public bool IsHighlightColorPink => _highlightColor == "#EC407A";
+    public bool IsHighlightColorPurple => _highlightColor == "#AB47BC";
+    public bool IsHighlightColorBlue => _highlightColor == "#1E88E5";
+    public bool IsHighlightColorTeal => _highlightColor == "#26A69A";
+    public bool IsHighlightColorGreen => _highlightColor == "#43A047";
+    public bool IsHighlightColorYellow => _highlightColor == "#FDD835";
+    public bool IsHighlightColorAmber => _highlightColor == "#FFB300";
+    public bool IsHighlightColorCyan => _highlightColor == "#00ACC1";
+    public bool IsHighlightColorIndigo => _highlightColor == "#3949AB";
+    public bool IsHighlightColorBrown => _highlightColor == "#6D4C41";
 
     // ── Timezone selection ───────────────────────────────────────────────────
 
@@ -328,7 +328,9 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         private set
         {
             if (SetProperty(ref _hotkeyErrorText, value))
+            {
                 OnPropertyChanged(nameof(HasHotkeyError));
+            }
         }
     }
 
@@ -344,9 +346,13 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
             {
                 HotkeyErrorText = string.Empty;
                 if (value)
+                {
                     HotkeyDisplayText = _loc.Get("settings.hotkey_record");
+                }
                 else
+                {
                     UpdateHotkeyDisplayText();
+                }
             }
         }
     }
@@ -377,7 +383,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     private bool _notificationSound = true;
     public bool NotificationSound { get => _notificationSound; set { if (SetProperty(ref _notificationSound, value)) { Log.Action($"setting: notification-sound {value}"); Apply(); } } }
     public string NotificationSoundLabel { get; private set; } = string.Empty;
-    public string TestNotificationLabel  { get; private set; } = string.Empty;
+    public string TestNotificationLabel { get; private set; } = string.Empty;
 
     // ── Clock: show seconds ──────────────────────────────────────────────────
 
@@ -403,24 +409,30 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     public string DataFileMessage
     {
         get => _dataFileMessage;
-        private set { if (SetProperty(ref _dataFileMessage, value)) OnPropertyChanged(nameof(HasDataFileMessage)); }
+        private set
+        {
+            if (SetProperty(ref _dataFileMessage, value))
+            {
+                OnPropertyChanged(nameof(HasDataFileMessage));
+            }
+        }
     }
     public bool HasDataFileMessage => !string.IsNullOrEmpty(_dataFileMessage);
 
-    public string ThemeDarkLabel    { get; private set; } = string.Empty;
-    public string ThemeLightLabel   { get; private set; } = string.Empty;
+    public string ThemeDarkLabel { get; private set; } = string.Empty;
+    public string ThemeLightLabel { get; private set; } = string.Empty;
     public string CornerRoundedLabel { get; private set; } = string.Empty;
-    public string CornerSharpLabel  { get; private set; } = string.Empty;
-    public string PresetDefaultLabel    { get; private set; } = string.Empty;
-    public string PresetOceanLabel      { get; private set; } = string.Empty;
-    public string PresetForestLabel     { get; private set; } = string.Empty;
-    public string PresetSunsetLabel     { get; private set; } = string.Empty;
-    public string PresetMonoLabel       { get; private set; } = string.Empty;
-    public string PresetAuroraLabel     { get; private set; } = string.Empty;
-    public string PresetCherryLabel     { get; private set; } = string.Empty;
-    public string PresetMidnightLabel   { get; private set; } = string.Empty;
-    public string PresetSlateLabel      { get; private set; } = string.Empty;
-    public string PresetEmberLabel      { get; private set; } = string.Empty;
+    public string CornerSharpLabel { get; private set; } = string.Empty;
+    public string PresetDefaultLabel { get; private set; } = string.Empty;
+    public string PresetOceanLabel { get; private set; } = string.Empty;
+    public string PresetForestLabel { get; private set; } = string.Empty;
+    public string PresetSunsetLabel { get; private set; } = string.Empty;
+    public string PresetMonoLabel { get; private set; } = string.Empty;
+    public string PresetAuroraLabel { get; private set; } = string.Empty;
+    public string PresetCherryLabel { get; private set; } = string.Empty;
+    public string PresetMidnightLabel { get; private set; } = string.Empty;
+    public string PresetSlateLabel { get; private set; } = string.Empty;
+    public string PresetEmberLabel { get; private set; } = string.Empty;
 
     public ICommand ClearHotkeyCommand { get; private set; } = null!;
 
@@ -445,33 +457,33 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     public ICommand SetClockFormat24hCommand { get; }
     public ICommand ResetToDefaultsCommand { get; }
     public ICommand SetHighlightColorDefaultCommand { get; }
-    public ICommand SetHighlightColorRedCommand     { get; }
-    public ICommand SetHighlightColorOrangeCommand  { get; }
-    public ICommand SetHighlightColorPinkCommand    { get; }
-    public ICommand SetHighlightColorPurpleCommand  { get; }
-    public ICommand SetHighlightColorBlueCommand    { get; }
-    public ICommand SetHighlightColorTealCommand    { get; }
-    public ICommand SetHighlightColorGreenCommand   { get; }
-    public ICommand SetHighlightColorYellowCommand  { get; }
-    public ICommand SetHighlightColorAmberCommand   { get; }
-    public ICommand SetHighlightColorCyanCommand    { get; }
-    public ICommand SetHighlightColorIndigoCommand  { get; }
-    public ICommand SetHighlightColorBrownCommand   { get; }
+    public ICommand SetHighlightColorRedCommand { get; }
+    public ICommand SetHighlightColorOrangeCommand { get; }
+    public ICommand SetHighlightColorPinkCommand { get; }
+    public ICommand SetHighlightColorPurpleCommand { get; }
+    public ICommand SetHighlightColorBlueCommand { get; }
+    public ICommand SetHighlightColorTealCommand { get; }
+    public ICommand SetHighlightColorGreenCommand { get; }
+    public ICommand SetHighlightColorYellowCommand { get; }
+    public ICommand SetHighlightColorAmberCommand { get; }
+    public ICommand SetHighlightColorCyanCommand { get; }
+    public ICommand SetHighlightColorIndigoCommand { get; }
+    public ICommand SetHighlightColorBrownCommand { get; }
     public ICommand SetPresetCommand { get; }
     public ICommand SetHighlightColorCommand { get; }
-    public ICommand TestNotificationCommand   { get; }
-    public ICommand OpenSettingsFileCommand          { get; }
-    public ICommand OpenShortcutsFileCommand         { get; }
-    public ICommand OpenRemindersFileCommand         { get; }
-    public ICommand OpenNotesFileCommand             { get; }
-    public ICommand OpenDocumentsFileCommand         { get; }
-    public ICommand OpenRunHistoryFileCommand        { get; }
-    public ICommand OpenScriptsFileCommand           { get; }
-    public ICommand OpenRuntimeFileCommand           { get; }
-    public ICommand OpenLocalizationFileCommand      { get; }
-    public ICommand OpenLogFileCommand               { get; }
-    public ICommand ExportBackupCommand              { get; }
-    public ICommand ImportBackupCommand              { get; }
+    public ICommand TestNotificationCommand { get; }
+    public ICommand OpenSettingsFileCommand { get; }
+    public ICommand OpenShortcutsFileCommand { get; }
+    public ICommand OpenRemindersFileCommand { get; }
+    public ICommand OpenNotesFileCommand { get; }
+    public ICommand OpenDocumentsFileCommand { get; }
+    public ICommand OpenRunHistoryFileCommand { get; }
+    public ICommand OpenScriptsFileCommand { get; }
+    public ICommand OpenRuntimeFileCommand { get; }
+    public ICommand OpenLocalizationFileCommand { get; }
+    public ICommand OpenLogFileCommand { get; }
+    public ICommand ExportBackupCommand { get; }
+    public ICommand ImportBackupCommand { get; }
 
     // ── Callback to parent (MainViewModel) ───────────────────────────────────
     public event EventHandler? SettingsApplied;
@@ -531,7 +543,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         SetLanguageNeCommand = new RelayCommand(() => Language = "ne");
         SetThemeDarkCommand = new RelayCommand(() => Theme = "Dark");
         SetThemeLightCommand = new RelayCommand(() => Theme = "Light");
-        SetPresetCommand = new RelayCommand<string>(s => { if (s is not null) BackgroundPreset = s; });
+        SetPresetCommand = new RelayCommand<string>(s => { if (s is not null) { BackgroundPreset = s; } });
         SetPresetDefaultCommand = new RelayCommand(() => BackgroundPreset = "Default");
         SetPresetOceanCommand = new RelayCommand(() => BackgroundPreset = "Ocean");
         SetPresetForestCommand = new RelayCommand(() => BackgroundPreset = "Forest");
@@ -550,18 +562,18 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         ClearHotkeyCommand = new RelayCommand(ClearHotkey);
         SetHighlightColorCommand = new RelayCommand<string>(s => HighlightColor = s ?? "");
         SetHighlightColorDefaultCommand = new RelayCommand(() => HighlightColor = "");
-        SetHighlightColorRedCommand     = new RelayCommand(() => HighlightColor = "#E53935");
-        SetHighlightColorOrangeCommand  = new RelayCommand(() => HighlightColor = "#F4511E");
-        SetHighlightColorPinkCommand    = new RelayCommand(() => HighlightColor = "#EC407A");
-        SetHighlightColorPurpleCommand  = new RelayCommand(() => HighlightColor = "#AB47BC");
-        SetHighlightColorBlueCommand    = new RelayCommand(() => HighlightColor = "#1E88E5");
-        SetHighlightColorTealCommand    = new RelayCommand(() => HighlightColor = "#26A69A");
-        SetHighlightColorGreenCommand   = new RelayCommand(() => HighlightColor = "#43A047");
-        SetHighlightColorYellowCommand  = new RelayCommand(() => HighlightColor = "#FDD835");
-        SetHighlightColorAmberCommand   = new RelayCommand(() => HighlightColor = "#FFB300");
-        SetHighlightColorCyanCommand    = new RelayCommand(() => HighlightColor = "#00ACC1");
-        SetHighlightColorIndigoCommand  = new RelayCommand(() => HighlightColor = "#3949AB");
-        SetHighlightColorBrownCommand   = new RelayCommand(() => HighlightColor = "#6D4C41");
+        SetHighlightColorRedCommand = new RelayCommand(() => HighlightColor = "#E53935");
+        SetHighlightColorOrangeCommand = new RelayCommand(() => HighlightColor = "#F4511E");
+        SetHighlightColorPinkCommand = new RelayCommand(() => HighlightColor = "#EC407A");
+        SetHighlightColorPurpleCommand = new RelayCommand(() => HighlightColor = "#AB47BC");
+        SetHighlightColorBlueCommand = new RelayCommand(() => HighlightColor = "#1E88E5");
+        SetHighlightColorTealCommand = new RelayCommand(() => HighlightColor = "#26A69A");
+        SetHighlightColorGreenCommand = new RelayCommand(() => HighlightColor = "#43A047");
+        SetHighlightColorYellowCommand = new RelayCommand(() => HighlightColor = "#FDD835");
+        SetHighlightColorAmberCommand = new RelayCommand(() => HighlightColor = "#FFB300");
+        SetHighlightColorCyanCommand = new RelayCommand(() => HighlightColor = "#00ACC1");
+        SetHighlightColorIndigoCommand = new RelayCommand(() => HighlightColor = "#3949AB");
+        SetHighlightColorBrownCommand = new RelayCommand(() => HighlightColor = "#6D4C41");
 
         // Hotkey init
         _hotkeyModifiers = s.RunBoxHotkeyModifiers;
@@ -577,18 +589,18 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
 
         TestNotificationCommand = new RelayCommand(() => TestNotificationRequested?.Invoke(this, EventArgs.Empty));
 
-        OpenSettingsFileCommand         = new RelayCommand(() => OpenFile(AppPaths.SettingsPath));
-        OpenShortcutsFileCommand        = new RelayCommand(() => OpenFile(AppPaths.ShortcutsPath));
-        OpenRemindersFileCommand        = new RelayCommand(() => OpenFile(AppPaths.RemindersPath));
-        OpenNotesFileCommand            = new RelayCommand(() => OpenFile(AppPaths.NotesPath));
-        OpenDocumentsFileCommand        = new RelayCommand(() => OpenFile(AppPaths.DocumentsPath));
-        OpenRunHistoryFileCommand       = new RelayCommand(() => OpenFile(AppPaths.RunHistoryPath));
-        OpenScriptsFileCommand          = new RelayCommand(() => OpenFile(AppPaths.ScriptsPath));
-        OpenRuntimeFileCommand          = new RelayCommand(() => OpenFile(AppPaths.AppStatePath));
-        OpenLocalizationFileCommand     = new RelayCommand(() => OpenFile(AppPaths.LocalizationPath));
-        OpenLogFileCommand              = new RelayCommand(() => OpenFile(AppPaths.LogPath));
-        ExportBackupCommand             = new RelayCommand(ExportBackup);
-        ImportBackupCommand             = new RelayCommand(ImportBackup);
+        OpenSettingsFileCommand = new RelayCommand(() => OpenFile(AppPaths.SettingsPath));
+        OpenShortcutsFileCommand = new RelayCommand(() => OpenFile(AppPaths.ShortcutsPath));
+        OpenRemindersFileCommand = new RelayCommand(() => OpenFile(AppPaths.RemindersPath));
+        OpenNotesFileCommand = new RelayCommand(() => OpenFile(AppPaths.NotesPath));
+        OpenDocumentsFileCommand = new RelayCommand(() => OpenFile(AppPaths.DocumentsPath));
+        OpenRunHistoryFileCommand = new RelayCommand(() => OpenFile(AppPaths.RunHistoryPath));
+        OpenScriptsFileCommand = new RelayCommand(() => OpenFile(AppPaths.ScriptsPath));
+        OpenRuntimeFileCommand = new RelayCommand(() => OpenFile(AppPaths.AppStatePath));
+        OpenLocalizationFileCommand = new RelayCommand(() => OpenFile(AppPaths.LocalizationPath));
+        OpenLogFileCommand = new RelayCommand(() => OpenFile(AppPaths.LogPath));
+        ExportBackupCommand = new RelayCommand(ExportBackup);
+        ImportBackupCommand = new RelayCommand(ImportBackup);
 
         RefreshLabels();
     }
@@ -625,7 +637,10 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
 
             if (string.IsNullOrEmpty(savedId) || string.Equals(savedId, localTz.Id, StringComparison.OrdinalIgnoreCase))
             {
-                if (isLocal) _selectedTimezone = item;
+                if (isLocal)
+                {
+                    _selectedTimezone = item;
+                }
             }
             else if (string.Equals(tz.Id, savedId, StringComparison.OrdinalIgnoreCase))
             {
@@ -634,14 +649,20 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         }
 
         if (savedItem is not null)
+        {
             _selectedTimezone = savedItem;
+        }
+
         _selectedTimezone ??= Timezones.FirstOrDefault();
     }
 
     private void Apply()
     {
         // Guard: don't run during construction (before timezones are populated)
-        if (Timezones.Count == 0) return;
+        if (Timezones.Count == 0)
+        {
+            return;
+        }
 
         var s = _settingsService.Current;
 
@@ -741,20 +762,20 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         ShowHelpBadgesLabel = _loc.Get("settings.show_help_badges");
         DataFilesSectionLabel = _loc.Get("settings.data_files");
 
-        ThemeDarkLabel    = _loc.Get("settings.theme_dark");
-        ThemeLightLabel   = _loc.Get("settings.theme_light");
+        ThemeDarkLabel = _loc.Get("settings.theme_dark");
+        ThemeLightLabel = _loc.Get("settings.theme_light");
         CornerRoundedLabel = _loc.Get("settings.corner_rounded");
-        CornerSharpLabel  = _loc.Get("settings.corner_sharp");
-        PresetDefaultLabel    = _loc.Get("menu.preset_default");
-        PresetOceanLabel      = _loc.Get("menu.preset_ocean");
-        PresetForestLabel     = _loc.Get("menu.preset_forest");
-        PresetSunsetLabel     = _loc.Get("menu.preset_sunset");
-        PresetMonoLabel       = _loc.Get("menu.preset_monochrome");
-        PresetAuroraLabel     = _loc.Get("menu.preset_aurora");
-        PresetCherryLabel     = _loc.Get("menu.preset_cherry");
-        PresetMidnightLabel   = _loc.Get("menu.preset_midnight");
-        PresetSlateLabel      = _loc.Get("menu.preset_slate");
-        PresetEmberLabel      = _loc.Get("menu.preset_ember");
+        CornerSharpLabel = _loc.Get("settings.corner_sharp");
+        PresetDefaultLabel = _loc.Get("menu.preset_default");
+        PresetOceanLabel = _loc.Get("menu.preset_ocean");
+        PresetForestLabel = _loc.Get("menu.preset_forest");
+        PresetSunsetLabel = _loc.Get("menu.preset_sunset");
+        PresetMonoLabel = _loc.Get("menu.preset_monochrome");
+        PresetAuroraLabel = _loc.Get("menu.preset_aurora");
+        PresetCherryLabel = _loc.Get("menu.preset_cherry");
+        PresetMidnightLabel = _loc.Get("menu.preset_midnight");
+        PresetSlateLabel = _loc.Get("menu.preset_slate");
+        PresetEmberLabel = _loc.Get("menu.preset_ember");
 
         OnPropertyChanged(nameof(LanguageLabel));
         OnPropertyChanged(nameof(ThemeLabel));
@@ -836,16 +857,26 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     /// </summary>
     internal static string? ResolveImportEntryPath(string entryName, string dataDirectory)
     {
-        if (string.IsNullOrEmpty(entryName)) return null;
+        if (string.IsNullOrEmpty(entryName))
+        {
+            return null;
+        }
         // Normalize to forward-slash form for allowlist lookup, then to OS separator for path ops.
         var forwardSlash = entryName.Replace('\\', '/');
-        if (!AllowedBackupEntries.Contains(forwardSlash)) return null;
+        if (!AllowedBackupEntries.Contains(forwardSlash))
+        {
+            return null;
+        }
+
         var relative = forwardSlash.Replace('/', Path.DirectorySeparatorChar);
         var dest = Path.GetFullPath(Path.Combine(dataDirectory, relative));
         var root = Path.GetFullPath(dataDirectory);
         if (!dest.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)
             && !string.Equals(dest, root, StringComparison.OrdinalIgnoreCase))
+        {
             return null;
+        }
+
         return dest;
     }
 
@@ -853,20 +884,30 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     {
         var dialog = new Microsoft.Win32.SaveFileDialog
         {
-            Title       = _loc.Get("settings.data_export"),
-            Filter      = "ZIP archive (*.zip)|*.zip",
-            FileName    = $"NepDateWidget-backup-{DateTime.Now:yyyy-MM-dd}",
-            DefaultExt  = ".zip"
+            Title = _loc.Get("settings.data_export"),
+            Filter = "ZIP archive (*.zip)|*.zip",
+            FileName = $"NepDateWidget-backup-{DateTime.Now:yyyy-MM-dd}",
+            DefaultExt = ".zip"
         };
-        if (dialog.ShowDialog() != true) return;
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
 
         try
         {
             var target = dialog.FileName;
-            if (File.Exists(target)) File.Delete(target);
+            if (File.Exists(target))
+            {
+                File.Delete(target);
+            }
+
             using var archive = ZipFile.Open(target, ZipArchiveMode.Create);
             using (var w = new StreamWriter(archive.CreateEntry("nepdate-backup.manifest").Open(), System.Text.Encoding.UTF8))
+            {
                 w.Write("NepDateWidget");
+            }
+
             string[] paths =
             [
                 AppPaths.SettingsPath, AppPaths.RemindersPath, AppPaths.NotesPath,
@@ -874,8 +915,13 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
                 AppPaths.AppStatePath, AppPaths.ScriptsPath, AppPaths.LocalizationPath, AppPaths.LogPath
             ];
             foreach (var p in paths)
+            {
                 if (File.Exists(p))
+                {
                     archive.CreateEntryFromFile(p, Path.GetRelativePath(AppPaths.DataDirectory, p).Replace('\\', '/'));
+                }
+            }
+
             ShowDataFileMessage(_loc.Get("settings.data_export_ok"));
             Log.Action($"backup exported: {target}");
         }
@@ -890,10 +936,13 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     {
         var dialog = new Microsoft.Win32.OpenFileDialog
         {
-            Title  = _loc.Get("settings.data_import"),
+            Title = _loc.Get("settings.data_import"),
             Filter = "ZIP archive (*.zip)|*.zip"
         };
-        if (dialog.ShowDialog() != true) return;
+        if (dialog.ShowDialog() != true)
+        {
+            return;
+        }
 
         try
         {
@@ -921,11 +970,17 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
             foreach (var entry in archive.Entries)
             {
                 // Skip directory entries
-                if (string.IsNullOrEmpty(entry.Name)) continue;
+                if (string.IsNullOrEmpty(entry.Name))
+                {
+                    continue;
+                }
 
                 // Allowlist + path-traversal guard (entry.FullName is the relative path in the ZIP)
                 var dest = ResolveImportEntryPath(entry.FullName, dataDir);
-                if (dest is null) continue;
+                if (dest is null)
+                {
+                    continue;
+                }
 
                 Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
                 entry.ExtractToFile(dest, overwrite: true);
@@ -958,7 +1013,11 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     // internal for unit tests
     internal static void EnsureDataFile(string path)
     {
-        if (File.Exists(path)) return;
+        if (File.Exists(path))
+        {
+            return;
+        }
+
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
@@ -966,15 +1025,22 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
             string content;
             // JSON-object files (“{}”): notes.json is a string dict, settings.json and
             // runtime.json are plain objects, localization.json is a dict-of-dicts.
-            if (name.Equals("notes.json",        StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("runtime.json",      StringComparison.OrdinalIgnoreCase) ||
-                name.Equals("settings.json",     StringComparison.OrdinalIgnoreCase) ||
+            if (name.Equals("notes.json", StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("runtime.json", StringComparison.OrdinalIgnoreCase) ||
+                name.Equals("settings.json", StringComparison.OrdinalIgnoreCase) ||
                 name.Equals("localization.json", StringComparison.OrdinalIgnoreCase))
+            {
                 content = "{}";
+            }
             else if (name.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+            {
                 content = "[]";
+            }
             else
+            {
                 content = string.Empty;
+            }
+
             File.WriteAllText(path, content, System.Text.Encoding.UTF8);
         }
         catch { /* best-effort - the editor will show an error if the file is still missing */ }
@@ -1104,10 +1170,25 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     {
         // Convert WPF modifiers to Win32 modifier flags
         int mod = 0;
-        if (wpfMod.HasFlag(System.Windows.Input.ModifierKeys.Control)) mod |= MOD_CONTROL;
-        if (wpfMod.HasFlag(System.Windows.Input.ModifierKeys.Shift)) mod |= MOD_SHIFT;
-        if (wpfMod.HasFlag(System.Windows.Input.ModifierKeys.Alt)) mod |= MOD_ALT;
-        if (wpfMod.HasFlag(System.Windows.Input.ModifierKeys.Windows)) mod |= MOD_WIN;
+        if (wpfMod.HasFlag(System.Windows.Input.ModifierKeys.Control))
+        {
+            mod |= MOD_CONTROL;
+        }
+
+        if (wpfMod.HasFlag(System.Windows.Input.ModifierKeys.Shift))
+        {
+            mod |= MOD_SHIFT;
+        }
+
+        if (wpfMod.HasFlag(System.Windows.Input.ModifierKeys.Alt))
+        {
+            mod |= MOD_ALT;
+        }
+
+        if (wpfMod.HasFlag(System.Windows.Input.ModifierKeys.Windows))
+        {
+            mod |= MOD_WIN;
+        }
 
         // Must have at least one modifier
         if (mod == 0)
@@ -1160,10 +1241,25 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         }
 
         var parts = new List<string>(4);
-        if ((_hotkeyModifiers & MOD_CONTROL) != 0) parts.Add("Ctrl");
-        if ((_hotkeyModifiers & MOD_ALT) != 0) parts.Add("Alt");
-        if ((_hotkeyModifiers & MOD_SHIFT) != 0) parts.Add("Shift");
-        if ((_hotkeyModifiers & MOD_WIN) != 0) parts.Add("Win");
+        if ((_hotkeyModifiers & MOD_CONTROL) != 0)
+        {
+            parts.Add("Ctrl");
+        }
+
+        if ((_hotkeyModifiers & MOD_ALT) != 0)
+        {
+            parts.Add("Alt");
+        }
+
+        if ((_hotkeyModifiers & MOD_SHIFT) != 0)
+        {
+            parts.Add("Shift");
+        }
+
+        if ((_hotkeyModifiers & MOD_WIN) != 0)
+        {
+            parts.Add("Win");
+        }
 
         var key = System.Windows.Input.KeyInterop.KeyFromVirtualKey(_hotkeyKey);
         parts.Add(key.ToString());
@@ -1174,19 +1270,34 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
     private static bool IsReservedHotkey(int mod, int vk)
     {
         // Block all Win+* (OS reserves these)
-        if ((mod & MOD_WIN) != 0) return true;
+        if ((mod & MOD_WIN) != 0)
+        {
+            return true;
+        }
 
         // Ctrl+Alt+Del (vk 0x2E = Delete)
-        if (mod == (MOD_CONTROL | MOD_ALT) && vk == 0x2E) return true;
+        if (mod == (MOD_CONTROL | MOD_ALT) && vk == 0x2E)
+        {
+            return true;
+        }
 
         // Ctrl+Shift+Esc (Task Manager, vk 0x1B = Escape)
-        if (mod == (MOD_CONTROL | MOD_SHIFT) && vk == 0x1B) return true;
+        if (mod == (MOD_CONTROL | MOD_SHIFT) && vk == 0x1B)
+        {
+            return true;
+        }
 
         // Alt+F4 (vk 0x73)
-        if (mod == MOD_ALT && vk == 0x73) return true;
+        if (mod == MOD_ALT && vk == 0x73)
+        {
+            return true;
+        }
 
         // Alt+Tab (vk 0x09)
-        if (mod == MOD_ALT && vk == 0x09) return true;
+        if (mod == MOD_ALT && vk == 0x09)
+        {
+            return true;
+        }
 
         return false;
     }

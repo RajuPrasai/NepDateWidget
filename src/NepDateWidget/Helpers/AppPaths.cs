@@ -43,35 +43,35 @@ public static class AppPaths
     public static string DataDirectory => _dataDir.Value;
 
     // Subdirectories - created eagerly in ResolveDataDir.
-    private static string ConfigDir   => Path.Combine(DataDirectory, "config");
+    private static string ConfigDir => Path.Combine(DataDirectory, "config");
     private static string UserDataDir => Path.Combine(DataDirectory, "data");
 
     // config/: user-editable configuration files
-    public static string SettingsPath      => Path.Combine(ConfigDir, "settings.json");
-    public static string LocalizationPath  => Path.Combine(ConfigDir, "localization.json");
-    public static string ShortcutsPath     => Path.Combine(ConfigDir, "shortcuts.json");
-    public static string ScriptsPath       => Path.Combine(ConfigDir, "scripts.json");
+    public static string SettingsPath => Path.Combine(ConfigDir, "settings.json");
+    public static string LocalizationPath => Path.Combine(ConfigDir, "localization.json");
+    public static string ShortcutsPath => Path.Combine(ConfigDir, "shortcuts.json");
+    public static string ScriptsPath => Path.Combine(ConfigDir, "scripts.json");
 
     // Shipped default config files - located next to the EXE in Resources/configs/.
     // These are read-only at runtime; the app copies from here to AppData on first launch
     // and merges new keys/entries on subsequent launches.
-    public static string DefaultsDirectory      => Path.Combine(ExeDirectory, "Resources", "configs");
+    public static string DefaultsDirectory => Path.Combine(ExeDirectory, "Resources", "configs");
     public static string DefaultLocalizationPath => Path.Combine(DefaultsDirectory, "localization.json");
-    public static string DefaultShortcutsPath    => Path.Combine(DefaultsDirectory, "shortcuts.json");
-    public static string DefaultRunHistoryPath   => Path.Combine(DefaultsDirectory, "run-history.json");
-    public static string DefaultSettingsPath     => Path.Combine(DefaultsDirectory, "settings.json");
-    public static string DefaultScriptsPath      => Path.Combine(DefaultsDirectory, "scripts.json");
+    public static string DefaultShortcutsPath => Path.Combine(DefaultsDirectory, "shortcuts.json");
+    public static string DefaultRunHistoryPath => Path.Combine(DefaultsDirectory, "run-history.json");
+    public static string DefaultSettingsPath => Path.Combine(DefaultsDirectory, "settings.json");
+    public static string DefaultScriptsPath => Path.Combine(DefaultsDirectory, "scripts.json");
 
     // data/: user content
-    public static string NotesPath       => Path.Combine(UserDataDir, "notes.json");
-    public static string RemindersPath   => Path.Combine(UserDataDir, "reminders.json");
-    public static string DocumentsPath   => Path.Combine(UserDataDir, "documents.json");
-    public static string RunHistoryPath  => Path.Combine(UserDataDir, "run-history.json");
+    public static string NotesPath => Path.Combine(UserDataDir, "notes.json");
+    public static string RemindersPath => Path.Combine(UserDataDir, "reminders.json");
+    public static string DocumentsPath => Path.Combine(UserDataDir, "documents.json");
+    public static string RunHistoryPath => Path.Combine(UserDataDir, "run-history.json");
     public static string DocumentsFilesDirectory => Path.Combine(UserDataDir, "Documents");
 
     // root: operational files (not user-edited)
     public static string AppStatePath => Path.Combine(DataDirectory, "runtime.json");
-    public static string LogPath      => Path.Combine(DataDirectory, "nepdate.log");
+    public static string LogPath => Path.Combine(DataDirectory, "nepdate.log");
 
     private static string ResolveExeDir()
     {
@@ -119,9 +119,17 @@ public static class AppPaths
     private static string ResolveLocalAppData()
     {
         var standard = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        if (!AppEnvironment.IsPackaged) return standard;
+        if (!AppEnvironment.IsPackaged)
+        {
+            return standard;
+        }
+
         var pfn = AppEnvironment.PackageFamilyName;
-        if (pfn is null) return standard; // defensive: packaged but PFN unavailable
+        if (pfn is null)
+        {
+            return standard; // defensive: packaged but PFN unavailable
+        }
+
         return Path.Combine(standard, "Packages", pfn, "LocalCache", "Local");
     }
 
@@ -152,13 +160,21 @@ public static class AppPaths
                     {
                         var srcDir = Path.Combine(priorData, subDir);
                         var dstDir = Path.Combine(target, subDir);
-                        if (!Directory.Exists(srcDir)) continue;
+                        if (!Directory.Exists(srcDir))
+                        {
+                            continue;
+                        }
+
                         foreach (var srcFile in Directory.GetFiles(srcDir))
+                        {
                             TryCopy(srcFile, Path.Combine(dstDir, Path.GetFileName(srcFile)));
+                        }
                     }
                     // Root-level files: nepdate.log, runtime.json
                     foreach (var srcFile in Directory.GetFiles(priorData))
+                    {
                         TryCopy(srcFile, Path.Combine(target, Path.GetFileName(srcFile)));
+                    }
                 }
             }
 
@@ -196,20 +212,26 @@ public static class AppPaths
 
             // 2. Migrate older filenames within the resolved folder.
             TryMove(Path.Combine(target, "NepDateWidget.settings.json"), SettingsPath);
-            TryMove(Path.Combine(target, "widget.settings.json"),        SettingsPath);
+            TryMove(Path.Combine(target, "widget.settings.json"), SettingsPath);
             TryMove(Path.Combine(target, "NepDateWidget.reminders.json"), RemindersPath);
 
             // 3. Migrate from very old beside-EXE flat layout.
             TryMove(Path.Combine(_exeDir.Value, "NepDateWidget.settings.json"), SettingsPath);
-            TryMove(Path.Combine(_exeDir.Value, "widget.settings.json"),        SettingsPath);
+            TryMove(Path.Combine(_exeDir.Value, "widget.settings.json"), SettingsPath);
             TryMove(Path.Combine(_exeDir.Value, "NepDateWidget.reminders.json"), RemindersPath);
-            TryMove(Path.Combine(_exeDir.Value, "nepdate.log"),                  LogPath);
+            TryMove(Path.Combine(_exeDir.Value, "nepdate.log"), LogPath);
 
             // 4. Migrate from flat AppData/ root to subdirectory layout.
             foreach (var fn in new[] { "settings.json", "localization.json", "shortcuts.json", "scripts.json" })
+            {
                 TryMove(Path.Combine(target, fn), Path.Combine(target, "config", fn));
+            }
+
             foreach (var fn in new[] { "notes.json", "reminders.json", "documents.json", "run-history.json" })
+            {
                 TryMove(Path.Combine(target, fn), Path.Combine(target, "data", fn));
+            }
+
             TryMoveDir(Path.Combine(target, "Documents"), Path.Combine(target, "data", "Documents"));
 
             // Remove doc-search-history.json - feature removed.
@@ -225,8 +247,16 @@ public static class AppPaths
     {
         try
         {
-            if (!File.Exists(source)) return;
-            if (File.Exists(destination)) return;
+            if (!File.Exists(source))
+            {
+                return;
+            }
+
+            if (File.Exists(destination))
+            {
+                return;
+            }
+
             File.Move(source, destination);
         }
         catch { /* best-effort */ }
@@ -236,8 +266,16 @@ public static class AppPaths
     {
         try
         {
-            if (!File.Exists(source)) return;
-            if (File.Exists(destination)) return;
+            if (!File.Exists(source))
+            {
+                return;
+            }
+
+            if (File.Exists(destination))
+            {
+                return;
+            }
+
             File.Copy(source, destination, overwrite: false);
         }
         catch { /* best-effort */ }
@@ -247,8 +285,16 @@ public static class AppPaths
     {
         try
         {
-            if (!Directory.Exists(source)) return;
-            if (Directory.Exists(destination)) return;
+            if (!Directory.Exists(source))
+            {
+                return;
+            }
+
+            if (Directory.Exists(destination))
+            {
+                return;
+            }
+
             Directory.Move(source, destination);
         }
         catch { /* best-effort */ }

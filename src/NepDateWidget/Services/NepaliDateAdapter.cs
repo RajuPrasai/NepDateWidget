@@ -1,4 +1,4 @@
-﻿using NepDate;
+using NepDate;
 
 namespace NepDateWidget.Services;
 
@@ -80,7 +80,11 @@ public sealed class NepaliDateAdapter : INepaliDateAdapter
 
     public string GetMonthNameNe(int bsMonth)
     {
-        if (bsMonth < 1 || bsMonth > 12) return string.Empty;
+        if (bsMonth < 1 || bsMonth > 12)
+        {
+            return string.Empty;
+        }
+
         return MonthNamesNe[bsMonth];
     }
 
@@ -165,7 +169,10 @@ public sealed class NepaliDateAdapter : INepaliDateAdapter
             var b = new NepaliDate(y2, m2, d2);
 
             // Ensure a <= b (we store sign externally)
-            if (a > b) (a, b) = (b, a);
+            if (a > b)
+            {
+                (a, b) = (b, a);
+            }
 
             int years = b.Year - a.Year;
             int months = b.Month - a.Month;
@@ -213,10 +220,22 @@ public sealed class NepaliDateAdapter : INepaliDateAdapter
             // Q1: Shrawan(4)-Ashwin(6), Q2: Kartik(7)-Poush(9), Q3: Magh(10)-Falgun(11)+Chaitra(12)? 
             // Actually: Q1=4-6, Q2=7-9, Q3=10-12, Q4=1-3
             int quarter;
-            if (bsMonth >= 4 && bsMonth <= 6) quarter = 1;
-            else if (bsMonth >= 7 && bsMonth <= 9) quarter = 2;
-            else if (bsMonth >= 10 && bsMonth <= 12) quarter = 3;
-            else quarter = 4; // 1-3
+            if (bsMonth >= 4 && bsMonth <= 6)
+            {
+                quarter = 1;
+            }
+            else if (bsMonth >= 7 && bsMonth <= 9)
+            {
+                quarter = 2;
+            }
+            else if (bsMonth >= 10 && bsMonth <= 12)
+            {
+                quarter = 3;
+            }
+            else
+            {
+                quarter = 4; // 1-3
+            }
 
             int daysToQEnd = (int)(qEnd.EnglishDate.Date - date.EnglishDate.Date).TotalDays;
             int daysToYrEnd = (int)(fyEnd.EnglishDate.Date - date.EnglishDate.Date).TotalDays;
@@ -237,8 +256,8 @@ public sealed class NepaliDateAdapter : INepaliDateAdapter
             var info = new NepaliDate(bsYear, bsMonth, bsDay).GetCalendarInfo();
             return (
                 info.IsPublicHoliday,
-                info.TithiEn  ?? string.Empty,
-                info.TithiNp  ?? string.Empty,
+                info.TithiEn ?? string.Empty,
+                info.TithiNp ?? string.Empty,
                 info.EventsEn ?? Array.Empty<string>(),
                 info.EventsNp ?? Array.Empty<string>());
         }
@@ -251,7 +270,11 @@ public sealed class NepaliDateAdapter : INepaliDateAdapter
     public bool TryParseSmartBsDate(string rawText, out int year, out int month, out int day)
     {
         year = month = day = 0;
-        if (string.IsNullOrWhiteSpace(rawText)) return false;
+        if (string.IsNullOrWhiteSpace(rawText))
+        {
+            return false;
+        }
+
         try
         {
             if (SmartDateParser.TryParse(rawText, out NepaliDate parsed))
@@ -294,8 +317,8 @@ public sealed class NepaliDateAdapter : INepaliDateAdapter
             var info = n.GetCalendarInfo();
             return (
                 info.IsPublicHoliday,
-                info.TithiEn  ?? string.Empty,
-                info.TithiNp  ?? string.Empty,
+                info.TithiEn ?? string.Empty,
+                info.TithiNp ?? string.Empty,
                 info.EventsEn ?? Array.Empty<string>(),
                 info.EventsNp ?? Array.Empty<string>(),
                 n.EnglishDate,
@@ -317,8 +340,13 @@ public sealed class NepaliDateAdapter : INepaliDateAdapter
     private static void ValidateBsYearMonth(int year, int month)
     {
         if (year < 1901 || year > 2199)
+        {
             throw new ArgumentOutOfRangeException(nameof(year), $"BS year {year} is outside the supported range 1901-2199.");
+        }
+
         if (month < 1 || month > 12)
+        {
             throw new ArgumentOutOfRangeException(nameof(month), $"BS month {month} must be 1-12.");
+        }
     }
 }

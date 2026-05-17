@@ -1,4 +1,4 @@
-﻿using NepDateWidget.ViewModels;
+using NepDateWidget.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -47,7 +47,9 @@ public partial class CalendarView : UserControl
     private void MonthCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ComboBox cb && cb.SelectedIndex >= 0 && DataContext is CalendarViewModel vm)
+        {
             vm.SelectedMonthIndex = cb.SelectedIndex;
+        }
     }
 
     private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -69,7 +71,11 @@ public partial class CalendarView : UserControl
 
     private void OnDaysGridSizeChanged(object sender, SizeChangedEventArgs e)
     {
-        if (DataContext is not CalendarViewModel vm) return;
+        if (DataContext is not CalendarViewModel vm)
+        {
+            return;
+        }
+
         vm.UpdateCellLayout(DaysGrid.ActualHeight / 6.0, DaysGrid.ActualWidth / 7.0);
     }
 
@@ -144,6 +150,8 @@ public partial class CalendarView : UserControl
     private void YearCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (sender is ComboBox cb && cb.SelectedIndex >= 0 && DataContext is CalendarViewModel vm)
+        {
             vm.SelectedYearIndex = cb.SelectedIndex;
+        }
     }
 }

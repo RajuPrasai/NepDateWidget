@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Models;
+using NepDateWidget.Models;
 using NepDateWidget.Services;
 
 namespace NepDateWidget.Tests.Services;
@@ -82,7 +82,9 @@ public class CalendarServiceTests
 
         var realDays = month.Days.Where(d => d.IsCurrentMonth).Select(d => d.Day).ToList();
         for (int i = 0; i < realDays.Count - 1; i++)
+        {
             Assert.Equal(realDays[i] + 1, realDays[i + 1]);
+        }
     }
 
     [Fact]
@@ -103,7 +105,9 @@ public class CalendarServiceTests
 
         // Cell 0, 7, 14, … should all be Sunday
         for (int i = 0; i < month.Days.Count; i++)
+        {
             Assert.Equal((DayOfWeek)(i % 7), month.Days[i].DayOfWeek);
+        }
     }
 
     [Fact]

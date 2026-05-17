@@ -6,7 +6,7 @@ namespace NepDateWidget.Services;
 public sealed class JobOrchestrationService : IJobOrchestrationService
 {
     private readonly IImageCompressionService _imageService;
-    private readonly IPdfCompressionService   _pdfService;
+    private readonly IPdfCompressionService _pdfService;
 
     private CancellationTokenSource? _cts;
     private volatile bool _isJobRunning;
@@ -17,15 +17,18 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
 
     public JobOrchestrationService(
         IImageCompressionService imageService,
-        IPdfCompressionService   pdfService)
+        IPdfCompressionService pdfService)
     {
         _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
-        _pdfService   = pdfService   ?? throw new ArgumentNullException(nameof(pdfService));
+        _pdfService = pdfService ?? throw new ArgumentNullException(nameof(pdfService));
     }
 
     public async Task StartJobAsync(IReadOnlyList<CompressionJob> jobs, CancellationToken cancellationToken = default)
     {
-        if (_isJobRunning) return;
+        if (_isJobRunning)
+        {
+            return;
+        }
 
         _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         _isJobRunning = true;
@@ -34,8 +37,8 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
         ResolveCollisions(jobs);
 
         int parallelism = Math.Max(1, Environment.ProcessorCount - 2);
-        var semaphore   = new SemaphoreSlim(parallelism, parallelism);
-        int completed   = 0;
+        var semaphore = new SemaphoreSlim(parallelism, parallelism);
+        int completed = 0;
         long totalSaved = 0;
         var token = _cts.Token;
 
@@ -46,12 +49,15 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
                 await semaphore.WaitAsync(token).ConfigureAwait(false);
                 try
                 {
-                    if (token.IsCancellationRequested) return;
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
 
                     Progress?.Invoke(this, new JobProgressState
                     {
-                        CompletedCount  = completed,
-                        TotalCount      = jobs.Count,
+                        CompletedCount = completed,
+                        TotalCount = jobs.Count,
                         CurrentFileName = Path.GetFileName(job.InputPath),
                         TotalSavedBytes = totalSaved,
                     });
@@ -68,8 +74,8 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
 
                     Progress?.Invoke(this, new JobProgressState
                     {
-                        CompletedCount  = completed,
-                        TotalCount      = jobs.Count,
+                        CompletedCount = completed,
+                        TotalCount = jobs.Count,
                         CurrentFileName = Path.GetFileName(job.InputPath),
                         TotalSavedBytes = totalSaved,
                     });
@@ -113,9 +119,9 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
             }
 
             // Collision - append counter starting at 2.
-            var dir   = Path.GetDirectoryName(path) ?? string.Empty;
-            var name  = Path.GetFileNameWithoutExtension(path);
-            var ext   = Path.GetExtension(path);
+            var dir = Path.GetDirectoryName(path) ?? string.Empty;
+            var name = Path.GetFileNameWithoutExtension(path);
+            var ext = Path.GetExtension(path);
             int counter = 2;
             string candidate;
             do

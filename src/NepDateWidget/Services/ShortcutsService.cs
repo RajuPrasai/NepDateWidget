@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using System.Threading;
 
 namespace NepDateWidget.Services;
 
@@ -27,21 +26,28 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
     /// </summary>
     internal static (IReadOnlyDictionary<string, string> Prefixes, IReadOnlyDictionary<string, string> SiteNames) LoadDefaults(string defaultFilePath)
     {
-        var prefixes  = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var prefixes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var siteNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         try
         {
-            if (!File.Exists(defaultFilePath)) return (prefixes, siteNames);
+            if (!File.Exists(defaultFilePath))
+            {
+                return (prefixes, siteNames);
+            }
+
             var items = JsonSerializer.Deserialize<List<UserShortcut>>(File.ReadAllText(defaultFilePath), JsonOptions);
             if (items is not null)
             {
                 foreach (var item in items)
                 {
                     if (item.Disabled || string.IsNullOrWhiteSpace(item.Key) || string.IsNullOrWhiteSpace(item.Url))
+                    {
                         continue;
-                    var url  = item.Url.Replace("{query}", "{0}", StringComparison.OrdinalIgnoreCase);
+                    }
+
+                    var url = item.Url.Replace("{query}", "{0}", StringComparison.OrdinalIgnoreCase);
                     var name = string.IsNullOrWhiteSpace(item.Name) ? item.Key : item.Name!;
-                    prefixes[item.Key]  = url;
+                    prefixes[item.Key] = url;
                     siteNames[item.Key] = name;
                 }
             }
@@ -76,7 +82,7 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
     private Dictionary<string, string> _prefixes;
     private Dictionary<string, string> _siteNames;
 
-    public IReadOnlyDictionary<string, string> Prefixes     => _prefixes;
+    public IReadOnlyDictionary<string, string> Prefixes => _prefixes;
     public IReadOnlyDictionary<string, string> PrefixSiteNames => _siteNames;
 
     public event EventHandler? ShortcutsChanged;
@@ -85,12 +91,12 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
 
     public ShortcutsService(string path, string? defaultFilePath = null)
     {
-        _path            = path;
+        _path = path;
         _defaultFilePath = defaultFilePath;
-        _syncContext     = SynchronizationContext.Current;
+        _syncContext = SynchronizationContext.Current;
 
         // Empty until Load() is called.
-        _prefixes  = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        _prefixes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         _siteNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
     }
 
@@ -99,16 +105,23 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
     public void Load()
     {
         if (!File.Exists(_path))
+        {
             SeedFile();
+        }
+
         MergeNewDefaults();
         LoadFromFile();
         _reloader ??= new DebouncedFileReloader(_path, debounceMs: 500, onReload: () =>
         {
             LoadFromFile();
             if (_syncContext is not null)
+            {
                 _syncContext.Post(_ => ShortcutsChanged?.Invoke(this, EventArgs.Empty), null);
+            }
             else
+            {
                 ShortcutsChanged?.Invoke(this, EventArgs.Empty);
+            }
         });
     }
 
@@ -118,9 +131,13 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
             if (_defaultFilePath is not null && File.Exists(_defaultFilePath))
+            {
                 File.Copy(_defaultFilePath, _path, overwrite: false);
+            }
             else
+            {
                 File.WriteAllText(_path, "[]", Encoding.UTF8);
+            }
         }
         catch (Exception ex)
         {
@@ -136,11 +153,15 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
     /// </summary>
     private void MergeNewDefaults()
     {
-        if (_defaultFilePath is null || !File.Exists(_defaultFilePath) || !File.Exists(_path)) return;
+        if (_defaultFilePath is null || !File.Exists(_defaultFilePath) || !File.Exists(_path))
+        {
+            return;
+        }
+
         try
         {
             var defaultItems = JsonSerializer.Deserialize<List<UserShortcut>>(File.ReadAllText(_defaultFilePath), JsonOptions) ?? new();
-            var userItems    = JsonSerializer.Deserialize<List<UserShortcut>>(File.ReadAllText(_path), JsonOptions) ?? new();
+            var userItems = JsonSerializer.Deserialize<List<UserShortcut>>(File.ReadAllText(_path), JsonOptions) ?? new();
 
             // Keys already in user's file (active or explicitly disabled)
             var existingKeys = new HashSet<string>(
@@ -164,21 +185,36 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
             var correctedCount = 0;
             foreach (var item in userItems)
             {
-                if (item.Key is null || !corrections.TryGetValue(item.Key, out var fix)) continue;
-                if (!string.Equals(item.Url, fix.OldUrl, StringComparison.OrdinalIgnoreCase)) continue;
-                item.Url  = fix.NewUrl;
+                if (item.Key is null || !corrections.TryGetValue(item.Key, out var fix))
+                {
+                    continue;
+                }
+
+                if (!string.Equals(item.Url, fix.OldUrl, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                item.Url = fix.NewUrl;
                 item.Name = fix.NewName;
                 correctedCount++;
             }
 
-            if (toAdd.Count == 0 && correctedCount == 0) return;
+            if (toAdd.Count == 0 && correctedCount == 0)
+            {
+                return;
+            }
 
             userItems.AddRange(toAdd);
             var merged = JsonSerializer.Serialize(userItems, JsonOptions);
             if (!AtomicFile.WriteAllText(_path, merged))
+            {
                 Log.Warn("shortcuts.json: atomic write failed during merge.");
+            }
             else
+            {
                 Log.Info($"shortcuts.json: merged {toAdd.Count} new, corrected {correctedCount} entry/entries.");
+            }
         }
         catch (Exception ex)
         {
@@ -190,19 +226,19 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
 
     private void LoadFromFile()
     {
-        var prefixes  = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var prefixes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var siteNames = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         if (!File.Exists(_path))
         {
-            _prefixes  = prefixes;
+            _prefixes = prefixes;
             _siteNames = siteNames;
             return;
         }
 
         try
         {
-            var json  = File.ReadAllText(_path);
+            var json = File.ReadAllText(_path);
             var items = JsonSerializer.Deserialize<List<UserShortcut>>(json, JsonOptions);
 
             if (items is not null)
@@ -210,7 +246,10 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
                 // Process in order; later entries with the same key win (last-write-wins).
                 foreach (var item in items)
                 {
-                    if (!ValidateItem(item)) continue;
+                    if (!ValidateItem(item))
+                    {
+                        continue;
+                    }
 
                     if (item.Disabled)
                     {
@@ -220,21 +259,21 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
                     }
 
                     // Normalize {query} → {0} for string.Format compatibility.
-                    var url  = item.Url!.Replace("{query}", "{0}", StringComparison.OrdinalIgnoreCase);
+                    var url = item.Url!.Replace("{query}", "{0}", StringComparison.OrdinalIgnoreCase);
                     var name = string.IsNullOrWhiteSpace(item.Name) ? item.Key : item.Name!;
 
-                    prefixes[item.Key]  = url;
+                    prefixes[item.Key] = url;
                     siteNames[item.Key] = name;
                 }
             }
 
-            _prefixes  = prefixes;
+            _prefixes = prefixes;
             _siteNames = siteNames;
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
         {
             Log.Warn($"shortcuts.json: load failed ({ex.GetType().Name}: {ex.Message}); no shortcuts loaded.");
-            _prefixes  = prefixes;
+            _prefixes = prefixes;
             _siteNames = siteNames;
         }
     }
@@ -250,7 +289,10 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
         }
 
         // Disabled entries only need a valid key.
-        if (item.Disabled) return true;
+        if (item.Disabled)
+        {
+            return true;
+        }
 
         if (string.IsNullOrWhiteSpace(item.Url))
         {
@@ -298,7 +340,7 @@ public sealed class ShortcutsService : IShortcutsService, IDisposable
             (_prefixes, _siteNames) = ShortcutsService.LoadDefaults(defaultFilePath);
         }
 
-        public IReadOnlyDictionary<string, string> Prefixes        => _prefixes;
+        public IReadOnlyDictionary<string, string> Prefixes => _prefixes;
         public IReadOnlyDictionary<string, string> PrefixSiteNames => _siteNames;
         public event EventHandler? ShortcutsChanged { add { } remove { } }
         public void Load() { }

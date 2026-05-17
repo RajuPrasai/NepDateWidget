@@ -22,7 +22,9 @@ public partial class ReminderPopup : Window
         Loaded += (_, _) =>
         {
             if (_vm.IsEditing)
+            {
                 TitleInput.Focus();
+            }
         };
 
         _vm.RequestClose += () =>
@@ -36,7 +38,10 @@ public partial class ReminderPopup : Window
 
     private void OnDeactivated(object? sender, EventArgs e)
     {
-        if (_isClosing) return;
+        if (_isClosing)
+        {
+            return;
+        }
 
         // If editing with unsaved changes, show the discard banner and re-activate
         if (_vm.IsEditing && _vm.IsDirty)
@@ -55,8 +60,15 @@ public partial class ReminderPopup : Window
         // Only close when focus went to an external app, not back to the widget.
         Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, () =>
         {
-            if (_isClosing) return;
-            if (NepDateWidget.Helpers.WindowHelpers.IsAnyAppWindowActive(this)) return;
+            if (_isClosing)
+            {
+                return;
+            }
+
+            if (NepDateWidget.Helpers.WindowHelpers.IsAnyAppWindowActive(this))
+            {
+                return;
+            }
 
             ClosedByDeactivation = true;
             _isClosing = true;
@@ -85,7 +97,10 @@ public partial class ReminderPopup : Window
         {
             // Don't intercept Enter in multiline TextBox (Notes field)
             if (Keyboard.FocusedElement is System.Windows.Controls.TextBox tb && tb.AcceptsReturn)
+            {
                 return;
+            }
+
             _vm.SaveCommand.Execute(null);
             e.Handled = true;
         }

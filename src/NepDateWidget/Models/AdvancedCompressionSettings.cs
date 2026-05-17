@@ -7,19 +7,19 @@ namespace NepDateWidget.Models;
 public sealed class AdvancedCompressionSettings
 {
     // Image - quality overrides
-    public int?  QualityOverride   { get; set; }   // 1-95; null = use slider mapping
-    public bool  StripMetadata     { get; set; } = true;
+    public int? QualityOverride { get; set; }   // 1-95; null = use slider mapping
+    public bool StripMetadata { get; set; } = true;
 
     // PNG
-    public bool  ConvertToWebP     { get; set; }
-    public bool  LosslessWebP      { get; set; }
+    public bool ConvertToWebP { get; set; }
+    public bool LosslessWebP { get; set; }
 
     // GIF
-    public bool  OptimizeGifFrames { get; set; } = true;
+    public bool OptimizeGifFrames { get; set; } = true;
 
     // TIFF compression method: "LZW" | "JPEG" | "ZIP" | "None"
-    public string TiffCompression  { get; set; } = "LZW";
+    public string TiffCompression { get; set; } = "LZW";
 
     // PDF
-    public bool  LinearizePdf      { get; set; } = true;
+    public bool LinearizePdf { get; set; } = true;
 }

@@ -14,14 +14,20 @@ public sealed class IntEqualConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is int intVal && parameter is string paramStr && int.TryParse(paramStr, out int target))
+        {
             return intVal == target;
+        }
+
         return false;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is true && parameter is string paramStr && int.TryParse(paramStr, out int target))
+        {
             return target;
+        }
+
         return Binding.DoNothing;
     }
 }

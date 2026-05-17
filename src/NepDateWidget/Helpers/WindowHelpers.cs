@@ -13,12 +13,22 @@ internal static class WindowHelpers
     public static bool IsAnyAppWindowActive(Window? excluding = null)
     {
         var app = Application.Current;
-        if (app is null) return false;
+        if (app is null)
+        {
+            return false;
+        }
 
         foreach (Window w in app.Windows)
         {
-            if (ReferenceEquals(w, excluding)) continue;
-            if (w.IsActive) return true;
+            if (ReferenceEquals(w, excluding))
+            {
+                continue;
+            }
+
+            if (w.IsActive)
+            {
+                return true;
+            }
         }
         return false;
     }

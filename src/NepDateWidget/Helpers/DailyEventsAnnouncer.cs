@@ -33,8 +33,15 @@ internal static class DailyEventsAnnouncer
     /// <param name="eventCount">Number of non-tithi events for today.</param>
     public static bool ShouldFire(DateTime today, string? lastShownIsoDate, bool isEnabled, int eventCount)
     {
-        if (!isEnabled) return false;
-        if (eventCount <= 0) return false;
+        if (!isEnabled)
+        {
+            return false;
+        }
+
+        if (eventCount <= 0)
+        {
+            return false;
+        }
 
         string todayIso = today.ToString(DateFormat, CultureInfo.InvariantCulture);
         return !string.Equals(lastShownIsoDate, todayIso, StringComparison.Ordinal);
@@ -48,11 +55,19 @@ internal static class DailyEventsAnnouncer
     /// </summary>
     public static string FormatBody(IReadOnlyList<string>? events)
     {
-        if (events is null || events.Count == 0) return string.Empty;
+        if (events is null || events.Count == 0)
+        {
+            return string.Empty;
+        }
+
         var sb = new System.Text.StringBuilder(events.Count * 24);
         for (int i = 0; i < events.Count; i++)
         {
-            if (i > 0) sb.Append('\n');
+            if (i > 0)
+            {
+                sb.Append('\n');
+            }
+
             sb.Append("• ").Append(events[i]);
         }
         return sb.ToString();

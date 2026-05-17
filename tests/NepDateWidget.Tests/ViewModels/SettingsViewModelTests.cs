@@ -2,7 +2,6 @@ using NepDateWidget.Models;
 using NepDateWidget.Services;
 using NepDateWidget.Tests.Services;
 using NepDateWidget.ViewModels;
-using System.IO;
 
 namespace NepDateWidget.Tests.ViewModels;
 
@@ -16,7 +15,6 @@ public class SettingsViewModelTests
         public void Load() { }
         public void Save() { SaveCount++; }
         public void ResetToDefaults() { Current = new WidgetSettings(); }
-        public event EventHandler? SettingsChanged;
     }
 
     private sealed class FakeThemeService : IThemeService

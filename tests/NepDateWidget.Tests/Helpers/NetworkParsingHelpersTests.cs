@@ -24,7 +24,9 @@ public class NetworkParsingHelpersTests
     public void OuiTable_AllKeysAreEightChars()
     {
         foreach (var key in NetworkParsingHelpers.OuiTable.Keys)
+        {
             Assert.True(key.Length == 8, $"OUI key '{key}' is not 8 characters");
+        }
     }
 
     [Fact]
@@ -33,15 +35,19 @@ public class NetworkParsingHelpersTests
         // Valid OUI format: XX:XX:XX where X is hex digit
         var pattern = new System.Text.RegularExpressions.Regex(@"^[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}:[0-9A-Fa-f]{2}$");
         foreach (var key in NetworkParsingHelpers.OuiTable.Keys)
+        {
             Assert.True(pattern.IsMatch(key), $"OUI key '{key}' does not match XX:XX:XX format");
+        }
     }
 
     [Fact]
     public void OuiTable_NoEmptyValues()
     {
         foreach (var kv in NetworkParsingHelpers.OuiTable)
+        {
             Assert.False(string.IsNullOrWhiteSpace(kv.Value),
                 $"OUI '{kv.Key}' has an empty or whitespace manufacturer name");
+        }
     }
 
     [Fact]

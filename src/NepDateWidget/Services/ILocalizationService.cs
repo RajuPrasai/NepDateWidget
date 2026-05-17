@@ -1,4 +1,4 @@
-﻿namespace NepDateWidget.Services;
+namespace NepDateWidget.Services;
 
 /// <summary>
 /// Returns localized UI strings for the active language.
@@ -26,10 +26,4 @@ public interface ILocalizationService
     /// Sets up hot-reload so external edits to localization.json are picked up automatically.
     /// </summary>
     void Load();
-
-    /// <summary>
-    /// Raised when localization.json is reloaded from disk (external edit or first load).
-    /// Subscribers should refresh all localized text.
-    /// </summary>
-    event EventHandler? LocalizationChanged;
 }

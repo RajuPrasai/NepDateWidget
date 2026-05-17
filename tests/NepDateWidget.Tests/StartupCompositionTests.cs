@@ -285,7 +285,6 @@ public sealed class StartupCompositionTests
         public void Load()  { }
         public void Save()  { }
         public void ResetToDefaults() { }
-        public event EventHandler? SettingsChanged;
     }
 
     private sealed class FakeThemeService : IThemeService

@@ -1,7 +1,6 @@
 using NepDateWidget.Helpers;
 using System.IO;
 using System.Text.Json;
-using System.Threading;
 
 namespace NepDateWidget.Services;
 
@@ -76,18 +75,30 @@ public sealed class NotesService : INotesService, IDisposable
         {
             // Suppress reloads triggered by our own writes (self-induced FSW noise).
             var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));
-            if (elapsed.TotalSeconds < 1.0) return;
+            if (elapsed.TotalSeconds < 1.0)
+            {
+                return;
+            }
+
             LoadFromDisk();
             if (_syncContext is not null)
+            {
                 _syncContext.Post(_ => NotesChanged?.Invoke(this, EventArgs.Empty), null);
+            }
             else
+            {
                 NotesChanged?.Invoke(this, EventArgs.Empty);
+            }
         });
     }
 
     private void LoadFromDisk()
     {
-        if (!File.Exists(_filePath)) return;
+        if (!File.Exists(_filePath))
+        {
+            return;
+        }
+
         try
         {
             var json = File.ReadAllText(_filePath);
@@ -109,7 +120,9 @@ public sealed class NotesService : INotesService, IDisposable
             var json = JsonSerializer.Serialize(_notes, SerializerOptions);
             // Atomic write so a crash mid-write cannot leave a zero-byte file.
             if (!AtomicFile.WriteAllText(_filePath, json))
+            {
                 Log.Error("Failed to save notes (atomic write returned false)");
+            }
         }
         catch (Exception ex)
         {
@@ -125,7 +138,11 @@ public sealed class NotesService : INotesService, IDisposable
     /// </summary>
     public void MigrateFromSettings(Dictionary<string, string> dayNotes)
     {
-        if (dayNotes is null || dayNotes.Count == 0) return;
+        if (dayNotes is null || dayNotes.Count == 0)
+        {
+            return;
+        }
+
         bool changed = false;
         foreach (var (key, value) in dayNotes)
         {
@@ -135,6 +152,9 @@ public sealed class NotesService : INotesService, IDisposable
                 changed = true;
             }
         }
-        if (changed) Save();
+        if (changed)
+        {
+            Save();
+        }
     }
 }

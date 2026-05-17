@@ -20,7 +20,9 @@ public sealed class InterestRateRowViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _fromDate, value))
+            {
                 Changed?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 
@@ -31,7 +33,9 @@ public sealed class InterestRateRowViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _rate, value))
+            {
                 Changed?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 
@@ -47,9 +51,9 @@ public sealed class InterestRateRowViewModel : ViewModelBase
         bool isFirstRow,
         Action<InterestRateRowViewModel> onRemove)
     {
-        _fromDate   = fromDate;
-        _rate       = rate;
-        IsFirstRow  = isFirstRow;
+        _fromDate = fromDate;
+        _rate = rate;
+        IsFirstRow = isFirstRow;
         RemoveCommand = new RelayCommand(() => onRemove(this));
     }
 
@@ -60,7 +64,11 @@ public sealed class InterestRateRowViewModel : ViewModelBase
     /// </summary>
     public void SyncFromDate(string date)
     {
-        if (_fromDate == date) return;
+        if (_fromDate == date)
+        {
+            return;
+        }
+
         _fromDate = date;
         OnPropertyChanged(nameof(FromDate));
     }

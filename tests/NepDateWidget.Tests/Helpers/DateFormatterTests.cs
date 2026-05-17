@@ -52,7 +52,9 @@ public sealed class DateFormatterTests
         // Header == Value: the menu has a separate "Copy" header row, the
         // option rows show only the formatted date.
         foreach (var o in opts)
+        {
             Assert.Equal(o.Value, o.Header);
+        }
     }
 
     [Fact]

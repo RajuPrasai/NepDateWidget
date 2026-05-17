@@ -72,7 +72,10 @@ public sealed class HolidayLookupServiceTests
     {
         var adapter = new HolidayWalkingFakeAdapter(today: (2082, 6, 1));
         for (int d = 2; d <= 20; d++)
+        {
             adapter.AddHoliday(2082, 6, d, $"H{d}", $"प{d}");
+        }
+
         var svc = new HolidayLookupService(adapter);
 
         var list = svc.GetUpcomingHolidays(3);

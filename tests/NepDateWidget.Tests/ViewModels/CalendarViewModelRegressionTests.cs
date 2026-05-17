@@ -73,7 +73,11 @@ public class CalendarViewModelRegressionTests
             GetCellData(int y, int m, int d)
         {
             var r = _inner.GetCellData(y, m, d);
-            if (!_cfg.TryGetValue((y, m, d), out var c)) return r;
+            if (!_cfg.TryGetValue((y, m, d), out var c))
+            {
+                return r;
+            }
+
             return (r.IsPublicHoliday, c.TithiEn, c.TithiEn.Length > 0 ? c.TithiEn + "-np" : "",
                     c.EventsEn, c.EventsEn.Select(e => e + "-np").ToArray(),
                     r.AdDate, r.BsShortEn, r.BsShortNe, r.BsLongEn, r.BsLongNe);
@@ -119,8 +123,15 @@ public class CalendarViewModelRegressionTests
         public IReadOnlyDictionary<string, string> GetAll() => _notes;
         public void SetNote(string dateKey, string? text)
         {
-            if (string.IsNullOrEmpty(text)) _notes.Remove(dateKey);
-            else _notes[dateKey] = text!;
+            if (string.IsNullOrEmpty(text))
+            {
+                _notes.Remove(dateKey);
+            }
+            else
+            {
+                _notes[dateKey] = text!;
+            }
+
             NotesChanged?.Invoke(this, EventArgs.Empty);
         }
         public void DeleteNote(string dateKey)
@@ -207,7 +218,9 @@ public class CalendarViewModelRegressionTests
         var vm = CreateAt12(rs: rs);
         // Cells 2-7 are days 1-6 of 2082/12 → all armed
         for (int i = 2; i <= 7; i++)
+        {
             Assert.True(vm.Days[i].HasReminders, $"Precondition: cell[{i}] should be armed.");
+        }
 
         vm.PrevMonthCommand.Execute(null); // → 2082/11
 
@@ -631,7 +644,9 @@ public class CalendarViewModelRegressionTests
         var vm = CreateAt12();
         var currentCells = vm.Days.Where(d => d.IsCurrentMonth).ToList();
         for (int i = 0; i < currentCells.Count; i++)
+        {
             Assert.Equal(i + 1, currentCells[i].Day);
+        }
     }
 
     [Fact]
@@ -670,7 +685,11 @@ public class CalendarViewModelRegressionTests
             },
             Collapse: () =>
             {
-                if (handler is not null) vm.NavigationRequested -= handler;
+                if (handler is not null)
+                {
+                    vm.NavigationRequested -= handler;
+                }
+
                 handler = null;
             }
         );
@@ -1000,7 +1019,9 @@ public class CalendarViewModelRegressionTests
 
         // Seed notes for every real day in the month
         for (int d = 1; d <= 30; d++)
+        {
             ns.Seed(NotesService.FormatKey(2082, 12, d), "note");
+        }
 
         // Force a NotesChanged event by deleting one real note (triggers RefreshNoteDots)
         ns.DeleteNote(NotesService.FormatKey(2082, 12, 1));
@@ -1043,7 +1064,7 @@ public class CalendarViewModelRegressionTests
         var vm = CreateAt12(adapter: adapter);
 
         // Default: visibleCount=1 → 1 visible, 2 hidden
-        Assert.Equal(1, vm.Days[2].VisibleEvents.Count);
+        Assert.Single(vm.Days[2].VisibleEvents);
         Assert.True(vm.Days[2].HasHiddenEvents);
 
         // Simulate the View reporting large cell dimensions (e.g. 200px × 114px)
@@ -1064,7 +1085,7 @@ public class CalendarViewModelRegressionTests
 
         vm.UpdateCellLayout(cellHeight: 10, cellWidth: 20);
 
-        Assert.Equal(1, vm.Days[2].VisibleEvents.Count);
+        Assert.Single(vm.Days[2].VisibleEvents);
     }
 
     [Fact]
@@ -1084,7 +1105,7 @@ public class CalendarViewModelRegressionTests
 
         Assert.Null(ex);
         // visibleCount must still be 1 (unchanged from default)
-        Assert.Equal(1, vm.Days[2].VisibleEvents.Count);
+        Assert.Single(vm.Days[2].VisibleEvents);
     }
 
     [Fact]
@@ -1094,18 +1115,24 @@ public class CalendarViewModelRegressionTests
         // update all of them, not just a subset.
         var adapter = new EventfulAdapter();
         for (int d = 1; d <= 5; d++)
+        {
             adapter.Set(2082, 12, d, eventsEn: ["Ev1", "Ev2"]);
+        }
 
         var vm = CreateAt12(adapter: adapter);
 
         // Before: all show 1 visible, 1 hidden
         for (int i = 2; i <= 6; i++) // cells 2-6 = days 1-5
+        {
             Assert.True(vm.Days[i].HasHiddenEvents, $"Pre-check: cell[{i}] should have hidden events.");
+        }
 
         vm.UpdateCellLayout(cellHeight: 200, cellWidth: 114); // visibleCount → 8
 
         for (int i = 2; i <= 6; i++)
+        {
             Assert.False(vm.Days[i].HasHiddenEvents, $"After layout: cell[{i}] must show all events.");
+        }
     }
 
     [Fact]

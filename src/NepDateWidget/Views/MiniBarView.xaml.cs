@@ -1,5 +1,5 @@
-﻿using System.Windows.Controls;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace NepDateWidget.Views;
 

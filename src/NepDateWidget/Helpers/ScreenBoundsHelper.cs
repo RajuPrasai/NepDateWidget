@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 
 namespace NepDateWidget.Helpers;
 
@@ -82,7 +82,9 @@ public static class ScreenBoundsHelper
         double savedLeft, double savedTop, double width, double height)
     {
         if (IsOnScreen(savedLeft, savedTop, width, height))
+        {
             return (savedLeft, savedTop);
+        }
 
         var wa = SystemParameters.WorkArea;
         return RecoverToSafePosition(width, height, wa.Left, wa.Top, wa.Width, wa.Height);

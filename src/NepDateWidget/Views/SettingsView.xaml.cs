@@ -1,4 +1,4 @@
-﻿using NepDateWidget.ViewModels;
+using NepDateWidget.ViewModels;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -15,20 +15,20 @@ public partial class SettingsView : UserControl
 
     private void HotkeyInput_GotFocus(object sender, System.Windows.RoutedEventArgs e)
     {
-        if (VM is not null)
-            VM.IsRecordingHotkey = true;
+        VM?.IsRecordingHotkey = true;
     }
 
     private void HotkeyInput_LostFocus(object sender, System.Windows.RoutedEventArgs e)
     {
-        if (VM is not null)
-            VM.IsRecordingHotkey = false;
+        VM?.IsRecordingHotkey = false;
     }
 
     private void HotkeyInput_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (VM is null || !VM.IsRecordingHotkey)
+        {
             return;
+        }
 
         e.Handled = true;
 
@@ -36,7 +36,9 @@ public partial class SettingsView : UserControl
         var key = e.Key == Key.System ? e.SystemKey : e.Key;
         if (key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt
             or Key.LeftShift or Key.RightShift or Key.LWin or Key.RWin)
+        {
             return;
+        }
 
         // Escape cancels recording
         if (key == Key.Escape)

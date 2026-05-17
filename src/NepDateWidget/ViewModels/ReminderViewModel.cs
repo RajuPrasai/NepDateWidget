@@ -134,7 +134,9 @@ public sealed class ReminderViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _editNotes, value?.Length > 500 ? value[..500] : value ?? string.Empty))
+            {
                 _isDirty = true;
+            }
         }
     }
 
@@ -145,7 +147,9 @@ public sealed class ReminderViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _editRecurrenceIndex, value))
+            {
                 _isDirty = true;
+            }
         }
     }
 
@@ -216,8 +220,8 @@ public sealed class ReminderViewModel : ViewModelBase
     public IReadOnlyList<string> RecurrenceOptions { get; }
 
     public string HintReminderTitle { get; }
-    public string HintReminderDate  { get; }
-    public string HintReminderTime  { get; }
+    public string HintReminderDate { get; }
+    public string HintReminderTime { get; }
 
     // ── Commands ──────────────────────────────────────────────────────────────
 
@@ -265,8 +269,8 @@ public sealed class ReminderViewModel : ViewModelBase
         DiscardTitleLabel = _loc.Get("reminder.discard_title");
         DiscardYesLabel = _loc.Get("reminder.discard_yes");
         HintReminderTitle = _loc.Get("hint.reminder_title");
-        HintReminderDate  = _loc.Get("hint.date_bs");
-        HintReminderTime  = _loc.Get("hint.reminder_time");
+        HintReminderDate = _loc.Get("hint.date_bs");
+        HintReminderTime = _loc.Get("hint.reminder_time");
         RecurrenceOptions = new[]
         {
             _loc.Get("reminder.recurrence_none"),
@@ -289,7 +293,9 @@ public sealed class ReminderViewModel : ViewModelBase
 
         // Auto-show add form when no active reminders exist for this date
         if (Reminders.Count == 0 || Reminders.All(r => r.IsCompleted))
+        {
             StartAdd();
+        }
     }
 
     private void StartAdd()
@@ -315,9 +321,16 @@ public sealed class ReminderViewModel : ViewModelBase
 
     private void StartEdit(string? id)
     {
-        if (id is null) return;
+        if (id is null)
+        {
+            return;
+        }
+
         var entry = _reminderService.GetAll().FirstOrDefault(r => r.Id == id);
-        if (entry is null) return;
+        if (entry is null)
+        {
+            return;
+        }
 
         _editingId = id;
         EditTitle = entry.Title;
@@ -449,7 +462,11 @@ public sealed class ReminderViewModel : ViewModelBase
 
     private void DoDelete(string? id)
     {
-        if (id is null) return;
+        if (id is null)
+        {
+            return;
+        }
+
         _reminderService.Delete(id);
         Log.Action($"reminder deleted: {id}");
         RefreshList();
@@ -461,13 +478,19 @@ public sealed class ReminderViewModel : ViewModelBase
         // Show reminders that are stored at this exact date
         var items = _reminderService.GetForDate(BsYear, BsMonth, BsDay);
         foreach (var r in items)
+        {
             Reminders.Add(new ReminderEntryViewModel(r, _loc));
+        }
 
         // Also show recurring reminders that land on this date
         foreach (var r in _reminderService.GetRecurringForDate(BsYear, BsMonth, BsDay))
         {
             // Avoid duplicates (already in list by exact date match)
-            if (items.Any(i => i.Id == r.Id)) continue;
+            if (items.Any(i => i.Id == r.Id))
+            {
+                continue;
+            }
+
             Reminders.Add(new ReminderEntryViewModel(r, _loc));
         }
     }
@@ -501,21 +524,34 @@ public sealed class ReminderViewModel : ViewModelBase
     private static bool TryParseTime12(string input, bool isAm, out string time24)
     {
         time24 = string.Empty;
-        if (string.IsNullOrWhiteSpace(input)) return false;
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return false;
+        }
 
         var match = TimePattern.Match(input.Trim());
-        if (!match.Success) return false;
+        if (!match.Success)
+        {
+            return false;
+        }
 
         int h = int.Parse(match.Groups[1].Value);
         int m = int.Parse(match.Groups[2].Value);
 
-        if (h < 1 || h > 12 || m < 0 || m > 59) return false;
+        if (h < 1 || h > 12 || m < 0 || m > 59)
+        {
+            return false;
+        }
 
         int h24;
         if (isAm)
+        {
             h24 = h == 12 ? 0 : h;
+        }
         else
+        {
             h24 = h == 12 ? 12 : h + 12;
+        }
 
         time24 = $"{h24:D2}:{m:D2}";
         return true;
@@ -559,13 +595,19 @@ public sealed class ReminderEntryViewModel
     private static string FormatTime12(string hhmm)
     {
         if (!TimeSpan.TryParse(hhmm, out var ts))
+        {
             return hhmm;
+        }
 
         int h = ts.Hours;
         int m = ts.Minutes;
         string period = h < 12 ? "AM" : "PM";
         int h12 = h % 12;
-        if (h12 == 0) h12 = 12;
+        if (h12 == 0)
+        {
+            h12 = 12;
+        }
+
         return $"{h12}:{m:D2} {period}";
     }
 }

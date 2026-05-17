@@ -21,7 +21,7 @@ internal static class AtomicFile
             if (File.Exists(path))
             {
                 File.Replace(tmp, path, bak);
-                try { if (File.Exists(bak)) File.Delete(bak); } catch { }
+                try { if (File.Exists(bak)) { File.Delete(bak); } } catch { }
             }
             else
             {

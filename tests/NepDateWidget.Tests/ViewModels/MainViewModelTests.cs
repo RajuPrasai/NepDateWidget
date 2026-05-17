@@ -23,7 +23,6 @@ public class MainViewModelTests
         public void Load()  { LoadCount++;  }
         public void Save()  { SaveCount++;  Current = Current; /* no-op write */ }
         public void ResetToDefaults() { Current = new WidgetSettings(); Save(); }
-        public event EventHandler? SettingsChanged;
     }
     private sealed class FakeThemeService : IThemeService
     {
@@ -587,7 +586,10 @@ public class MainViewModelTests
     {
         var (vm, _, _) = Create();
         for (int i = 0; i < 10; i++)
+        {
             vm.ToggleExpandedCommand.Execute(null);
+        }
+
         Assert.False(vm.IsExpanded);
     }
 
@@ -596,7 +598,10 @@ public class MainViewModelTests
     {
         var (vm, _, _) = Create();
         for (int i = 0; i < 11; i++)
+        {
             vm.ToggleExpandedCommand.Execute(null);
+        }
+
         Assert.True(vm.IsExpanded);
     }
 
@@ -638,7 +643,7 @@ public class MainViewModelTests
     {
         var (vm, _, _) = Create();
         var raised = false;
-        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.IsExpanded)) raised = true; };
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.IsExpanded)) { raised = true; } };
         vm.ToggleExpandedCommand.Execute(null);
         Assert.True(raised);
     }

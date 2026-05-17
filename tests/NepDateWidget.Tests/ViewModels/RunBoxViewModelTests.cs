@@ -1,4 +1,3 @@
-using NepDateWidget.Models;
 using NepDateWidget.Services;
 using NepDateWidget.ViewModels;
 
@@ -19,14 +18,21 @@ public sealed class RunBoxViewModelTests
         public IReadOnlyList<string> GetMatching(string prefix, int max = 10)
         {
             if (string.IsNullOrWhiteSpace(prefix))
+            {
                 return _entries.Take(max).ToList();
+            }
+
             return _entries.Where(e => e.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)).Take(max).ToList();
         }
 
         public void Record(string term)
         {
             term = term.Trim();
-            if (string.IsNullOrEmpty(term)) return;
+            if (string.IsNullOrEmpty(term))
+            {
+                return;
+            }
+
             _entries.RemoveAll(e => string.Equals(e, term, StringComparison.OrdinalIgnoreCase));
             _entries.Insert(0, term);
             Save();
@@ -35,9 +41,16 @@ public sealed class RunBoxViewModelTests
         public void Remove(string term)
         {
             term = term.Trim();
-            if (string.IsNullOrEmpty(term)) return;
+            if (string.IsNullOrEmpty(term))
+            {
+                return;
+            }
+
             int removed = _entries.RemoveAll(e => string.Equals(e, term, StringComparison.OrdinalIgnoreCase));
-            if (removed > 0) Save();
+            if (removed > 0)
+            {
+                Save();
+            }
         }
 
         public void Load() { }
@@ -55,7 +68,6 @@ public sealed class RunBoxViewModelTests
         };
         public void SetLanguage(string languageCode) => CurrentLanguage = languageCode;
         public void Load() { }
-        public event EventHandler? LocalizationChanged;
     }
 
     private sealed class FakeShortcutsService : IShortcutsService

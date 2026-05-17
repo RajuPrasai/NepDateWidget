@@ -27,7 +27,10 @@ public sealed class AppStateService : IAppStateService
     public AppStateService(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
+        {
             throw new ArgumentException("Path must not be empty.", nameof(path));
+        }
+
         _path = path;
     }
 
@@ -60,7 +63,9 @@ public sealed class AppStateService : IAppStateService
         {
             var json = JsonSerializer.Serialize(_current, SerializerOptions);
             if (!AtomicFile.WriteAllText(_path, json))
+            {
                 Log.Warn("runtime.json: AtomicFile.WriteAllText returned false");
+            }
         }
         catch (Exception ex)
         {

@@ -1,5 +1,4 @@
 using NepDateWidget.ViewModels;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,28 +15,42 @@ public partial class CompressionView : UserControl
     {
         InitializeComponent();
         DragEnter += OnDragEnter;
-        Drop      += OnDrop;
+        Drop += OnDrop;
     }
 
     private void OnDragEnter(object sender, DragEventArgs e)
     {
         if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
             e.Effects = DragDropEffects.Copy;
+        }
         else
+        {
             e.Effects = DragDropEffects.None;
+        }
+
         e.Handled = true;
     }
 
     private void OnDrop(object sender, DragEventArgs e)
     {
-        if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+        if (!e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            return;
+        }
+
         var files = e.Data.GetData(DataFormats.FileDrop) as string[];
-        if (files is null || files.Length == 0) return;
+        if (files is null || files.Length == 0)
+        {
+            return;
+        }
 
         _clickStartedHere = false; // drop, not a click - clear any stale state
 
         if (DataContext is CompressionViewModel vm)
+        {
             vm.AddFiles(files);
+        }
 
         e.Handled = true;
     }
@@ -51,9 +64,14 @@ public partial class CompressionView : UserControl
     {
         bool wasClick = _clickStartedHere;
         _clickStartedHere = false;
-        if (!wasClick) return;
+        if (!wasClick)
+        {
+            return;
+        }
 
         if (DataContext is CompressionViewModel vm)
+        {
             vm.LoadFilesCommand.Execute(null);
+        }
     }
 }

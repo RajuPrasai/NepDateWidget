@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Media;
 
 namespace NepDateWidget.Services;
@@ -72,20 +72,28 @@ public sealed class ThemeService : IThemeService
             string.Equals(k, preset, StringComparison.OrdinalIgnoreCase));
 
         if (canonicalKey is null)
+        {
             canonicalKey = "Default";
+        }
 
         CurrentPreset = canonicalKey;
         ApplyPalette(isDark, palettes[canonicalKey]);
 
         // Re-apply user color override so theme changes don't revert it
         if (!string.IsNullOrEmpty(_highlightColorOverride))
+        {
             ApplyHighlightColorOverride(_highlightColorOverride);
+        }
     }
 
     public void OverrideHighlightColor(string colorHex)
     {
         _highlightColorOverride = colorHex ?? string.Empty;
-        if (string.IsNullOrEmpty(_highlightColorOverride)) return;
+        if (string.IsNullOrEmpty(_highlightColorOverride))
+        {
+            return;
+        }
+
         ApplyHighlightColorOverride(_highlightColorOverride);
     }
 
@@ -104,17 +112,17 @@ public sealed class ThemeService : IThemeService
 
     private static void ApplyPalette(bool isDark, Palette p)
     {
-        var bg  = p.Background;
-        var fg  = p.Foreground;
+        var bg = p.Background;
+        var fg = p.Foreground;
         var acc = p.Accent;
 
         // Derived colours computed algorithmically
-        Color border     = Blend(bg, fg, 0.20f);
-        Color hover      = Blend(bg, fg, 0.10f);
+        Color border = Blend(bg, fg, 0.20f);
+        Color hover = Blend(bg, fg, 0.10f);
         Color headerHover = hover;
-        Color input      = Blend(bg, fg, 0.08f);
-        Color inputBdr   = Blend(bg, fg, 0.25f);
-        Color divider    = Blend(bg, fg, 0.18f);
+        Color input = Blend(bg, fg, 0.08f);
+        Color inputBdr = Blend(bg, fg, 0.25f);
+        Color divider = Blend(bg, fg, 0.18f);
 
         // Saturday / holiday
         Color holiday = isDark ? C("#F38BA8") : C("#C62828");
@@ -129,26 +137,26 @@ public sealed class ThemeService : IThemeService
         // Padding cells dimmed
         Color padding = Blend(bg, fg, 0.30f);
 
-        SetBrush("WidgetBackgroundBrush",     bg);
-        SetBrush("WidgetForegroundBrush",     fg);
-        SetBrush("WidgetBorderBrush",         border);
-        SetBrush("WidgetAccentBrush",         acc);
-        SetBrush("WidgetHolidayBrush",        holiday);
-        SetBrush("WidgetHoverBrush",          hover);
+        SetBrush("WidgetBackgroundBrush", bg);
+        SetBrush("WidgetForegroundBrush", fg);
+        SetBrush("WidgetBorderBrush", border);
+        SetBrush("WidgetAccentBrush", acc);
+        SetBrush("WidgetHolidayBrush", holiday);
+        SetBrush("WidgetHoverBrush", hover);
         SetBrush("WidgetCalHeaderHoverBrush", headerHover);
-        SetBrush("WidgetDayTodayBrush",       acc);
-        SetBrush("WidgetDayTodayTextBrush",   todayText);
-        SetBrush("WidgetDaySaturdayBrush",    holiday);
+        SetBrush("WidgetDayTodayBrush", acc);
+        SetBrush("WidgetDayTodayTextBrush", todayText);
+        SetBrush("WidgetDaySaturdayBrush", holiday);
         SetBrush("WidgetDayHolidayTextBrush", HolidayText(holiday));
         SetBrush("WidgetDayHighlightedBrush", success);
         SetBrush("WidgetDayWeekendTintBrush", Color.FromArgb(0x10, holiday.R, holiday.G, holiday.B));
-        SetBrush("WidgetDayPaddingBrush",     Colors.Transparent);
+        SetBrush("WidgetDayPaddingBrush", Colors.Transparent);
         SetBrush("WidgetDayPaddingTextBrush", padding);
-        SetBrush("WidgetInputBrush",          input);
-        SetBrush("WidgetInputBorderBrush",    inputBdr);
-        SetBrush("WidgetSuccessBrush",        success);
-        SetBrush("WidgetErrorBrush",          error);
-        SetBrush("WidgetDividerBrush",        divider);
+        SetBrush("WidgetInputBrush", input);
+        SetBrush("WidgetInputBorderBrush", inputBdr);
+        SetBrush("WidgetSuccessBrush", success);
+        SetBrush("WidgetErrorBrush", error);
+        SetBrush("WidgetDividerBrush", divider);
 
         // Muted foreground - toolbar icons, secondary text
         Color muted = Blend(bg, fg, 0.40f);
@@ -168,7 +176,9 @@ public sealed class ThemeService : IThemeService
     private static void SetBrush(string key, Color color)
     {
         if (Application.Current is null)
+        {
             return;   // unit-test context - skip WPF resource update
+        }
 
         // Always replace with a new mutable brush so that DynamicResource bindings
         // re-evaluate via ResourceDictionary.Changed notification.

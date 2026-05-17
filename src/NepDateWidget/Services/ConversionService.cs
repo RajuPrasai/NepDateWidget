@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Models;
+using NepDateWidget.Models;
 
 namespace NepDateWidget.Services;
 
@@ -31,7 +31,9 @@ public sealed class ConversionService : IConversionService
 
         var result = _adapter.AdToBs(adDate);
         if (result is null)
+        {
             return ConversionResult.Fail("The AD date is outside the supported BS range (1901-2199).");
+        }
 
         var (bsYear, bsMonth, bsDay) = result.Value;
         return ConversionResult.Ok(
@@ -44,7 +46,9 @@ public sealed class ConversionService : IConversionService
         // NepDate validates internally; BsToAd returns null for invalid/out-of-range dates
         var adDate = _adapter.BsToAd(bsYear, bsMonth, bsDay);
         if (adDate is null)
+        {
             return ConversionResult.Fail("The BS date is invalid or outside the supported range.");
+        }
 
         return ConversionResult.Ok(
             result: adDate.Value.ToString("yyyy-MM-dd"),
@@ -54,7 +58,9 @@ public sealed class ConversionService : IConversionService
     public ConversionResult ConvertFromText(string input, bool isAdToBs)
     {
         if (string.IsNullOrWhiteSpace(input))
+        {
             return ConversionResult.Fail("Please enter a date.");
+        }
 
         var trimmed = input.Trim();
 
@@ -83,7 +89,10 @@ public sealed class ConversionService : IConversionService
             // BS → AD: use SmartDateParser (handles Nepali digits, month names, alternate separators)
             // with autoAdjust TryParse as a fallback for numeric-only edge cases.
             if (!_adapter.TryParseSmartBsDate(trimmed, out int year, out int month, out int day))
+            {
                 return ConversionResult.Fail("Enter a BS date like 2081/01/15");
+            }
+
             return BsToAd(year, month, day);
         }
     }

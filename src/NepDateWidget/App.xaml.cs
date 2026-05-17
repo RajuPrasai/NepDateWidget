@@ -1,8 +1,8 @@
-﻿using NepDateWidget.Helpers;
+using ImageMagick;
+using NepDateWidget.Helpers;
 using NepDateWidget.Services;
 using NepDateWidget.ViewModels;
 using NepDateWidget.Views;
-using ImageMagick;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,7 +13,7 @@ public partial class App : Application
 {
     private static Mutex? _instanceMutex;
     private ShortcutsService? _shortcutsService;
-    private ScriptService?    _scriptService;
+    private ScriptService? _scriptService;
     private AppStateService? _appStateService;
     private NotesService? _notesService;
     private ReminderService? _reminderService;
@@ -27,7 +27,9 @@ public partial class App : Application
             new KeyboardFocusChangedEventHandler((s, _) =>
             {
                 if (s is TextBox tb && !tb.IsReadOnly)
+                {
                     tb.CaretIndex = tb.Text.Length;
+                }
             }));
 
         // ── Global crash handler ─────────────────────────────────────────────
@@ -123,9 +125,13 @@ public partial class App : Application
         var autoStartAction = Helpers.FirstRunBootstrap.ApplyAutoStart(
             settingsService, autoStartService, isDev);
         if (autoStartAction == Helpers.FirstRunBootstrap.AutoStartAction.EnabledOnFirstRun)
+        {
             Log.Info("First-run bootstrap: enabled Start with Windows.");
+        }
         else if (autoStartAction == Helpers.FirstRunBootstrap.AutoStartAction.ReconciledToSettings)
+        {
             Log.Info($"AutoStart reconciled to persisted setting: {settingsService.Current.AutoStart}.");
+        }
 
         // Reminder service: reminders.json in the resolved data folder.
         _reminderService = new ReminderService(Helpers.AppPaths.RemindersPath, nepDateAdapter);
@@ -157,10 +163,10 @@ public partial class App : Application
         _scriptService = new ScriptService(Helpers.AppPaths.ScriptsPath, Helpers.AppPaths.DefaultScriptsPath);
         _scriptService.Load();
 
-        var fileTypeService          = new FileTypeService();
-        var imageCompressionService  = new ImageCompressionService();
-        var pdfCompressionService    = new PdfCompressionService();
-        var jobOrchestrationService  = new JobOrchestrationService(imageCompressionService, pdfCompressionService);
+        var fileTypeService = new FileTypeService();
+        var imageCompressionService = new ImageCompressionService();
+        var pdfCompressionService = new PdfCompressionService();
+        var jobOrchestrationService = new JobOrchestrationService(imageCompressionService, pdfCompressionService);
 
         var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, runHistoryService: runHistoryService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!, scriptService: _scriptService, fileTypeService: fileTypeService, jobOrchestrationService: jobOrchestrationService);
         var mainWindow = new MainWindow(mainViewModel, settingsService, _appStateService!);
@@ -190,7 +196,10 @@ public partial class App : Application
                 {
                     var existing = System.IO.File.ReadAllText(iniPath);
                     if (existing == iniContent)
+                    {
                         goto skipIni; // content identical - skip the write entirely
+                    }
+
                     System.IO.File.SetAttributes(iniPath, System.IO.FileAttributes.Normal);
                 }
 
@@ -201,7 +210,7 @@ public partial class App : Application
                     System.IO.File.GetAttributes(folder) | System.IO.FileAttributes.ReadOnly);
             }
 
-            skipIni:
+        skipIni:
             dynamic shell = Activator.CreateInstance(Type.GetTypeFromProgID("Shell.Application")!)!;
 
             // Remove any stale Quick Access pin that may have been created with the old virtual

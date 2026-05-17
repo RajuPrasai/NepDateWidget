@@ -70,7 +70,10 @@ public sealed class XamlResourceConsistencyTests
         while (dir != null)
         {
             if (File.Exists(Path.Combine(dir.FullName, "NepDateWidget.slnx")))
+            {
                 return Path.Combine(dir.FullName, "src", "NepDateWidget");
+            }
+
             dir = dir.Parent;
         }
         throw new InvalidOperationException(
@@ -83,14 +86,22 @@ public sealed class XamlResourceConsistencyTests
     private static HashSet<string> CollectKeysRecursive(string filePath, HashSet<string>? visited = null)
     {
         visited ??= new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        if (!visited.Add(filePath)) return new HashSet<string>(StringComparer.Ordinal);
+        if (!visited.Add(filePath))
+        {
+            return new HashSet<string>(StringComparer.Ordinal);
+        }
 
         var keys = new HashSet<string>(StringComparer.Ordinal);
-        if (!File.Exists(filePath)) return keys;
+        if (!File.Exists(filePath))
+        {
+            return keys;
+        }
 
         var content = File.ReadAllText(filePath);
         foreach (Match m in KeyDefinitionPattern.Matches(content))
+        {
             keys.Add(m.Groups[1].Value);
+        }
 
         var baseDir = Path.GetDirectoryName(filePath) ?? string.Empty;
         foreach (Match m in MergedSourcePattern.Matches(content))
@@ -98,7 +109,9 @@ public sealed class XamlResourceConsistencyTests
             var relative = m.Groups[1].Value.Replace('/', Path.DirectorySeparatorChar);
             var resolved = Path.GetFullPath(Path.Combine(baseDir, relative));
             if (File.Exists(resolved))
+            {
                 keys.UnionWith(CollectKeysRecursive(resolved, visited));
+            }
         }
 
         return keys;
@@ -120,14 +133,23 @@ public sealed class XamlResourceConsistencyTests
 
         foreach (var type in vmAssembly.GetTypes())
         {
-            if (type.Namespace?.StartsWith("NepDateWidget.ViewModels", StringComparison.Ordinal) != true) continue;
-            if (!type.IsClass || type.IsAbstract) continue;
+            if (type.Namespace?.StartsWith("NepDateWidget.ViewModels", StringComparison.Ordinal) != true)
+            {
+                continue;
+            }
+
+            if (!type.IsClass || type.IsAbstract)
+            {
+                continue;
+            }
 
             foreach (var prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 var setter = prop.GetSetMethod(nonPublic: true);
                 if (setter is not null && !setter.IsPublic)
+                {
                     names.Add(prop.Name);
+                }
             }
         }
         return names;
@@ -157,7 +179,9 @@ public sealed class XamlResourceConsistencyTests
             {
                 var key = m.Groups[1].Value;
                 if (!availableKeys.Contains(key))
+                {
                     violations.Add($"  {fileName}: {{{{StaticResource {key}}}}} - key not found in local resources or Application.Resources");
+                }
             }
         }
 
@@ -170,7 +194,10 @@ public sealed class XamlResourceConsistencyTests
     public void ResourceDictionaries_StaticResourceKeys_AreDefinedWithinScope()
     {
         var resourcesDir = Path.Combine(SourceRoot, "Resources");
-        if (!Directory.Exists(resourcesDir)) return;
+        if (!Directory.Exists(resourcesDir))
+        {
+            return;
+        }
 
         var appKeys    = BuildApplicationKeys();
         var violations = new List<string>();
@@ -186,7 +213,9 @@ public sealed class XamlResourceConsistencyTests
             {
                 var key = m.Groups[1].Value;
                 if (!availableKeys.Contains(key))
+                {
                     violations.Add($"  {fileName}: {{{{StaticResource {key}}}}} - key not resolvable");
+                }
             }
         }
 
@@ -210,7 +239,9 @@ public sealed class XamlResourceConsistencyTests
             var relative = m.Groups[1].Value.Replace('/', Path.DirectorySeparatorChar);
             var full     = Path.GetFullPath(Path.Combine(baseDir, relative));
             if (!File.Exists(full))
+            {
                 missing.Add($"  {m.Groups[1].Value} → {full}");
+            }
         }
 
         Assert.True(missing.Count == 0,
@@ -242,7 +273,9 @@ public sealed class XamlResourceConsistencyTests
             {
                 var attrValue = m.Groups[1].Value;
                 if (!ExplicitOneWay.IsMatch(attrValue))
+                {
                     violations.Add($"  {fileName}: ProgressBar Value=\"{attrValue}\" - missing Mode=OneWay");
+                }
             }
         }
 
@@ -276,11 +309,16 @@ public sealed class XamlResourceConsistencyTests
             {
                 var attrName = m.Groups[1].Value;
                 var propName = m.Groups[2].Value;
-                if (!privateSetters.Contains(propName)) continue;
+                if (!privateSetters.Contains(propName))
+                {
+                    continue;
+                }
 
                 if (!ExplicitOneWay.IsMatch(m.Value))
+                {
                     violations.Add($"  {fileName}: {attrName}=\"{{Binding {propName}}}\" - " +
                                    $"property has a non-public setter, binding is missing Mode=OneWay");
+                }
             }
         }
 
@@ -314,11 +352,16 @@ public sealed class XamlResourceConsistencyTests
             {
                 var bindingExpr = m.Groups[1].Value;
                 var propName    = m.Groups[2].Value;
-                if (!privateSetters.Contains(propName)) continue;
+                if (!privateSetters.Contains(propName))
+                {
+                    continue;
+                }
 
                 if (!ExplicitOneWay.IsMatch(bindingExpr))
+                {
                     violations.Add($"  {fileName}: Slider Value=\"{bindingExpr}\" - " +
                                    $"property '{propName}' has a non-public setter, binding is missing Mode=OneWay");
+                }
             }
         }
 

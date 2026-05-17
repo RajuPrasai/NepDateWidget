@@ -32,32 +32,53 @@ public sealed class FileTypeService : IFileTypeService
 
     public string? GetMimeType(string extension)
     {
-        if (string.IsNullOrWhiteSpace(extension)) return null;
+        if (string.IsNullOrWhiteSpace(extension))
+        {
+            return null;
+        }
+
         return _mimeMap.TryGetValue(extension, out var mime) ? mime : null;
     }
 
     public FileCategory GetCategory(string mimeType)
     {
-        if (_imageMimes.Contains(mimeType)) return FileCategory.Image;
-        if (string.Equals(mimeType, "application/pdf", StringComparison.OrdinalIgnoreCase)) return FileCategory.Pdf;
+        if (_imageMimes.Contains(mimeType))
+        {
+            return FileCategory.Image;
+        }
+
+        if (string.Equals(mimeType, "application/pdf", StringComparison.OrdinalIgnoreCase))
+        {
+            return FileCategory.Pdf;
+        }
+
         return FileCategory.Unsupported;
     }
 
     public string? ValidateSameType(IReadOnlyList<string> filePaths)
     {
-        if (filePaths.Count == 0) return null;
+        if (filePaths.Count == 0)
+        {
+            return null;
+        }
 
         var mimes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var path in filePaths)
         {
             var ext = Path.GetExtension(path);
             var mime = GetMimeType(ext);
-            if (mime is null) return $"Unsupported file type: {ext}";
+            if (mime is null)
+            {
+                return $"Unsupported file type: {ext}";
+            }
+
             mimes.Add(mime);
         }
 
         if (mimes.Count > 1)
+        {
             return "Mixed file types detected. Please select files of the same type.";
+        }
 
         return null;
     }

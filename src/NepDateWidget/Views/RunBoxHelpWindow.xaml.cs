@@ -1,5 +1,4 @@
 using NepDateWidget.Services;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
@@ -14,11 +13,11 @@ public partial class RunBoxHelpWindow : Window
     {
         InitializeComponent();
 
-        TitleText.Text   = loc.Get("help.runbox.title");
-        DescText.Text    = loc.Get("help.runbox.desc");
+        TitleText.Text = loc.Get("help.runbox.title");
+        DescText.Text = loc.Get("help.runbox.desc");
         KeysHeading.Text = loc.Get("help.runbox.keys.title");
         ShortcutsHeading.Text = loc.Get("help.runbox.shortcut.title");
-        ScriptsHeading.Text   = loc.Get("help.runbox.script.title");
+        ScriptsHeading.Text = loc.Get("help.runbox.script.title");
 
         KeysList.ItemsSource = new[]
         {
@@ -33,7 +32,10 @@ public partial class RunBoxHelpWindow : Window
 
         var prefixItems = new List<KeyValuePair<string, string>>();
         foreach (var kvp in shortcuts.PrefixSiteNames)
+        {
             prefixItems.Add(new KeyValuePair<string, string>(kvp.Key, kvp.Value));
+        }
+
         ShortcutsList.ItemsSource = prefixItems;
 
         var scriptItems = scripts?.GetAll() ?? System.Array.Empty<NepDateWidget.Models.ScriptEntry>();
@@ -42,7 +44,7 @@ public partial class RunBoxHelpWindow : Window
         if (scriptItems.Count == 0)
         {
             ScriptsHeading.Visibility = Visibility.Collapsed;
-            ScriptsPanel.Visibility   = Visibility.Collapsed;
+            ScriptsPanel.Visibility = Visibility.Collapsed;
         }
 
         MouseLeftButtonDown += (_, _) => { try { DragMove(); } catch { } };
@@ -59,10 +61,18 @@ public partial class RunBoxHelpWindow : Window
 
     private void OnDeactivated(object? sender, EventArgs e)
     {
-        if (_isClosing) return;
+        if (_isClosing)
+        {
+            return;
+        }
+
         Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, () =>
         {
-            if (_isClosing) return;
+            if (_isClosing)
+            {
+                return;
+            }
+
             DoClose();
         });
     }
@@ -79,7 +89,11 @@ public partial class RunBoxHelpWindow : Window
 
     private void DoClose()
     {
-        if (_isClosing) return;
+        if (_isClosing)
+        {
+            return;
+        }
+
         _isClosing = true;
         Deactivated -= OnDeactivated;
         try { Close(); } catch { }

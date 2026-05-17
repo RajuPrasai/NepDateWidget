@@ -1,8 +1,7 @@
-﻿using NepDateWidget.Helpers;
+using NepDateWidget.Helpers;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
 
 namespace NepDateWidget.Services;
 
@@ -34,9 +33,9 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
     /// </summary>
     public LocalizationService(string filePath, string defaultFilePath)
     {
-        _filePath        = filePath        ?? throw new ArgumentNullException(nameof(filePath));
+        _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
         _defaultFilePath = defaultFilePath ?? throw new ArgumentNullException(nameof(defaultFilePath));
-        _syncContext     = SynchronizationContext.Current;
+        _syncContext = SynchronizationContext.Current;
     }
 
     /// <summary>
@@ -45,9 +44,9 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
     /// </summary>
     public LocalizationService(string defaultFilePath)
     {
-        _filePath        = string.Empty;
+        _filePath = string.Empty;
         _defaultFilePath = defaultFilePath ?? throw new ArgumentNullException(nameof(defaultFilePath));
-        _syncContext     = null;
+        _syncContext = null;
         LoadFromFile(_defaultFilePath);
     }
 
@@ -58,14 +57,21 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
     public string Get(string key)
     {
         if (key is null)
+        {
             return "[]";
+        }
 
         if (_strings.TryGetValue(key, out var langs))
         {
             if (langs.TryGetValue(_language, out var text) && !string.IsNullOrEmpty(text))
+            {
                 return text;
+            }
+
             if (langs.TryGetValue("en", out var fallback) && !string.IsNullOrEmpty(fallback))
+            {
                 return fallback;
+            }
         }
 
         return $"[{key}]";
@@ -74,17 +80,24 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
     public void SetLanguage(string languageCode)
     {
         if (!string.IsNullOrWhiteSpace(languageCode))
+        {
             _language = languageCode.ToLowerInvariant();
+        }
     }
 
     public void Load()
     {
         // No-op for the test constructor (empty AppData path). Data is
         // already in memory from the constructor; there is no file to watch.
-        if (string.IsNullOrEmpty(_filePath)) return;
+        if (string.IsNullOrEmpty(_filePath))
+        {
+            return;
+        }
 
         if (!File.Exists(_filePath))
+        {
             SeedFile();
+        }
 
         LoadFromDisk();
         MergeMissingFromDefaults();
@@ -94,9 +107,13 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
             LoadFromDisk();
             MergeMissingFromDefaults();
             if (_syncContext is not null)
+            {
                 _syncContext.Post(_ => LocalizationChanged?.Invoke(this, EventArgs.Empty), null);
+            }
             else
+            {
                 LocalizationChanged?.Invoke(this, EventArgs.Empty);
+            }
         });
     }
 
@@ -127,10 +144,14 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
 
     private void LoadFromFile(string path)
     {
-        if (!File.Exists(path)) return;
+        if (!File.Exists(path))
+        {
+            return;
+        }
+
         try
         {
-            var json   = File.ReadAllText(path);
+            var json = File.ReadAllText(path);
             var loaded = JsonSerializer.Deserialize<Dictionary<string, Dictionary<string, string>>>(json, SerializerOptions);
             _strings = loaded ?? new();
         }
@@ -149,18 +170,32 @@ public sealed class LocalizationService : ILocalizationService, IDisposable
     private void MergeMissingFromDefaults()
     {
         var defaults = GetLoadedDefaults();
-        if (defaults is null) return;
+        if (defaults is null)
+        {
+            return;
+        }
+
         foreach (var kvp in defaults)
         {
             if (!_strings.ContainsKey(kvp.Key))
+            {
                 _strings[kvp.Key] = kvp.Value;
+            }
         }
     }
 
     private Dictionary<string, Dictionary<string, string>>? GetLoadedDefaults()
     {
-        if (_loadedDefaults is not null) return _loadedDefaults;
-        if (string.IsNullOrEmpty(_defaultFilePath) || !File.Exists(_defaultFilePath)) return null;
+        if (_loadedDefaults is not null)
+        {
+            return _loadedDefaults;
+        }
+
+        if (string.IsNullOrEmpty(_defaultFilePath) || !File.Exists(_defaultFilePath))
+        {
+            return null;
+        }
+
         try
         {
             var json = File.ReadAllText(_defaultFilePath);

@@ -16,7 +16,11 @@ public class ConverterViewModelTests
         var adapter = new FakeNepaliDateAdapter();
         var svc = conversionService ?? new ConversionService(adapter);
         var vm = new ConverterViewModel(svc, loc, adapter: adapter);
-        if (isAdToBs) vm.IsAdToBs = true;
+        if (isAdToBs)
+        {
+            vm.IsAdToBs = true;
+        }
+
         return vm;
     }
 

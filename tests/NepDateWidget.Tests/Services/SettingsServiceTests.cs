@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 using NepDateWidget.Models;
 using NepDateWidget.Services;
@@ -29,7 +29,12 @@ public class SettingsServiceTests : IDisposable
     public void Dispose()
     {
         foreach (var f in _tempFiles)
-            if (File.Exists(f)) File.Delete(f);
+        {
+            if (File.Exists(f))
+            {
+                File.Delete(f);
+            }
+        }
     }
 
     // ── Missing file ──────────────────────────────────────────────────────────

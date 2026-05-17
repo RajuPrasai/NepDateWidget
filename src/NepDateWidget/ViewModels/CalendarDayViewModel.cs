@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Helpers;
+using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using NepDateWidget.Services;
 
@@ -152,7 +152,7 @@ public sealed class CalendarDayViewModel : ViewModelBase
         TithiText = day.IsCurrentMonth ? rawTithi : string.Empty;
         ShowTithiText = day.IsCurrentMonth && showTithi && !string.IsNullOrEmpty(rawTithi);
         IsPurnima = day.IsCurrentMonth && day.TithiEn.StartsWith("Purnima", StringComparison.Ordinal);
-        IsAunsi   = day.IsCurrentMonth && day.TithiEn == "Aunsi";
+        IsAunsi = day.IsCurrentMonth && day.TithiEn == "Aunsi";
 
         // Multi-event: store all events and initialise with 1 visible row
         string[] events = isNepali ? day.EventsNp : day.EventsEn;
@@ -186,7 +186,9 @@ public sealed class CalendarDayViewModel : ViewModelBase
                 CopyFormatOptions = DateFormatter.Build(day.Year, day.Month, day.Day, adapter, localization, isNepali);
             }
             if (CopyFormatOptions.Count > 0)
+            {
                 CopyMenuTitle = localization.Get("calendar.copy.title");
+            }
         }
     }
 
@@ -230,18 +232,18 @@ public sealed class CalendarDayViewModel : ViewModelBase
             ? day.AdDay.ToString()
             : string.Empty;
 
-        ShowEnglishBadge      = day.IsCurrentMonth && day.AdDay > 0 && showEnglishDayNumbers;
+        ShowEnglishBadge = day.IsCurrentMonth && day.AdDay > 0 && showEnglishDayNumbers;
         ShowSaturdayHighlight = day.IsSaturday && highlightSaturdays;
-        ShowSundayHighlight   = day.IsSunday && highlightSundays;
+        ShowSundayHighlight = day.IsSunday && highlightSundays;
 
         string rawTithi = isNepali ? day.TithiNp : day.TithiEn;
-        TithiText     = day.IsCurrentMonth ? rawTithi : string.Empty;
+        TithiText = day.IsCurrentMonth ? rawTithi : string.Empty;
         ShowTithiText = day.IsCurrentMonth && showTithi && !string.IsNullOrEmpty(rawTithi);
-        IsPurnima     = day.IsCurrentMonth && day.TithiEn.StartsWith("Purnima", StringComparison.Ordinal);
-        IsAunsi       = day.IsCurrentMonth && day.TithiEn == "Aunsi";
+        IsPurnima = day.IsCurrentMonth && day.TithiEn.StartsWith("Purnima", StringComparison.Ordinal);
+        IsAunsi = day.IsCurrentMonth && day.TithiEn == "Aunsi";
 
         string[] events = isNepali ? day.EventsNp : day.EventsEn;
-        _allEvents    = (day.IsCurrentMonth && showEvents) ? events : Array.Empty<string>();
+        _allEvents = (day.IsCurrentMonth && showEvents) ? events : Array.Empty<string>();
         _canShowEvents = day.IsCurrentMonth && showEvents;
         UpdateVisibleEventCount(visibleEventCount);
 
@@ -251,9 +253,13 @@ public sealed class CalendarDayViewModel : ViewModelBase
         if (day.IsCurrentMonth && localization is not null)
         {
             if (day.AdDate.HasValue && !string.IsNullOrEmpty(day.BsShortEn))
+            {
                 newOpts = DateFormatter.Build(day, localization, isNepali);
+            }
             else if (adapter is not null)
+            {
                 newOpts = DateFormatter.Build(day.Year, day.Month, day.Day, adapter, localization, isNepali);
+            }
         }
         CopyFormatOptions = newOpts;
         OnPropertyChanged(nameof(HasCopyOptions));
@@ -278,7 +284,7 @@ public sealed class CalendarDayViewModel : ViewModelBase
                 OnPropertyChanged(nameof(VisibleEvents));
             }
             HasVisibleEvents = false;
-            HasHiddenEvents  = false;
+            HasHiddenEvents = false;
             return;
         }
 
@@ -302,7 +308,10 @@ public sealed class CalendarDayViewModel : ViewModelBase
             int hiddenCount = _allEvents.Length - count;
             newVisible = new string[count];
             for (int i = 0; i < count; i++)
+            {
                 newVisible[i] = _allEvents[i];
+            }
+
             newVisible[count - 1] = _allEvents[count - 1] + " +" + hiddenCount;
             newHasHidden = true;
         }
@@ -310,9 +319,17 @@ public sealed class CalendarDayViewModel : ViewModelBase
         // Length alone doesn’t detect “+N” text changes when count stays equal.
         bool contentSame = newVisible.Length == _visibleEventsArray.Length;
         if (contentSame)
+        {
             for (int i = 0; i < newVisible.Length; i++)
+            {
                 if (newVisible[i] != _visibleEventsArray[i]) { contentSame = false; break; }
-        if (contentSame && newHasHidden == _hasHiddenEvents) return;
+            }
+        }
+
+        if (contentSame && newHasHidden == _hasHiddenEvents)
+        {
+            return;
+        }
 
         _visibleEventsArray = newVisible;
         OnPropertyChanged(nameof(VisibleEvents));

@@ -34,11 +34,17 @@ public partial class DayInfoPopup : Window
 
     private void OnDeactivated(object? sender, EventArgs e)
     {
-        if (_isClosing) return;
+        if (_isClosing)
+        {
+            return;
+        }
 
         Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, () =>
         {
-            if (_isClosing) return;
+            if (_isClosing)
+            {
+                return;
+            }
 
             ClosedByDeactivation = true;
             _isClosing = true;

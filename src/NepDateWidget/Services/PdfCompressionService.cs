@@ -13,7 +13,7 @@ public sealed class PdfCompressionService : IPdfCompressionService
         {
             originalSize = new FileInfo(inputPath).Length;
 
-            var adv     = settings.Advanced;
+            var adv = settings.Advanced;
             var tmpPath = outputPath + ".tmp";
 
             // Build QPDF job - use only the stable documented API surface.
@@ -24,27 +24,35 @@ public sealed class PdfCompressionService : IPdfCompressionService
             job.InputFile(inputPath).OutputFile(tmpPath);
 
             if (adv.LinearizePdf)
+            {
                 job.Linearize();
+            }
 
             var exitCode = job.Run(out _);
 
             // Non-zero exit means QPDF signalled an error.
             if (exitCode != 0)
+            {
                 throw new InvalidOperationException($"QPDF exited with code {(int)exitCode}.");
+            }
 
             if (File.Exists(outputPath))
+            {
                 File.Replace(tmpPath, outputPath, null);
+            }
             else
+            {
                 File.Move(tmpPath, outputPath);
+            }
 
             long compressedSize = new FileInfo(outputPath).Length;
             return new CompressionResult
             {
-                InputPath           = inputPath,
-                OutputPath          = outputPath,
-                OriginalSizeBytes   = originalSize,
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                OriginalSizeBytes = originalSize,
                 CompressedSizeBytes = compressedSize,
-                Success             = true,
+                Success = true,
             };
         }
         catch (DllNotFoundException)
@@ -52,12 +60,12 @@ public sealed class PdfCompressionService : IPdfCompressionService
             TryCleanTmp(outputPath);
             return new CompressionResult
             {
-                InputPath           = inputPath,
-                OutputPath          = outputPath,
-                OriginalSizeBytes   = originalSize,
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                OriginalSizeBytes = originalSize,
                 CompressedSizeBytes = 0,
-                Success             = false,
-                ErrorMessage        = "PDF compression requires the Microsoft Visual C++ 2022 Runtime. " +
+                Success = false,
+                ErrorMessage = "PDF compression requires the Microsoft Visual C++ 2022 Runtime. " +
                                       "Please install it from microsoft.com and restart the app.",
             };
         }
@@ -66,12 +74,12 @@ public sealed class PdfCompressionService : IPdfCompressionService
             TryCleanTmp(outputPath);
             return new CompressionResult
             {
-                InputPath           = inputPath,
-                OutputPath          = outputPath,
-                OriginalSizeBytes   = originalSize,
+                InputPath = inputPath,
+                OutputPath = outputPath,
+                OriginalSizeBytes = originalSize,
                 CompressedSizeBytes = 0,
-                Success             = false,
-                ErrorMessage        = ex.Message,
+                Success = false,
+                ErrorMessage = ex.Message,
             };
         }
     }
@@ -79,7 +87,7 @@ public sealed class PdfCompressionService : IPdfCompressionService
     private static void TryCleanTmp(string outputPath)
     {
         var tmp = outputPath + ".tmp";
-        try { if (File.Exists(tmp)) File.Delete(tmp); } catch { }
+        try { if (File.Exists(tmp)) { File.Delete(tmp); } } catch { }
     }
 }
 
