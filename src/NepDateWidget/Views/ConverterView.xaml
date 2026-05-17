@@ -4,7 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
-             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
              mc:Ignorable="d"
              UseLayoutRounding="True"
              TextOptions.TextFormattingMode="Display"
@@ -12,44 +11,14 @@
              d:DataContext="{d:DesignInstance vm:ConverterViewModel}"
              d:Width="380">
 
-            <UserControl.Resources>
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
-        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
-
-        <Style x:Key="PillButton" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderBrush"     Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="Height"          Value="28" />
-            <Setter Property="Padding"         Value="14,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="Opacity"         Value="0.55" />
+    <UserControl.Resources>
+        <!-- AnimatedPillButton: global PillButton + ScaleTransform press animation -->
+        <Style x:Key="AnimatedPillButton" TargetType="Button" BasedOn="{StaticResource PillButton}">
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
             <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
+                <Setter.Value><ScaleTransform ScaleX="1" ScaleY="1" /></Setter.Value>
             </Setter>
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                    <Setter Property="Opacity" Value="0.9" />
-                </Trigger>
                 <Trigger Property="IsPressed" Value="True">
                     <Trigger.EnterActions>
                         <BeginStoryboard>
@@ -75,63 +44,13 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="DirButton" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-            <Setter Property="BorderThickness" Value="0.7" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="FontWeight"      Value="SemiBold" />
-            <Setter Property="Height"          Value="36" />
-            <Setter Property="Padding"         Value="8,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <!-- AnimatedDirButton: global DirButton + ScaleTransform press animation -->
+        <Style x:Key="AnimatedDirButton" TargetType="Button" BasedOn="{StaticResource DirButton}">
             <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
             <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="Bd"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="0.82" Duration="0:0:0.1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard FillBehavior="Stop">
-                                            <DoubleAnimation Storyboard.TargetName="Bd"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1" Duration="0:0:0.15" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
+                <Setter.Value><ScaleTransform ScaleX="1" ScaleY="1" /></Setter.Value>
             </Setter>
             <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                </Trigger>
                 <Trigger Property="IsPressed" Value="True">
                     <Trigger.EnterActions>
                         <BeginStoryboard>
@@ -156,169 +75,6 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
-        <!-- InputBoxStyle, OutputBoxStyle: from global TextBoxStyles.xaml -->
-
-        <!-- Themed ComboBox for timezone dropdowns -->
-        <Style x:Key="TzComboBoxStyle" TargetType="ComboBox">
-            <Setter Property="Height"          Value="36" />
-            <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-            <Setter Property="BorderThickness" Value="0.7" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="Padding"         Value="6,0" />
-            <Setter Property="SnapsToDevicePixels" Value="True" />
-            <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ComboBox">
-                        <Grid>
-                            <Border x:Name="MainBorder"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="6" />
-                            <ToggleButton Focusable="False" Background="Transparent" BorderThickness="0"
-                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay,
-                                                       RelativeSource={RelativeSource TemplatedParent}}"
-                                          ClickMode="Press">
-                                <ToggleButton.Style>
-                                    <Style TargetType="ToggleButton">
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="ToggleButton">
-                                                    <Border Background="Transparent" />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </ToggleButton.Style>
-                            </ToggleButton>
-                            <ContentPresenter Margin="8,0,28,0"
-                                              VerticalAlignment="Center"
-                                              HorizontalAlignment="Left"
-                                              Content="{TemplateBinding SelectionBoxItem}"
-                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                              ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
-                                              IsHitTestVisible="False" />
-                            <TextBlock Text="▾" FontSize="11"
-                                       Foreground="{TemplateBinding Foreground}"
-                                       VerticalAlignment="Center"
-                                       HorizontalAlignment="Right"
-                                       Margin="0,0,8,0" IsHitTestVisible="False" />
-                            <Popup Placement="Bottom"
-                                   IsOpen="{TemplateBinding IsDropDownOpen}"
-                                   AllowsTransparency="True" Focusable="False"
-                                   PopupAnimation="Slide">
-                                <Border MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
-                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                        Background="{DynamicResource WidgetInputBrush}"
-                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                        BorderThickness="0.7" CornerRadius="4" Margin="0,2,0,0">
-                                    <Border.Resources>
-                                        <Style TargetType="ComboBoxItem">
-                                            <Setter Property="Background"  Value="{DynamicResource WidgetInputBrush}" />
-                                            <Setter Property="Foreground"  Value="{DynamicResource WidgetForegroundBrush}" />
-                                            <Setter Property="Padding"     Value="8,5" />
-                                            <Setter Property="BorderThickness" Value="0" />
-                                            <Style.Triggers>
-                                                <Trigger Property="IsHighlighted" Value="True">
-                                                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                                                </Trigger>
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Resources>
-                                    <ScrollViewer SnapsToDevicePixels="True">
-                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
-                                    </ScrollViewer>
-                                </Border>
-                            </Popup>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="MainBorder" Property="Background"
-                                        Value="{DynamicResource WidgetHoverBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsDropDownOpen" Value="True">
-                                <Setter TargetName="MainBorder" Property="Background"
-                                        Value="{DynamicResource WidgetHoverBrush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Accent-coloured button: hover dims via opacity rather than swapping colour -->
-        <Style x:Key="AccentButton" TargetType="Button">
-            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-            <Setter Property="BorderThickness" Value="0.7" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="FontWeight"      Value="SemiBold" />
-            <Setter Property="Height"          Value="36" />
-            <Setter Property="Padding"         Value="8,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
-            <Setter Property="RenderTransform">
-                <Setter.Value>
-                    <ScaleTransform ScaleX="1" ScaleY="1" />
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.82" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.68" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsPressed" Value="True">
-                    <Trigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                                 To="0.94" Duration="0:0:0.06" />
-                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                                 To="0.94" Duration="0:0:0.06" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </Trigger.EnterActions>
-                    <Trigger.ExitActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
-                                                 To="1" Duration="0:0:0.12" />
-                                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                                 To="1" Duration="0:0:0.12" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </Trigger.ExitActions>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
     </UserControl.Resources>
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"
@@ -346,7 +102,7 @@
                 <Grid Grid.Column="0">
                     <Button Command="{Binding SetModeConvertCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource AnimatedPillButton}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeConvert}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -378,7 +134,7 @@
                 <Grid Grid.Column="1">
                     <Button Command="{Binding SetModeDaysCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource AnimatedPillButton}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeDays}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -410,7 +166,7 @@
                 <Grid Grid.Column="2">
                     <Button Command="{Binding SetModeTimeCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource AnimatedPillButton}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeTime}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -475,7 +231,7 @@
             <Button Grid.Row="1" Grid.Column="0"
                     Content="{Binding BsToAdLabel}" Command="{Binding SetBsToAdCommand}">
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                    <Style TargetType="Button" BasedOn="{StaticResource AnimatedDirButton}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsBsToAd}" Value="True">
                                 <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
@@ -495,7 +251,7 @@
             <Button Grid.Row="3" Grid.Column="0"
                     Content="{Binding AdToBsLabel}" Command="{Binding SetAdToBsCommand}">
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                    <Style TargetType="Button" BasedOn="{StaticResource AnimatedDirButton}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsAdToBs}" Value="True">
                                 <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
@@ -561,7 +317,7 @@
             <Button Grid.Row="1" Grid.Column="0"
                     Content="{Binding DaysDiffLabel}" Command="{Binding SetDaysDiffCommand}">
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                    <Style TargetType="Button" BasedOn="{StaticResource AnimatedDirButton}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsDaysDiff}" Value="True">
                                 <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
@@ -581,7 +337,7 @@
             <Button Grid.Row="3" Grid.Column="0"
                     Content="{Binding DaysAddSubLabel}" Command="{Binding SetDaysAddSubCommand}">
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                    <Style TargetType="Button" BasedOn="{StaticResource AnimatedDirButton}">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsDaysAddSub}" Value="True">
                                 <Setter Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
@@ -595,7 +351,7 @@
             <Grid Grid.Row="3" Grid.Column="2">
                 <TextBox TabIndex="1"
                          Text="{Binding DaysInput2, UpdateSourceTrigger=PropertyChanged}"
-                         Tag="YYYY/MM/DD"
+                         Tag=""
                          Style="{StaticResource InputBoxStyle}" />
                 <TextBlock Margin="8,0" VerticalAlignment="Center"
                            Foreground="{DynamicResource WidgetForegroundBrush}"
@@ -715,12 +471,12 @@
                           DisplayMemberPath="DisplayName"
                           TextSearch.TextPath="DisplayName"
                           IsTextSearchEnabled="True"
-                          Style="{StaticResource TzComboBoxStyle}"
+                          Style="{StaticResource LargeComboBoxStyle}"
                           MaxDropDownHeight="340" />
                 <Button Grid.Column="2" Command="{Binding TimeSwapCommand}"
                         Content="⇄" ToolTip="{Binding TooltipSwapTz}" Width="36">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource AnimatedDirButton}">
                             <Setter Property="FontSize" Value="15" />
                         </Style>
                     </Button.Style>
@@ -731,7 +487,7 @@
                           DisplayMemberPath="DisplayName"
                           TextSearch.TextPath="DisplayName"
                           IsTextSearchEnabled="True"
-                          Style="{StaticResource TzComboBoxStyle}"
+                          Style="{StaticResource LargeComboBoxStyle}"
                           MaxDropDownHeight="340" />
             </Grid>
 
@@ -752,7 +508,7 @@
                 <Button Grid.Column="2" Command="{Binding TimeToggleAmPmCommand}"
                         Content="{Binding TimeAmPmLabel}" Width="40">
                     <Button.Style>
-                        <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                        <Style TargetType="Button" BasedOn="{StaticResource AnimatedDirButton}">
                             <Setter Property="FontSize" Value="11" />
                         </Style>
                     </Button.Style>

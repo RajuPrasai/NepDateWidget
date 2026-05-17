@@ -14,34 +14,6 @@
         Opacity="0">
 
     <Window.Resources>
-        <Style x:Key="HelpCloseBtn" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="Padding"         Value="5,5" />
-            <Setter Property="Width"           Value="26" />
-            <Setter Property="Height"          Value="26" />
-            <Setter Property="Opacity"         Value="0.48" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Chrome"
-                                Background="{TemplateBinding Background}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Chrome" Property="Background"
-                                        Value="{DynamicResource WidgetHoverBrush}" />
-                                <Setter Property="Opacity" Value="1.0" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
     <Border Background="{DynamicResource WidgetBackgroundBrush}"
@@ -69,7 +41,7 @@
                                TextTrimming="CharacterEllipsis"
                                Margin="0,2.5,8,0" />
                     <Button Grid.Column="1"
-                            Style="{StaticResource HelpCloseBtn}"
+                            Style="{StaticResource PopupCloseBtn}"
                             Click="CloseBtn_Click">
                         <Path Data="{StaticResource IconWindowClose}"
                               Stroke="{DynamicResource WidgetForegroundBrush}"

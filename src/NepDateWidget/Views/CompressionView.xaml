@@ -4,7 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
-             xmlns:conv="clr-namespace:NepDateWidget.Converters"
              mc:Ignorable="d"
              UseLayoutRounding="True"
              TextOptions.TextFormattingMode="Display"
@@ -12,29 +11,6 @@
              AllowDrop="True"
              d:DataContext="{d:DesignInstance vm:CompressionViewModel}"
              d:Width="380">
-
-  <UserControl.Resources>
-    <conv:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
-    <conv:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
-    <Style x:Key="LevelLabelStyle" TargetType="TextBlock">
-      <Setter Property="FontSize"   Value="10.5" />
-      <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
-      <Setter Property="Opacity"    Value="0.65" />
-    </Style>
-    <Style x:Key="CompactInputStyle" TargetType="TextBox">
-      <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
-      <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-      <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-      <Setter Property="BorderThickness" Value="0.7" />
-      <Setter Property="Height"          Value="30" />
-      <Setter Property="FontSize"        Value="13" />
-      <Setter Property="Padding"         Value="6,0" />
-      <Setter Property="CaretBrush"      Value="{DynamicResource WidgetForegroundBrush}" />
-      <Setter Property="SelectionBrush"  Value="{DynamicResource WidgetAccentBrush}" />
-      <Setter Property="ContextMenu"     Value="{StaticResource ThemedTextBoxContextMenu}" />
-      <Setter Property="Template"        Value="{StaticResource PlaceholderTextBoxTemplate}" />
-    </Style>
-  </UserControl.Resources>
 
   <Grid x:Name="CompressionViewRoot">
     <StackPanel>
@@ -469,11 +445,5 @@
       </Button>
     </Grid>
     </StackPanel>
-    <Grid HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,4,0"
-          Style="{StaticResource HoverGateStyle}">
-      <Button Style="{StaticResource InfoPillBadgeStyle}"
-              Command="{Binding OpenHelpCommand}"
-              CommandParameter="help.compress" />
-    </Grid>
   </Grid>
 </UserControl>

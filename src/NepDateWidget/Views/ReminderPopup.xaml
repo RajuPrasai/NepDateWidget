@@ -19,8 +19,6 @@
         mc:Ignorable="d">
 
     <Window.Resources>
-        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
-        <conv:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True" />
         <conv:IntEqualConverter x:Key="IntEqual" />
 
         <!-- InputBoxStyle: from global TextBoxStyles.xaml -->

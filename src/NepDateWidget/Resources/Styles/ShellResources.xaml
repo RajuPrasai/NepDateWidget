@@ -387,4 +387,259 @@
         </Setter>
     </Style>
 
+    <!-- ══════════════════════════════════════════════════════════════════
+         Shared action buttons - used across all tool tabs.
+         ════════════════════════════════════════════════════════════════ -->
+
+    <!-- Primary accent button (H=36). Grid+BgLayer separates paint from layout. -->
+    <Style x:Key="AccentButton" TargetType="Button">
+        <Setter Property="Background"                   Value="{DynamicResource WidgetAccentBrush}" />
+        <Setter Property="BorderBrush"                  Value="{DynamicResource WidgetAccentBrush}" />
+        <Setter Property="BorderThickness"              Value="0.7" />
+        <Setter Property="Foreground"                   Value="{DynamicResource WidgetDayTodayTextBrush}" />
+        <Setter Property="FontSize"                     Value="12" />
+        <Setter Property="FontWeight"                   Value="SemiBold" />
+        <Setter Property="Height"                       Value="36" />
+        <Setter Property="Padding"                      Value="8,0" />
+        <Setter Property="Cursor"                       Value="Hand" />
+        <Setter Property="HorizontalContentAlignment"   Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid x:Name="Root">
+                        <Border x:Name="BgLayer"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="6" />
+                        <Border Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Smaller accent button (H=32, Padding=12) -->
+    <Style x:Key="AccentButtonSm" TargetType="Button" BasedOn="{StaticResource AccentButton}">
+        <Setter Property="Height"   Value="32" />
+        <Setter Property="Padding"  Value="12,0" />
+    </Style>
+
+    <!-- Pill button (H=28, Padding=14) - tab selector / filter pills -->
+    <Style x:Key="PillButton" TargetType="Button">
+        <Setter Property="Background"      Value="Transparent" />
+        <Setter Property="BorderBrush"     Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+        <Setter Property="FontSize"        Value="12" />
+        <Setter Property="Height"          Value="28" />
+        <Setter Property="Padding"         Value="14,0" />
+        <Setter Property="Cursor"          Value="Hand" />
+        <Setter Property="Opacity"         Value="0.55" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                <Setter Property="Opacity"    Value="0.9" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Compact pill (Padding=10) -->
+    <Style x:Key="PillButtonSm" TargetType="Button" BasedOn="{StaticResource PillButton}">
+        <Setter Property="Padding" Value="10,0" />
+    </Style>
+
+    <!-- Direction / secondary-action button (H=36) with animated hover fade -->
+    <Style x:Key="DirButton" TargetType="Button">
+        <Setter Property="Background"                   Value="Transparent" />
+        <Setter Property="BorderBrush"                  Value="{DynamicResource WidgetInputBorderBrush}" />
+        <Setter Property="BorderThickness"              Value="0.7" />
+        <Setter Property="Foreground"                   Value="{DynamicResource WidgetForegroundBrush}" />
+        <Setter Property="FontSize"                     Value="12" />
+        <Setter Property="FontWeight"                   Value="SemiBold" />
+        <Setter Property="Height"                       Value="36" />
+        <Setter Property="Padding"                      Value="8,0" />
+        <Setter Property="Cursor"                       Value="Hand" />
+        <Setter Property="HorizontalContentAlignment"   Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="Bd"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.82" Duration="0:0:0.1" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard FillBehavior="Stop">
+                                        <DoubleAnimation Storyboard.TargetName="Bd"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1" Duration="0:0:0.15" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Compact direction button (H=32) -->
+    <Style x:Key="DirButtonSm" TargetType="Button" BasedOn="{StaticResource DirButton}">
+        <Setter Property="Height" Value="32" />
+    </Style>
+
+    <!-- Ghost border button (H=28) - secondary/cancel actions -->
+    <Style x:Key="SecondaryButton" TargetType="Button">
+        <Setter Property="Background"                   Value="Transparent" />
+        <Setter Property="BorderBrush"                  Value="{DynamicResource WidgetInputBorderBrush}" />
+        <Setter Property="BorderThickness"              Value="0.7" />
+        <Setter Property="Foreground"                   Value="{DynamicResource WidgetForegroundBrush}" />
+        <Setter Property="FontSize"                     Value="11" />
+        <Setter Property="Height"                       Value="28" />
+        <Setter Property="Padding"                      Value="10,0" />
+        <Setter Property="Cursor"                       Value="Hand" />
+        <Setter Property="HorizontalContentAlignment"   Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="5"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background"
+                                    Value="{DynamicResource WidgetHoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         Shared layout / typography styles.
+         ════════════════════════════════════════════════════════════════ -->
+
+    <!-- Section heading (14pt) used in Settings and More tabs -->
+    <Style x:Key="SectionLabel" TargetType="TextBlock">
+        <Setter Property="FontSize"   Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+        <Setter Property="Margin"     Value="0,0,0,8" />
+    </Style>
+
+    <!-- Card surface used in Settings and More tabs -->
+    <Style x:Key="CardPanel" TargetType="Border">
+        <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+        <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+        <Setter Property="BorderThickness" Value="0.7" />
+        <Setter Property="CornerRadius"    Value="8" />
+        <Setter Property="Padding"         Value="10,8" />
+        <Setter Property="Margin"          Value="0,0,0,8" />
+    </Style>
+
+    <!-- Slider level label (10.5pt, muted) used in Compression and Resize tabs -->
+    <Style x:Key="LevelLabelStyle" TargetType="TextBlock">
+        <Setter Property="FontSize"   Value="10.5" />
+        <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+        <Setter Property="Opacity"    Value="0.65" />
+    </Style>
+
+    <!-- Popup window close button (26×26, semi-transparent at rest) -->
+    <Style x:Key="PopupCloseBtn" TargetType="Button">
+        <Setter Property="Background"      Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor"          Value="Hand" />
+        <Setter Property="Padding"         Value="5,5" />
+        <Setter Property="Width"           Value="26" />
+        <Setter Property="Height"          Value="26" />
+        <Setter Property="Opacity"         Value="0.48" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Chrome"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="6"
+                            Padding="{TemplateBinding Padding}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Chrome" Property="Background"
+                                    Value="{DynamicResource WidgetHoverBrush}" />
+                            <Setter Property="Opacity" Value="1.0" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Section label inside popups (10.5pt, muted) -->
+    <Style x:Key="PopupSectionLabel" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+        <Setter Property="FontSize"   Value="10.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Opacity"    Value="0.45" />
+        <Setter Property="Margin"     Value="0,0,0,6" />
+    </Style>
+
 </ResourceDictionary>

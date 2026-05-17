@@ -32,6 +32,8 @@ public sealed class MoreViewModel : ViewModelBase
                 OnPropertyChanged(nameof(IsSubViewReminders));
                 OnPropertyChanged(nameof(IsSubViewCompression));
                 OnPropertyChanged(nameof(IsSubViewResize));
+                OnPropertyChanged(nameof(CurrentSubViewTitle));
+                OnPropertyChanged(nameof(CurrentSubViewHelpKey));
             }
         }
     }
@@ -42,6 +44,26 @@ public sealed class MoreViewModel : ViewModelBase
     public bool IsSubViewReminders   => _currentSubView == "Reminders";
     public bool IsSubViewCompression => _currentSubView == "Compression";
     public bool IsSubViewResize      => _currentSubView == "Resize";
+
+    public string CurrentSubViewTitle => _currentSubView switch
+    {
+        "Notes"       => NotesHeadingLabel,
+        "Reminders"   => RemindersHeadingLabel,
+        "Documents"   => DocsHeadingLabel,
+        "Compression" => CompressNavLabel,
+        "Resize"      => ResizeNavLabel,
+        _ => _currentSubView ?? string.Empty
+    };
+
+    public string CurrentSubViewHelpKey => _currentSubView switch
+    {
+        "Notes"       => "help.more.notes",
+        "Reminders"   => "help.more.reminders",
+        "Documents"   => "help.more.documents",
+        "Compression" => "help.compress",
+        "Resize"      => "help.resize",
+        _ => string.Empty
+    };
 
     public ICommand NavigateToCommand { get; private set; } = null!;
     public ICommand GoBackCommand     { get; private set; } = null!;
@@ -932,6 +954,7 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(DocClearFileLabel));
         OnPropertyChanged(nameof(DocSearchHintLabel));
         OnPropertyChanged(nameof(DocDuplicateTitleLabel));
+        OnPropertyChanged(nameof(CurrentSubViewTitle));
     }
 
     public void RefreshNotes()
