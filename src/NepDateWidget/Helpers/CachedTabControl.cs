@@ -11,7 +11,7 @@ namespace NepDateWidget.Helpers;
 /// Template must contain a Panel named PART_ContentPanel.
 /// All tab content is moved into PART_ContentPanel eagerly on template application so
 /// every view is connected to the visual tree from startup. This is required for VS
-/// XAML Hot Reload, which uses XamlDiagnostics to walk the visual tree — logical-tree-
+/// XAML Hot Reload, which uses XamlDiagnostics to walk the visual tree - logical-tree-
 /// only elements (content still in TabItem.Content) are invisible to the hot reload
 /// engine and would report "applied to 0 elements".
 /// </summary>

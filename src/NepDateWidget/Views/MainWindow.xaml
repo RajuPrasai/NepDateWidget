@@ -47,9 +47,14 @@
             Cursor="Hand"
             MouseLeftButtonDown="WidgetBorder_MouseLeftButtonDown"
             MouseMove="WidgetBorder_MouseMove"
-            MouseLeftButtonUp="WidgetBorder_MouseLeftButtonUp">
+            MouseLeftButtonUp="WidgetBorder_MouseLeftButtonUp"
+            MouseEnter="WidgetBorder_MouseEnter"
+            MouseLeave="WidgetBorder_MouseLeave">
         <Border.RenderTransform>
-            <ScaleTransform x:Name="PillScale" ScaleX="1" ScaleY="1" />
+            <TransformGroup>
+                <ScaleTransform x:Name="PillScale" ScaleX="1" ScaleY="1" />
+                <TranslateTransform x:Name="PillLift" />
+            </TransformGroup>
         </Border.RenderTransform>
         <Border.Style>
             <Style TargetType="Border">
@@ -62,10 +67,6 @@
                         <Setter Property="Background"  Value="#01000000" />
                         <Setter Property="BorderBrush" Value="Transparent" />
                     </DataTrigger>
-                    <!-- Hover feedback: accent border lets users find the pill even when transparent. -->
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
-                    </Trigger>
                 </Style.Triggers>
             </Style>
         </Border.Style>

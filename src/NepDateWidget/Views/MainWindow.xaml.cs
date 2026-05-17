@@ -324,6 +324,36 @@ public partial class MainWindow : Window
     /// Quickly expands slightly then settles back, giving tactile feedback without
     /// a disruptive scale-down/scale-up transition.
     /// </summary>
+    private void WidgetBorder_MouseEnter(object sender, MouseEventArgs e)
+    {
+        if (ViewModel.AnimationEnabled)
+        {
+            var anim = new DoubleAnimation(-2, TimeSpan.FromMilliseconds(100));
+            anim.EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut };
+            PillLift.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, anim);
+        }
+        else
+        {
+            PillLift.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, null);
+            PillLift.Y = -2;
+        }
+    }
+
+    private void WidgetBorder_MouseLeave(object sender, MouseEventArgs e)
+    {
+        if (ViewModel.AnimationEnabled)
+        {
+            var anim = new DoubleAnimation(0, TimeSpan.FromMilliseconds(150));
+            anim.EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut };
+            PillLift.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, anim);
+        }
+        else
+        {
+            PillLift.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, null);
+            PillLift.Y = 0;
+        }
+    }
+
     private void PlayPillBounce()
     {
         var anim = new DoubleAnimationUsingKeyFrames();

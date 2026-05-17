@@ -502,42 +502,82 @@ public class CalendarDayViewModelUpdateTests
     }
 
     // ════════════════════════════════════════════════════════════════════════
-    // _day-delegating properties: fire PropertyChanged unconditionally in Update()
-    // This is intentional: WPF checks value equality internally; we always notify
-    // so the binding chain is never stale even when the new day has the same values.
+    // _day-delegating properties: fire PropertyChanged only when value changes.
+    // Each test has two assertions: fires when the value transitions, and is
+    // silent when the same value is re-applied (the optimization that removes
+    // up to 378 redundant notifications per month navigation).
     // ════════════════════════════════════════════════════════════════════════
 
     [Fact]
-    public void Update_AlwaysFiresPropertyChanged_IsCurrentMonth()
+    public void Update_FiresPropertyChanged_IsCurrentMonth_WhenValueChanges()
     {
+        // current-month → padding: IsCurrentMonth changes true→false, must fire.
         var vm = new CalendarDayViewModel(CurrentMonth());
-        // Navigate to a cell with the same IsCurrentMonth=true - must still notify.
-        var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth()));
+        var fired = Capture(vm, () => DoUpdate(vm, Padding()));
         Assert.Contains(nameof(vm.IsCurrentMonth), fired);
     }
 
     [Fact]
-    public void Update_AlwaysFiresPropertyChanged_IsPadding()
+    public void Update_SilentPropertyChanged_IsCurrentMonth_WhenValueUnchanged()
     {
+        // current-month → current-month: IsCurrentMonth stays true, must NOT fire.
         var vm = new CalendarDayViewModel(CurrentMonth());
         var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth()));
+        Assert.DoesNotContain(nameof(vm.IsCurrentMonth), fired);
+    }
+
+    [Fact]
+    public void Update_FiresPropertyChanged_IsPadding_WhenValueChanges()
+    {
+        // current-month → padding: IsPadding changes false→true, must fire.
+        var vm = new CalendarDayViewModel(CurrentMonth());
+        var fired = Capture(vm, () => DoUpdate(vm, Padding()));
         Assert.Contains(nameof(vm.IsPadding), fired);
     }
 
     [Fact]
-    public void Update_AlwaysFiresPropertyChanged_IsToday()
+    public void Update_SilentPropertyChanged_IsPadding_WhenValueUnchanged()
     {
+        // current-month → current-month: IsPadding stays false, must NOT fire.
+        var vm = new CalendarDayViewModel(CurrentMonth());
+        var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth()));
+        Assert.DoesNotContain(nameof(vm.IsPadding), fired);
+    }
+
+    [Fact]
+    public void Update_FiresPropertyChanged_IsToday_WhenValueChanges()
+    {
+        // non-today → today: IsToday changes false→true, must fire.
         var vm = new CalendarDayViewModel(CurrentMonth(isToday: false));
-        var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth(isToday: false)));
+        var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth(isToday: true)));
         Assert.Contains(nameof(vm.IsToday), fired);
     }
 
     [Fact]
-    public void Update_AlwaysFiresPropertyChanged_IsSaturday()
+    public void Update_SilentPropertyChanged_IsToday_WhenValueUnchanged()
     {
+        // non-today → non-today: IsToday stays false, must NOT fire.
+        var vm = new CalendarDayViewModel(CurrentMonth(isToday: false));
+        var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth(isToday: false)));
+        Assert.DoesNotContain(nameof(vm.IsToday), fired);
+    }
+
+    [Fact]
+    public void Update_FiresPropertyChanged_IsSaturday_WhenValueChanges()
+    {
+        // Saturday → non-Saturday: IsSaturday changes true→false, must fire.
+        var vm = new CalendarDayViewModel(CurrentMonth(dow: DayOfWeek.Saturday));
+        var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth(dow: DayOfWeek.Monday)));
+        Assert.Contains(nameof(vm.IsSaturday), fired);
+    }
+
+    [Fact]
+    public void Update_SilentPropertyChanged_IsSaturday_WhenValueUnchanged()
+    {
+        // Saturday → Saturday: IsSaturday stays true, must NOT fire.
         var vm = new CalendarDayViewModel(CurrentMonth(dow: DayOfWeek.Saturday));
         var fired = Capture(vm, () => DoUpdate(vm, CurrentMonth(dow: DayOfWeek.Saturday)));
-        Assert.Contains(nameof(vm.IsSaturday), fired);
+        Assert.DoesNotContain(nameof(vm.IsSaturday), fired);
     }
 
     // ════════════════════════════════════════════════════════════════════════

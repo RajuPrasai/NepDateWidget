@@ -545,8 +545,7 @@ public sealed class CalendarViewModel : ViewModelBase
     /// <summary>Called when the language changes - refreshes all labels.</summary>
     public void OnLanguageChanged()
     {
-        RefreshLabels();
-        RefreshGrid(); // month name in header depends on language
+        RefreshLabels(); // calls RefreshGrid() internally at the end
         RefreshHolidayCountdown();
         Converter.OnLanguageChanged();
     }
@@ -608,6 +607,10 @@ public sealed class CalendarViewModel : ViewModelBase
         // than calling HasRemindersForDateExpanded per cell (O(cells × reminders)).
         var reminderDays = _reminderService?.GetHasRemindersForMonth(_displayYear, _displayMonth);
 
+        // Batch note-dot query: same pattern as reminder dots — one dictionary pass for
+        // the month rather than a per-cell GetNote call with per-cell key allocations.
+        var noteDays = _notesService?.GetHasNotesForMonth(_displayYear, _displayMonth);
+
         if (Days.Count == month.Days.Count)
         {
             // Fast path: update all cells in-place, preserving container elements.
@@ -623,9 +626,9 @@ public sealed class CalendarViewModel : ViewModelBase
                     Days[i].HasReminders = day.IsCurrentMonth && reminderDays.Contains(day.Day);
                 }
 
-                if (_notesService is not null)
+                if (noteDays is not null)
                 {
-                    Days[i].HasNote = day.IsCurrentMonth && _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
+                    Days[i].HasNote = day.IsCurrentMonth && noteDays.Contains(day.Day);
                 }
             }
         }
@@ -645,9 +648,9 @@ public sealed class CalendarViewModel : ViewModelBase
                     Days[i].HasReminders = day.IsCurrentMonth && reminderDays.Contains(day.Day);
                 }
 
-                if (_notesService is not null)
+                if (noteDays is not null)
                 {
-                    Days[i].HasNote = day.IsCurrentMonth && _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
+                    Days[i].HasNote = day.IsCurrentMonth && noteDays.Contains(day.Day);
                 }
             }
             for (int i = overlap; i < month.Days.Count; i++)
@@ -661,9 +664,14 @@ public sealed class CalendarViewModel : ViewModelBase
                     vm.HasReminders = reminderDays.Contains(day.Day);
                 }
 
-                if (_notesService is not null && day.IsCurrentMonth)
+                if (noteDays is not null && day.IsCurrentMonth)
                 {
-                    vm.HasNote = _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
+                    vm.HasNote = noteDays.Contains(day.Day);
+                }
+
+                if (_visibleEventCount > 1)
+                {
+                    vm.UpdateVisibleEventCount(_visibleEventCount);
                 }
 
                 Days.Add(vm);
@@ -686,18 +694,6 @@ public sealed class CalendarViewModel : ViewModelBase
         AdMonthLabel = month.AdMonthLabel ?? string.Empty;
         RefreshNavState();
         RefreshFiscalFooter();
-
-        // For VMs created via the slow path (count change), re-apply the current visible-event
-        // count since the constructor defaults to 1. In-place-updated VMs already got the
-        // correct count from Update(). The loop is a no-op for them (UpdateVisibleEventCount
-        // is idempotent).
-        if (_visibleEventCount > 1)
-        {
-            foreach (var dayVm in Days)
-            {
-                dayVm.UpdateVisibleEventCount(_visibleEventCount);
-            }
-        }
 
         IsShowingToday = month.ContainsToday;
     }
@@ -970,11 +966,13 @@ public sealed class CalendarViewModel : ViewModelBase
             return;
         }
 
+        var noteDays = _notesService.GetHasNotesForMonth(_displayYear, _displayMonth);
+
         foreach (var dayVm in Days)
         {
             if (dayVm.IsCurrentMonth)
             {
-                dayVm.HasNote = _notesService.GetNote(NotesService.FormatKey(dayVm.BsYear, dayVm.BsMonth, dayVm.Day)) is not null;
+                dayVm.HasNote = noteDays.Contains(dayVm.Day);
             }
         }
     }

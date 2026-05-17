@@ -65,6 +65,7 @@ public sealed class MoreViewModelTests
 
         public string? GetNote(string dateKey) => _notes.GetValueOrDefault(dateKey);
         public IReadOnlyDictionary<string, string> GetAll() => _notes;
+        public HashSet<int> GetHasNotesForMonth(int bsYear, int bsMonth) => new();
         public void SetNote(string dateKey, string? text)
         {
             if (string.IsNullOrEmpty(text))

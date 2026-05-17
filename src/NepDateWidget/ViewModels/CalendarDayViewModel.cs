@@ -210,19 +210,33 @@ public sealed class CalendarDayViewModel : ViewModelBase
         ILocalizationService? localization,
         int visibleEventCount = 1)
     {
+        // Capture all _day-delegating property values BEFORE replacing _day so we can
+        // compare and only raise PropertyChanged for values that actually changed.
+        // 42 cells × up to 9 events = up to 378 notifications per navigation; in practice
+        // IsSaturday/IsSunday never change (column position is fixed), IsToday rarely changes,
+        // and padding status only flips on slow-path navigations — so most properties are
+        // silent on most navigations.
+        int oldBsYear        = _day.Year;
+        int oldBsMonth       = _day.Month;
+        int oldDay           = _day.Day;
+        bool oldIsCurrentMonth = _day.IsCurrentMonth;
+        bool oldIsPadding    = _day.IsPadding;
+        bool oldIsToday      = _day.IsToday;
+        bool oldIsSaturday   = _day.IsSaturday;
+        bool oldIsSunday     = _day.IsSunday;
+        bool oldIsHighlighted = _day.IsHighlighted;
+
         _day = day ?? throw new ArgumentNullException(nameof(day));
 
-        // Raise PropertyChanged for all _day-delegating properties unconditionally.
-        // These are cheap identity reads - WPF will diff and skip re-render if unchanged.
-        OnPropertyChanged(nameof(BsYear));
-        OnPropertyChanged(nameof(BsMonth));
-        OnPropertyChanged(nameof(Day));
-        OnPropertyChanged(nameof(IsCurrentMonth));
-        OnPropertyChanged(nameof(IsPadding));
-        OnPropertyChanged(nameof(IsToday));
-        OnPropertyChanged(nameof(IsSaturday));
-        OnPropertyChanged(nameof(IsSunday));
-        OnPropertyChanged(nameof(IsHighlighted));
+        if (oldBsYear           != _day.Year)           OnPropertyChanged(nameof(BsYear));
+        if (oldBsMonth          != _day.Month)          OnPropertyChanged(nameof(BsMonth));
+        if (oldDay              != _day.Day)            OnPropertyChanged(nameof(Day));
+        if (oldIsCurrentMonth   != _day.IsCurrentMonth) OnPropertyChanged(nameof(IsCurrentMonth));
+        if (oldIsPadding        != _day.IsPadding)      OnPropertyChanged(nameof(IsPadding));
+        if (oldIsToday          != _day.IsToday)        OnPropertyChanged(nameof(IsToday));
+        if (oldIsSaturday       != _day.IsSaturday)     OnPropertyChanged(nameof(IsSaturday));
+        if (oldIsSunday         != _day.IsSunday)       OnPropertyChanged(nameof(IsSunday));
+        if (oldIsHighlighted    != _day.IsHighlighted)  OnPropertyChanged(nameof(IsHighlighted));
 
         DayText = day.IsCurrentMonth
             ? (isNepali ? ToNepaliDigits(day.Day) : day.Day.ToString())

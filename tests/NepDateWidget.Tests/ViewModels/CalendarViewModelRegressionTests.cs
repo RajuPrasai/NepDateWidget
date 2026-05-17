@@ -121,6 +121,21 @@ public class CalendarViewModelRegressionTests
         public void Seed(string dateKey, string text) => _notes[dateKey] = text;
         public string? GetNote(string dateKey)         => _notes.GetValueOrDefault(dateKey);
         public IReadOnlyDictionary<string, string> GetAll() => _notes;
+        public HashSet<int> GetHasNotesForMonth(int bsYear, int bsMonth)
+        {
+            var result = new HashSet<int>();
+            string prefix = $"{bsYear:D4}-{bsMonth:D2}-";
+            foreach (var key in _notes.Keys)
+            {
+                if (key.Length == prefix.Length + 2
+                    && key.StartsWith(prefix, StringComparison.Ordinal)
+                    && int.TryParse(key.AsSpan(prefix.Length), out int day))
+                {
+                    result.Add(day);
+                }
+            }
+            return result;
+        }
         public void SetNote(string dateKey, string? text)
         {
             if (string.IsNullOrEmpty(text))

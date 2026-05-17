@@ -165,6 +165,11 @@ public sealed class ThemeService : IThemeService
         // Calendar grid lines - very subtle, just enough to separate cells
         Color gridLine = Blend(bg, fg, 0.08f);
         SetBrush("WidgetGridLineBrush", gridLine);
+
+        // Accent-tinted surface: 15% accent into background, used for subtle
+        // hover/active states that carry colour (e.g. tab hover).
+        Color accentLight = Blend(bg, acc, 0.15f);
+        SetBrush("WidgetAccentBrushLight", accentLight);
     }
 
     /// <summary>

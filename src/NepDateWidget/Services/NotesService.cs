@@ -33,6 +33,26 @@ public sealed class NotesService : INotesService, IDisposable
         return value;
     }
 
+    /// <summary>
+    /// Returns the set of day numbers (1-based) that have a note in the given BS year/month.
+    /// One dictionary pass instead of per-cell key lookups during grid refresh.
+    /// </summary>
+    public HashSet<int> GetHasNotesForMonth(int bsYear, int bsMonth)
+    {
+        var result = new HashSet<int>();
+        string prefix = $"{bsYear:D4}-{bsMonth:D2}-";
+        foreach (var key in _notes.Keys)
+        {
+            if (key.Length == prefix.Length + 2
+                && key.StartsWith(prefix, StringComparison.Ordinal)
+                && int.TryParse(key.AsSpan(prefix.Length), out int day))
+            {
+                result.Add(day);
+            }
+        }
+        return result;
+    }
+
     public static string FormatKey(int year, int month, int day) => $"{year:D4}-{month:D2}-{day:D2}";
 
     public void SetNote(string dateKey, string? text)

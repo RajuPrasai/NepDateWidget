@@ -231,7 +231,7 @@
                                 <Condition Property="IsSelected" Value="False" />
                             </MultiTrigger.Conditions>
                             <Setter TargetName="TabBg" Property="Background"
-                                    Value="{DynamicResource WidgetHoverBrush}" />
+                                    Value="{DynamicResource WidgetAccentBrushLight}" />
                         </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
