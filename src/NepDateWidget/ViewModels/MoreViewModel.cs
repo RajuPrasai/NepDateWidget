@@ -32,6 +32,8 @@ public sealed class MoreViewModel : ViewModelBase
                 OnPropertyChanged(nameof(IsSubViewReminders));
                 OnPropertyChanged(nameof(IsSubViewCompression));
                 OnPropertyChanged(nameof(IsSubViewResize));
+                OnPropertyChanged(nameof(IsSubViewIdPhoto));
+                OnPropertyChanged(nameof(IsSubViewImageConverter));
                 OnPropertyChanged(nameof(CurrentSubViewTitle));
                 OnPropertyChanged(nameof(CurrentSubViewHelpKey));
             }
@@ -44,6 +46,8 @@ public sealed class MoreViewModel : ViewModelBase
     public bool IsSubViewReminders => _currentSubView == "Reminders";
     public bool IsSubViewCompression => _currentSubView == "Compression";
     public bool IsSubViewResize => _currentSubView == "Resize";
+    public bool IsSubViewIdPhoto => _currentSubView == "IdPhoto";
+    public bool IsSubViewImageConverter => _currentSubView == "ImageConverter";
 
     public string CurrentSubViewTitle => _currentSubView switch
     {
@@ -52,6 +56,8 @@ public sealed class MoreViewModel : ViewModelBase
         "Documents" => DocsHeadingLabel,
         "Compression" => CompressNavLabel,
         "Resize" => ResizeNavLabel,
+        "IdPhoto" => IdPhotoNavLabel,
+        "ImageConverter" => ImageConverterNavLabel,
         _ => _currentSubView ?? string.Empty
     };
 
@@ -62,6 +68,8 @@ public sealed class MoreViewModel : ViewModelBase
         "Documents" => "help.more.documents",
         "Compression" => "help.compress",
         "Resize" => "help.resize",
+        "IdPhoto" => "help.idphoto",
+        "ImageConverter" => "help.imgconv",
         _ => string.Empty
     };
 
@@ -72,6 +80,8 @@ public sealed class MoreViewModel : ViewModelBase
 
     public CompressionViewModel Compression { get; private set; } = null!;
     public ResizeViewModel Resize { get; private set; } = null!;
+    public IdPhotoViewModel IdPhoto { get; private set; } = null!;
+    public ImageConverterViewModel? ImageConverter { get; private set; }
 
     // ── Mode toggle (Documents | Notes | Reminders) ──────────────────────────
     // Kept for cancel-on-navigate logic. Not used by MoreView.xaml directly -
@@ -610,6 +620,8 @@ public sealed class MoreViewModel : ViewModelBase
     public string ToolsHeadingLabel { get; private set; } = string.Empty;
     public string CompressNavLabel { get; private set; } = string.Empty;
     public string ResizeNavLabel { get; private set; } = string.Empty;
+    public string IdPhotoNavLabel { get; private set; } = string.Empty;
+    public string ImageConverterNavLabel { get; private set; } = string.Empty;
 
     public string DocsHeadingLabel { get; private set; } = string.Empty;
     public string NoDocsLabel { get; private set; } = string.Empty;
@@ -627,6 +639,7 @@ public sealed class MoreViewModel : ViewModelBase
     public string DocFieldFileLabel { get; private set; } = string.Empty;
     public string DocFieldNotesLabel { get; private set; } = string.Empty;
     public string DocClearFileLabel { get; private set; } = string.Empty;
+    public string DocDropLabel { get; private set; } = string.Empty;
     public string DocSearchHintLabel { get; private set; } = string.Empty;
     public string DocDuplicateTitleLabel { get; private set; } = string.Empty;
 
@@ -685,7 +698,8 @@ public sealed class MoreViewModel : ViewModelBase
         IDocumentService? documentService = null,
         INepaliDateAdapter? adapter = null,
         IFileTypeService? fileTypeService = null,
-        IJobOrchestrationService? jobOrchestrationService = null)
+        IJobOrchestrationService? jobOrchestrationService = null,
+        IImageConversionService? imageConversionService = null)
     {
         _loc = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _notesService = notesService;
@@ -731,11 +745,17 @@ public sealed class MoreViewModel : ViewModelBase
             CurrentSubView = null;
         });
 
-        // Compression / Resize (optional: may be null when services are unavailable)
+        // Compression / Resize / IdPhoto / ImageConverter sub-ViewModels
+        // IdPhoto is always available; Compression and Resize require file-processing services.
+        IdPhoto = new IdPhotoViewModel(localizationService);
         if (fileTypeService is not null && jobOrchestrationService is not null)
         {
             Compression = new CompressionViewModel(fileTypeService, jobOrchestrationService, localizationService);
             Resize = new ResizeViewModel(fileTypeService, jobOrchestrationService, localizationService);
+        }
+        if (imageConversionService is not null)
+        {
+            ImageConverter = new ImageConverterViewModel(imageConversionService, localizationService);
         }
 
         DeleteNoteCommand = new RelayCommand<string>(DoDeleteNote);
@@ -847,6 +867,8 @@ public sealed class MoreViewModel : ViewModelBase
         RefreshDocuments();
         Compression?.OnLanguageChanged();
         Resize?.OnLanguageChanged();
+        IdPhoto.OnLanguageChanged();
+        ImageConverter?.OnLanguageChanged();
     }
 
     /// <summary>
@@ -944,6 +966,8 @@ public sealed class MoreViewModel : ViewModelBase
         ToolsHeadingLabel = _loc.Get("more.tools_heading");
         CompressNavLabel = _loc.Get("more.compress_label");
         ResizeNavLabel = _loc.Get("more.resize_label");
+        IdPhotoNavLabel = _loc.Get("more.idphoto_label");
+        ImageConverterNavLabel = _loc.Get("more.imgconv_label");
         NoDocsLabel = _loc.Get("docs.no_docs");
         NoDocsHintLabel = _loc.Get("docs.no_docs_hint");
         NoDocsResultsLabel = _loc.Get("docs.no_results");
@@ -959,6 +983,7 @@ public sealed class MoreViewModel : ViewModelBase
         DocFieldFileLabel = _loc.Get("docs.field_file");
         DocFieldNotesLabel = _loc.Get("docs.field_notes");
         DocClearFileLabel = _loc.Get("docs.clear_file");
+        DocDropLabel = _loc.Get("docs.drop_label");
         DocSearchHintLabel = _loc.Get("docs.search_hint");
         DocDuplicateTitleLabel = _loc.Get("docs.duplicate_title");
 
@@ -1006,6 +1031,7 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(ToolsHeadingLabel));
         OnPropertyChanged(nameof(CompressNavLabel));
         OnPropertyChanged(nameof(ResizeNavLabel));
+        OnPropertyChanged(nameof(IdPhotoNavLabel));
         OnPropertyChanged(nameof(NoDocsLabel));
         OnPropertyChanged(nameof(NoDocsHintLabel));
         OnPropertyChanged(nameof(NoDocsResultsLabel));
@@ -1022,6 +1048,7 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(DocFieldFileLabel));
         OnPropertyChanged(nameof(DocFieldNotesLabel));
         OnPropertyChanged(nameof(DocClearFileLabel));
+        OnPropertyChanged(nameof(DocDropLabel));
         OnPropertyChanged(nameof(DocSearchHintLabel));
         OnPropertyChanged(nameof(DocDuplicateTitleLabel));
         OnPropertyChanged(nameof(CurrentSubViewTitle));

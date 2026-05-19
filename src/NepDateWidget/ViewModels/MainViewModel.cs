@@ -502,7 +502,8 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         IAppStateService? appStateService = null,
         IScriptService? scriptService = null,
         IFileTypeService? fileTypeService = null,
-        IJobOrchestrationService? jobOrchestrationService = null)
+        IJobOrchestrationService? jobOrchestrationService = null,
+        IImageConversionService? imageConversionService = null)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
@@ -571,7 +572,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         TextTools = new TextToolsViewModel(localizationService);
         RunBox = new RunBoxViewModel(runHistoryService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly(AppPaths.DefaultShortcutsPath), scriptService);
         About = new AboutViewModel(localizationService);
-        More = new MoreViewModel(localizationService, notesService, reminderService, documentService, adapter: adapter, fileTypeService: fileTypeService, jobOrchestrationService: jobOrchestrationService);
+        More = new MoreViewModel(localizationService, notesService, reminderService, documentService, adapter: adapter, fileTypeService: fileTypeService, jobOrchestrationService: jobOrchestrationService, imageConversionService: imageConversionService);
 
         // When settings are applied from the Settings tab, sync live state
         Settings.SettingsApplied += (_, _) => SyncFromSettings();

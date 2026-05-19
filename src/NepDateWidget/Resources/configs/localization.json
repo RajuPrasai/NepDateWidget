@@ -1548,8 +1548,8 @@
     "ne": "कागजात सम्पादन"
   },
   "docs.browse": {
-    "en": "Browse",
-    "ne": "ब्राउज"
+    "en": "or click to browse",
+    "ne": "वा क्लिक गरेर खोज्नुहोस्"
   },
   "docs.open": {
     "en": "Open file",
@@ -1594,6 +1594,10 @@
   "docs.clear_file": {
     "en": "Remove file",
     "ne": "फाइल हटाउनुहोस्"
+  },
+  "docs.drop_label": {
+    "en": "Drop a file here",
+    "ne": "यहाँ फाइल छोड्नुहोस्"
   },
   "docs.search_hint": {
     "en": "Search... or #tag to filter by tag",
@@ -2548,8 +2552,8 @@
     "ne": "TIFF कम्प्रेसन"
   },
   "compress.adv_pdf": {
-    "en": "PDF",
-    "ne": "PDF"
+    "en": "PDF — slider controls compression level and image quality",
+    "ne": "PDF — स्लाइडरले कम्प्रेसन स्तर र छवि गुणस्तर नियन्त्रण गर्छ"
   },
   "compress.adv_linearize": {
     "en": "Linearize (optimize for web / fast open)",
@@ -2698,5 +2702,223 @@
   "help.resize.why3": {
     "en": "Supports JPEG, PNG, WebP, GIF, and TIFF formats.",
     "ne": "JPEG, PNG, WebP, GIF र TIFF ढाँचाहरू समर्थन गर्छ।"
-  }
+  },
+  "more.idphoto_label": {
+    "en": "ID Photo",
+    "ne": "आईडी फोटो"
+  },
+  "idphoto.drop_label": {
+    "en": "Drop photo here",
+    "ne": "यहाँ फोटो राख्नुहोस्"
+  },
+  "idphoto.browse": {
+    "en": "Click to browse",
+    "ne": "ब्राउज गर्न क्लिक गर्नुहोस्"
+  },
+  "idphoto.format_section": {
+    "en": "Format",
+    "ne": "ढाँचा"
+  },
+  "idphoto.preset_passport": {
+    "en": "Passport / MRP  35×45 mm",
+    "ne": "राहदानी / MRP  ३५×४५ मि.मि."
+  },
+  "idphoto.preset_auto": {
+    "en": "Auto Size  25×30 mm",
+    "ne": "अटो साइज  २५×३० मि.मि."
+  },
+  "idphoto.preset_stamp": {
+    "en": "Stamp Size  20×25 mm",
+    "ne": "स्ट्याम्प साइज  २०×२५ मि.मि."
+  },
+  "idphoto.preset_usdv": {
+    "en": "US / DV  51×51 mm",
+    "ne": "अमेरिकी / DV  ५१×५१ मि.मि."
+  },
+  "idphoto.preset_custom": {
+    "en": "Custom",
+    "ne": "कस्टम"
+  },
+  "idphoto.width_label": {
+    "en": "W",
+    "ne": "चौ."
+  },
+  "idphoto.height_label": {
+    "en": "H",
+    "ne": "उ."
+  },
+  "idphoto.sheet_section": {
+    "en": "Print Sheet Size",
+    "ne": "प्रिन्ट पाना आकार"
+  },
+  "idphoto.sheet_a4": {
+    "en": "A4  210×297 mm",
+    "ne": "A4  २१०×२९७ मि.मि."
+  },
+  "idphoto.sheet_4r": {
+    "en": "4R  10×15 cm",
+    "ne": "4R  १०×१५ से.मि."
+  },
+  "idphoto.sheet_3r": {
+    "en": "3R  9×13 cm",
+    "ne": "3R  ९×१३ से.मि."
+  },
+  "idphoto.sheet_5r": {
+    "en": "5R  13×18 cm",
+    "ne": "5R  १३×१८ से.मि."
+  },
+  "idphoto.sheet_custom": {
+    "en": "Custom",
+    "ne": "आफ्नो"
+  },
+  "idphoto.unit_label": {
+    "en": "Unit",
+    "ne": "एकाइ"
+  },
+  "idphoto.sheet_dims_label": {
+    "en": "Paper Size",
+    "ne": "कागज साइज"
+  },
+  "idphoto.sheet_width_label": {
+    "en": "W",
+    "ne": "चौ"
+  },
+  "idphoto.sheet_height_label": {
+    "en": "H",
+    "ne": "उ"
+  },
+  "idphoto.layout_label": {
+    "en": "Layout",
+    "ne": "लेआउट"
+  },
+  "idphoto.orientation_label": {
+    "en": "Orientation",
+    "ne": "दिशा"
+  },
+  "idphoto.auto_label": {
+    "en": "Auto",
+    "ne": "स्वत:"
+  },
+  "idphoto.portrait": {
+    "en": "Portrait",
+    "ne": "खडा"
+  },
+  "idphoto.landscape": {
+    "en": "Landscape",
+    "ne": "आडा"
+  },
+  "idphoto.cols_label": {
+    "en": "Columns",
+    "ne": "स्तम्भ"
+  },
+  "idphoto.rows_label": {
+    "en": "Rows",
+    "ne": "पंक्ति"
+  },
+  "idphoto.crop_hint": {
+    "en": "Drag to reposition · Scroll to resize",
+    "ne": "तान्नुहोस् · स्क्रोल = साइज"
+  },
+  "idphoto.crop_square": {
+    "en": "Square",
+    "ne": "वर्ग"
+  },
+  "idphoto.crop_circle": {
+    "en": "Circle",
+    "ne": "वृत्त"
+  },
+  "idphoto.save_photo": {
+    "en": "Save Photo",
+    "ne": "फोटो सेभ गर्नुहोस्"
+  },
+  "idphoto.save_sheet": {
+    "en": "Save Print Sheet",
+    "ne": "प्रिन्ट शीट सेभ गर्नुहोस्"
+  },
+  "idphoto.processing": {
+    "en": "Processing...",
+    "ne": "प्रक्रिया हुँदैछ..."
+  },
+  "idphoto.done_photo": {
+    "en": "Photo saved",
+    "ne": "फोटो सेभ भयो"
+  },
+  "idphoto.done_sheet": {
+    "en": "Print sheet saved",
+    "ne": "प्रिन्ट शीट सेभ भयो"
+  },
+  "idphoto.reset": {
+    "en": "Reset",
+    "ne": "हटाउनुहोस्"
+  },
+  "idphoto.no_photo": {
+    "en": "No photo loaded",
+    "ne": "कुनै फोटो लोड भएको छैन"
+  },
+  "idphoto.invalid_hex": {
+    "en": "Invalid color — use #RRGGBB",
+    "ne": "अमान्य रङ — #RRGGBB प्रयोग गर्नुहोस्"
+  },
+  "idphoto.invalid_dims": {
+    "en": "Width and height must be positive numbers",
+    "ne": "चौडाइ र उचाइ धनात्मक संख्या हुनुपर्छ"
+  },
+  "help.idphoto.title": {
+    "en": "ID / Passport Photo",
+    "ne": "आईडी / राहदानी फोटो"
+  },
+  "help.idphoto.desc": {
+    "en": "Crop and resize any photo to standard ID or passport dimensions.",
+    "ne": "कुनै पनि फोटोलाई मानक आईडी वा राहदानी आयाममा क्रप र Resize गर्नुहोस्।"
+  },
+  "help.idphoto.how1": {
+    "en": "Drop a photo or click to browse, then drag the crop frame to position the face.",
+    "ne": "फोटो राख्नुहोस् वा ब्राउज गर्न क्लिक गर्नुहोस्, अनि अनुहार मिलाउन फ्रेम तान्नुहोस्।"
+  },
+  "help.idphoto.how2": {
+    "en": "Choose a format preset (Passport, Auto, Stamp, or US/DV) or enter custom mm dimensions.",
+    "ne": "ढाँचा प्रिसेट छान्नुहोस् (राहदानी, अटो, स्ट्याम्प, वा US/DV) वा कस्टम मि.मि. आयाम लेख्नुहोस्।"
+  },
+  "help.idphoto.how3": {
+    "en": "Save Photo exports a single JPEG. Save Print Sheet tiles multiple copies on an A4 page.",
+    "ne": "Save Photo ले एउटा JPEG निर्यात गर्छ। Save Print Sheet ले A4 पेजमा धेरै प्रतिहरू राख्छ।"
+  },
+  "help.idphoto.why1": {
+    "en": "Enable Replace Background to flood-fill the photo background with white, blue, or a custom color.",
+    "ne": "Replace Background सक्षम गरेर फोटोको पृष्ठभूमि सेतो, नीलो, वा कस्टम रङले भर्नुहोस्।"
+  },
+  "help.idphoto.why2": {
+    "en": "Output is always 300 DPI JPEG for print-ready quality.",
+    "ne": "आउटपुट सधैं 300 DPI JPEG हुन्छ — प्रिन्टका लागि तयार।"
+  },
+  "more.imgconv_label": { "en": "Convert", "ne": "रूपान्तरण" },
+  "imgconv.drop": { "en": "Drop images or folders here", "ne": "यहाँ तस्बिर वा फोल्डरहरू छोड्नुहोस्" },
+  "imgconv.browse": { "en": "or click to browse files", "ne": "वा फाइल ब्राउज गर्न क्लिक गर्नुहोस्" },
+  "imgconv.format_section": { "en": "Output format", "ne": "आउटपुट ढाँचा" },
+  "imgconv.quality_section": { "en": "Quality", "ne": "गुणस्तर" },
+  "imgconv.level_smallest": { "en": "Smallest", "ne": "सबैभन्दा सानो" },
+  "imgconv.level_low": { "en": "Low", "ne": "कम" },
+  "imgconv.level_balanced": { "en": "Balanced", "ne": "सन्तुलित" },
+  "imgconv.level_high": { "en": "High", "ne": "उच्च" },
+  "imgconv.level_best": { "en": "Best", "ne": "सर्वोत्तम" },
+  "imgconv.strip_meta": { "en": "Strip metadata", "ne": "मेटाडेटा हटाउनुहोस्" },
+  "imgconv.compress_toggle": { "en": "Apply compression", "ne": "कम्प्रेसन लागू गर्ने" },
+  "imgconv.convert_btn": { "en": "Convert", "ne": "रूपान्तरण गर्नुहोस्" },
+  "imgconv.cancel_btn": { "en": "Cancel", "ne": "रद्द गर्नुहोस्" },
+  "imgconv.converting": { "en": "Converting", "ne": "रूपान्तरण हुँदैछ" },
+  "imgconv.progress_of": { "en": "of", "ne": "मध्ये" },
+  "imgconv.remove_file": { "en": "Remove", "ne": "हटाउनुहोस्" },
+  "imgconv.summary_done_one": { "en": "1 file converted — new size is {0}", "ne": "१ फाइल रूपान्तरण भयो — नयाँ आकार {0}" },
+  "imgconv.summary_done_many": { "en": "{0} files converted — total size is {1}", "ne": "{0} फाइलहरू रूपान्तरण भए — कुल आकार {1}" },
+  "imgconv.summary_partial": { "en": "{0} done, {1} failed — total size is {2}", "ne": "{0} सफल, {1} असफल — कुल आकार {2}" },
+  "imgconv.summary_seg_size": { "en": "total {0}", "ne": "कुल {0}" },
+  "imgconv.summary_seg_files_one": { "en": "1 file done", "ne": "१ फाइल सकियो" },
+  "imgconv.summary_seg_files_many": { "en": "{0} files done", "ne": "{0} फाइलहरू सकिए" },
+  "imgconv.summary_seg_partial": { "en": "{0} done, {1} failed", "ne": "{0} सफल, {1} असफल" },
+  "help.imgconv.title": { "en": "Image Converter", "ne": "तस्बिर परिवर्तक" },
+  "help.imgconv.desc": { "en": "Convert images between JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO and TGA. RAW camera files and HEIC are accepted as input.", "ne": "JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO र TGA बीच तस्बिरहरू रूपान्तरण गर्नुहोस्।" },
+  "help.imgconv.how1": { "en": "Drop one or more images or click to browse. All major formats are accepted including RAW camera files and HEIC.", "ne": "एक वा बढी तस्बिरहरू थप्नुहोस्। RAW र HEIC सहित सबै प्रमुख ढाँचाहरू स्वीकार्य छन्।" },
+  "help.imgconv.how2": { "en": "Select the output format using the format chips, adjust quality if needed, then click Convert.", "ne": "आउटपुट ढाँचा छान्नुहोस्, गुणस्तर मिलाउनुहोस् र Convert क्लिक गर्नुहोस्।" },
+  "help.imgconv.how3": { "en": "Choose an output folder when prompted. Converted files are saved there with the new extension.", "ne": "आउटपुट फोल्डर छान्नुस्। रूपान्तरित फाइलहरू नयाँ एक्सटेन्सनसहित त्यहाँ सेभ हुन्छन्।" },
+  "help.imgconv.why1": { "en": "Quality slider applies only to lossy formats (JPEG, WebP, AVIF). Higher means better quality and larger file size.", "ne": "गुणस्तर स्लाइडर केवल lossy ढाँचाहरू (JPEG, WebP, AVIF) का लागि लागू हुन्छ।" }
 }

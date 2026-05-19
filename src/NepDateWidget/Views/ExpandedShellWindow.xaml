@@ -253,7 +253,7 @@
                             Margin="0,0,4,0">
                         <Button.Style>
                             <Style TargetType="Button">
-                                <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
                                 <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
                                 <Setter Property="Template">
                                     <Setter.Value>
@@ -293,7 +293,7 @@
                             Margin="0,0,4,0">
                         <Button.Style>
                             <Style TargetType="Button">
-                                <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
                                 <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
                                 <Setter Property="Template">
                                     <Setter.Value>
@@ -333,7 +333,7 @@
                             Margin="0,0,4,0">
                         <Button.Style>
                             <Style TargetType="Button">
-                                <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
                                 <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
                                 <Setter Property="Template">
                                     <Setter.Value>
@@ -372,7 +372,7 @@
                             Cursor="Hand">
                         <Button.Style>
                             <Style TargetType="Button">
-                                <Setter Property="Background" Value="{DynamicResource WidgetInputBrush}" />
+                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
                                 <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
                                 <Setter Property="Template">
                                     <Setter.Value>

@@ -70,6 +70,7 @@
 		<PackageReference Include="NepDate" Version="2.0.7" />
 		<PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.*" />
 		<PackageReference Include="QPdfNet" Version="1.5.*" />
+		<PackageReference Include="PDFsharp" Version="6.*" />
 	</ItemGroup>
 
 	<!-- Embedded font families. All fonts are bundled (OFL licensed) so they work regardless of OS install state.

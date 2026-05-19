@@ -265,6 +265,99 @@ public sealed class StartupCompositionTests
         Assert.Null(vm.More.Resize);
     }
 
+    [Fact]
+    public void ImageConversionService_CanBeConstructed()
+    {
+        var svc = new ImageConversionService();
+        Assert.NotNull(svc);
+    }
+
+    [Fact]
+    public void ImageConverterViewModel_CanBeConstructed_WithRealService()
+    {
+        var svc = new ImageConversionService();
+        var vm  = new ImageConverterViewModel(svc, MakeLoc());
+        Assert.NotNull(vm);
+        Assert.False(vm.HasFiles);
+        Assert.False(vm.IsJobRunning);
+        Assert.True(vm.IsFormatJpeg);   // default format is JPEG
+        Assert.True(vm.ShowQuality);    // JPEG shows quality
+    }
+
+    [Fact]
+    public void MoreViewModel_WithImageConversionService_ExposesNonNullImageConverter()
+    {
+        var svc = new ImageConversionService();
+        var vm  = new MoreViewModel(MakeLoc(), imageConversionService: svc);
+        Assert.NotNull(vm.ImageConverter);
+    }
+
+    [Fact]
+    public void MoreViewModel_WithoutImageConversionService_ImageConverterIsNull()
+    {
+        var vm = new MoreViewModel(MakeLoc());
+        Assert.Null(vm.ImageConverter);
+    }
+
+    [Fact]
+    public void NavigateToImageConverter_FromGrid_SetsSubView()
+    {
+        var svc = new ImageConversionService();
+        var vm  = new MoreViewModel(MakeLoc(), imageConversionService: svc);
+
+        Assert.True(vm.IsGridVisible);
+
+        vm.NavigateToCommand.Execute("ImageConverter");
+
+        Assert.False(vm.IsGridVisible);
+        Assert.Equal("ImageConverter", vm.CurrentSubView);
+        Assert.True(vm.IsSubViewImageConverter);
+    }
+
+    [Fact]
+    public void ImageConverterViewModel_SelectFormat_UpdatesFlags()
+    {
+        var svc = new ImageConversionService();
+        var vm  = new ImageConverterViewModel(svc, MakeLoc());
+
+        vm.SelectFormatCommand.Execute("png");
+
+        Assert.True(vm.IsFormatPng);
+        Assert.False(vm.IsFormatJpeg);
+        Assert.False(vm.ShowQuality);   // PNG is lossless — no quality slider
+    }
+
+    [Fact]
+    public void ImageConverterViewModel_SelectFormat_WebP_ShowsQuality()
+    {
+        var svc = new ImageConversionService();
+        var vm  = new ImageConverterViewModel(svc, MakeLoc());
+
+        vm.SelectFormatCommand.Execute("webp");
+
+        Assert.True(vm.IsFormatWebp);
+        Assert.True(vm.ShowQuality);
+    }
+
+    [Fact]
+    public void MainViewModel_WithImageConversionService_WiresItToMore()
+    {
+        var adapter      = new FakeNepaliDateAdapter();
+        var calendar     = new CalendarService(adapter);
+        var conversion   = new ConversionService(adapter);
+        var loc          = new LocalizationService(TestPaths.DefaultLocalizationPath);
+        var imgConv      = new ImageConversionService();
+
+        var vm = new MainViewModel(
+            new FakeSettingsService(),
+            calendar, loc, conversion,
+            new FakeThemeService(),
+            new FakeAutoStartService(),
+            imageConversionService: imgConv);
+
+        Assert.NotNull(vm.More.ImageConverter);
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static LocalizationService MakeLoc()
