@@ -22,12 +22,34 @@ public sealed class FileTypeService : IFileTypeService
         { ".heif", "image/heif" },
         { ".avif", "image/avif" },
         { ".pdf",  "application/pdf" },
+        // RAW camera formats
+        { ".arw", "image/x-sony-arw"      },
+        { ".cr2", "image/x-canon-cr2"     },
+        { ".cr3", "image/x-canon-cr3"     },
+        { ".dng", "image/x-adobe-dng"     },
+        { ".nef", "image/x-nikon-nef"     },
+        { ".orf", "image/x-olympus-orf"   },
+        { ".raf", "image/x-fuji-raf"      },
+        { ".rw2", "image/x-panasonic-rw2" },
+        { ".erf", "image/x-epson-erf"     },
+        { ".pef", "image/x-pentax-pef"    },
+        { ".x3f", "image/x-sigma-x3f"     },
     };
 
     private static readonly HashSet<string> _imageMimes = new(StringComparer.OrdinalIgnoreCase)
     {
         "image/jpeg", "image/png", "image/webp", "image/gif",
         "image/tiff", "image/bmp", "image/heif", "image/avif",
+    };
+
+    // RAW MIME types are intentionally NOT in _imageMimes — they route through
+    // FileCategory.Raw so ImageToolsViewModel can apply the correct smart defaults.
+    private static readonly HashSet<string> _rawMimes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/x-sony-arw", "image/x-canon-cr2", "image/x-canon-cr3",
+        "image/x-adobe-dng", "image/x-nikon-nef", "image/x-olympus-orf",
+        "image/x-fuji-raf", "image/x-panasonic-rw2", "image/x-epson-erf",
+        "image/x-pentax-pef", "image/x-sigma-x3f",
     };
 
     public string? GetMimeType(string extension)
@@ -45,6 +67,11 @@ public sealed class FileTypeService : IFileTypeService
         if (_imageMimes.Contains(mimeType))
         {
             return FileCategory.Image;
+        }
+
+        if (_rawMimes.Contains(mimeType))
+        {
+            return FileCategory.Raw;
         }
 
         if (string.Equals(mimeType, "application/pdf", StringComparison.OrdinalIgnoreCase))

@@ -6,6 +6,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using static NepDateWidget.Helpers.FileFormatHelper;
 
 namespace NepDateWidget.ViewModels;
 
@@ -538,19 +539,5 @@ public sealed class ImageConverterViewModel : ViewModelBase
         OnPropertyChanged(nameof(ProgressTitleLabel));
         OnPropertyChanged(nameof(ProgressLabel));
         OnPropertyChanged(nameof(ConvertButtonLabel));
-    }
-
-    private static long GetFileSizeBytes(string path)
-    {
-        try { return new FileInfo(path).Length; } catch { return 0; }
-    }
-
-    private static string FormatBytes(long bytes)
-    {
-        if (bytes <= 0) return "0 B";
-        if (bytes < 1_024) return $"{bytes} B";
-        if (bytes < 1_048_576) return $"{bytes / 1_024.0:F1} KB";
-        if (bytes < 1_073_741_824) return $"{bytes / 1_048_576.0:F1} MB";
-        return $"{bytes / 1_073_741_824.0:F2} GB";
     }
 }

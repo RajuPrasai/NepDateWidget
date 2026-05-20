@@ -15,7 +15,9 @@ public sealed class ImageConversionService : IImageConversionService
         string outputPath,
         string targetExtension,
         int qualityLevel,
-        bool stripMetadata)
+        bool stripMetadata,
+        uint? targetWidth = null,
+        uint? targetHeight = null)
     {
         try
         {
@@ -38,6 +40,9 @@ public sealed class ImageConversionService : IImageConversionService
 
             if (stripMetadata)
                 image.Strip();
+
+            // Apply resize before encoding if either dimension is specified.
+            ApplyResize(image, targetWidth, targetHeight);
 
             var format = GetFormat(ext);
             image.Format = format;
@@ -82,4 +87,32 @@ public sealed class ImageConversionService : IImageConversionService
         "tga"           => MagickFormat.Tga,
         _               => MagickFormat.Jpeg,
     };
+
+    /// <summary>
+    /// Resizes the image proportionally if one or both target dimensions are provided.
+    /// One dimension: scales to that dimension preserving aspect ratio.
+    /// Both dimensions: resizes to exact size (may change aspect ratio).
+    /// Neither: no-op.
+    /// </summary>
+    private static void ApplyResize(MagickImage image, uint? targetWidth, uint? targetHeight)
+    {
+        if (targetWidth is null && targetHeight is null)
+            return;
+
+        var geometry = new MagickGeometry(
+            targetWidth ?? 0,
+            targetHeight ?? 0);
+
+        // If only one dimension is given, preserve aspect ratio by setting IgnoreAspectRatio=false.
+        if (targetWidth is null || targetHeight is null)
+        {
+            geometry.IgnoreAspectRatio = false;
+        }
+        else
+        {
+            geometry.IgnoreAspectRatio = true;
+        }
+
+        image.Resize(geometry);
+    }
 }

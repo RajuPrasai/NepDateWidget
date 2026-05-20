@@ -11,9 +11,10 @@
   <CubicEase x:Key="SmoothEase" EasingMode="EaseInOut" />
 
   <!-- Title-bar caption icons -->
-  <StreamGeometry x:Key="IconChevronDown">M3,6 L8,11 L13,6</StreamGeometry>
-  <StreamGeometry x:Key="IconWindowClose">M3,3 L13,13 M13,3 L3,13</StreamGeometry>
-  <StreamGeometry x:Key="IconWindowMinimize">M3,8 L13,8</StreamGeometry>
+  <StreamGeometry x:Key="IconChevronDown">M6 9l6 6l6 -6</StreamGeometry>
+  <StreamGeometry x:Key="IconWindowClose">M18 6l-12 12 M6 6l12 12</StreamGeometry>
+  <StreamGeometry x:Key="IconWindowMinimize">M5 12l14 0</StreamGeometry>
+  <StreamGeometry x:Key="IconChevronLeft">M15 6l-6 6l6 6</StreamGeometry>
 
   <!-- ══════════════════════════════════════════════════════════════════
          Context Menu - chrome and items.
@@ -195,7 +196,7 @@
   <Style x:Key="WidgetTabItemStyle" TargetType="TabItem">
     <Setter Property="Background" Value="Transparent" />
     <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
-    <Setter Property="FontSize" Value="13" />
+    <Setter Property="FontSize" Value="12.5" />
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="FocusVisualStyle" Value="{x:Null}" />
     <Setter Property="Template">
@@ -266,8 +267,8 @@
   <Style x:Key="FieldLabel" TargetType="TextBlock">
     <Setter Property="FontSize"   Value="12" />
     <Setter Property="FontWeight" Value="SemiBold" />
-    <Setter Property="Opacity" Value="0.9" />
-    <Setter Property="Foreground" Value="{DynamicResource WidgetMutedForegroundBrush}" />
+    <Setter Property="Opacity" Value="0.8" />
+    
   </Style>
 
   <!-- iOS-style toggle CheckBox - use everywhere instead of the default WPF CheckBox -->
@@ -344,44 +345,103 @@
     <Setter Property="ToolTip"         Value="Help" />
     <Setter Property="Template">
       <Setter.Value>
+        <!--
+          WARNING: The ScaleTransform below MUST be named 'BadgeScale' and must NOT be replaced with a TransformGroup or other type.
+          All Storyboard animations below target this transform directly for runtime safety.
+          If you change the template structure, update all TargetName references accordingly.
+        -->
         <ControlTemplate TargetType="Button">
-          <Grid x:Name="Root" Width="20" Height="20" Opacity="0.50"
-                          ClipToBounds="True">
-            <Border CornerRadius="99"
-                                BorderBrush="{TemplateBinding Foreground}"
-                                BorderThickness="1"
-                                Background="Transparent" />
-            <TextBlock Text="𝑖"
-                                   FontFamily="Monotype Corsiva,Palatino Linotype,Georgia"
-                                   FontSize="16"
-                                   LineHeight="16"
-                                   LineStackingStrategy="BlockLineHeight"
-                                   Foreground="{TemplateBinding Foreground}"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Margin="0,2,0,0" />
+          <Grid x:Name="Root" Width="20" Height="20" Opacity="0.8"
+                RenderTransformOrigin="0.5,0.5">
+            <Grid.RenderTransform>
+              <ScaleTransform x:Name="BadgeScale" ScaleX="1" ScaleY="1" />
+            </Grid.RenderTransform>
+            <Border CornerRadius="6"
+                    BorderBrush="{TemplateBinding Foreground}"
+                    BorderThickness="1"
+                    Background="Transparent" />
+            <Viewbox Stretch="Uniform" Width="14" Height="14"
+                     HorizontalAlignment="Center" VerticalAlignment="Center">
+              <Canvas Width="24" Height="24">
+                    <Path Data="M8 8a3.5 3 0 0 1 3.5 -3h1a3.5 3 0 0 1 3.5 3a3 3 0 0 1 -2 3a3 4 0 0 0 -2 4"
+                      Fill="Transparent"
+                      Stroke="{TemplateBinding Foreground}"
+                      StrokeThickness="2"
+                      StrokeLineJoin="Round"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round" />
+                    <Path Data="M12 19l0 .01"
+                      Fill="Transparent"
+                      Stroke="{TemplateBinding Foreground}"
+                      StrokeThickness="2"
+                      StrokeLineJoin="Round"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round" />
+              </Canvas>
+            </Viewbox>
+            <!-- Fallback visual if SVG fails: simple ellipse -->
+            <Ellipse x:Name="FallbackEllipse" Width="10" Height="10" Fill="Gray" Visibility="Collapsed" />
           </Grid>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Trigger.EnterActions>
-                <BeginStoryboard>
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="1.0" Duration="0:0:0.10" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.EnterActions>
-              <Trigger.ExitActions>
-                <BeginStoryboard>
-                  <Storyboard>
-                    <DoubleAnimation Storyboard.TargetName="Root"
-                                                         Storyboard.TargetProperty="Opacity"
-                                                         To="0.50" Duration="0:0:0.15" />
-                  </Storyboard>
-                </BeginStoryboard>
-              </Trigger.ExitActions>
-            </Trigger>
+            <!-- Animate Opacity and Scale on hover/click, targeting BadgeScale directly for safety -->
+            <EventTrigger RoutedEvent="Mouse.MouseEnter">
+              <BeginStoryboard>
+                <Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="Root"
+                                   Storyboard.TargetProperty="Opacity"
+                                   To="1" Duration="0:0:0.1" />
+                  <DoubleAnimation Storyboard.TargetName="BadgeScale"
+                                   Storyboard.TargetProperty="ScaleX"
+                                   To="1.15" Duration="0:0:0.1" />
+                  <DoubleAnimation Storyboard.TargetName="BadgeScale"
+                                   Storyboard.TargetProperty="ScaleY"
+                                   To="1.15" Duration="0:0:0.1" />
+                </Storyboard>
+              </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="Mouse.MouseLeave">
+              <BeginStoryboard>
+                <Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="Root"
+                                   Storyboard.TargetProperty="Opacity"
+                                   To="0.8" Duration="0:0:0.12" />
+                  <DoubleAnimation Storyboard.TargetName="BadgeScale"
+                                   Storyboard.TargetProperty="ScaleX"
+                                   To="1" Duration="0:0:0.12" />
+                  <DoubleAnimation Storyboard.TargetName="BadgeScale"
+                                   Storyboard.TargetProperty="ScaleY"
+                                   To="1" Duration="0:0:0.12" />
+                </Storyboard>
+              </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="UIElement.PreviewMouseLeftButtonDown">
+              <BeginStoryboard>
+                <Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="BadgeScale"
+                                   Storyboard.TargetProperty="ScaleX"
+                                   To="0.88" Duration="0:0:0.07" />
+                  <DoubleAnimation Storyboard.TargetName="BadgeScale"
+                                   Storyboard.TargetProperty="ScaleY"
+                                   To="0.88" Duration="0:0:0.07" />
+                </Storyboard>
+              </BeginStoryboard>
+            </EventTrigger>
+            <EventTrigger RoutedEvent="UIElement.PreviewMouseLeftButtonUp">
+              <BeginStoryboard>
+                <Storyboard>
+                  <DoubleAnimation Storyboard.TargetName="BadgeScale"
+                                   Storyboard.TargetProperty="ScaleX"
+                                   To="1.15" Duration="0:0:0.08" />
+                  <DoubleAnimation Storyboard.TargetName="BadgeScale"
+                                   Storyboard.TargetProperty="ScaleY"
+                                   To="1.15" Duration="0:0:0.08" />
+                </Storyboard>
+              </BeginStoryboard>
+            </EventTrigger>
+            <!-- Defensive: If SVG fails, show fallback ellipse -->
+            <DataTrigger Binding="{Binding ActualWidth, RelativeSource={RelativeSource Self}}" Value="0">
+              <Setter TargetName="FallbackEllipse" Property="Visibility" Value="Visible" />
+            </DataTrigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
@@ -400,7 +460,7 @@
     <Setter Property="FontSize"        Value="12" />
     <Setter Property="FontWeight"      Value="SemiBold" />
     <Setter Property="Height"          Value="36" />
-    <Setter Property="Padding"         Value="12,0" />
+    <Setter Property="Padding"         Value="8,0" />
     <Setter Property="Cursor"          Value="Hand" />
     <Setter Property="HorizontalContentAlignment" Value="Center" />
     <Setter Property="Template">
@@ -417,19 +477,21 @@
             </Border>
           </Grid>
           <ControlTemplate.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
-            </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-              <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
-            </Trigger>
             <Trigger Property="IsEnabled" Value="False">
               <Setter TargetName="Root" Property="Opacity" Value="0.4" />
+            </Trigger>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Root" Property="Opacity" Value="0.8" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+
+  <Style x:Key="AccentButtonSm" TargetType="Button" BasedOn="{StaticResource AccentButton}">
+    <Setter Property="Height"  Value="32" />
+    <Setter Property="Padding" Value="12,0" />
   </Style>
 
   <!-- Secondary (cancel / copy) button -->
@@ -450,18 +512,158 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="5"
+                            CornerRadius="6"
                             Padding="{TemplateBinding Padding}">
             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
           </Border>
           <ControlTemplate.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+              <Setter TargetName="Bd" Property="Opacity" Value="0.4" />
+            </Trigger>
             <Trigger Property="IsMouseOver" Value="True">
-              <Setter TargetName="Bd" Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
+              <Setter TargetName="Bd" Property="Opacity" Value="0.8" />
             </Trigger>
           </ControlTemplate.Triggers>
         </ControlTemplate>
       </Setter.Value>
     </Setter>
+  </Style>
+
+  <!-- ── PillButton: transparent mode-selector / tab pill ─────────── -->
+  <Style x:Key="PillButton" TargetType="Button">
+    <Setter Property="Background"      Value="Transparent" />
+    <Setter Property="BorderBrush"     Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+    <Setter Property="FontSize"        Value="12" />
+    <Setter Property="Height"          Value="28" />
+    <Setter Property="Padding"         Value="14,0" />
+    <Setter Property="Cursor"          Value="Hand" />
+    <Setter Property="Opacity"         Value="0.55" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="5"
+                  Padding="{TemplateBinding Padding}">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style x:Key="PillButtonSm" TargetType="Button" BasedOn="{StaticResource PillButton}">
+    <Setter Property="Padding" Value="10,0" />
+  </Style>
+
+  <!-- ── DirButton: bordered browse/action button ────────────────── -->
+  <Style x:Key="DirButton" TargetType="Button">
+    <Setter Property="Background"      Value="Transparent" />
+    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+    <Setter Property="BorderThickness" Value="0.7" />
+    <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
+    <Setter Property="FontSize"        Value="12" />
+    <Setter Property="FontWeight"      Value="SemiBold" />
+    <Setter Property="Height"          Value="36" />
+    <Setter Property="Padding"         Value="8,0" />
+    <Setter Property="Cursor"          Value="Hand" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="Bd"
+                  Background="{TemplateBinding Background}"
+                  BorderBrush="{TemplateBinding BorderBrush}"
+                  BorderThickness="{TemplateBinding BorderThickness}"
+                  CornerRadius="6"
+                  Padding="{TemplateBinding Padding}">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <ControlTemplate.Triggers>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+    <Style.Triggers>
+      <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
+      </Trigger>
+    </Style.Triggers>
+  </Style>
+
+  <Style x:Key="DirButtonSm" TargetType="Button" BasedOn="{StaticResource DirButton}">
+    <Setter Property="Height" Value="32" />
+  </Style>
+
+  <!-- ── SectionLabel: 14pt semibold heading for card sections ─────── -->
+  <Style x:Key="SectionLabel" TargetType="TextBlock">
+    <Setter Property="FontSize"   Value="14" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+    <Setter Property="Margin"     Value="0,0,0,8" />
+  </Style>
+
+  <!-- ── CardPanel: standard section card border ───────────────────── -->
+  <Style x:Key="CardPanel" TargetType="Border">
+    <Setter Property="Background"      Value="{DynamicResource WidgetBackgroundBrush}" />
+    <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
+    <Setter Property="BorderThickness" Value="0.7" />
+    <Setter Property="CornerRadius"    Value="8" />
+    <Setter Property="Padding"         Value="12,12" />
+    <Setter Property="Margin"          Value="0,0,0,8" />
+  </Style>
+
+  <!-- ── LevelLabelStyle: small muted quality-level label ──────────── -->
+  <Style x:Key="LevelLabelStyle" TargetType="TextBlock">
+    <Setter Property="FontSize"   Value="10.5" />
+    <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+    <Setter Property="Opacity"    Value="0.8" />
+  </Style>
+
+  <!-- ── PopupCloseBtn: 26×26 close button used by popup windows ───── -->
+  <Style x:Key="PopupCloseBtn" TargetType="Button">
+    <Setter Property="Background"      Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Cursor"          Value="Hand" />
+    <Setter Property="Padding"         Value="5,5" />
+    <Setter Property="Width"           Value="26" />
+    <Setter Property="Height"          Value="26" />
+    <Setter Property="Opacity"         Value="0.48" />
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="Button">
+          <Border x:Name="Chrome"
+                  Background="{TemplateBinding Background}"
+                  CornerRadius="6"
+                  Padding="{TemplateBinding Padding}">
+            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+              <Setter TargetName="Chrome" Property="Background"
+                      Value="{DynamicResource WidgetHoverBrush}" />
+            </Trigger>
+          </ControlTemplate.Triggers>
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </Style>
+
+  <!-- ── PopupSectionLabel: 10.5pt muted heading for help/popup sections -->
+  <Style x:Key="PopupSectionLabel" TargetType="TextBlock">
+    <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
+    <Setter Property="FontSize"   Value="10.5" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Opacity"    Value="0.45" />
+    <Setter Property="Margin"     Value="0,0,0,6" />
   </Style>
 
 </ResourceDictionary>

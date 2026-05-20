@@ -517,20 +517,51 @@ public partial class IdPhotoView : UserControl
             return;
         }
 
-        const double step = 1.10;
-        double factor = e.Delta > 0 ? step : 1.0 / step;
-        double aspect = _cropW / _cropH;
+        var (newW, newH) = ComputeZoomedCropSize(_cropW, _cropH, _imgRenderedW, _imgRenderedH, e.Delta);
 
-        // Resize the frame while maintaining its aspect ratio.
-        double newW = _cropW * factor;
+        // Keep the frame centered on its current center, clamped to image bounds.
+        double cx = _cropX + _cropW / 2.0;
+        double cy = _cropY + _cropH / 2.0;
+
+        _cropW = newW;
+        _cropH = newH;
+        // newW <= _imgRenderedW and newH <= _imgRenderedH are guaranteed by ComputeZoomedCropSize,
+        // so _imgRenderedW - newW >= 0 and the Clamp max bound is always >= min bound.
+        _cropX = Math.Clamp(cx - newW / 2.0, _imgOffsetX, _imgOffsetX + (_imgRenderedW - newW));
+        _cropY = Math.Clamp(cy - newH / 2.0, _imgOffsetY, _imgOffsetY + (_imgRenderedH - newH));
+
+        UpdateCropOverlay();
+        PushNormalizedCrop();
+        e.Handled = true;
+    }
+
+    /// <summary>
+    /// Computes a new crop frame size given the current size, the rendered image bounds,
+    /// and a mouse-wheel delta. Maintains the current aspect ratio, enforces a minimum
+    /// short-side size, and guarantees the result fits within the image bounds.
+    ///
+    /// Returned newW is always in (0, imgRenderedW] and newH in (0, imgRenderedH].
+    /// Math.Clamp(x, _imgOffset, _imgOffset + imgRendered - newDim) is therefore safe
+    /// because the max bound is always >= the min bound.
+    /// </summary>
+    internal static (double newW, double newH) ComputeZoomedCropSize(
+        double cropW, double cropH,
+        double imgRenderedW, double imgRenderedH,
+        int delta)
+    {
+        const double step = 1.10;
+        double factor = delta > 0 ? step : 1.0 / step;
+        double aspect = cropW / cropH;
+
+        double newW = cropW * factor;
         double newH = newW / aspect;
 
-        // Cap at image bounds.
-        if (newW > _imgRenderedW) { newW = _imgRenderedW; newH = newW / aspect; }
-        if (newH > _imgRenderedH) { newH = _imgRenderedH; newW = newH * aspect; }
+        // First pass: cap at image bounds.
+        if (newW > imgRenderedW) { newW = imgRenderedW; newH = newW / aspect; }
+        if (newH > imgRenderedH) { newH = imgRenderedH; newW = newH * aspect; }
 
-        // Minimum: short side >= 20% of the rendered shorter dimension, at least 20px.
-        double minShort = Math.Max(20.0, Math.Min(_imgRenderedW, _imgRenderedH) * 0.20);
+        // Enforce minimum short side (>=20% of shorter image dimension, at least 20px).
+        double minShort = Math.Max(20.0, Math.Min(imgRenderedW, imgRenderedH) * 0.20);
         double shortSide = Math.Min(newW, newH);
         if (shortSide < minShort)
         {
@@ -539,17 +570,14 @@ public partial class IdPhotoView : UserControl
             newH *= scale;
         }
 
-        // Keep the frame centered on its current center, clamped to image bounds.
-        double cx = _cropX + _cropW / 2.0;
-        double cy = _cropY + _cropH / 2.0;
+        // Second pass: re-clamp after minShort enforcement. When the crop aspect ratio is
+        // extreme the scale-up above can push one dimension above the image boundary even
+        // though it was within bounds before. Without this second clamp,
+        // Math.Clamp(pos, offset, offset + imgRendered - newDim) receives max < min and
+        // throws ArgumentException.
+        newW = Math.Min(newW, imgRenderedW);
+        newH = Math.Min(newH, imgRenderedH);
 
-        _cropW = newW;
-        _cropH = newH;
-        _cropX = Math.Clamp(cx - newW / 2.0, _imgOffsetX, _imgOffsetX + _imgRenderedW - newW);
-        _cropY = Math.Clamp(cy - newH / 2.0, _imgOffsetY, _imgOffsetY + _imgRenderedH - newH);
-
-        UpdateCropOverlay();
-        PushNormalizedCrop();
-        e.Handled = true;
+        return (newW, newH);
     }
 }

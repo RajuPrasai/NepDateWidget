@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
-        xmlns:cvt="clr-namespace:NepDateWidget.Converters"
         xmlns:views="clr-namespace:NepDateWidget.Views"
         xmlns:h="clr-namespace:NepDateWidget.Helpers"
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
@@ -39,11 +38,6 @@
                             ResizeBorderThickness="6"
                             UseAeroCaptionButtons="False" />
     </shell:WindowChrome.WindowChrome>
-
-    <Window.Resources>
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
-        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
-    </Window.Resources>
 
     <Border x:Name="ShellRoot"
             Background="{DynamicResource WidgetBackgroundBrush}"
@@ -269,9 +263,6 @@
                                                       VerticalAlignment="Center" />
                                             </Border>
                                             <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Opacity" Value="0.7" />
-                                                </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -309,9 +300,6 @@
                                                       VerticalAlignment="Center" />
                                             </Border>
                                             <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Opacity" Value="0.7" />
-                                                </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -349,9 +337,6 @@
                                                       VerticalAlignment="Center" />
                                             </Border>
                                             <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Opacity" Value="0.7" />
-                                                </Trigger>
                                             </ControlTemplate.Triggers>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -428,7 +413,7 @@
                 <TabItem Style="{StaticResource WidgetTabItemStyle}">
                     <TabItem.Header>
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Path Data="{StaticResource IconConverter}"
+                            <Path Data="{StaticResource IconCalendarClock}"
                                   Stroke="{DynamicResource WidgetForegroundBrush}" StrokeThickness="1.1"
                                   Stretch="Uniform" Width="15" Height="15"
                                   VerticalAlignment="Center" />
@@ -515,7 +500,7 @@
             <Button x:Name="RunBoxStrip"
                     Grid.Row="3"
                     Height="28"
-                    Margin="8,4,6,5"
+                    Margin="8,6,6,9"
                     Cursor="Hand"
                     FocusVisualStyle="{x:Null}"
                     Click="RunBoxStrip_Click">
@@ -554,14 +539,14 @@
                                 <TextBlock Grid.Column="2"
                                            Text="{Binding Calendar.FiscalFooterText}"
                                            Foreground="{DynamicResource WidgetForegroundBrush}"
-                                           Opacity="0.5"
+                                           Opacity="0.7"
                                            FontSize="11"
                                            FontWeight="SemiBold"
                                            VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis"
                                            Margin="0,0,8,0" />
                                 <Border Grid.Column="3"
-                                        Background="{DynamicResource WidgetHoverBrush}"
+                                        Background="{DynamicResource WidgetAccentBrushLight}"
                                         CornerRadius="4"
                                         Padding="7,3"
                                         VerticalAlignment="Center">
@@ -577,8 +562,8 @@
                                     </Border.Style>
                                     <TextBlock Text="{Binding RunBox.HotkeyHintLabel}"
                                                Foreground="{DynamicResource WidgetForegroundBrush}"
-                                               Opacity="0.32"
-                                               FontSize="10.5"
+                                               Opacity="0.4"
+                                               FontSize="11"
                                                VerticalAlignment="Center" />
                                 </Border>
                             </Grid>
@@ -587,9 +572,6 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="StripBd" Property="Background"
                                         Value="{DynamicResource WidgetAccentBrushLight}" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="StripBd" Property="Opacity" Value="0.7" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

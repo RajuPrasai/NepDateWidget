@@ -45,7 +45,7 @@ public sealed class StartupCompositionTests
     {
         var image       = new ImageCompressionService();
         var pdf         = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf);
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
         Assert.NotNull(orchestrator);
     }
 
@@ -57,7 +57,7 @@ public sealed class StartupCompositionTests
         var fileType     = new FileTypeService();
         var image        = new ImageCompressionService();
         var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf);
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
 
         var vm = new CompressionViewModel(fileType, orchestrator, MakeLoc());
         Assert.NotNull(vm);
@@ -71,7 +71,7 @@ public sealed class StartupCompositionTests
         var fileType     = new FileTypeService();
         var image        = new ImageCompressionService();
         var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf);
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
 
         var vm = new ResizeViewModel(fileType, orchestrator, MakeLoc());
         Assert.NotNull(vm);
@@ -86,7 +86,7 @@ public sealed class StartupCompositionTests
         var fileType     = new FileTypeService();
         var image        = new ImageCompressionService();
         var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf);
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
 
         var vm = new MoreViewModel(loc, fileTypeService: fileType, jobOrchestrationService: orchestrator);
 
@@ -157,7 +157,7 @@ public sealed class StartupCompositionTests
         var fileType     = new FileTypeService();
         var image        = new ImageCompressionService();
         var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf);
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
         var vm           = new MoreViewModel(loc, fileTypeService: fileType, jobOrchestrationService: orchestrator);
 
         Assert.True(vm.IsGridVisible);
@@ -176,7 +176,7 @@ public sealed class StartupCompositionTests
         var fileType     = new FileTypeService();
         var image        = new ImageCompressionService();
         var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf);
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
         var vm           = new MoreViewModel(loc, fileTypeService: fileType, jobOrchestrationService: orchestrator);
 
         Assert.True(vm.IsGridVisible);
@@ -231,7 +231,7 @@ public sealed class StartupCompositionTests
         var fileType     = new FileTypeService();
         var image        = new ImageCompressionService();
         var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf);
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
 
         var vm = new MainViewModel(
             new FakeSettingsService(),
@@ -367,6 +367,36 @@ public sealed class StartupCompositionTests
         return loc;
     }
 
+    [Fact]
+    public void QrCodeViewModel_CanBeConstructed()
+    {
+        var vm = new QrCodeViewModel(MakeLoc());
+        Assert.NotNull(vm);
+        Assert.True(vm.IsTypeTextUrl);
+        Assert.False(vm.IsTypeWifi);
+        Assert.False(vm.IsTypeVCard);
+    }
+
+    [Fact]
+    public void MoreViewModel_ExposesNonNullQrCode()
+    {
+        var vm = new MoreViewModel(MakeLoc());
+        Assert.NotNull(vm.QrCode);
+    }
+
+    [Fact]
+    public void NavigateToQrCode_FromGrid_SetsSubView()
+    {
+        var vm = new MoreViewModel(MakeLoc());
+        Assert.True(vm.IsGridVisible);
+
+        vm.NavigateToCommand.Execute("QrCode");
+
+        Assert.False(vm.IsGridVisible);
+        Assert.Equal("QrCode", vm.CurrentSubView);
+        Assert.True(vm.IsSubViewQrCode);
+    }
+
     // Minimal fakes needed to construct MainViewModel without WPF runtime.
     // ThemeService.Apply() touches Application.Current.Resources; FakeThemeService
     // is a no-op, mirroring the pattern in MainViewModelTests.
@@ -388,3 +418,4 @@ public sealed class StartupCompositionTests
         public void OverrideHighlightColor(string colorHex) { }
     }
 }
+

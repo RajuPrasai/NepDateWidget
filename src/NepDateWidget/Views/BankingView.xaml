@@ -4,7 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
-             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
              mc:Ignorable="d"
              UseLayoutRounding="True"
              TextOptions.TextFormattingMode="Display"
@@ -12,101 +11,10 @@
              d:DataContext="{d:DesignInstance vm:BankingViewModel}"
              d:Width="380">
 
-    <UserControl.Resources>
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
-        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
-
-        <Style x:Key="PillButton" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderBrush"     Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="Height"          Value="28" />
-            <Setter Property="Padding"         Value="14,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="Opacity"         Value="0.55" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
-                    <Setter Property="Opacity" Value="0.9" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="DirButton" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-            <Setter Property="BorderThickness" Value="0.7" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="FontWeight"      Value="SemiBold" />
-            <Setter Property="Height"          Value="36" />
-            <Setter Property="Padding"         Value="8,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="Bd"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="0.82" Duration="0:0:0.1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard FillBehavior="Stop">
-                                            <DoubleAnimation Storyboard.TargetName="Bd"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             To="1" Duration="0:0:0.15" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-    </UserControl.Resources>
-
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
 
-        <StackPanel Margin="8,4,8,0"
+        <StackPanel Margin="8,8,8,0"
                     MaxWidth="1024">
 
         <!-- Mode selector: Interest | EMI -->
@@ -115,7 +23,7 @@
                 BorderThickness="0.7"
                 CornerRadius="7"
                 Padding="3"
-                Margin="0,0,0,8">
+                Margin="0,0,0,10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -191,7 +99,7 @@
         <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                 BorderThickness="0.7"
                 CornerRadius="8"
-                Padding="12,10">
+                Padding="12,14">
         <StackPanel>
 
         <!-- ── INTEREST mode ────────────────────────────────────────────────── -->
@@ -204,7 +112,7 @@
             <TextBox Text="{Binding InterestPrincipal, UpdateSourceTrigger=PropertyChanged}"
                      Tag="{Binding HintPrincipal}"
                      Style="{StaticResource InputBoxStyle}"
-                     Margin="0,0,0,8" />
+                     Margin="0,0,0,12" />
 
             <!-- From / To labels -->
             <Grid Margin="0,2,0,3">
@@ -220,7 +128,7 @@
             </Grid>
 
             <!-- From / BS-AD toggle / To -->
-            <Grid Margin="0,0,0,8">
+            <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"  />
                     <ColumnDefinition Width="90" />
@@ -421,7 +329,7 @@
                 <TextBlock Grid.Column="2" Text="{Binding EmiStartDateLabel}"
                            Style="{StaticResource FieldLabel}" />
             </Grid>
-            <Grid Margin="0,0,0,8">
+            <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="90" />
@@ -469,7 +377,7 @@
             </Grid>
 
             <!-- Annual Rate % and Months on the same row -->
-            <Grid Margin="0,0,0,8">
+            <Grid Margin="0,0,0,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="8" />
@@ -660,11 +568,11 @@
                                                                       Opacity="0.45" VerticalAlignment="Center">
                                                                     <Path.Style>
                                                                         <Style TargetType="Path">
-                                                                            <Setter Property="Data" Value="M 0,0 L 4,4 L 8,0" />
+                                                                            <Setter Property="Data" Value="M6 9l6 6l6 -6" />
                                                                             <Setter Property="Stretch" Value="Uniform" />
                                                                             <Style.Triggers>
                                                                                 <DataTrigger Binding="{Binding IsExpanded}" Value="True">
-                                                                                    <Setter Property="Data" Value="M 0,4 L 4,0 L 8,4" />
+                                                                                    <Setter Property="Data" Value="M6 15l6 -6l6 6" />
                                                                                 </DataTrigger>
                                                                             </Style.Triggers>
                                                                         </Style>

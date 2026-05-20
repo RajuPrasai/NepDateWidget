@@ -85,7 +85,7 @@ public partial class NotificationPopup : Window
 
         // Allow more vertical room than a reminder note so multiple events
         // remain readable instead of being clipped to a single visible line.
-        NotesText.MaxHeight = 140;
+        NotesText.MaxHeight = 200;
 
         if (string.IsNullOrWhiteSpace(body))
         {

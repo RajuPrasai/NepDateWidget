@@ -7,6 +7,7 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
 {
     private readonly IImageCompressionService _imageService;
     private readonly IPdfCompressionService _pdfService;
+    private readonly IImageConversionService _conversionService;
 
     private CancellationTokenSource? _cts;
     private volatile bool _isJobRunning;
@@ -17,10 +18,12 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
 
     public JobOrchestrationService(
         IImageCompressionService imageService,
-        IPdfCompressionService pdfService)
+        IPdfCompressionService pdfService,
+        IImageConversionService conversionService)
     {
         _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
         _pdfService = pdfService ?? throw new ArgumentNullException(nameof(pdfService));
+        _conversionService = conversionService ?? throw new ArgumentNullException(nameof(conversionService));
     }
 
     public async Task StartJobAsync(IReadOnlyList<CompressionJob> jobs, CancellationToken cancellationToken = default)
@@ -102,6 +105,81 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
         try { _cts?.Cancel(); } catch { }
     }
 
+    public async Task StartConversionJobAsync(IReadOnlyList<ConversionJobDescriptor> jobs, CancellationToken cancellationToken = default)
+    {
+        if (_isJobRunning)
+        {
+            return;
+        }
+
+        _cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        _isJobRunning = true;
+
+        // Pre-job: resolve output path collisions before any file is written.
+        ResolveConversionCollisions(jobs);
+
+        int parallelism = Math.Max(1, Environment.ProcessorCount - 2);
+        var semaphore = new SemaphoreSlim(parallelism, parallelism);
+        int completed = 0;
+        var token = _cts.Token;
+
+        try
+        {
+            var tasks = jobs.Select(async job =>
+            {
+                await semaphore.WaitAsync(token).ConfigureAwait(false);
+                try
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    Progress?.Invoke(this, new JobProgressState
+                    {
+                        CompletedCount = completed,
+                        TotalCount = jobs.Count,
+                        CurrentFileName = Path.GetFileName(job.InputPath),
+                    });
+
+                    await Task.Run(() =>
+                    {
+                        _conversionService.Convert(
+                            job.InputPath,
+                            job.OutputPath,
+                            job.TargetExtension,
+                            job.QualityLevel,
+                            job.StripMetadata,
+                            job.TargetWidth,
+                            job.TargetHeight);
+                    }, token).ConfigureAwait(false);
+
+                    Interlocked.Increment(ref completed);
+
+                    Progress?.Invoke(this, new JobProgressState
+                    {
+                        CompletedCount = completed,
+                        TotalCount = jobs.Count,
+                        CurrentFileName = Path.GetFileName(job.InputPath),
+                    });
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            }).ToList();
+
+            await Task.WhenAll(tasks).ConfigureAwait(false);
+        }
+        finally
+        {
+            _isJobRunning = false;
+            _cts?.Dispose();
+            _cts = null;
+            semaphore.Dispose();
+        }
+    }
+
     // ── Collision resolution ─────────────────────────────────────────────────
 
     private static void ResolveCollisions(IReadOnlyList<CompressionJob> jobs)
@@ -119,6 +197,35 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
             }
 
             // Collision - append counter starting at 2.
+            var dir = Path.GetDirectoryName(path) ?? string.Empty;
+            var name = Path.GetFileNameWithoutExtension(path);
+            var ext = Path.GetExtension(path);
+            int counter = 2;
+            string candidate;
+            do
+            {
+                candidate = Path.Combine(dir, $"{name}_{counter}{ext}");
+                counter++;
+            } while (committed.Contains(candidate) || File.Exists(candidate));
+
+            job.OutputPath = candidate;
+            committed.Add(candidate);
+        }
+    }
+
+    private static void ResolveConversionCollisions(IReadOnlyList<ConversionJobDescriptor> jobs)
+    {
+        var committed = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var job in jobs)
+        {
+            var path = job.OutputPath;
+            if (!committed.Contains(path) && !File.Exists(path))
+            {
+                committed.Add(path);
+                continue;
+            }
+
             var dir = Path.GetDirectoryName(path) ?? string.Empty;
             var name = Path.GetFileNameWithoutExtension(path);
             var ext = Path.GetExtension(path);

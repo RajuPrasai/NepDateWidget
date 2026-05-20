@@ -14,5 +14,11 @@ public interface IJobOrchestrationService
 
     Task StartJobAsync(IReadOnlyList<CompressionJob> jobs, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Runs a batch of format-conversion jobs (format change ± quality ± resize).
+    /// Uses the same parallel semaphore infrastructure as StartJobAsync.
+    /// </summary>
+    Task StartConversionJobAsync(IReadOnlyList<ConversionJobDescriptor> jobs, CancellationToken cancellationToken = default);
+
     void CancelJob();
 }

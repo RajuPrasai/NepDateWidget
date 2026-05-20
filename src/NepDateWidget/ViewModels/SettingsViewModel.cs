@@ -1041,7 +1041,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
                 content = string.Empty;
             }
 
-            File.WriteAllText(path, content, System.Text.Encoding.UTF8);
+            AtomicFile.WriteAllText(path, content);
         }
         catch { /* best-effort - the editor will show an error if the file is still missing */ }
     }

@@ -4,7 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
-             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
              mc:Ignorable="d"
              UseLayoutRounding="True"
              TextOptions.TextFormattingMode="Display"
@@ -13,8 +12,6 @@
              d:Width="300" d:Height="420">
 
     <UserControl.Resources>
-
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVis" Invert="False" />
 
         <!-- Chevron geometries for nav buttons -->
         <StreamGeometry x:Key="ChevronLeft">M10,2 L4,8 L10,14</StreamGeometry>
@@ -43,7 +40,7 @@
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment"   Value="Center" />
             <Setter Property="FontSize"            Value="14" />
-            <Setter Property="FontWeight"          Value="SemiBold" />
+            <Setter Property="FontWeight"          Value="smi" />
             <Setter Property="Foreground"          Value="{DynamicResource WidgetForegroundBrush}" />
         </Style>
 
@@ -79,17 +76,6 @@
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard Name="NavHoverFadeIn">
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                             From="0.6" To="1" Duration="0:0:0.12" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <RemoveStoryboard BeginStoryboardName="NavHoverFadeIn" />
-                                </Trigger.ExitActions>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.3" />
@@ -151,44 +137,60 @@
                                    AllowsTransparency="True"
                                    Focusable="False"
                                    PopupAnimation="Fade">
-                                <Border Background="{DynamicResource WidgetInputBrush}"
-                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                        BorderThickness="0.7" CornerRadius="4" Margin="0,2,0,0">
-                                    <Border.Resources>
-                                        <Style TargetType="ComboBoxItem">
-                                            <Setter Property="OverridesDefaultStyle" Value="True" />
-                                            <Setter Property="Background"  Value="{DynamicResource WidgetInputBrush}" />
-                                            <Setter Property="Foreground"  Value="{DynamicResource WidgetForegroundBrush}" />
-                                            <Setter Property="Padding"     Value="10,5" />
-                                            <Setter Property="FontSize"    Value="12" />
-                                            <Setter Property="FontWeight"  Value="Normal" />
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="ComboBoxItem">
-                                                        <Border Background="{TemplateBinding Background}"
-                                                                TextElement.Foreground="{TemplateBinding Foreground}"
-                                                                Padding="{TemplateBinding Padding}">
-                                                            <ContentPresenter />
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Style.Triggers>
-                                                <Trigger Property="IsHighlighted" Value="True">
-                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
-                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                                </Trigger>
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
-                                                    <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Border.Resources>
-                                    <ScrollViewer SnapsToDevicePixels="True"
-                                                    MaxHeight="{TemplateBinding MaxDropDownHeight}">
-                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
-                                    </ScrollViewer>
+                                <Border Background="Transparent" Margin="0,3,0,0">
+                                    <Border.Effect>
+                                        <DropShadowEffect Direction="270" ShadowDepth="4" BlurRadius="12"
+                                                          Color="#000000" Opacity="0.15"
+                                                          RenderingBias="Performance" />
+                                    </Border.Effect>
+                                    <Border Background="{DynamicResource WidgetInputBrush}"
+                                            BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                            BorderThickness="0.8" CornerRadius="8"
+                                            ClipToBounds="True" Padding="0,4,0,0">
+                                        <Border.Resources>
+                                            <Style TargetType="ComboBoxItem">
+                                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                                <Setter Property="Background"  Value="Transparent" />
+                                                <Setter Property="Foreground"  Value="{DynamicResource WidgetForegroundBrush}" />
+                                                <Setter Property="Padding"     Value="10,7" />
+                                                <Setter Property="FontSize"    Value="12" />
+                                                <Setter Property="FontWeight"  Value="Normal" />
+                                                <Setter Property="Cursor"      Value="Hand" />
+                                                <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="ComboBoxItem">
+                                                            <Border x:Name="ItemBd"
+                                                                    Background="{TemplateBinding Background}"
+                                                                    CornerRadius="5"
+                                                                    Padding="{TemplateBinding Padding}"
+                                                                    Margin="4,1">
+                                                                <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}" />
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsSelected" Value="True">
+                                                                    <Setter TargetName="ItemBd" Property="Background"
+                                                                            Value="{DynamicResource WidgetAccentBrushLight}" />
+                                                                    <Setter Property="Foreground"
+                                                                            Value="{DynamicResource WidgetAccentBrush}" />
+                                                                </Trigger>
+                                                                <Trigger Property="IsHighlighted" Value="True">
+                                                                    <Setter TargetName="ItemBd" Property="Background"
+                                                                            Value="{DynamicResource WidgetAccentBrush}" />
+                                                                    <Setter Property="Foreground"
+                                                                            Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Border.Resources>
+                                        <ScrollViewer SnapsToDevicePixels="True"
+                                                      MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                            <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                        </ScrollViewer>
+                                    </Border>
                                 </Border>
                             </Popup>
                         </Grid>

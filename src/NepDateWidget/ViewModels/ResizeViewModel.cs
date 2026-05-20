@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
+using static NepDateWidget.Helpers.FileFormatHelper;
 
 namespace NepDateWidget.ViewModels;
 
@@ -17,6 +19,7 @@ public sealed class ResizeViewModel : ViewModelBase
     private readonly IFileTypeService _fileTypeService;
     private readonly IJobOrchestrationService _orchestrator;
     private readonly ILocalizationService _loc;
+    private DispatcherTimer? _resetTimer;
 
     // ── File list ────────────────────────────────────────────────────────────
 
@@ -321,6 +324,7 @@ public sealed class ResizeViewModel : ViewModelBase
 
     public void AddFiles(IReadOnlyList<string> paths)
     {
+        CancelPendingAutoReset();
         if (paths.Count == 0)
         {
             return;
@@ -458,6 +462,7 @@ public sealed class ResizeViewModel : ViewModelBase
         SummaryNewSizeSegment = string.Format(_loc.Get("compress.summary_seg_new_size"), FormatBytes(totalOut));
         SummaryOrigSizeSegment = string.Format(_loc.Get("compress.summary_seg_orig_size"), FormatBytes(totalIn));
         SummarySavedSegment = string.Format(_loc.Get("compress.summary_seg_saved"), FormatBytes(totalSaved));
+        ScheduleAutoReset(failedCount > 0);
 
         }
 
@@ -468,6 +473,7 @@ public sealed class ResizeViewModel : ViewModelBase
 
     private void ResetForNextJob()
     {
+        CancelPendingAutoReset();
         Files.Clear();
         _detectedMimeType = string.Empty;
         _detectedCategory = FileCategory.Unsupported;
@@ -489,6 +495,20 @@ public sealed class ResizeViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsImageLoaded));
         OnPropertyChanged(nameof(HasFiles));
         OnPropertyChanged(nameof(ShowFileList));
+    }
+
+    private void ScheduleAutoReset(bool hasErrors)
+    {
+        CancelPendingAutoReset();
+        _resetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(hasErrors ? 8 : 3) };
+        _resetTimer.Tick += (_, _) => { CancelPendingAutoReset(); ResetForNextJob(); };
+        _resetTimer.Start();
+    }
+
+    private void CancelPendingAutoReset()
+    {
+        _resetTimer?.Stop();
+        _resetTimer = null;
     }
 
     // ── Progress handler ─────────────────────────────────────────────────────
@@ -632,36 +652,11 @@ public sealed class ResizeViewModel : ViewModelBase
         return ((int)img.Width, (int)img.Height);
     }
 
-    private static long GetFileSizeBytes(string path)
-    {
-        try { return new FileInfo(path).Length; } catch { return 0; }
-    }
-
     private static long EstimateSaved(string outputPath, string inputPath)
     {
         long original = GetFileSizeBytes(inputPath);
         long output = GetFileSizeBytes(outputPath);
         return Math.Max(0L, original - output);
-    }
-
-    private static string FormatBytes(long bytes)
-    {
-        if (bytes <= 0)
-        {
-            return "0 B";
-        }
-
-        if (bytes < 1024)
-        {
-            return $"{bytes} B";
-        }
-
-        if (bytes < 1024 * 1024)
-        {
-            return $"{bytes / 1024.0:F1} KB";
-        }
-
-        return $"{bytes / (1024.0 * 1024):F1} MB";
     }
 
     // ── Language support ──────────────────────────────────────────────────────

@@ -23,6 +23,7 @@ public class ResizeViewModelTests
         public bool IsJobRunning => false;
         public event EventHandler<JobProgressState>? Progress;
         public Task StartJobAsync(IReadOnlyList<CompressionJob> jobs, CancellationToken ct = default) => Task.CompletedTask;
+        public Task StartConversionJobAsync(IReadOnlyList<ConversionJobDescriptor> jobs, CancellationToken ct = default) => Task.CompletedTask;
         public void CancelJob() { }
         // Suppress unused event warning
         private void RaiseFakeProgress() => Progress?.Invoke(this, new JobProgressState());

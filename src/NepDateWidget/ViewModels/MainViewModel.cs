@@ -280,6 +280,8 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _animationEnabled, value))
             {
                 _settingsService.Current.AnimationEnabled = value;
+                if (!value)
+                    Helpers.UIAnimations.ResetAllScales();
                 if (!_syncingFromSettings)
                 {
                     _settingsService.Save();

@@ -66,8 +66,9 @@ public sealed class ImageCompressionService : IImageCompressionService
         // 1. Bake EXIF rotation into pixels BEFORE anything else.
         image.AutoOrient();
 
-        // 2. Resize if requested.
+        // 2. Resize: explicit user dimensions take priority; fall back to per-level auto-resize cap.
         ApplyResize(image, settings);
+        ApplyAutoResize(image, level, settings);
 
         // 3. Strip metadata.
         if (adv.StripMetadata)
@@ -219,33 +220,49 @@ public sealed class ImageCompressionService : IImageCompressionService
     private static void CompressGif(string inputPath, string outputPath, CompressionSettings settings)
     {
         var adv = settings.Advanced;
-        bool hasResize = settings.ResizeWidth.HasValue || settings.ResizeHeight.HasValue;
+        int level = Math.Clamp(settings.CompressionLevel, 0, 4);
+        bool hasExplicitResize = (settings.ResizeWidth.HasValue && settings.ResizeWidth.Value > 0)
+                              || (settings.ResizeHeight.HasValue && settings.ResizeHeight.Value > 0);
 
         using var collection = new MagickImageCollection(inputPath);
 
-        if (hasResize)
+        // Compute target once using the first frame (all frames share the canvas size post-coalesce).
+        // Coalescing decodes delta frames into full-canvas frames — expensive; only do it when needed.
+        uint gifTarget = 0;
+        bool autoResizeNeeded = false;
+        if (!hasExplicitResize && collection.Count > 0)
         {
-            // Coalesce must happen before resize: delta frames need full-frame context.
-            collection.Coalesce();
-            foreach (var frame in collection)
+            uint? t = ComputeAutoResizeTarget(collection[0].Width, collection[0].Height, level);
+            if (t.HasValue)
             {
-                if (adv.StripMetadata)
-                {
-                    frame.Strip();
-                }
+                gifTarget = t.Value;
+                autoResizeNeeded = true;
+            }
+        }
 
+        if (hasExplicitResize || autoResizeNeeded)
+        {
+            // Coalesce must happen before any resize: delta frames need full-frame context.
+            collection.Coalesce();
+        }
+
+        foreach (var frame in collection)
+        {
+            if (adv.StripMetadata)
+            {
+                frame.Strip();
+            }
+
+            if (hasExplicitResize)
+            {
                 var geo = BuildGeometry(settings.ResizeWidth, settings.ResizeHeight);
                 frame.Resize(geo);
             }
-        }
-        else
-        {
-            foreach (var frame in collection)
+            else if (autoResizeNeeded)
             {
-                if (adv.StripMetadata)
-                {
-                    frame.Strip();
-                }
+                var gifGeo = new MagickGeometry(gifTarget, gifTarget);
+                gifGeo.Greater = true;
+                frame.Resize(gifGeo);
             }
         }
 
@@ -260,6 +277,61 @@ public sealed class ImageCompressionService : IImageCompressionService
     }
 
     // ── Resize ───────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Applies a per-level auto-resize when no explicit resize was requested.
+    /// Uses a proportional scale (min(source × scale%, absoluteCap)), clamped to a floor.
+    /// Never upscales. Explicit user dimensions always take precedence; this method is a no-op when they are set.
+    /// </summary>
+    internal static void ApplyAutoResize(MagickImage image, int level, CompressionSettings settings)
+    {
+        bool hasExplicit = (settings.ResizeWidth.HasValue && settings.ResizeWidth.Value > 0)
+                        || (settings.ResizeHeight.HasValue && settings.ResizeHeight.Value > 0);
+        if (hasExplicit)
+            return;
+
+        uint? target = ComputeAutoResizeTarget(image.Width, image.Height, level);
+        if (target == null)
+            return;
+
+        var geo = new MagickGeometry(target.Value, target.Value);
+        geo.Greater = true;
+        image.Resize(geo);
+    }
+
+    /// <summary>
+    /// Computes the target longest edge for auto-resize at the given level.
+    /// Returns null when no resize should be applied (level 3-4, source already small enough,
+    /// or result would require upscaling).
+    /// Formula: min(source × ResizeScalePercent, ResizeMaxPx), then max(result, ResizeFloorPx).
+    /// </summary>
+    private static uint? ComputeAutoResizeTarget(uint width, uint height, int level)
+    {
+        if (width == 0 || height == 0)
+            return null;
+
+        double? scale = CompressionProfiles.ResizeScalePercent[Math.Clamp(level, 0, 4)];
+        uint? maxPx   = CompressionProfiles.ResizeMaxPx[Math.Clamp(level, 0, 4)];
+
+        if (scale == null)
+            return null; // levels 3-4: never auto-resize
+
+        uint longestEdge = Math.Max(width, height);
+        double scaledEdge = longestEdge * scale.Value;
+
+        uint target = maxPx.HasValue
+            ? (uint)Math.Min(Math.Round(scaledEdge), (double)maxPx.Value)
+            : (uint)Math.Round(scaledEdge);
+
+        // Floor: prevent producing unusable tiny images.
+        target = Math.Max(target, CompressionProfiles.ResizeFloorPx);
+
+        // Never upscale.
+        if (target >= longestEdge)
+            return null;
+
+        return target;
+    }
 
     private static void ApplyResize(MagickImage image, CompressionSettings settings)
     {

@@ -34,6 +34,8 @@ public sealed class MoreViewModel : ViewModelBase
                 OnPropertyChanged(nameof(IsSubViewResize));
                 OnPropertyChanged(nameof(IsSubViewIdPhoto));
                 OnPropertyChanged(nameof(IsSubViewImageConverter));
+                OnPropertyChanged(nameof(IsSubViewQrCode));
+                OnPropertyChanged(nameof(IsSubViewImageTools));
                 OnPropertyChanged(nameof(CurrentSubViewTitle));
                 OnPropertyChanged(nameof(CurrentSubViewHelpKey));
             }
@@ -48,6 +50,8 @@ public sealed class MoreViewModel : ViewModelBase
     public bool IsSubViewResize => _currentSubView == "Resize";
     public bool IsSubViewIdPhoto => _currentSubView == "IdPhoto";
     public bool IsSubViewImageConverter => _currentSubView == "ImageConverter";
+    public bool IsSubViewQrCode        => _currentSubView == "QrCode";
+    public bool IsSubViewImageTools     => _currentSubView == "ImageTools";
 
     public string CurrentSubViewTitle => _currentSubView switch
     {
@@ -58,6 +62,8 @@ public sealed class MoreViewModel : ViewModelBase
         "Resize" => ResizeNavLabel,
         "IdPhoto" => IdPhotoNavLabel,
         "ImageConverter" => ImageConverterNavLabel,
+        "QrCode"         => QrCodeNavLabel,
+        "ImageTools"     => ImageToolsNavLabel,
         _ => _currentSubView ?? string.Empty
     };
 
@@ -70,6 +76,8 @@ public sealed class MoreViewModel : ViewModelBase
         "Resize" => "help.resize",
         "IdPhoto" => "help.idphoto",
         "ImageConverter" => "help.imgconv",
+        "QrCode"         => "help.qrcode",
+        "ImageTools"     => "help.imgtools",
         _ => string.Empty
     };
 
@@ -82,6 +90,9 @@ public sealed class MoreViewModel : ViewModelBase
     public ResizeViewModel Resize { get; private set; } = null!;
     public IdPhotoViewModel IdPhoto { get; private set; } = null!;
     public ImageConverterViewModel? ImageConverter { get; private set; }
+    public QrCodeViewModel QrCode { get; private set; } = null!;
+    public ImageToolsViewModel? ImageTools { get; private set; }
+    public string ImageToolsNavLabel { get; private set; } = string.Empty;
 
     // ── Mode toggle (Documents | Notes | Reminders) ──────────────────────────
     // Kept for cancel-on-navigate logic. Not used by MoreView.xaml directly -
@@ -622,6 +633,7 @@ public sealed class MoreViewModel : ViewModelBase
     public string ResizeNavLabel { get; private set; } = string.Empty;
     public string IdPhotoNavLabel { get; private set; } = string.Empty;
     public string ImageConverterNavLabel { get; private set; } = string.Empty;
+    public string QrCodeNavLabel        { get; private set; } = string.Empty;
 
     public string DocsHeadingLabel { get; private set; } = string.Empty;
     public string NoDocsLabel { get; private set; } = string.Empty;
@@ -748,6 +760,7 @@ public sealed class MoreViewModel : ViewModelBase
         // Compression / Resize / IdPhoto / ImageConverter sub-ViewModels
         // IdPhoto is always available; Compression and Resize require file-processing services.
         IdPhoto = new IdPhotoViewModel(localizationService);
+        QrCode  = new QrCodeViewModel(localizationService);
         if (fileTypeService is not null && jobOrchestrationService is not null)
         {
             Compression = new CompressionViewModel(fileTypeService, jobOrchestrationService, localizationService);
@@ -756,6 +769,10 @@ public sealed class MoreViewModel : ViewModelBase
         if (imageConversionService is not null)
         {
             ImageConverter = new ImageConverterViewModel(imageConversionService, localizationService);
+        }
+        if (fileTypeService is not null && jobOrchestrationService is not null && imageConversionService is not null)
+        {
+            ImageTools = new ImageToolsViewModel(fileTypeService, jobOrchestrationService, imageConversionService, localizationService);
         }
 
         DeleteNoteCommand = new RelayCommand<string>(DoDeleteNote);
@@ -869,6 +886,8 @@ public sealed class MoreViewModel : ViewModelBase
         Resize?.OnLanguageChanged();
         IdPhoto.OnLanguageChanged();
         ImageConverter?.OnLanguageChanged();
+        QrCode.OnLanguageChanged();
+        ImageTools?.OnLanguageChanged();
     }
 
     /// <summary>
@@ -968,6 +987,8 @@ public sealed class MoreViewModel : ViewModelBase
         ResizeNavLabel = _loc.Get("more.resize_label");
         IdPhotoNavLabel = _loc.Get("more.idphoto_label");
         ImageConverterNavLabel = _loc.Get("more.imgconv_label");
+        QrCodeNavLabel          = _loc.Get("more.qrcode_label");
+        ImageToolsNavLabel      = _loc.Get("more.imgtools_label");
         NoDocsLabel = _loc.Get("docs.no_docs");
         NoDocsHintLabel = _loc.Get("docs.no_docs_hint");
         NoDocsResultsLabel = _loc.Get("docs.no_results");
@@ -1032,6 +1053,9 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(CompressNavLabel));
         OnPropertyChanged(nameof(ResizeNavLabel));
         OnPropertyChanged(nameof(IdPhotoNavLabel));
+        OnPropertyChanged(nameof(ImageConverterNavLabel));
+        OnPropertyChanged(nameof(QrCodeNavLabel));
+        OnPropertyChanged(nameof(ImageToolsNavLabel));
         OnPropertyChanged(nameof(NoDocsLabel));
         OnPropertyChanged(nameof(NoDocsHintLabel));
         OnPropertyChanged(nameof(NoDocsResultsLabel));

@@ -13,141 +13,6 @@
              d:Width="380">
 
     <UserControl.Resources>
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
-        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
-
-        <!-- Pill mode-selector button (inactive state) -->
-        <Style x:Key="PillButton" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderBrush"     Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="Height"          Value="28" />
-            <Setter Property="Padding"         Value="10,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="Opacity"         Value="0.55" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
-                                <Setter Property="Opacity"    Value="0.8" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Accent button -->
-        <Style x:Key="AccentButton" TargetType="Button">
-            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-            <Setter Property="BorderThickness" Value="0.7" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="FontWeight"      Value="SemiBold" />
-            <Setter Property="Height"          Value="32" />
-            <Setter Property="Padding"         Value="12,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="Root">
-                            <Border x:Name="BgLayer" Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="6" />
-                            <Border Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Secondary button -->
-        <Style x:Key="SecondaryButton" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-            <Setter Property="BorderThickness" Value="0.7" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"        Value="11" />
-            <Setter Property="Height"          Value="28" />
-            <Setter Property="Padding"         Value="10,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Direction/action button - equal-weight bordered pair (Preeti ↔ Unicode) -->
-        <Style x:Key="DirButton" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-            <Setter Property="BorderThickness" Value="0.7" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="FontWeight"      Value="SemiBold" />
-            <Setter Property="Height"          Value="32" />
-            <Setter Property="Padding"         Value="8,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="6"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
         <!-- Small case converter button -->
         <Style x:Key="CaseButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
@@ -165,47 +30,6 @@
         </Style>
 
         <!-- InputBoxStyle, MultilineInputStyle, MultilineOutputStyle: from global TextBoxStyles.xaml -->
-
-        <!-- Themed CheckBox - iOS-style toggle switch -->
-        <Style x:Key="WidgetCheckBox" TargetType="CheckBox">
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="Cursor"  Value="Hand" />
-            <Setter Property="Margin"  Value="0,2" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="CheckBox">
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <Border x:Name="Track"
-                                    Width="34" Height="18"
-                                    CornerRadius="9"
-                                    Background="{DynamicResource WidgetInputBrush}"
-                                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                    BorderThickness="0.7">
-                                <Border x:Name="Thumb"
-                                        Width="14" Height="14"
-                                        CornerRadius="7"
-                                        Background="{DynamicResource WidgetInputBorderBrush}"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Margin="1,0,0,0" />
-                            </Border>
-                            <ContentPresenter Margin="6,0,0,0" VerticalAlignment="Center"
-                                              RecognizesAccessKey="True" />
-                        </StackPanel>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Track" Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
-                                <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
-                                <Setter TargetName="Thumb" Property="Background"           Value="White" />
-                                <Setter TargetName="Thumb" Property="HorizontalAlignment"  Value="Right" />
-                                <Setter TargetName="Thumb" Property="Margin"               Value="0,0,1,0" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
         <!-- Themed ProgressBar -->
         <Style x:Key="StrengthBar" TargetType="ProgressBar">
@@ -274,7 +98,7 @@
                 BorderThickness="0.7"
                 CornerRadius="7"
                 Padding="3"
-                Margin="8,4,8,0">
+                Margin="8,8,8,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -285,7 +109,7 @@
                 <Grid Grid.Column="2">
                     <Button Command="{Binding SetModeUnicodeCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeUnicode}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -316,7 +140,7 @@
                 <Grid Grid.Column="1">
                     <Button Command="{Binding SetModeWordCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeWord}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -347,7 +171,7 @@
                 <Grid Grid.Column="0">
                     <Button Command="{Binding SetModePasswordCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModePassword}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -378,7 +202,7 @@
                 <Grid Grid.Column="3">
                     <Button Command="{Binding SetModeScriptCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeScript}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -417,7 +241,7 @@
                 <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                         BorderThickness="0.7"
                         CornerRadius="8"
-                        Padding="12,10">
+                        Padding="12,14">
                     <ScrollViewer VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled">
                     <Grid>
@@ -443,7 +267,7 @@
                         <WrapPanel Grid.Row="2" Margin="0,0,0,8">
                             <Button Content="{Binding PreetiToUnicodeLabel}" Command="{Binding SetUnicodeDir0Command}">
                                 <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                                    <Style TargetType="Button" BasedOn="{StaticResource DirButtonSm}">
                                         <Setter Property="Height" Value="28" />
                                         <Setter Property="Margin" Value="0,0,4,0" />
                                         <Style.Triggers>
@@ -458,7 +282,7 @@
                             </Button>
                             <Button Content="{Binding UnicodeToPreetiLabel}" Command="{Binding SetUnicodeDir1Command}">
                                 <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                                    <Style TargetType="Button" BasedOn="{StaticResource DirButtonSm}">
                                         <Setter Property="Height" Value="28" />
                                         <Setter Property="Margin" Value="0" />
                                         <Style.Triggers>
@@ -525,7 +349,7 @@
                                     </Border>
                                     <Button Grid.Column="2"
                                             Content="{Binding FileBrowseLabel}"
-                                            Style="{StaticResource DirButton}"
+                                            Style="{StaticResource DirButtonSm}"
                                             Height="32"
                                             Click="BrowseUnicodeFile_Click" />
                                 </Grid>
@@ -548,7 +372,7 @@
 
                                 <!-- Convert & Save -->
                                 <Button Grid.Row="3"
-                                        Style="{StaticResource AccentButton}"
+                                        Style="{StaticResource AccentButtonSm}"
                                         HorizontalAlignment="Stretch"
                                         IsEnabled="{Binding UnicodeFileCanConvert}"
                                         Command="{Binding ConvertUnicodeFileCommand}"
@@ -598,7 +422,7 @@
                 <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                         BorderThickness="0.7"
                         CornerRadius="8"
-                        Padding="12,10">
+                        Padding="12,14">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -680,14 +504,14 @@
                 <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                         BorderThickness="0.7"
                         CornerRadius="8"
-                        Padding="12,10">
+                        Padding="12,14">
                     <ScrollViewer VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Disabled"
                                   Focusable="False">
                     <StackPanel>
 
                         <!-- Length slider -->
-                        <Grid Margin="0,0,0,10">
+                        <Grid Margin="0,0,0,22">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -715,7 +539,7 @@
                         </Grid>
 
                         <!-- Char set checkboxes -->
-                        <WrapPanel Margin="0,0,0,14">
+                        <WrapPanel Margin="0,0,0,20">
                             <CheckBox Content="{Binding PwUpperLabel}"   Style="{StaticResource WidgetCheckBox}" IsChecked="{Binding PwUpper,   Mode=TwoWay}" Margin="0,0,12,4" />
                             <CheckBox Content="{Binding PwLowerLabel}"   Style="{StaticResource WidgetCheckBox}" IsChecked="{Binding PwLower,   Mode=TwoWay}" Margin="0,0,12,4" />
                             <CheckBox Content="{Binding PwNumbersLabel}" Style="{StaticResource WidgetCheckBox}" IsChecked="{Binding PwNumbers, Mode=TwoWay}" Margin="0,0,12,4" />
@@ -726,15 +550,15 @@
                         <!-- Generated password -->
                         <TextBox Style="{StaticResource MultilineOutputStyle}"
                                  MinHeight="60"
-                                 Margin="0,0,0,8"
+                                 Margin="0,0,0,18"
                                  AcceptsReturn="False"
                                  TextWrapping="Wrap"
                                  Text="{Binding GeneratedPassword, Mode=OneWay}"
                                  GotKeyboardFocus="OutputBox_GotKeyboardFocus"
                                  PreviewMouseDown="OutputBox_PreviewMouseDown" />
 
-                        <Button Style="{StaticResource AccentButton}"
-                                Margin="0,0,0,12"
+                        <Button Style="{StaticResource AccentButtonSm}"
+                                Margin="0,0,0,18"
                                 Command="{Binding GeneratePasswordCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <Path Data="{StaticResource IconLock}"
@@ -747,14 +571,14 @@
 
                         <!-- Section divider -->
                         <Border Height="1"
-                                Background="{DynamicResource WidgetDividerBrush}"
+                                Background="{DynamicResource WidgetAccentBrushLight}"
                                 Margin="0,2,0,12" />
 
                         <!-- Strength checker -->
                         <TextBlock Text="{Binding PwCheckLabel}"
                                    Style="{StaticResource FieldLabel}" />
                         <TextBox Style="{StaticResource InputBoxStyle}"
-                                 Margin="0,0,0,8"
+                                 Margin="0,4,0,8"
                                  Text="{Binding StrengthInput, UpdateSourceTrigger=PropertyChanged}" />
 
                         <!-- Strength bar + label -->
@@ -901,7 +725,7 @@
                 <Border BorderBrush="{DynamicResource WidgetBorderBrush}"
                         BorderThickness="0.7"
                         CornerRadius="8"
-                        Padding="12,10">
+                        Padding="12,14">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -925,7 +749,7 @@
                         <WrapPanel Grid.Row="2" Margin="0,0,0,8">
                             <Button Content="{Binding ScriptRomanToDevaLabel}" Command="{Binding SetScriptDir0Command}">
                                 <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                                    <Style TargetType="Button" BasedOn="{StaticResource DirButtonSm}">
                                         <Setter Property="Height" Value="28" />
                                         <Setter Property="Margin" Value="0,0,4,0" />
                                         <Style.Triggers>
@@ -940,7 +764,7 @@
                             </Button>
                             <Button Content="{Binding ScriptDevaToRomanLabel}" Command="{Binding SetScriptDir1Command}">
                                 <Button.Style>
-                                    <Style TargetType="Button" BasedOn="{StaticResource DirButton}">
+                                    <Style TargetType="Button" BasedOn="{StaticResource DirButtonSm}">
                                         <Setter Property="Height" Value="28" />
                                         <Setter Property="Margin" Value="0" />
                                         <Style.Triggers>
@@ -1007,7 +831,7 @@
                                     </Border>
                                     <Button Grid.Column="2"
                                             Content="{Binding FileBrowseLabel}"
-                                            Style="{StaticResource DirButton}"
+                                            Style="{StaticResource DirButtonSm}"
                                             Height="32"
                                             Click="BrowseScriptFile_Click" />
                                 </Grid>
@@ -1030,7 +854,7 @@
 
                                 <!-- Convert & Save -->
                                 <Button Grid.Row="3"
-                                        Style="{StaticResource AccentButton}"
+                                        Style="{StaticResource AccentButtonSm}"
                                         HorizontalAlignment="Stretch"
                                         IsEnabled="{Binding ScriptFileCanConvert}"
                                         Command="{Binding ConvertScriptFileCommand}"
