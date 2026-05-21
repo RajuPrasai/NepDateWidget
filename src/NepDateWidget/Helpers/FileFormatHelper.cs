@@ -5,8 +5,7 @@ namespace NepDateWidget.Helpers;
 /// <summary>
 /// Shared file-size utilities used by image-processing view models.
 /// Centralises <c>FormatBytes</c> and <c>GetFileSizeBytes</c> so they are not
-/// duplicated across CompressionViewModel, ResizeViewModel, ImageConverterViewModel,
-/// and ImageToolsViewModel.
+/// duplicated across ImageToolsViewModel and IdPhotoViewModel.
 /// </summary>
 internal static class FileFormatHelper
 {

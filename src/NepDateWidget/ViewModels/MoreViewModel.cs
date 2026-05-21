@@ -30,10 +30,7 @@ public sealed class MoreViewModel : ViewModelBase
                 OnPropertyChanged(nameof(IsSubViewDocuments));
                 OnPropertyChanged(nameof(IsSubViewNotes));
                 OnPropertyChanged(nameof(IsSubViewReminders));
-                OnPropertyChanged(nameof(IsSubViewCompression));
-                OnPropertyChanged(nameof(IsSubViewResize));
                 OnPropertyChanged(nameof(IsSubViewIdPhoto));
-                OnPropertyChanged(nameof(IsSubViewImageConverter));
                 OnPropertyChanged(nameof(IsSubViewQrCode));
                 OnPropertyChanged(nameof(IsSubViewImageTools));
                 OnPropertyChanged(nameof(CurrentSubViewTitle));
@@ -46,10 +43,7 @@ public sealed class MoreViewModel : ViewModelBase
     public bool IsSubViewDocuments => _currentSubView == "Documents";
     public bool IsSubViewNotes => _currentSubView == "Notes";
     public bool IsSubViewReminders => _currentSubView == "Reminders";
-    public bool IsSubViewCompression => _currentSubView == "Compression";
-    public bool IsSubViewResize => _currentSubView == "Resize";
     public bool IsSubViewIdPhoto => _currentSubView == "IdPhoto";
-    public bool IsSubViewImageConverter => _currentSubView == "ImageConverter";
     public bool IsSubViewQrCode        => _currentSubView == "QrCode";
     public bool IsSubViewImageTools     => _currentSubView == "ImageTools";
 
@@ -58,10 +52,7 @@ public sealed class MoreViewModel : ViewModelBase
         "Notes" => NotesHeadingLabel,
         "Reminders" => RemindersHeadingLabel,
         "Documents" => DocsHeadingLabel,
-        "Compression" => CompressNavLabel,
-        "Resize" => ResizeNavLabel,
         "IdPhoto" => IdPhotoNavLabel,
-        "ImageConverter" => ImageConverterNavLabel,
         "QrCode"         => QrCodeNavLabel,
         "ImageTools"     => ImageToolsNavLabel,
         _ => _currentSubView ?? string.Empty
@@ -72,10 +63,7 @@ public sealed class MoreViewModel : ViewModelBase
         "Notes" => "help.more.notes",
         "Reminders" => "help.more.reminders",
         "Documents" => "help.more.documents",
-        "Compression" => "help.compress",
-        "Resize" => "help.resize",
         "IdPhoto" => "help.idphoto",
-        "ImageConverter" => "help.imgconv",
         "QrCode"         => "help.qrcode",
         "ImageTools"     => "help.imgtools",
         _ => string.Empty
@@ -84,12 +72,9 @@ public sealed class MoreViewModel : ViewModelBase
     public ICommand NavigateToCommand { get; private set; } = null!;
     public ICommand GoBackCommand { get; private set; } = null!;
 
-    // ── Compression / Resize sub-ViewModels ──────────────────────────────────
+    // ── Sub-ViewModels ───────────────────────────────────────────────────────
 
-    public CompressionViewModel Compression { get; private set; } = null!;
-    public ResizeViewModel Resize { get; private set; } = null!;
     public IdPhotoViewModel IdPhoto { get; private set; } = null!;
-    public ImageConverterViewModel? ImageConverter { get; private set; }
     public QrCodeViewModel QrCode { get; private set; } = null!;
     public ImageToolsViewModel? ImageTools { get; private set; }
     public string ImageToolsNavLabel { get; private set; } = string.Empty;
@@ -629,10 +614,7 @@ public sealed class MoreViewModel : ViewModelBase
 
     public string EssentialsHeadingLabel { get; private set; } = string.Empty;
     public string ToolsHeadingLabel { get; private set; } = string.Empty;
-    public string CompressNavLabel { get; private set; } = string.Empty;
-    public string ResizeNavLabel { get; private set; } = string.Empty;
     public string IdPhotoNavLabel { get; private set; } = string.Empty;
-    public string ImageConverterNavLabel { get; private set; } = string.Empty;
     public string QrCodeNavLabel        { get; private set; } = string.Empty;
 
     public string DocsHeadingLabel { get; private set; } = string.Empty;
@@ -757,19 +739,9 @@ public sealed class MoreViewModel : ViewModelBase
             CurrentSubView = null;
         });
 
-        // Compression / Resize / IdPhoto / ImageConverter sub-ViewModels
-        // IdPhoto is always available; Compression and Resize require file-processing services.
+        // IdPhoto / QrCode / ImageTools sub-ViewModels
         IdPhoto = new IdPhotoViewModel(localizationService);
         QrCode  = new QrCodeViewModel(localizationService);
-        if (fileTypeService is not null && jobOrchestrationService is not null)
-        {
-            Compression = new CompressionViewModel(fileTypeService, jobOrchestrationService, localizationService);
-            Resize = new ResizeViewModel(fileTypeService, jobOrchestrationService, localizationService);
-        }
-        if (imageConversionService is not null)
-        {
-            ImageConverter = new ImageConverterViewModel(imageConversionService, localizationService);
-        }
         if (fileTypeService is not null && jobOrchestrationService is not null && imageConversionService is not null)
         {
             ImageTools = new ImageToolsViewModel(fileTypeService, jobOrchestrationService, imageConversionService, localizationService);
@@ -882,10 +854,7 @@ public sealed class MoreViewModel : ViewModelBase
         RefreshNotes();
         RefreshReminders();
         RefreshDocuments();
-        Compression?.OnLanguageChanged();
-        Resize?.OnLanguageChanged();
         IdPhoto.OnLanguageChanged();
-        ImageConverter?.OnLanguageChanged();
         QrCode.OnLanguageChanged();
         ImageTools?.OnLanguageChanged();
     }
@@ -983,10 +952,7 @@ public sealed class MoreViewModel : ViewModelBase
         DocsHeadingLabel = _loc.Get("docs.heading");
         EssentialsHeadingLabel = _loc.Get("more.essentials_heading");
         ToolsHeadingLabel = _loc.Get("more.tools_heading");
-        CompressNavLabel = _loc.Get("more.compress_label");
-        ResizeNavLabel = _loc.Get("more.resize_label");
         IdPhotoNavLabel = _loc.Get("more.idphoto_label");
-        ImageConverterNavLabel = _loc.Get("more.imgconv_label");
         QrCodeNavLabel          = _loc.Get("more.qrcode_label");
         ImageToolsNavLabel      = _loc.Get("more.imgtools_label");
         NoDocsLabel = _loc.Get("docs.no_docs");
@@ -1050,10 +1016,7 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(DocsHeadingLabel));
         OnPropertyChanged(nameof(EssentialsHeadingLabel));
         OnPropertyChanged(nameof(ToolsHeadingLabel));
-        OnPropertyChanged(nameof(CompressNavLabel));
-        OnPropertyChanged(nameof(ResizeNavLabel));
         OnPropertyChanged(nameof(IdPhotoNavLabel));
-        OnPropertyChanged(nameof(ImageConverterNavLabel));
         OnPropertyChanged(nameof(QrCodeNavLabel));
         OnPropertyChanged(nameof(ImageToolsNavLabel));
         OnPropertyChanged(nameof(NoDocsLabel));

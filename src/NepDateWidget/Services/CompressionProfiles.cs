@@ -39,4 +39,11 @@ internal static class CompressionProfiles
     internal static readonly int[] PngFlate            = {  9,  9,  8,  4,  2 };
     internal static readonly int[] PdfCompressionLevel = {  9,  8,  7,  5,  3 };
     internal static readonly int[] PdfOiMinArea        = {  0, 4096, 16384, 40000, 65536 };
+
+    /// <summary>
+    /// GIF color palette size per compression level. GIF supports max 256 colors.
+    /// Reducing colors allows LZW to compress more aggressively.
+    /// Level 4 (best) keeps the full palette — no quantization applied.
+    /// </summary>
+    internal static readonly int[] GifColors = { 64, 128, 192, 224, 256 };
 }

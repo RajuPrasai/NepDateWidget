@@ -27,11 +27,27 @@ public sealed class ImageConversionService : IImageConversionService
             if (ext == "gif")
             {
                 using var collection = new MagickImageCollection(inputPath);
-                if (stripMetadata)
+
+                bool needsResize = targetWidth is not null || targetHeight is not null;
+
+                if (needsResize)
+                    collection.Coalesce();
+
+                foreach (var frame in collection)
                 {
-                    foreach (var frame in collection)
+                    if (stripMetadata)
                         frame.Strip();
+
+                    if (needsResize)
+                        ApplyResizeFrame(frame, targetWidth, targetHeight);
                 }
+
+                if (needsResize)
+                {
+                    collection.OptimizePlus();
+                    collection.OptimizeTransparency();
+                }
+
                 collection.Write(outputPath, MagickFormat.Gif);
                 return new ImageConversionResult(true);
             }
@@ -114,5 +130,19 @@ public sealed class ImageConversionService : IImageConversionService
         }
 
         image.Resize(geometry);
+    }
+
+    private static void ApplyResizeFrame(IMagickImage frame, uint? targetWidth, uint? targetHeight)
+    {
+        var geometry = new MagickGeometry(
+            targetWidth ?? 0,
+            targetHeight ?? 0);
+
+        if (targetWidth is null || targetHeight is null)
+            geometry.IgnoreAspectRatio = false;
+        else
+            geometry.IgnoreAspectRatio = true;
+
+        frame.Resize(geometry);
     }
 }

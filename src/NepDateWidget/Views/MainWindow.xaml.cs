@@ -469,7 +469,7 @@ public partial class MainWindow : Window
 
     private void ViewModel_ExitRequested(object? sender, EventArgs e)
     {
-        if (ViewModel.More.Compression?.IsJobRunning == true || ViewModel.More.Resize?.IsJobRunning == true)
+        if (ViewModel.More.ImageTools?.IsJobRunning == true)
         {
             System.Windows.MessageBox.Show(
                 "A job is in progress. Please wait for it to finish or cancel it first.",

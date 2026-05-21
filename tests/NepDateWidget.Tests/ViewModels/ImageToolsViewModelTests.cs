@@ -283,8 +283,8 @@ public class ImageToolsViewModelTests
 
         // Convert was set manually; smart defaults should NOT reset it.
         Assert.True(vm.IsConvertEnabled);
-        // But note: CanToggleConvert is still blocked by PDF.
-        Assert.False(vm.CanToggleConvert);
+        // PDF input no longer blocks the convert toggle.
+        Assert.True(vm.CanToggleConvert);
     }
 
     [Fact]
@@ -309,11 +309,12 @@ public class ImageToolsViewModelTests
     }
 
     [Fact]
-    public void CanToggleConvert_BlockedByPdf()
+    public void CanToggleConvert_AllowedForPdfInput()
     {
         var vm = Create();
         vm.AddFiles(new[] { @"C:\test\doc.pdf" });
-        Assert.False(vm.CanToggleConvert);
+        // PDF input is now a valid convert source (PDF→image). Only job-running blocks the toggle.
+        Assert.True(vm.CanToggleConvert);
     }
 
     [Fact]
@@ -328,7 +329,7 @@ public class ImageToolsViewModelTests
     }
 
     [Fact]
-    public void ShowConvertSection_TrueOnlyWhenConvertEnabledAndNoPdf()
+    public void ShowConvertSection_TrueWhenConvertEnabled()
     {
         var vm = Create();
         vm.AddFiles(new[] { @"C:\test\photo.jpg" });
@@ -550,7 +551,7 @@ public class ImageToolsViewModelTests
     public void SelectFormat_AllFormats_Accepted()
     {
         var vm = Create();
-        var formats = new[] { "jpg", "png", "webp", "avif", "gif", "bmp", "tif", "ico", "tga" };
+        var formats = new[] { "jpg", "png", "webp", "avif", "gif", "bmp", "tif", "ico", "tga", "pdf" };
         foreach (var fmt in formats)
         {
             vm.SelectFormatCommand.Execute(fmt);
@@ -958,5 +959,180 @@ public class ImageToolsViewModelTests
         Assert.False(vm.ShowSummary);
         Assert.True(vm.HasFiles);
         Assert.Single(vm.Files);
+    }
+
+    // ── 16. PDF conversion guard matrix ──────────────────────────────────────
+
+    [Fact]
+    public void SelectFormat_Pdf_UpdatesIsFormatPdf()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\photo.jpg" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("pdf");
+        Assert.True(vm.IsFormatPdf);
+    }
+
+    [Fact]
+    public void SelectFormat_Pdf_DisablesCompress()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\photo.jpg" });
+        vm.IsCompressEnabled = true;
+        vm.IsConvertEnabled  = true;
+        vm.SelectFormatCommand.Execute("pdf");
+        Assert.False(vm.IsCompressEnabled);
+    }
+
+    [Fact]
+    public void SelectFormat_Pdf_HidesQualitySlider()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\photo.jpg" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("pdf");
+        Assert.False(vm.ShowQualitySlider);
+    }
+
+    [Fact]
+    public void IsFormatPdfChipVisible_FalseWhenAllFilesArePdf()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\doc.pdf" });
+        Assert.False(vm.IsFormatPdfChipVisible);
+    }
+
+    [Fact]
+    public void IsFormatPdfChipVisible_TrueWhenInputIsImage()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\photo.jpg" });
+        Assert.True(vm.IsFormatPdfChipVisible);
+    }
+
+    [Fact]
+    public void ShowImageToPdfOptions_TrueWhenMultipleImagesAndPdfFormat()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\a.jpg", @"C:\test\b.png" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("pdf");
+        Assert.True(vm.ShowImageToPdfOptions);
+    }
+
+    [Fact]
+    public void ShowImageToPdfOptions_FalseForSingleImageWithPdfFormat()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\a.jpg" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("pdf");
+        Assert.False(vm.ShowImageToPdfOptions);
+    }
+
+    [Fact]
+    public void ShowPdfConvertOptions_TrueWhenAllPdfsAndConvertEnabled()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\doc.pdf" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("jpg");
+        Assert.True(vm.ShowPdfConvertOptions);
+    }
+
+    [Fact]
+    public void ShowPdfConvertOptions_FalseWhenNotAllPdfs()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\photo.jpg" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("jpg");
+        Assert.False(vm.ShowPdfConvertOptions);
+    }
+
+    [Fact]
+    public void CanRun_False_MixedPdfAndImageWithConvert()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\doc.pdf", @"C:\test\photo.jpg" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("jpg");
+        Assert.False(vm.CanRun);
+    }
+
+    [Fact]
+    public void CanRun_False_AllPdfsWithPdfOutputFormat()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\doc.pdf" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("pdf");
+        Assert.False(vm.CanRun);
+    }
+
+    [Fact]
+    public void CanRun_True_AllPdfsConvertToJpeg()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\doc.pdf" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("jpg");
+        Assert.True(vm.CanRun);
+    }
+
+    [Fact]
+    public void CanRun_True_ImagesConvertToPdf()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\photo.jpg" });
+        vm.IsConvertEnabled = true;
+        vm.SelectFormatCommand.Execute("pdf");
+        Assert.True(vm.CanRun);
+    }
+
+    [Fact]
+    public void MixedTypeWarning_SetWhenMixedPdfImageAndConvertEnabled()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\doc.pdf", @"C:\test\photo.jpg" });
+        vm.IsConvertEnabled = true;
+        Assert.False(string.IsNullOrEmpty(vm.MixedTypeWarning));
+    }
+
+    [Fact]
+    public void InternalReset_ResetsPdfPageMode()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\doc.pdf" });
+        vm.SelectPdfPageModeCommand.Execute("AllPagesCombined");
+        vm.DismissSummaryCommand.Execute(null); // triggers InternalReset via HasFiles path
+        // After reset, mode goes back to FirstPageOnly default.
+        Assert.True(vm.IsPdfPageModeFirstOnly);
+        Assert.False(vm.IsPdfPageModeCombined);
+    }
+
+    [Fact]
+    public void InternalReset_ResetsImageToPdfMode()
+    {
+        var vm = Create();
+        vm.AddFiles(new[] { @"C:\test\a.jpg", @"C:\test\b.png" });
+        vm.SelectImageToPdfModeCommand.Execute("CombinedPdf");
+        vm.DismissSummaryCommand.Execute(null);
+        Assert.True(vm.IsImageToPdfOnePerFile);
+        Assert.False(vm.IsImageToPdfCombined);
+    }
+
+    [Fact]
+    public void OnLanguageChanged_IncludesPdfLabels()
+    {
+        var vm = Create();
+        var fired = new List<string?>();
+        vm.PropertyChanged += (_, e) => fired.Add(e.PropertyName);
+        vm.OnLanguageChanged();
+        Assert.Contains(nameof(vm.PdfPageModeFirstLabel),    fired);
+        Assert.Contains(nameof(vm.PdfPageModePerFileLabel),  fired);
+        Assert.Contains(nameof(vm.PdfPageModeCombinedLabel), fired);
+        Assert.Contains(nameof(vm.ImgToPdfOnePerFileLabel),  fired);
+        Assert.Contains(nameof(vm.ImgToPdfCombinedLabel),    fired);
     }
 }

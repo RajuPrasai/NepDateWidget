@@ -45,61 +45,32 @@ public sealed class StartupCompositionTests
     {
         var image       = new ImageCompressionService();
         var pdf         = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService(), new PdfTranscodeService());
         Assert.NotNull(orchestrator);
     }
 
     // ── ViewModel construction ────────────────────────────────────────────────
 
     [Fact]
-    public void CompressionViewModel_CanBeConstructed_WithRealServices()
-    {
-        var fileType     = new FileTypeService();
-        var image        = new ImageCompressionService();
-        var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
-
-        var vm = new CompressionViewModel(fileType, orchestrator, MakeLoc());
-        Assert.NotNull(vm);
-        Assert.False(vm.HasFiles);
-        Assert.False(vm.IsJobRunning);
-    }
-
-    [Fact]
-    public void ResizeViewModel_CanBeConstructed_WithRealServices()
-    {
-        var fileType     = new FileTypeService();
-        var image        = new ImageCompressionService();
-        var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
-
-        var vm = new ResizeViewModel(fileType, orchestrator, MakeLoc());
-        Assert.NotNull(vm);
-        Assert.False(vm.HasFiles);
-        Assert.False(vm.IsJobRunning);
-    }
-
-    [Fact]
-    public void MoreViewModel_WithCompressionServices_ExposesNonNullSubVMs()
+    public void MoreViewModel_WithImageServices_ExposesNonNullImageTools()
     {
         var loc          = MakeLoc();
         var fileType     = new FileTypeService();
         var image        = new ImageCompressionService();
         var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService(), new PdfTranscodeService());
+        var imgConv      = new ImageConversionService();
 
-        var vm = new MoreViewModel(loc, fileTypeService: fileType, jobOrchestrationService: orchestrator);
+        var vm = new MoreViewModel(loc, fileTypeService: fileType, jobOrchestrationService: orchestrator, imageConversionService: imgConv);
 
-        Assert.NotNull(vm.Compression);
-        Assert.NotNull(vm.Resize);
+        Assert.NotNull(vm.ImageTools);
     }
 
     [Fact]
-    public void MoreViewModel_WithoutCompressionServices_LeavesSubVMsNull()
+    public void MoreViewModel_WithoutImageServices_LeavesImageToolsNull()
     {
         var vm = new MoreViewModel(MakeLoc());
-        Assert.Null(vm.Compression);
-        Assert.Null(vm.Resize);
+        Assert.Null(vm.ImageTools);
     }
 
     // ── Navigation: grid → sub-view (regression for the SetMode early-return bug) ──
@@ -151,41 +122,23 @@ public sealed class StartupCompositionTests
     }
 
     [Fact]
-    public void NavigateToCompression_FromGrid_SetsSubView()
+    public void NavigateToImageTools_FromGrid_SetsSubView()
     {
         var loc          = MakeLoc();
         var fileType     = new FileTypeService();
         var image        = new ImageCompressionService();
         var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
-        var vm           = new MoreViewModel(loc, fileTypeService: fileType, jobOrchestrationService: orchestrator);
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService(), new PdfTranscodeService());
+        var imgConv      = new ImageConversionService();
+        var vm           = new MoreViewModel(loc, fileTypeService: fileType, jobOrchestrationService: orchestrator, imageConversionService: imgConv);
 
         Assert.True(vm.IsGridVisible);
 
-        vm.NavigateToCommand.Execute("Compression");
+        vm.NavigateToCommand.Execute("ImageTools");
 
         Assert.False(vm.IsGridVisible);
-        Assert.Equal("Compression", vm.CurrentSubView);
-        Assert.True(vm.IsSubViewCompression);
-    }
-
-    [Fact]
-    public void NavigateToResize_FromGrid_SetsSubView()
-    {
-        var loc          = MakeLoc();
-        var fileType     = new FileTypeService();
-        var image        = new ImageCompressionService();
-        var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
-        var vm           = new MoreViewModel(loc, fileTypeService: fileType, jobOrchestrationService: orchestrator);
-
-        Assert.True(vm.IsGridVisible);
-
-        vm.NavigateToCommand.Execute("Resize");
-
-        Assert.False(vm.IsGridVisible);
-        Assert.Equal("Resize", vm.CurrentSubView);
-        Assert.True(vm.IsSubViewResize);
+        Assert.Equal("ImageTools", vm.CurrentSubView);
+        Assert.True(vm.IsSubViewImageTools);
     }
 
     [Fact]
@@ -215,14 +168,9 @@ public sealed class StartupCompositionTests
     }
 
     // ── App.xaml.cs wiring: MainViewModel passes services to MoreViewModel ───
-    //
-    // If the fileTypeService/jobOrchestrationService arguments were accidentally
-    // removed from MainViewModel's MoreViewModel constructor call, the Compression
-    // and Resize sub-VMs would be null. The feature would silently not work and
-    // nothing else would throw. This test guards that wiring path explicitly.
 
     [Fact]
-    public void MainViewModel_WithCompressionServices_WiresThemToMore()
+    public void MainViewModel_WithImageServices_WiresThemToMore()
     {
         var adapter      = new FakeNepaliDateAdapter();
         var calendar     = new CalendarService(adapter);
@@ -231,7 +179,8 @@ public sealed class StartupCompositionTests
         var fileType     = new FileTypeService();
         var image        = new ImageCompressionService();
         var pdf          = new PdfCompressionService();
-        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService());
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService(), new PdfTranscodeService());
+        var imgConv      = new ImageConversionService();
 
         var vm = new MainViewModel(
             new FakeSettingsService(),
@@ -239,17 +188,15 @@ public sealed class StartupCompositionTests
             new FakeThemeService(),
             new FakeAutoStartService(),
             fileTypeService: fileType,
-            jobOrchestrationService: orchestrator);
+            jobOrchestrationService: orchestrator,
+            imageConversionService: imgConv);
 
-        Assert.NotNull(vm.More.Compression);
-        Assert.NotNull(vm.More.Resize);
+        Assert.NotNull(vm.More.ImageTools);
     }
 
     [Fact]
-    public void MainViewModel_WithoutCompressionServices_LeavesMoreSubVMsNull()
+    public void MainViewModel_WithoutImageServices_LeavesImageToolsNull()
     {
-        // Matches the "services not provided" path - e.g. if the service construction
-        // in App.xaml.cs throws before the orchestrator is built.
         var adapter    = new FakeNepaliDateAdapter();
         var calendar   = new CalendarService(adapter);
         var conversion = new ConversionService(adapter);
@@ -261,8 +208,7 @@ public sealed class StartupCompositionTests
             new FakeThemeService(),
             new FakeAutoStartService());
 
-        Assert.Null(vm.More.Compression);
-        Assert.Null(vm.More.Resize);
+        Assert.Null(vm.More.ImageTools);
     }
 
     [Fact]
@@ -273,79 +219,16 @@ public sealed class StartupCompositionTests
     }
 
     [Fact]
-    public void ImageConverterViewModel_CanBeConstructed_WithRealService()
-    {
-        var svc = new ImageConversionService();
-        var vm  = new ImageConverterViewModel(svc, MakeLoc());
-        Assert.NotNull(vm);
-        Assert.False(vm.HasFiles);
-        Assert.False(vm.IsJobRunning);
-        Assert.True(vm.IsFormatJpeg);   // default format is JPEG
-        Assert.True(vm.ShowQuality);    // JPEG shows quality
-    }
-
-    [Fact]
-    public void MoreViewModel_WithImageConversionService_ExposesNonNullImageConverter()
-    {
-        var svc = new ImageConversionService();
-        var vm  = new MoreViewModel(MakeLoc(), imageConversionService: svc);
-        Assert.NotNull(vm.ImageConverter);
-    }
-
-    [Fact]
-    public void MoreViewModel_WithoutImageConversionService_ImageConverterIsNull()
-    {
-        var vm = new MoreViewModel(MakeLoc());
-        Assert.Null(vm.ImageConverter);
-    }
-
-    [Fact]
-    public void NavigateToImageConverter_FromGrid_SetsSubView()
-    {
-        var svc = new ImageConversionService();
-        var vm  = new MoreViewModel(MakeLoc(), imageConversionService: svc);
-
-        Assert.True(vm.IsGridVisible);
-
-        vm.NavigateToCommand.Execute("ImageConverter");
-
-        Assert.False(vm.IsGridVisible);
-        Assert.Equal("ImageConverter", vm.CurrentSubView);
-        Assert.True(vm.IsSubViewImageConverter);
-    }
-
-    [Fact]
-    public void ImageConverterViewModel_SelectFormat_UpdatesFlags()
-    {
-        var svc = new ImageConversionService();
-        var vm  = new ImageConverterViewModel(svc, MakeLoc());
-
-        vm.SelectFormatCommand.Execute("png");
-
-        Assert.True(vm.IsFormatPng);
-        Assert.False(vm.IsFormatJpeg);
-        Assert.False(vm.ShowQuality);   // PNG is lossless — no quality slider
-    }
-
-    [Fact]
-    public void ImageConverterViewModel_SelectFormat_WebP_ShowsQuality()
-    {
-        var svc = new ImageConversionService();
-        var vm  = new ImageConverterViewModel(svc, MakeLoc());
-
-        vm.SelectFormatCommand.Execute("webp");
-
-        Assert.True(vm.IsFormatWebp);
-        Assert.True(vm.ShowQuality);
-    }
-
-    [Fact]
     public void MainViewModel_WithImageConversionService_WiresItToMore()
     {
         var adapter      = new FakeNepaliDateAdapter();
         var calendar     = new CalendarService(adapter);
         var conversion   = new ConversionService(adapter);
         var loc          = new LocalizationService(TestPaths.DefaultLocalizationPath);
+        var fileType     = new FileTypeService();
+        var image        = new ImageCompressionService();
+        var pdf          = new PdfCompressionService();
+        var orchestrator = new JobOrchestrationService(image, pdf, new ImageConversionService(), new PdfTranscodeService());
         var imgConv      = new ImageConversionService();
 
         var vm = new MainViewModel(
@@ -353,9 +236,11 @@ public sealed class StartupCompositionTests
             calendar, loc, conversion,
             new FakeThemeService(),
             new FakeAutoStartService(),
+            fileTypeService: fileType,
+            jobOrchestrationService: orchestrator,
             imageConversionService: imgConv);
 
-        Assert.NotNull(vm.More.ImageConverter);
+        Assert.NotNull(vm.More.ImageTools);
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

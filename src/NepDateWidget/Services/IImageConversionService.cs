@@ -1,6 +1,14 @@
 namespace NepDateWidget.Services;
 
-public sealed record ImageConversionResult(bool Success, string? ErrorMessage = null);
+/// <param name="OutputPaths">
+/// Output file paths produced by this operation.
+/// Empty/null for failures. For multi-output operations (PDF all-pages mode)
+/// contains all generated paths; for single-output contains one entry.
+/// </param>
+public sealed record ImageConversionResult(
+    bool Success,
+    string? ErrorMessage = null,
+    IReadOnlyList<string>? OutputPaths = null);
 
 public interface IImageConversionService
 {

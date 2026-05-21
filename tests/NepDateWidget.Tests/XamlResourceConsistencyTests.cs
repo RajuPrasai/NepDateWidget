@@ -374,87 +374,41 @@ public sealed class XamlResourceConsistencyTests
     [Fact]
     public void MoreView_SubViews_UseRootScopedVisibilityBindings()
     {
-        // Compression/Resize sub-views have their own DataContext.
-        // Visibility bindings must explicitly source back to MoreView's DataContext,
-        // otherwise binding falls back and sub-views render on the home grid.
+        // Sub-views with their own DataContext need visibility bindings that explicitly
+        // source back to MoreView's DataContext via ElementName=RootMoreView.
         var moreViewPath = Path.Combine(SourceRoot, "Views", "MoreView.xaml");
         Assert.True(File.Exists(moreViewPath));
 
         var content = File.ReadAllText(moreViewPath);
 
         Assert.Contains("x:Name=\"RootMoreView\"", content, StringComparison.Ordinal);
-        Assert.Contains("DataContext.IsSubViewCompression", content, StringComparison.Ordinal);
-        Assert.Contains("DataContext.IsSubViewResize", content, StringComparison.Ordinal);
+        Assert.Contains("DataContext.IsSubViewIdPhoto", content, StringComparison.Ordinal);
+        Assert.Contains("DataContext.IsSubViewImageTools", content, StringComparison.Ordinal);
         Assert.Contains("ElementName=RootMoreView", content, StringComparison.Ordinal);
         Assert.Contains("FallbackValue=Collapsed", content, StringComparison.Ordinal);
     }
 
     [Fact]
-    public void CompressionAndResize_Sliders_UseWidgetSliderStyle()
+    public void ImageToolsView_Slider_UsesWidgetSliderStyle()
     {
-        // Enforce visual consistency with the rest of the widget by using the
-        // shared iOS-style slider template from theme resources.
-        var compressionViewPath = Path.Combine(SourceRoot, "Views", "CompressionView.xaml");
-        var resizeViewPath      = Path.Combine(SourceRoot, "Views", "ResizeView.xaml");
+        var imageToolsViewPath = Path.Combine(SourceRoot, "Views", "ImageToolsView.xaml");
+        Assert.True(File.Exists(imageToolsViewPath));
 
-        Assert.True(File.Exists(compressionViewPath));
-        Assert.True(File.Exists(resizeViewPath));
+        var xaml = File.ReadAllText(imageToolsViewPath);
 
-        var compressionXaml = File.ReadAllText(compressionViewPath);
-        var resizeXaml      = File.ReadAllText(resizeViewPath);
-
-        Assert.Contains("Value=\"{Binding CompressionLevel}\"", compressionXaml, StringComparison.Ordinal);
-        Assert.Contains("Style=\"{DynamicResource IosSlider}\"", compressionXaml, StringComparison.Ordinal);
-
-        Assert.Contains("Value=\"{Binding QualityLevel}\"", resizeXaml, StringComparison.Ordinal);
-        Assert.Contains("Style=\"{DynamicResource IosSlider}\"", resizeXaml, StringComparison.Ordinal);
+        Assert.Contains("Value=\"{Binding QualityLevel}\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Style=\"{DynamicResource IosSlider}\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Maximum=\"4\"", xaml, StringComparison.Ordinal);
     }
 
     [Fact]
-    public void CompressionAndResize_Sliders_UseFivePointScale()
+    public void ImageToolsView_SummaryBanner_DoesNotRequireManualNewJobButton()
     {
-        var compressionViewPath = Path.Combine(SourceRoot, "Views", "CompressionView.xaml");
-        var resizeViewPath      = Path.Combine(SourceRoot, "Views", "ResizeView.xaml");
+        var imageToolsViewPath = Path.Combine(SourceRoot, "Views", "ImageToolsView.xaml");
+        Assert.True(File.Exists(imageToolsViewPath));
 
-        Assert.True(File.Exists(compressionViewPath));
-        Assert.True(File.Exists(resizeViewPath));
+        var xaml = File.ReadAllText(imageToolsViewPath);
 
-        var compressionXaml = File.ReadAllText(compressionViewPath);
-        var resizeXaml      = File.ReadAllText(resizeViewPath);
-
-        Assert.Contains("Value=\"{Binding CompressionLevel}\"", compressionXaml, StringComparison.Ordinal);
-        Assert.Contains("Maximum=\"4\"", compressionXaml, StringComparison.Ordinal);
-
-        Assert.Contains("Value=\"{Binding QualityLevel}\"", resizeXaml, StringComparison.Ordinal);
-        Assert.Contains("Maximum=\"4\"", resizeXaml, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void CompressionView_AdvancedPanel_ContainsResizeInputs()
-    {
-        var compressionViewPath = Path.Combine(SourceRoot, "Views", "CompressionView.xaml");
-        Assert.True(File.Exists(compressionViewPath));
-
-        var compressionXaml = File.ReadAllText(compressionViewPath);
-
-        Assert.Contains("{Binding AdvOptionalResizeLabel}", compressionXaml, StringComparison.Ordinal);
-        Assert.Contains("{Binding ResizeWidthText", compressionXaml, StringComparison.Ordinal);
-        Assert.Contains("{Binding ResizeHeightText", compressionXaml, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void CompressionAndResize_SummaryBanners_DoNotRequireManualNewJobButton()
-    {
-        var compressionViewPath = Path.Combine(SourceRoot, "Views", "CompressionView.xaml");
-        var resizeViewPath      = Path.Combine(SourceRoot, "Views", "ResizeView.xaml");
-
-        Assert.True(File.Exists(compressionViewPath));
-        Assert.True(File.Exists(resizeViewPath));
-
-        var compressionXaml = File.ReadAllText(compressionViewPath);
-        var resizeXaml      = File.ReadAllText(resizeViewPath);
-
-        Assert.DoesNotContain("StartNewJobCommand", compressionXaml, StringComparison.Ordinal);
-        Assert.DoesNotContain("StartNewJobCommand", resizeXaml, StringComparison.Ordinal);
+        Assert.DoesNotContain("StartNewJobCommand", xaml, StringComparison.Ordinal);
     }
 }

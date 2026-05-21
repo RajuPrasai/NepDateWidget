@@ -44,6 +44,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
     private FileCategory _detectedCategory = FileCategory.Unsupported;
     private bool _hasMultipleMimeTypes;
     private bool _hasAnyPdfFile;
+    private bool _allFilesArePdf;
 
     public bool HasFiles => Files.Count > 0;
     public bool ShowFileList => HasFiles && !ShowSummary;
@@ -66,6 +67,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
                 OnPropertyChanged(nameof(ShowGifOptions));
                 OnPropertyChanged(nameof(ShowTiffOptions));
                 OnPropertyChanged(nameof(ShowPdfOptions));
+                OnPropertyChanged(nameof(ShowAdvancedToggle));
                 OnPropertyChanged(nameof(CanRun));
                 OnPropertyChanged(nameof(ActionButtonLabel));
                 OnPropertyChanged(nameof(IsRunButtonEnabled));
@@ -114,25 +116,28 @@ public sealed class ImageToolsViewModel : ViewModelBase
 
     public bool CanToggleCompress => !_isJobRunning && _detectedCategory != FileCategory.Raw;
     public bool CanToggleResize   => !_isJobRunning && !_hasAnyPdfFile;
-    public bool CanToggleConvert  => !_isJobRunning && !_hasAnyPdfFile;
+    // PDF input is allowed for convert (PDF→image). Only job running blocks the toggle.
+    public bool CanToggleConvert  => !_isJobRunning;
 
     public bool IsRawOnlyFiles => _detectedCategory == FileCategory.Raw;
 
     // ── Section visibility ────────────────────────────────────────────────────
 
     public bool ShowCompressSection => _isCompressEnabled;
-    public bool ShowResizeSection   => _isResizeEnabled && !_hasAnyPdfFile;
-    public bool ShowConvertSection  => _isConvertEnabled && !_hasAnyPdfFile;
+    public bool ShowResizeSection   => _isResizeEnabled && !_hasAnyPdfFile && _selectedFormatExt != "pdf";
+    public bool ShowConvertSection  => _isConvertEnabled;
 
     // ── Quality slider ────────────────────────────────────────────────────────
 
     /// <summary>
     /// Hidden when Compress is OFF. Hidden when Convert is ON targeting a lossless format.
     /// "Lossy" formats: jpg, webp, avif — matches existing ImageConverterViewModel.ShowQuality.
+    /// Hidden for PDF output (no quality concept for image embedding).
     /// </summary>
     public bool ShowQualitySlider =>
         _isCompressEnabled &&
-        (!_isConvertEnabled || _selectedFormatExt is "jpg" or "webp" or "avif");
+        (!_isConvertEnabled || _selectedFormatExt is "jpg" or "webp" or "avif")
+        && _selectedFormatExt != "pdf";
 
     // ── Quality level ─────────────────────────────────────────────────────────
 
@@ -161,9 +166,54 @@ public sealed class ImageToolsViewModel : ViewModelBase
     public bool IsFormatTiff => _selectedFormatExt == "tif";
     public bool IsFormatIco  => _selectedFormatExt == "ico";
     public bool IsFormatTga  => _selectedFormatExt == "tga";
+    public bool IsFormatPdf  => _selectedFormatExt == "pdf";
+
+    // PDF chip is only valid when input is not PDF (PDF→PDF makes no sense).
+    public bool IsFormatPdfChipVisible => !_hasAnyPdfFile;
+
+    // ── PDF convert page mode ─────────────────────────────────────────────────
+
+    private PdfConvertPageMode _pdfPageMode = PdfConvertPageMode.FirstPageOnly;
+
+    public bool IsPdfPageModeFirstOnly   => _pdfPageMode == PdfConvertPageMode.FirstPageOnly;
+    public bool IsPdfPageModeAllPerFile  => _pdfPageMode == PdfConvertPageMode.AllPagesPerFile;
+    public bool IsPdfPageModeCombined    => _pdfPageMode == PdfConvertPageMode.AllPagesCombined;
+
+    /// <summary>Visible when all input files are PDFs and Convert is on and target is not PDF.</summary>
+    public bool ShowPdfConvertOptions =>
+        _allFilesArePdf && _isConvertEnabled && _selectedFormatExt != "pdf";
+
+    // ── Image-to-PDF mode ────────────────────────────────────────────────────
+
+    private ImageToPdfMode _imageToPdfMode = ImageToPdfMode.OnePerFile;
+
+    public bool IsImageToPdfOnePerFile => _imageToPdfMode == ImageToPdfMode.OnePerFile;
+    public bool IsImageToPdfCombined   => _imageToPdfMode == ImageToPdfMode.CombinedPdf;
+
+    /// <summary>Visible when no PDF input, Convert is on, PDF is target, and multiple files loaded.</summary>
+    public bool ShowImageToPdfOptions =>
+        !_hasAnyPdfFile && _isConvertEnabled && _selectedFormatExt == "pdf" && Files.Count > 1;
+
+    // ── More formats toggle ───────────────────────────────────────────────────
+
+    private bool _showMoreFormats;
+    public bool ShowMoreFormats
+    {
+        get => _showMoreFormats;
+        set => SetProperty(ref _showMoreFormats, value);
+    }
+
+    // ── Format-specific advanced options toggle ───────────────────────────────
+
+    private bool _showAdvancedOptions;
+    public bool ShowAdvancedOptions
+    {
+        get => _showAdvancedOptions;
+        set => SetProperty(ref _showAdvancedOptions, value);
+    }
 
     private static readonly HashSet<string> _noCompressionFormats =
-        new(StringComparer.OrdinalIgnoreCase) { "gif", "bmp", "ico", "tga" };
+        new(StringComparer.OrdinalIgnoreCase) { "gif", "bmp", "ico", "tga", "pdf" };
 
     private bool _compressDisabledByFormat;
     private bool _isSummaryVisible;
@@ -182,7 +232,13 @@ public sealed class ImageToolsViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsFormatTiff));
             OnPropertyChanged(nameof(IsFormatIco));
             OnPropertyChanged(nameof(IsFormatTga));
+            OnPropertyChanged(nameof(IsFormatPdf));
             OnPropertyChanged(nameof(ShowQualitySlider));
+            OnPropertyChanged(nameof(ShowResizeSection));
+            OnPropertyChanged(nameof(ShowPdfConvertOptions));
+            OnPropertyChanged(nameof(ShowImageToPdfOptions));
+            OnPropertyChanged(nameof(CanRun));
+            OnPropertyChanged(nameof(IsRunButtonEnabled));
             EnforceFormatConstraints();
         }
     }
@@ -206,6 +262,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             OnPropertyChanged(nameof(ShowGifOptions));
             OnPropertyChanged(nameof(ShowTiffOptions));
             OnPropertyChanged(nameof(ShowPdfOptions));
+            OnPropertyChanged(nameof(ShowAdvancedToggle));
             OnPropertyChanged(nameof(ShowQualitySlider));
             OnPropertyChanged(nameof(CanRun));
             OnPropertyChanged(nameof(IsRunButtonEnabled));
@@ -220,6 +277,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             OnPropertyChanged(nameof(ShowGifOptions));
             OnPropertyChanged(nameof(ShowTiffOptions));
             OnPropertyChanged(nameof(ShowPdfOptions));
+            OnPropertyChanged(nameof(ShowAdvancedToggle));
             OnPropertyChanged(nameof(ShowQualitySlider));
             OnPropertyChanged(nameof(CanRun));
             OnPropertyChanged(nameof(IsRunButtonEnabled));
@@ -277,6 +335,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
     public bool ShowGifOptions  => _isCompressEnabled && _detectedMimeType == "image/gif";
     public bool ShowTiffOptions => _isCompressEnabled && _detectedMimeType == "image/tiff";
     public bool ShowPdfOptions  => _isCompressEnabled && _hasAnyPdfFile;
+    public bool ShowAdvancedToggle => ShowGifOptions || ShowTiffOptions || ShowPdfOptions;
 
     private bool _optimizeGifFrames = true;
     public bool OptimizeGifFrames
@@ -432,8 +491,14 @@ public sealed class ImageToolsViewModel : ViewModelBase
                 return false;
             if (!_isConvertEnabled && HasMixedTypeWarning)
                 return false;
-            // If Resize is ON and not blocked by PDF, at least one dimension must be entered.
-            if (_isResizeEnabled && !_hasAnyPdfFile)
+            // Mixed PDF + images with convert ON: two different pipelines, cannot batch together.
+            if (_isConvertEnabled && _hasAnyPdfFile && !_allFilesArePdf)
+                return false;
+            // PDF→PDF (all PDF input, PDF target): nonsensical — block.
+            if (_isConvertEnabled && _allFilesArePdf && _selectedFormatExt == "pdf")
+                return false;
+            // If Resize is ON and not blocked by PDF input or PDF output, at least one dimension must be entered.
+            if (_isResizeEnabled && !_hasAnyPdfFile && _selectedFormatExt != "pdf")
             {
                 bool hasW = uint.TryParse(_widthText, out uint w) && w > 0;
                 bool hasH = uint.TryParse(_heightText, out uint h) && h > 0;
@@ -513,6 +578,14 @@ public sealed class ImageToolsViewModel : ViewModelBase
     public string WidthLabelText       => _loc.Get("imgtools.width_label");
     public string HeightLabelText      => _loc.Get("imgtools.height_label");
     public string AddMoreLabel         => _loc.Get("imgtools.add_more");
+    public string MoreFormatsLabel     => _loc.Get("imgtools.more_formats");
+    public string AdvancedLabel        => _loc.Get("imgtools.advanced");
+    // PDF transcode option labels
+    public string PdfPageModeFirstLabel    => _loc.Get("imgtools.pdf_page_first");
+    public string PdfPageModePerFileLabel  => _loc.Get("imgtools.pdf_page_per_file");
+    public string PdfPageModeCombinedLabel => _loc.Get("imgtools.pdf_page_combined");
+    public string ImgToPdfOnePerFileLabel  => _loc.Get("imgtools.img_to_pdf_one_per_file");
+    public string ImgToPdfCombinedLabel    => _loc.Get("imgtools.img_to_pdf_combined");
 
     public bool ShowResetButton => HasFiles && !_isJobRunning;
 
@@ -524,6 +597,10 @@ public sealed class ImageToolsViewModel : ViewModelBase
     public ICommand RunCommand            { get; }
     public ICommand DismissSummaryCommand { get; }
     public ICommand OpenHelpCommand       { get; }
+    public ICommand ToggleMoreFormatsCommand  { get; }
+    public ICommand ToggleAdvancedCommand    { get; }
+    public ICommand SelectPdfPageModeCommand { get; }
+    public ICommand SelectImageToPdfModeCommand { get; }
 
     // ── Construction ─────────────────────────────────────────────────────────
 
@@ -543,6 +620,27 @@ public sealed class ImageToolsViewModel : ViewModelBase
         SelectFormatCommand = new RelayCommand<string>(ext => { if (ext is not null) SetFormat(ext); }, _ => !_isJobRunning);
         RunCommand          = new RelayCommand(DoRun, () => CanRun || _isJobRunning);
         DismissSummaryCommand = new RelayCommand(InternalReset);
+        ToggleMoreFormatsCommand = new RelayCommand(() => ShowMoreFormats = !ShowMoreFormats);
+        ToggleAdvancedCommand    = new RelayCommand(() => ShowAdvancedOptions = !ShowAdvancedOptions);
+        SelectPdfPageModeCommand = new RelayCommand<string>(modeStr =>
+        {
+            if (Enum.TryParse<PdfConvertPageMode>(modeStr, out var mode))
+            {
+                _pdfPageMode = mode;
+                OnPropertyChanged(nameof(IsPdfPageModeFirstOnly));
+                OnPropertyChanged(nameof(IsPdfPageModeAllPerFile));
+                OnPropertyChanged(nameof(IsPdfPageModeCombined));
+            }
+        });
+        SelectImageToPdfModeCommand = new RelayCommand<string>(modeStr =>
+        {
+            if (Enum.TryParse<ImageToPdfMode>(modeStr, out var mode))
+            {
+                _imageToPdfMode = mode;
+                OnPropertyChanged(nameof(IsImageToPdfOnePerFile));
+                OnPropertyChanged(nameof(IsImageToPdfCombined));
+            }
+        });
         OpenHelpCommand     = new RelayCommand<string>(key =>
         {
             var shell = Application.Current.Windows
@@ -834,6 +932,9 @@ public sealed class ImageToolsViewModel : ViewModelBase
         _hasAnyPdfFile = Files.Any(f =>
             string.Equals(Path.GetExtension(f.FilePath), ".pdf", StringComparison.OrdinalIgnoreCase));
 
+        _allFilesArePdf = _hasAnyPdfFile && Files.All(f =>
+            string.Equals(Path.GetExtension(f.FilePath), ".pdf", StringComparison.OrdinalIgnoreCase));
+
         if (Files.Count == 0)
         {
             _detectedMimeType = string.Empty;
@@ -874,16 +975,27 @@ public sealed class ImageToolsViewModel : ViewModelBase
         OnPropertyChanged(nameof(ShowGifOptions));
         OnPropertyChanged(nameof(ShowTiffOptions));
         OnPropertyChanged(nameof(ShowPdfOptions));
+        OnPropertyChanged(nameof(ShowAdvancedToggle));
         OnPropertyChanged(nameof(ShowResizeSection));
         OnPropertyChanged(nameof(ShowConvertSection));
         OnPropertyChanged(nameof(ShowStripMetaOption));
+        OnPropertyChanged(nameof(ShowPdfConvertOptions));
+        OnPropertyChanged(nameof(ShowImageToPdfOptions));
+        OnPropertyChanged(nameof(IsFormatPdfChipVisible));
+        OnPropertyChanged(nameof(CanRun));
+        OnPropertyChanged(nameof(IsRunButtonEnabled));
     }
 
     // ── Mixed-type warning ────────────────────────────────────────────────────
 
     private void ReEvaluateMixedTypeWarning()
     {
-        if (!_hasMultipleMimeTypes || _isConvertEnabled)
+        if (_isConvertEnabled && _hasAnyPdfFile && !_allFilesArePdf)
+        {
+            // Can't convert a batch that mixes PDF and image files — different pipelines.
+            MixedTypeWarning = _loc.Get("imgtools.mixed_pdf_image_convert");
+        }
+        else if (!_hasMultipleMimeTypes || _isConvertEnabled)
         {
             MixedTypeWarning = string.Empty;
         }
@@ -984,22 +1096,131 @@ public sealed class ImageToolsViewModel : ViewModelBase
         outputDir = null;
         singleOutputPath = null;
 
-        // Files eligible for output dialog (exclude PDF when using conversion pipeline).
-        var eligibleFiles = isConvert
-            ? Files.Where(f => !string.Equals(Path.GetExtension(f.FilePath), ".pdf", StringComparison.OrdinalIgnoreCase)).ToList()
-            : Files.ToList();
+        if (isConvert)
+        {
+            // ── PDF → image ───────────────────────────────────────────────────
+            if (_allFilesArePdf)
+            {
+                bool needsFolder = Files.Count > 1
+                    || _pdfPageMode == PdfConvertPageMode.AllPagesPerFile;
 
-        if (eligibleFiles.Count == 0)
+                if (needsFolder)
+                {
+                    var dlg = new Microsoft.Win32.OpenFolderDialog
+                    {
+                        Title = "Select Output Folder",
+                    };
+                    if (dlg.ShowDialog() != true)
+                        return false;
+                    outputDir = dlg.FolderName;
+                    return true;
+                }
+                else
+                {
+                    // Single PDF, first-page-only or combined → save dialog.
+                    var inputPath = Files[0].FilePath;
+                    var suggestedName = ProcessedOutputNaming.BuildOutputPath(
+                        inputPath, Path.GetDirectoryName(inputPath) ?? string.Empty, _selectedFormatExt);
+                    var ext = _selectedFormatExt;
+                    var dlg = new Microsoft.Win32.SaveFileDialog
+                    {
+                        FileName = Path.GetFileName(suggestedName),
+                        InitialDirectory = Path.GetDirectoryName(inputPath) ?? string.Empty,
+                        Filter = $"{ext.ToUpperInvariant()} files (*.{ext})|*.{ext}|All files (*.*)|*.*",
+                    };
+                    if (dlg.ShowDialog() != true)
+                        return false;
+                    singleOutputPath = dlg.FileName;
+                    return true;
+                }
+            }
+
+            // ── image → PDF ───────────────────────────────────────────────────
+            if (_selectedFormatExt == "pdf")
+            {
+                bool needsFolder = Files.Count > 1
+                    && _imageToPdfMode == ImageToPdfMode.OnePerFile;
+
+                if (needsFolder)
+                {
+                    var dlg = new Microsoft.Win32.OpenFolderDialog
+                    {
+                        Title = "Select Output Folder",
+                    };
+                    if (dlg.ShowDialog() != true)
+                        return false;
+                    outputDir = dlg.FolderName;
+                    return true;
+                }
+                else
+                {
+                    // Single file or combined → save dialog.
+                    var inputPath = Files[0].FilePath;
+                    var suggestedName = ProcessedOutputNaming.BuildOutputPath(
+                        inputPath, Path.GetDirectoryName(inputPath) ?? string.Empty, "pdf");
+                    var dlg = new Microsoft.Win32.SaveFileDialog
+                    {
+                        FileName = Path.GetFileName(suggestedName),
+                        InitialDirectory = Path.GetDirectoryName(inputPath) ?? string.Empty,
+                        Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*",
+                    };
+                    if (dlg.ShowDialog() != true)
+                        return false;
+                    singleOutputPath = dlg.FileName;
+                    return true;
+                }
+            }
+
+            // ── image → image ─────────────────────────────────────────────────
+            var eligibleFiles = Files
+                .Where(f => !string.Equals(Path.GetExtension(f.FilePath), ".pdf", StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            if (eligibleFiles.Count == 0)
+                return false;
+
+            if (eligibleFiles.Count == 1)
+            {
+                var inputPath = eligibleFiles[0].FilePath;
+                var suggestedName = ProcessedOutputNaming.BuildOutputPath(
+                    inputPath, Path.GetDirectoryName(inputPath) ?? string.Empty, _selectedFormatExt);
+                var ext = _selectedFormatExt;
+                var dlg = new Microsoft.Win32.SaveFileDialog
+                {
+                    FileName = Path.GetFileName(suggestedName),
+                    InitialDirectory = Path.GetDirectoryName(inputPath) ?? string.Empty,
+                    Filter = $"{ext.ToUpperInvariant()} files (*.{ext})|*.{ext}|All files (*.*)|*.*",
+                };
+                if (dlg.ShowDialog() != true)
+                    return false;
+                singleOutputPath = dlg.FileName;
+                return true;
+            }
+            else
+            {
+                var dlg = new Microsoft.Win32.OpenFolderDialog
+                {
+                    Title = "Select Output Folder",
+                };
+                if (dlg.ShowDialog() != true)
+                    return false;
+                outputDir = dlg.FolderName;
+                return true;
+            }
+        }
+
+        // ── Compression / resize pipeline ─────────────────────────────────────
+        var compFiles = Files.ToList();
+        if (compFiles.Count == 0)
             return false;
 
-        var targetExt = isConvert ? _selectedFormatExt : Path.GetExtension(eligibleFiles[0].FilePath).TrimStart('.');
+        var targetExt = Path.GetExtension(compFiles[0].FilePath).TrimStart('.');
 
-        if (eligibleFiles.Count == 1)
+        if (compFiles.Count == 1)
         {
-            var inputPath = eligibleFiles[0].FilePath;
-            var suggestedName = ProcessedOutputNaming.BuildOutputPath(inputPath,
-                Path.GetDirectoryName(inputPath) ?? string.Empty, targetExt);
-
+            var inputPath = compFiles[0].FilePath;
+            var suggestedName = ProcessedOutputNaming.BuildOutputPath(
+                inputPath, Path.GetDirectoryName(inputPath) ?? string.Empty, targetExt);
             var dlg = new Microsoft.Win32.SaveFileDialog
             {
                 FileName = Path.GetFileName(suggestedName),
@@ -1008,7 +1229,6 @@ public sealed class ImageToolsViewModel : ViewModelBase
             };
             if (dlg.ShowDialog() != true)
                 return false;
-
             singleOutputPath = dlg.FileName;
             return true;
         }
@@ -1020,7 +1240,6 @@ public sealed class ImageToolsViewModel : ViewModelBase
             };
             if (dlg.ShowDialog() != true)
                 return false;
-
             outputDir = dlg.FolderName;
             return true;
         }
@@ -1030,43 +1249,108 @@ public sealed class ImageToolsViewModel : ViewModelBase
     {
         var jobs = new List<ConversionJobDescriptor>();
         var targetExt = _selectedFormatExt;
-        int qualityLevel = _isCompressEnabled ? _qualityLevel : 4; // 4 = max quality when Compress is OFF
+        int qualityLevel = _isCompressEnabled ? _qualityLevel : 4;
         uint? width  = (_isResizeEnabled && !_hasAnyPdfFile) ? ParsePositiveUInt(_widthText)  : null;
         uint? height = (_isResizeEnabled && !_hasAnyPdfFile) ? ParsePositiveUInt(_heightText) : null;
 
         bool isSingleFile = singleOutputPath is not null;
 
+        // ── PDF → image ───────────────────────────────────────────────────────
+        if (_allFilesArePdf)
+        {
+            for (int i = 0; i < Files.Count; i++)
+            {
+                var f = Files[i];
+                string outPath = isSingleFile
+                    ? singleOutputPath!
+                    : ProcessedOutputNaming.BuildOutputPath(f.FilePath, outputDir!, targetExt);
+
+                jobs.Add(new ConversionJobDescriptor
+                {
+                    InputPath      = f.FilePath,
+                    OutputPath     = outPath,
+                    TargetExtension = targetExt,
+                    QualityLevel   = qualityLevel,
+                    StripMetadata  = _stripMetadata,
+                    Kind           = ConversionKind.PdfToImage,
+                    PdfPageMode    = _pdfPageMode,
+                });
+            }
+            return jobs;
+        }
+
+        // ── image → PDF ───────────────────────────────────────────────────────
+        if (targetExt == "pdf")
+        {
+            if (_imageToPdfMode == ImageToPdfMode.CombinedPdf && Files.Count > 1)
+            {
+                // One combined job: all images into a single PDF.
+                var allPaths = Files.Select(f => f.FilePath).ToList();
+                string outPath = singleOutputPath ?? ProcessedOutputNaming.BuildOutputPath(
+                    Files[0].FilePath, outputDir!, "pdf");
+
+                jobs.Add(new ConversionJobDescriptor
+                {
+                    InputPath          = Files[0].FilePath,
+                    OutputPath         = outPath,
+                    TargetExtension    = "pdf",
+                    QualityLevel       = qualityLevel,
+                    StripMetadata      = _stripMetadata,
+                    Kind               = ConversionKind.ImagesToPdf,
+                    CombinedInputPaths = allPaths,
+                });
+            }
+            else
+            {
+                // One PDF per image.
+                for (int i = 0; i < Files.Count; i++)
+                {
+                    var f = Files[i];
+                    string outPath = isSingleFile
+                        ? singleOutputPath!
+                        : ProcessedOutputNaming.BuildOutputPath(f.FilePath, outputDir!, "pdf");
+
+                    jobs.Add(new ConversionJobDescriptor
+                    {
+                        InputPath       = f.FilePath,
+                        OutputPath      = outPath,
+                        TargetExtension = "pdf",
+                        QualityLevel    = qualityLevel,
+                        StripMetadata   = _stripMetadata,
+                        Kind            = ConversionKind.ImageToPdf,
+                    });
+                }
+            }
+            return jobs;
+        }
+
+        // ── image → image (existing path) ─────────────────────────────────────
         for (int i = 0; i < Files.Count; i++)
         {
             var f = Files[i];
             var ext = Path.GetExtension(f.FilePath);
 
-            // Skip PDF files in conversion pipeline — mark them as Error immediately.
+            // Skip PDF files in image-to-image pipeline — marked Error by BuildConversionJobs caller.
             if (string.Equals(ext, ".pdf", StringComparison.OrdinalIgnoreCase))
             {
                 f.Status = CompressionFileStatus.Error;
                 continue;
             }
 
-            string outPath;
-            if (isSingleFile)
-            {
-                outPath = singleOutputPath!;
-            }
-            else
-            {
-                outPath = ProcessedOutputNaming.BuildOutputPath(f.FilePath, outputDir!, targetExt);
-            }
+            string outPath = isSingleFile
+                ? singleOutputPath!
+                : ProcessedOutputNaming.BuildOutputPath(f.FilePath, outputDir!, targetExt);
 
             jobs.Add(new ConversionJobDescriptor
             {
-                InputPath      = f.FilePath,
-                OutputPath     = outPath,
+                InputPath       = f.FilePath,
+                OutputPath      = outPath,
                 TargetExtension = targetExt,
-                QualityLevel   = qualityLevel,
-                StripMetadata  = _stripMetadata,
-                TargetWidth    = width,
-                TargetHeight   = height,
+                QualityLevel    = qualityLevel,
+                StripMetadata   = _stripMetadata,
+                TargetWidth     = width,
+                TargetHeight    = height,
+                Kind            = ConversionKind.ImageToImage,
             });
         }
 
@@ -1084,6 +1368,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             CompressionLevel = _qualityLevel,
             ResizeWidth  = width,
             ResizeHeight = height,
+            NoAutoResize = !_isResizeEnabled,
             Advanced = new AdvancedCompressionSettings
             {
                 StripMetadata    = _stripMetadata,
@@ -1130,13 +1415,34 @@ public sealed class ImageToolsViewModel : ViewModelBase
     {
         foreach (var job in jobs)
         {
-            var item = Files.FirstOrDefault(f => f.FilePath == job.InputPath);
-            if (item is null) continue;
-            item.Status = File.Exists(job.OutputPath)
-                ? CompressionFileStatus.Done
-                : CompressionFileStatus.Error;
-            item.OutputSizeBytes = item.IsDone ? GetFileSizeBytes(job.OutputPath) : 0;
-            item.NotifyStatus();
+            if (job.Kind == ConversionKind.ImagesToPdf)
+            {
+                // Combined job: one output file represents all input images.
+                bool outputExists = File.Exists(job.OutputPath);
+                long outSize = outputExists ? GetFileSizeBytes(job.OutputPath) : 0;
+                var inputs = job.CombinedInputPaths ?? new[] { job.InputPath };
+                foreach (var inputPath in inputs)
+                {
+                    var item = Files.FirstOrDefault(f => f.FilePath == inputPath);
+                    if (item is null) continue;
+                    item.Status = outputExists ? CompressionFileStatus.Done : CompressionFileStatus.Error;
+                    item.OutputSizeBytes = outSize;
+                    item.NotifyStatus();
+                }
+            }
+            else
+            {
+                var item = Files.FirstOrDefault(f => f.FilePath == job.InputPath);
+                if (item is null) continue;
+                // For PdfToImage all-pages modes, the primary OutputPath may be the base path;
+                // check if at least one output file was produced.
+                bool hasPrimaryOutput = File.Exists(job.OutputPath);
+                item.Status = hasPrimaryOutput
+                    ? CompressionFileStatus.Done
+                    : CompressionFileStatus.Error;
+                item.OutputSizeBytes = item.IsDone ? GetFileSizeBytes(job.OutputPath) : 0;
+                item.NotifyStatus();
+            }
         }
     }
 
@@ -1218,11 +1524,14 @@ public sealed class ImageToolsViewModel : ViewModelBase
         _detectedCategory = FileCategory.Unsupported;
         _hasMultipleMimeTypes = false;
         _hasAnyPdfFile = false;
+        _allFilesArePdf = false;
         _userHasManuallyChangedToggles = false;
         _isCompressEnabled = false;
         _isResizeEnabled   = false;
         _isConvertEnabled  = false;
         _jobIncludedSizeComparison = false;
+        _pdfPageMode = PdfConvertPageMode.FirstPageOnly;
+        _imageToPdfMode = ImageToPdfMode.OnePerFile;
         MixedTypeWarning = string.Empty;
         IsJobRunning  = false;
         IsJobComplete = false;
@@ -1246,6 +1555,15 @@ public sealed class ImageToolsViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsRunButtonEnabled));
         OnPropertyChanged(nameof(ActionButtonLabel));
         OnPropertyChanged(nameof(ShowQualitySlider));
+        OnPropertyChanged(nameof(HasAnyPdfFile));
+        OnPropertyChanged(nameof(IsFormatPdfChipVisible));
+        OnPropertyChanged(nameof(ShowPdfConvertOptions));
+        OnPropertyChanged(nameof(ShowImageToPdfOptions));
+        OnPropertyChanged(nameof(IsPdfPageModeFirstOnly));
+        OnPropertyChanged(nameof(IsPdfPageModeAllPerFile));
+        OnPropertyChanged(nameof(IsPdfPageModeCombined));
+        OnPropertyChanged(nameof(IsImageToPdfOnePerFile));
+        OnPropertyChanged(nameof(IsImageToPdfCombined));
         FireToggleAndSectionProps();
     }
 
@@ -1326,6 +1644,13 @@ public sealed class ImageToolsViewModel : ViewModelBase
         OnPropertyChanged(nameof(WidthLabelText));
         OnPropertyChanged(nameof(HeightLabelText));
         OnPropertyChanged(nameof(AddMoreLabel));
+        OnPropertyChanged(nameof(MoreFormatsLabel));
+        OnPropertyChanged(nameof(AdvancedLabel));
+        OnPropertyChanged(nameof(PdfPageModeFirstLabel));
+        OnPropertyChanged(nameof(PdfPageModePerFileLabel));
+        OnPropertyChanged(nameof(PdfPageModeCombinedLabel));
+        OnPropertyChanged(nameof(ImgToPdfOnePerFileLabel));
+        OnPropertyChanged(nameof(ImgToPdfCombinedLabel));
         OnPropertyChanged(nameof(ActionButtonLabel));
     }
 

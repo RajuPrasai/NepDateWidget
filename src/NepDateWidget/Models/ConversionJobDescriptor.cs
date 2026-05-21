@@ -1,8 +1,8 @@
 namespace NepDateWidget.Models;
 
 /// <summary>
-/// Describes a single file to be processed by the conversion pipeline
-/// (format change ± quality ± resize). Used by StartConversionJobAsync.
+/// Describes a single unit of work for the conversion pipeline.
+/// Kind determines which code path the orchestrator uses.
 /// </summary>
 public sealed class ConversionJobDescriptor
 {
@@ -13,4 +13,18 @@ public sealed class ConversionJobDescriptor
     public required bool StripMetadata { get; init; }
     public uint? TargetWidth { get; init; }
     public uint? TargetHeight { get; init; }
+
+    // ── PDF-specific ──────────────────────────────────────────────────────────
+
+    /// <summary>Routing discriminator. Defaults to ImageToImage (existing behaviour).</summary>
+    public ConversionKind Kind { get; init; } = ConversionKind.ImageToImage;
+
+    /// <summary>For PdfToImage jobs: which pages to render.</summary>
+    public PdfConvertPageMode PdfPageMode { get; init; } = PdfConvertPageMode.FirstPageOnly;
+
+    /// <summary>
+    /// For ImagesToPdf (combined) jobs: all input image paths.
+    /// InputPath is set to the first entry for display/progress purposes.
+    /// </summary>
+    public IReadOnlyList<string>? CombinedInputPaths { get; init; }
 }

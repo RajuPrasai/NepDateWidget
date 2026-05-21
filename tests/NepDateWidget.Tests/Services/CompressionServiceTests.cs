@@ -1,6 +1,5 @@
 using NepDateWidget.Models;
 using NepDateWidget.Services;
-using NepDateWidget.ViewModels;
 
 namespace NepDateWidget.Tests.Services;
 
@@ -131,109 +130,5 @@ public sealed class FileTypeServiceTests
         var result = _svc.ValidateSameType(files);
         Assert.NotNull(result);
         Assert.Contains("Unsupported", result, StringComparison.OrdinalIgnoreCase);
-    }
-}
-
-public sealed class GetOutputFileNameTests
-{
-    // ── Suffix ───────────────────────────────────────────────────────────────
-
-    [Fact]
-    public void Compression_AddsCompressedSuffix()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.jpg", "image/jpeg", isResize: false);
-        Assert.Contains("_Compressed", result);
-    }
-
-    [Fact]
-    public void Resize_AddsResizedSuffix()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.jpg", "image/jpeg", isResize: true);
-        Assert.Contains("_Resized", result);
-    }
-
-    // ── Extension remapping ──────────────────────────────────────────────────
-
-    [Fact]
-    public void Bmp_RemapsToJpg()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.bmp", "image/bmp", isResize: false);
-        Assert.EndsWith(".jpg", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public void Heif_RemapsToJpg()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.heic", "image/heif", isResize: false);
-        Assert.EndsWith(".jpg", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public void Jpeg_PreservesJpegExtension()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.jpeg", "image/jpeg", isResize: false);
-        Assert.EndsWith(".jpeg", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public void Png_PreservesPngExtension()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.png", "image/png", isResize: false);
-        Assert.EndsWith(".png", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public void Pdf_PreservesPdfExtension()
-    {
-        var result = CompressionViewModel.GetOutputFileName("doc.pdf", "application/pdf", isResize: false);
-        Assert.EndsWith(".pdf", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    // ── Directory preservation ───────────────────────────────────────────────
-
-    [Fact]
-    public void OutputFile_DirectoryMatches_InputDirectory()
-    {
-        const string input  = @"C:\Users\test\Pictures\photo.jpg";
-        var          result = CompressionViewModel.GetOutputFileName(input, "image/jpeg", isResize: false);
-        Assert.StartsWith(@"C:\Users\test\Pictures\", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    // ── ConvertToWebP extension remapping ────────────────────────────────────
-
-    [Fact]
-    public void Jpeg_ConvertToWebP_RemapsToWebp()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.jpg", "image/jpeg", isResize: false, convertToWebP: true);
-        Assert.EndsWith(".webp", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public void Png_ConvertToWebP_RemapsToWebp()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.png", "image/png", isResize: false, convertToWebP: true);
-        Assert.EndsWith(".webp", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public void Jpeg_ConvertToWebP_False_PreservesJpegExtension()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.jpg", "image/jpeg", isResize: false, convertToWebP: false);
-        Assert.EndsWith(".jpg", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public void Png_ConvertToWebP_False_PreservesPngExtension()
-    {
-        var result = CompressionViewModel.GetOutputFileName("photo.png", "image/png", isResize: false, convertToWebP: false);
-        Assert.EndsWith(".png", result, StringComparison.OrdinalIgnoreCase);
-    }
-
-    [Fact]
-    public void Bmp_ConvertToWebP_True_StillRemapsToJpg()
-    {
-        // BMP→JPG remapping takes priority in the switch; WebP flag only applies to JPEG and PNG.
-        var result = CompressionViewModel.GetOutputFileName("photo.bmp", "image/bmp", isResize: false, convertToWebP: true);
-        Assert.EndsWith(".jpg", result, StringComparison.OrdinalIgnoreCase);
     }
 }

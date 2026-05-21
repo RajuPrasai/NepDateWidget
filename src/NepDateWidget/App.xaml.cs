@@ -167,7 +167,8 @@ public partial class App : Application
         var imageCompressionService = new ImageCompressionService();
         var pdfCompressionService = new PdfCompressionService();
         var imageConversionService = new ImageConversionService();
-        var jobOrchestrationService = new JobOrchestrationService(imageCompressionService, pdfCompressionService, imageConversionService);
+        var pdfTranscodeService = new PdfTranscodeService();
+        var jobOrchestrationService = new JobOrchestrationService(imageCompressionService, pdfCompressionService, imageConversionService, pdfTranscodeService);
 
         var mainViewModel = new MainViewModel(settingsService, calendarService, localizationService, conversionService, themeService, autoStartService, reminderService: _reminderService, notesService: _notesService, documentService: documentService, runHistoryService: runHistoryService, holidayLookupService: new HolidayLookupService(nepDateAdapter), adapter: nepDateAdapter, shortcutsService: _shortcutsService, appStateService: _appStateService!, scriptService: _scriptService, fileTypeService: fileTypeService, jobOrchestrationService: jobOrchestrationService, imageConversionService: imageConversionService);
         Helpers.UIAnimations.Register(mainViewModel);

@@ -15,8 +15,8 @@ public interface IJobOrchestrationService
     Task StartJobAsync(IReadOnlyList<CompressionJob> jobs, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Runs a batch of format-conversion jobs (format change ± quality ± resize).
-    /// Uses the same parallel semaphore infrastructure as StartJobAsync.
+    /// Runs a batch of conversion jobs. The Kind discriminator on each descriptor
+    /// determines which pipeline is used (image-to-image, PDF-to-image, image-to-PDF).
     /// </summary>
     Task StartConversionJobAsync(IReadOnlyList<ConversionJobDescriptor> jobs, CancellationToken cancellationToken = default);
 

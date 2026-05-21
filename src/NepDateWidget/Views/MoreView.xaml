@@ -208,46 +208,6 @@
                                        Foreground="{DynamicResource WidgetForegroundBrush}" />
                         </StackPanel>
                         <WrapPanel>
-                            <Button Command="{Binding NavigateToCommand}" CommandParameter="Compression"
-                                    Style="{StaticResource GridIconBtnStyle}">
-                                <Button.Content>
-                                    <StackPanel HorizontalAlignment="Center">
-                    <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                                BorderThickness="0.8" CornerRadius="8" Padding="10"
-                                                HorizontalAlignment="Center" Margin="0,0,0,5">
-                                            <Path Data="{StaticResource IconCompress}"
-                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
-                                                  StrokeThickness="1.2" Stretch="Uniform"
-                                                  Width="22" Height="22" />
-                                        </Border>
-                                        <TextBlock Text="{Binding CompressNavLabel}"
-                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                   FontSize="11" TextAlignment="Center"
-                                                   HorizontalAlignment="Center" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Button.Content>
-                            </Button>
-                            <Button Command="{Binding NavigateToCommand}" CommandParameter="Resize"
-                                    Style="{StaticResource GridIconBtnStyle}">
-                                <Button.Content>
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                                BorderThickness="0.8" CornerRadius="8" Padding="10"
-                                                HorizontalAlignment="Center" Margin="0,0,0,5">
-                                            <Path Data="{StaticResource IconResize}"
-                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
-                                                  StrokeThickness="1.2" Stretch="Uniform"
-                                                  Width="22" Height="22" />
-                                        </Border>
-                                        <TextBlock Text="{Binding ResizeNavLabel}"
-                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                   FontSize="11" TextAlignment="Center"
-                                                   HorizontalAlignment="Center" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Button.Content>
-                            </Button>
                             <Button Command="{Binding NavigateToCommand}" CommandParameter="IdPhoto"
                                     Style="{StaticResource GridIconBtnStyle}">
                                 <Button.Content>
@@ -262,26 +222,6 @@
                                                   Width="22" Height="22" />
                                         </Border>
                                         <TextBlock Text="{Binding IdPhotoNavLabel}"
-                                                   Foreground="{DynamicResource WidgetForegroundBrush}"
-                                                   FontSize="11" TextAlignment="Center"
-                                                   HorizontalAlignment="Center" TextWrapping="Wrap" />
-                                    </StackPanel>
-                                </Button.Content>
-                            </Button>
-                            <Button Command="{Binding NavigateToCommand}" CommandParameter="ImageConverter"
-                                    Style="{StaticResource GridIconBtnStyle}">
-                                <Button.Content>
-                                    <StackPanel HorizontalAlignment="Center">
-                                        <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                                                BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                                BorderThickness="0.8" CornerRadius="8" Padding="10"
-                                                HorizontalAlignment="Center" Margin="0,0,0,5">
-                                            <Path Data="{StaticResource IconImageConvert}"
-                                                  Stroke="{DynamicResource WidgetForegroundBrush}"
-                                                  StrokeThickness="1.2" Stretch="Uniform"
-                                                  Width="22" Height="22" />
-                                        </Border>
-                                        <TextBlock Text="{Binding ImageConverterNavLabel}"
                                                    Foreground="{DynamicResource WidgetForegroundBrush}"
                                                    FontSize="11" TextAlignment="Center"
                                                    HorizontalAlignment="Center" TextWrapping="Wrap" />
@@ -375,17 +315,8 @@
                                             <DataTrigger Binding="{Binding IsSubViewDocuments}" Value="True">
                                                 <Setter Property="Data" Value="{StaticResource IconFiles}" />
                                             </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsSubViewCompression}" Value="True">
-                                                <Setter Property="Data" Value="{StaticResource IconCompress}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsSubViewResize}" Value="True">
-                                                <Setter Property="Data" Value="{StaticResource IconResize}" />
-                                            </DataTrigger>
                                             <DataTrigger Binding="{Binding IsSubViewIdPhoto}" Value="True">
                                                 <Setter Property="Data" Value="{StaticResource IconIdPhoto}" />
-                                            </DataTrigger>
-                                            <DataTrigger Binding="{Binding IsSubViewImageConverter}" Value="True">
-                                                <Setter Property="Data" Value="{StaticResource IconImageConvert}" />
                                             </DataTrigger>
                                             <DataTrigger Binding="{Binding IsSubViewImageTools}" Value="True">
                                                 <Setter Property="Data" Value="{StaticResource IconImageTools}" />
@@ -1565,28 +1496,6 @@
 
             </StackPanel>
 
-            <!-- ── Compression Sub-view ──────────────────────────────── -->
-            <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4"
-                    Visibility="{Binding DataContext.IsSubViewCompression,
-                                 ElementName=RootMoreView,
-                                 Converter={StaticResource BoolToVis},
-                                 FallbackValue=Collapsed}">
-                <views:CompressionView DataContext="{Binding Compression}" />
-            </Border>
-
-            <!-- ── Resize Sub-view ───────────────────────────────────── -->
-            <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4"
-                    Visibility="{Binding DataContext.IsSubViewResize,
-                                 ElementName=RootMoreView,
-                                 Converter={StaticResource BoolToVis},
-                                 FallbackValue=Collapsed}">
-                <views:ResizeView DataContext="{Binding Resize}" />
-            </Border>
-
             <!-- ── ID Photo Sub-view ──────────────────────────────────── -->
             <Border Background="{DynamicResource WidgetBackgroundBrush}"
                     BorderBrush="{DynamicResource WidgetInputBorderBrush}"
@@ -1596,17 +1505,6 @@
                                  Converter={StaticResource BoolToVis},
                                  FallbackValue=Collapsed}">
                 <views:IdPhotoView DataContext="{Binding IdPhoto}" />
-            </Border>
-
-            <!-- ── Image Converter Sub-view ──────────────────────────── -->
-            <Border Background="{DynamicResource WidgetBackgroundBrush}"
-                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                    BorderThickness="0.8" CornerRadius="8" Padding="12,10" Margin="0,0,0,4"
-                    Visibility="{Binding DataContext.IsSubViewImageConverter,
-                                 ElementName=RootMoreView,
-                                 Converter={StaticResource BoolToVis},
-                                 FallbackValue=Collapsed}">
-                <views:ImageConverterView DataContext="{Binding DataContext.ImageConverter, ElementName=RootMoreView}" />
             </Border>
 
             <!-- ── Image Tools Sub-view ──────────────────────────────── -->

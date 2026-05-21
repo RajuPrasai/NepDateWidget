@@ -8,6 +8,7 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
     private readonly IImageCompressionService _imageService;
     private readonly IPdfCompressionService _pdfService;
     private readonly IImageConversionService _conversionService;
+    private readonly IPdfTranscodeService _pdfTranscode;
 
     private CancellationTokenSource? _cts;
     private volatile bool _isJobRunning;
@@ -19,11 +20,13 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
     public JobOrchestrationService(
         IImageCompressionService imageService,
         IPdfCompressionService pdfService,
-        IImageConversionService conversionService)
+        IImageConversionService conversionService,
+        IPdfTranscodeService pdfTranscode)
     {
         _imageService = imageService ?? throw new ArgumentNullException(nameof(imageService));
         _pdfService = pdfService ?? throw new ArgumentNullException(nameof(pdfService));
         _conversionService = conversionService ?? throw new ArgumentNullException(nameof(conversionService));
+        _pdfTranscode = pdfTranscode ?? throw new ArgumentNullException(nameof(pdfTranscode));
     }
 
     public async Task StartJobAsync(IReadOnlyList<CompressionJob> jobs, CancellationToken cancellationToken = default)
@@ -144,14 +147,29 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
 
                     await Task.Run(() =>
                     {
-                        _conversionService.Convert(
-                            job.InputPath,
-                            job.OutputPath,
-                            job.TargetExtension,
-                            job.QualityLevel,
-                            job.StripMetadata,
-                            job.TargetWidth,
-                            job.TargetHeight);
+                        _ = job.Kind switch
+                        {
+                            ConversionKind.PdfToImage => _pdfTranscode.PdfToImage(
+                                job.InputPath,
+                                job.OutputPath,
+                                job.TargetExtension,
+                                job.QualityLevel,
+                                job.PdfPageMode),
+                            ConversionKind.ImageToPdf => _pdfTranscode.ImageToPdf(
+                                job.InputPath,
+                                job.OutputPath),
+                            ConversionKind.ImagesToPdf => _pdfTranscode.ImagesToPdf(
+                                job.CombinedInputPaths ?? new[] { job.InputPath },
+                                job.OutputPath),
+                            _ => _conversionService.Convert(
+                                job.InputPath,
+                                job.OutputPath,
+                                job.TargetExtension,
+                                job.QualityLevel,
+                                job.StripMetadata,
+                                job.TargetWidth,
+                                job.TargetHeight),
+                        };
                     }, token).ConfigureAwait(false);
 
                     Interlocked.Increment(ref completed);

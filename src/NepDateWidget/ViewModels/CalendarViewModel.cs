@@ -611,6 +611,9 @@ public sealed class CalendarViewModel : ViewModelBase
         // the month rather than a per-cell GetNote call with per-cell key allocations.
         var noteDays = _notesService?.GetHasNotesForMonth(_displayYear, _displayMonth);
 
+        // Compute the copy-menu title once per refresh — it does not vary per cell.
+        string copyMenuTitle = _loc.Get("calendar.copy.title");
+
         if (Days.Count == month.Days.Count)
         {
             // Fast path: update all cells in-place, preserving container elements.
@@ -620,7 +623,7 @@ public sealed class CalendarViewModel : ViewModelBase
                 var day = month.Days[i];
                 Days[i].Update(day, isNepali, _showEnglishDayNumbers, _highlightSaturdays,
                     _highlightSundays, _showTithi, _showEvents, _highlightPublicHolidays,
-                    _adapter, _loc, _visibleEventCount);
+                    _adapter, _loc, _visibleEventCount, copyMenuTitle);
                 if (reminderDays is not null)
                 {
                     Days[i].HasReminders = day.IsCurrentMonth && reminderDays.Contains(day.Day);
@@ -642,7 +645,7 @@ public sealed class CalendarViewModel : ViewModelBase
                 var day = month.Days[i];
                 Days[i].Update(day, isNepali, _showEnglishDayNumbers, _highlightSaturdays,
                     _highlightSundays, _showTithi, _showEvents, _highlightPublicHolidays,
-                    _adapter, _loc, _visibleEventCount);
+                    _adapter, _loc, _visibleEventCount, copyMenuTitle);
                 if (reminderDays is not null)
                 {
                     Days[i].HasReminders = day.IsCurrentMonth && reminderDays.Contains(day.Day);

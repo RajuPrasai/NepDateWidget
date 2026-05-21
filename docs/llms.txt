@@ -15,6 +15,8 @@ NepDate Widget is a lightweight WPF/.NET desktop application that converts Bikra
 - **Unit Converter**: Convert traditional Nepali land units (Ropani, Bigha, Dhur) and weight units.
 - **Notes & Reminders**: Pin notes to specific BS dates. Set recurring reminders with snooze.
 - **Document Manager**: Organize and quick-access documents from within the widget.
+- **ID Photo**: Crop photos to exact passport/ID print dimensions (Passport/MRP 35×45 mm, Auto Size 25×30 mm, Stamp Size 20×25 mm, US/DV 51×51 mm, or fully custom). Square or circle crop. Export a single photo or tile copies onto A4, 4R, 3R, 5R, or any custom print sheet.
+- **Image Tools**: Batch compress (5-level quality slider, metadata stripping, GIF/TIFF/PDF-specific options), resize to exact pixel dimensions, and convert between JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO, TGA, all major RAW formats (ARW, CR2, CR3, DNG, NEF, ORF, RAF, RW2, ERF, PEF, X3F), and PDF. Any combination of all three operations in a single pass.
 - **Dual Language UI**: Switch between English and Nepali (नेपाली) instantly - no restart needed.
 - **20 Color Themes**: 10 light and 10 dark presets, customizable fonts, rounded or sharp corners, optional transparency.
 
