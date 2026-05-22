@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system')}()</script>
+  <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system');document.documentElement.style.backgroundColor=t==='dark'?'#0a0e1a':'#fff';document.documentElement.classList.add('no-transition');requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('no-transition')})})}()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
   <meta name="color-scheme" content="light dark" />

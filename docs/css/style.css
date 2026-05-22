@@ -160,6 +160,8 @@ li { margin-bottom: .25em; }
   --shadow-glow:   0 0 0 1px var(--accent-border), 0 12px 36px -8px var(--accent-glow);
 }
 
+html.no-transition, html.no-transition *, html.no-transition *::before, html.no-transition *::after { transition: none !important; }
+
 body {
   font-family: var(--font-sans);
   background: var(--bg);
@@ -455,6 +457,13 @@ body {
   filter: drop-shadow(0 0 6px rgba(255, 100, 60, 0.45));
 }
 
+.hero .hero-tagline {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  letter-spacing: -.01em;
+}
 .hero .lede {
   font-size: 1.15rem;
   color: var(--text-muted);
