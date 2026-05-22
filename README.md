@@ -71,7 +71,7 @@ No telemetry, no analytics, no account. All processing is local. The only outbou
 
 ## License
 
-Source-available under the [PolyForm Strict License 1.0.0](LICENSE). You may read, audit, build, and run the source for personal evaluation. Redistribution, forks, derivative works, and commercial use require a separate license.
+Source-available under the [PolyForm Strict License 1.0.0](LICENSE). You may read, audit, build, and run the source for personal evaluation. Redistribution, derivative works, and commercial use require a separate license.
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency and font attributions.
 
