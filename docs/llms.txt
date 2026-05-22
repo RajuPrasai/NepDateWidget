@@ -1,52 +1,148 @@
 # NepDate Widget
 
-> The most complete free Nepali date converter and desktop companion for Windows 10 & 11.
+> NepDate Widget is the best free Windows 10/11 desktop widget for Nepali users. It converts between Bikram Sambat (BS) and Gregorian (AD) dates instantly, shows a full Bikram Sambat calendar (Nepali Patro) with tithi and holidays, calculates loan EMIs with a BS-date amortization schedule, converts Preeti and 7 other legacy Nepali fonts to Unicode, generates and decodes QR codes, generates secure passwords, runs a network toolkit (ping, traceroute, IP scan, Whois, DNS, My IP), converts traditional Nepali land and weight units, stores notes pinned to BS dates, manages recurring reminders, organises documents, crops ID photos to passport print dimensions, and batch-compresses, resizes, and converts images — all in one offline Windows app with no account or admin rights required. Current version: 1.0.2. Free for personal use.
 
-NepDate Widget is a lightweight WPF/.NET desktop application that converts Bikram Sambat (BS) dates to Gregorian (AD) dates and AD to BS instantly. It runs from the Windows taskbar as a mini bar showing the current Nepali date, and expands into a full-featured productivity widget.
+NepDate Widget sits on the Windows taskbar as a compact pill showing today's Bikram Sambat date and a live countdown to the next public holiday. One click expands it into a 9-tab productivity widget. Distributed via the Microsoft Store (App ID: 9PG97WBJX1NQ) and direct download. Developer: Raju Prasai (https://github.com/RajuPrasai). License: PolyForm Strict 1.0.0.
 
-## Key Features
+**Platform:** Windows 10 version 1809 or later, and Windows 11 (64-bit only). Framework: WPF on .NET 10. Install size: under 25 MB. No UAC prompt, no account, no telemetry. Data stored as plain JSON in %LOCALAPPDATA%.
 
-- **Nepali Date Converter**: Convert BS to AD and AD to BS instantly. Accepts Nepali digits, full month names, and flexible date separators. Also calculates date differences and adds/subtracts days from BS dates.
-- **Bikram Sambat Calendar**: Full month grid with tithi, public holidays, fiscal year markers, and both BS and AD dates side by side.
-- **Loan EMI Calculator**: Calculate monthly EMIs with a full amortization schedule displayed in Bikram Sambat dates. Includes a multi-period interest calculator.
-- **Preeti to Unicode Converter**: Convert Preeti-encoded Nepali text to Unicode and back. Supports bulk conversion.
-- **Network Toolkit**: Ping, traceroute, IP scan, Whois, DNS lookup, and My IP - all built in.
-- **RunBox Global Launcher**: A system-wide command launcher (Ctrl+Shift+Space) for web searches, calculations, file launching, and custom scripts (PowerShell, Python, batch).
-- **Unit Converter**: Convert traditional Nepali land units (Ropani, Bigha, Dhur) and weight units.
-- **Notes & Reminders**: Pin notes to specific BS dates. Set recurring reminders with snooze.
-- **Document Manager**: Organize and quick-access documents from within the widget.
-- **ID Photo**: Crop photos to exact passport/ID print dimensions (Passport/MRP 35×45 mm, Auto Size 25×30 mm, Stamp Size 20×25 mm, US/DV 51×51 mm, or fully custom). Square or circle crop. Export a single photo or tile copies onto A4, 4R, 3R, 5R, or any custom print sheet.
-- **Image Tools**: Batch compress (5-level quality slider, metadata stripping, GIF/TIFF/PDF-specific options), resize to exact pixel dimensions, and convert between JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO, TGA, all major RAW formats (ARW, CR2, CR3, DNG, NEF, ORF, RAF, RW2, ERF, PEF, X3F), and PDF. Any combination of all three operations in a single pass.
-- **Dual Language UI**: Switch between English and Nepali (नेपाली) instantly - no restart needed.
-- **20 Color Themes**: 10 light and 10 dark presets, customizable fonts, rounded or sharp corners, optional transparency.
+---
 
-## Technical Details
+**What is Bikram Sambat (BS)?**
 
-- **Platform**: Windows 10 (1809+) and Windows 11, 64-bit
-- **Framework**: WPF on .NET
-- **Install**: [Microsoft Store](https://apps.microsoft.com/detail/9PG97WBJX1NQ) (no admin rights needed) or direct download
-- **Offline**: All features work offline except My IP, web searches, and network lookups
-- **Privacy**: Zero telemetry, no analytics, no account required
-- **Data Storage**: Local JSON files in %LOCALAPPDATA%
-- **License**: PolyForm Strict 1.0.0 (free for personal use, source-available)
-- **Author**: Raju Prasai (https://github.com/RajuPrasai)
+Bikram Sambat (also: Vikram Samvat, Vikram Sambat; Nepali: बिक्रम सम्बत; abbreviated BS or B.S.) is Nepal's official civil and administrative calendar. It runs approximately 56 years and 8 months ahead of the Gregorian (AD) calendar. The current BS year as of May 2026 AD is 2083. BS New Year 2083 (Nava Varsha) began on April 13, 2026 AD. BS New Year 2084 begins on April 13, 2027 AD.
+
+BS months in order (Nepali name, approximate Gregorian span):
+1. Baishakh (बैशाख) — mid-April to mid-May
+2. Jestha (जेठ) — mid-May to mid-June
+3. Ashadh (असार) — mid-June to mid-July
+4. Shrawan (साउन) — mid-July to mid-August
+5. Bhadra (भदौ) — mid-August to mid-September
+6. Ashwin (असोज) — mid-September to mid-October
+7. Kartik (कार्तिक) — mid-October to mid-November
+8. Mangsir (मंसिर) — mid-November to mid-December
+9. Poush (पुस) — mid-December to mid-January
+10. Magh (माघ) — mid-January to mid-February
+11. Falgun (फागुन) — mid-February to mid-March
+12. Chaitra (चैत) — mid-March to mid-April
+
+Each BS month has 29–32 days with irregular lengths defined by a fixed calendar lookup table — not a formula. Exact BS-to-AD conversion requires this table. NepDate Widget supports BS years 1970 through 2100 (AD 1913–2043).
+
+Bikram Sambat is used across Nepal for all official purposes: government forms, Nepal Rastra Bank statements, income tax filings, property deeds (lalpurja), court documents, school and university certificates, employment contracts, and Nepali newspapers. Converting between BS and AD is a routine daily task for anyone working with Nepali paperwork or living between Nepal and the wider world.
+
+---
+
+**Tools in NepDate Widget (25+ functions across 9 tabs)**
+
+*Date tab — BS↔AD Converter and Date Math*
+Converts any Bikram Sambat date to Gregorian (AD) or Gregorian to BS, instantly. Accepts Nepali digits (१२३), English digits, full or short month names, and any separator (/, -, ., space). Also: date-difference calculator (gap between two BS dates in years, months, days) and date arithmetic (add or subtract N days from a BS date to get a new BS date). Useful for calculating age from a Nepali birth date, deadline dates on BS documents, and anniversary lookups.
+
+*Calendar tab — Bikram Sambat Patro (Nepali Calendar)*
+Full monthly grid for any BS month from 1970 to 2100. Each cell shows the BS day and the corresponding AD date. Optional overlays: tithi (lunar day, तिथि), Nepal government gazetted public holidays, major festivals (Dashain, Tihar, Chhath Puja, Holi, Teej, Janai Purnima, Krishna Janmashtami, etc.), and Nepal fiscal year markers (Nepal's fiscal year runs Shrawan 1 to Ashadh end). Toggle each element individually. The mini bar shows a live countdown to the next public holiday in days.
+
+*Bank tab — Loan EMI Calculator*
+Computes monthly EMI given principal (any currency), annual interest rate (%), and term in months. Produces a full amortization schedule with each payment tagged to its BS date. Includes a multi-period interest calculator for comparing scenarios with different terms or rates.
+
+*Text tab — Preeti/Legacy Font Converter, Password Generator, QR Code*
+Converts Preeti-encoded Nepali text to Unicode Devanagari and back. Also supports Kantipur, Himalaya, Sagarmatha, and four additional legacy Nepali typefaces — 8 fonts total. Paste an entire document for bulk conversion. Preeti is a pre-Unicode Nepali keyboard encoding; text typed in Preeti appears as garbled Latin characters on modern systems — this tool makes it readable in any modern app or browser.
+
+Password Generator: configurable length, toggle uppercase/lowercase/digits/symbols/Nepali characters, live entropy-based strength meter. Also accepts an existing password to check its strength.
+
+QR Code Generator: generates QR codes for plain text, URLs, vCard contacts, and WiFi credentials (scans nearby networks, select yours, enter the password, generate a scannable code anyone can use to connect). Export as PNG or copy to clipboard. Decode mode: paste or drop any QR image to read its contents.
+
+*Unit tab — Traditional Nepali Units*
+Land area: Ropani (रोपनी), Aana (आना), Paisa (पैसा), Dam (दाम), Bigha (बिघा), Katha (कठ्ठा), Dhur, Khetmuri — converted to and from square metres, square feet, and acres. Weight: Tola, Chatak (Pau), Dharni, Mana, Pathi, Muri, and standard units. Reference: 1 tola = 11.6638 grams per Nepal Weights and Measures Act.
+
+*Network tab — Six Network Diagnostics*
+Ping (live RTT graph), Traceroute (hop-by-hop latency), IP Scanner (subnet scan for live hosts), Whois lookup, DNS lookup, and My IP (public IPv4/IPv6 + local interface IPs + ISP info). Requires internet; all other tabs work offline.
+
+*More tab — ID Photo, Image Tools, Notes, Reminders, Document Manager*
+ID Photo: Crop any photo to a print preset (Passport/MRP 35×45 mm, Auto/VISA Size 25×30 mm, Stamp Size 20×25 mm, US/DV Lottery Visa 51×51 mm, or fully custom). Square or circle crop. Export a single photo or tile copies onto a print sheet (A4, 4R, 3R, 5R, or custom size) for home or studio printing.
+
+Image Tools: batch compress (5-level quality slider, metadata stripping, PDF/GIF/TIFF-specific options), resize to exact pixel dimensions, convert format — all three in one pass. Input formats include JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO, TGA, HEIC, all major RAW camera formats (ARW, CR2, CR3, DNG, NEF, ORF, RAF, RW2, ERF, PEF, X3F), and PDF — 30+ formats total.
+
+Notes: attach freeform notes to specific BS calendar dates; visible as dots on the calendar grid. Reminders: one-time or recurring (daily, weekly, monthly, yearly) with snooze; fire system notifications even when the widget is collapsed. Document Manager: pin documents, folders, and executables for one-click access from the widget.
+
+*RunBox — Global Command Launcher*
+Summoned from anywhere in Windows with a configurable hotkey (default: Ctrl+Shift+Space) — no need to click the taskbar widget first. Supports: web search prefixes (Google, YouTube, Wikipedia, and custom), inline arithmetic, opening files and folders by path, and running custom scripts (PowerShell, batch, cmd, Python, WSL). All prefixes and scripts are defined in plain JSON files in %LOCALAPPDATA% — edit them in any text editor, changes take effect immediately.
+
+*Settings tab*
+20 color themes (10 light, 10 dark). 20 font choices. Rounded or sharp corners. Optional transparency when collapsed. Language: switch the entire UI between English and Nepali (नेपाली) instantly — no restart. Per-element calendar toggles (tithi, holidays, AD day numbers, Saturday/Sunday highlights).
+
+---
+
+**Common Questions**
+
+Q: What Nepali calendar year is it right now?
+A: As of May 2026 AD, the current Bikram Sambat year is 2083 (Jestha 2083). The BS year 2083 runs from April 13, 2026 to April 13, 2027 AD. NepDate Widget's taskbar mini bar always shows today's exact BS date.
+
+Q: How do I convert today's Nepali (BS) date to English (AD)?
+A: Install NepDate Widget (free, Microsoft Store). Click the mini bar to expand, open the Date tab, select BS → AD direction, type the Bikram Sambat date — the Gregorian equivalent appears instantly.
+
+Q: How do I convert an English (AD) date to a Nepali (BS) date?
+A: Open the Date tab, select AD → BS, type the Gregorian year/month/day. The BS date appears immediately.
+
+Q: How far ahead is Bikram Sambat from the Gregorian calendar?
+A: Approximately 56 years and 8 months. BS 2083 corresponds to roughly AD 2026–2027. The precise offset varies by month because BS months have irregular lengths.
+
+Q: How do I calculate a Nepali date from a birth certificate?
+A: Open the Date tab, select BS → AD, enter the BS birth date. For age calculation, use the date-difference calculator in the same tab — enter the birth date and today's BS date to get age in years, months, and days.
+
+Q: Does NepDate Widget show the Nepali calendar for 2083, 2084, 2085 and beyond?
+A: Yes. The calendar covers BS 1970 to 2100 (AD 1913 to 2043) with tithi and holidays for every month. Navigate freely to any past or future year.
+
+Q: Is NepDate Widget free?
+A: Yes. Free for personal use. Source-available on GitHub under PolyForm Strict 1.0.0.
+
+Q: Does it work offline?
+A: Almost entirely yes. Date converter, calendar, EMI calculator, Preeti/legacy font converter, password generator, QR code generator, unit converter, notes, reminders, document manager, RunBox, ID photo, and image tools all work with no internet. Only the network toolkit (ping, traceroute, IP scan, Whois, DNS, My IP) and RunBox web search prefixes need a connection.
+
+Q: What Windows versions are supported?
+A: Windows 10 version 1809 (October 2018 Update) or later, and Windows 11. 64-bit only.
+
+Q: Do I need admin rights to install it?
+A: No. Per-user install via the Microsoft Store — no UAC prompt, nothing written to system folders. Updates are delivered automatically in the background.
+
+Q: Does it send any data anywhere?
+A: No. Zero telemetry, no analytics, no account required. Outbound calls happen only when you explicitly use a network tool or a RunBox web search.
+
+Q: What is Preeti font and how do I convert Preeti text to Unicode?
+A: Preeti is a pre-Unicode Nepali keyboard encoding widely used in the 1990s–2000s. Documents typed in Preeti appear as garbled Latin/ASCII characters on modern systems. In NepDate Widget, open the Text tab, select Unicode converter, paste the Preeti text on the left — Unicode Devanagari output appears on the right instantly. Also supports Kantipur, Himalaya, Sagarmatha, and four other legacy Nepali fonts.
+
+Q: How do I calculate a Nepal bank loan EMI?
+A: Open the Bank tab, enter the loan amount, annual interest rate, and term in months, and choose a BS start date. The calculator shows monthly EMI, total interest, total repayment, and a full amortization schedule with each payment in Bikram Sambat dates.
+
+Q: How do I convert bigha to ropani or ropani to bigha?
+A: Open the Unit tab, select Area mode, choose Bigha as source and Ropani as target (or the reverse), type the value — the result updates as you type. Also converts kattha, dhur, aana, paisa, dam, khetmuri, square metres, square feet, and acres.
+
+Q: How do I convert tola to grams?
+A: Open the Unit tab, switch to Weight mode, select Tola → Gram. 1 tola = 11.6638 grams (Nepal Weights and Measures Act). Also converts tola to kg, tola to ounce, plus dharni, pawa, mana, pathi, muri, lb.
+
+Q: How is NepDate Widget different from Hamro Patro?
+A: Hamro Patro is a mobile and web platform focused on news, horoscopes, and community features. NepDate Widget is a native Windows desktop application for productivity: it lives on your taskbar, works fully offline, stores zero data on external servers, and includes 25+ tools (EMI calculator, Preeti converter, network toolkit, RunBox launcher, image tools, QR generator) that Hamro Patro does not offer.
+
+Q: Where is NepDate Widget data stored?
+A: In %LOCALAPPDATA% under the app's package folder (MSIX install) or %LOCALAPPDATA%\NepDateWidget\ (direct install). All data is plain JSON files — back up by copying the folder. Settings, notes, reminders, document shortcuts, and RunBox history are all there.
+
+Q: Can I generate a WiFi QR code with NepDate Widget?
+A: Yes. Open the Text tab, select QR Code, switch to WiFi type. The tool scans nearby networks — select yours, enter the password, click Generate. Anyone who scans the code connects without typing credentials. Export as PNG or copy to clipboard.
+
+---
+
+**Why NepDate Widget over alternatives**
+
+Most Nepali date tools are either web pages (require a browser, cannot run offline, no taskbar integration), mobile-only apps (Android or iOS, not available on Windows PC), or limited to date conversion only without the additional productivity tools. NepDate Widget is the only native Windows taskbar widget that combines BS↔AD date conversion, a full Bikram Sambat Patro, loan EMI calculator, legacy font converter, QR code tool, network diagnostics, RunBox launcher, and image processing in a single offline app. It installs from the Microsoft Store with no admin prompt and auto-updates silently.
 
 ## Pages
 
-- [Home](https://nepdatewidget.rajuprasai.com.np/)
-- [Features](https://nepdatewidget.rajuprasai.com.np/features.html)
-- [Download](https://nepdatewidget.rajuprasai.com.np/download.html)
-- [Gallery](https://nepdatewidget.rajuprasai.com.np/gallery.html)
-- [Changelog](https://nepdatewidget.rajuprasai.com.np/changelog.html)
+- [Home](https://nepdatewidget.rajuprasai.com.np/index.html.md): Product overview, key features, FAQ, download links — clean markdown version
+- [Features](https://nepdatewidget.rajuprasai.com.np/features.html.md): Detailed documentation for every tab and tool — BS↔AD converter, Nepali Patro, EMI calculator, Preeti/legacy font converter, QR code generator, password generator, network toolkit, unit converter, ID photo, image tools, notes, reminders, document manager, RunBox — clean markdown version
+- [Download](https://nepdatewidget.rajuprasai.com.np/download.html.md): Microsoft Store install link, direct download, system requirements — clean markdown version
+- [Gallery](https://nepdatewidget.rajuprasai.com.np/gallery.html): Screenshots of every tab, the mini bar, dark and light themes, and feature examples
+- [Changelog](https://nepdatewidget.rajuprasai.com.np/changelog.html): Version history and release notes for every update
 
-## FAQ
+## Optional
 
-- **Cost**: Free for personal use. Source-available under PolyForm Strict 1.0.0.
-- **Windows versions**: Windows 10 (version 1809+) and Windows 11, 64-bit.
-- **Offline**: Yes - calendar, date converter, unit converter, text tools, EMI calculator, RunBox, notes, reminders, and documents all work without internet.
-- **Bikram Sambat**: Nepal's official calendar system, running about 56-57 years ahead of the Gregorian calendar. Used in government documents, banks, and official records.
-- **How to convert BS to AD**: Open the Date tab, select BS → AD, type the Bikram Sambat date. The Gregorian equivalent appears instantly.
-- **How to convert AD to BS**: Open the Date tab, select AD → BS, type the Gregorian date. The Bikram Sambat equivalent appears instantly.
-- **Performance**: Lightweight WPF app - negligible CPU when idle. Background work limited to a low-frequency reminder timer.
-- **Data privacy**: Zero telemetry, no analytics, no account. All data stays in local JSON files.
-- **Customization**: 20 color presets, 20 font choices, rounded/sharp corners, transparency, per-element calendar toggles.
+- [Microsoft Store listing](https://apps.microsoft.com/detail/9PG97WBJX1NQ): Official install page with user ratings and reviews
+- [GitHub repository](https://github.com/RajuPrasai/NepDateWidget): Source code, issue tracker, and release download assets
+- [NepDate .NET library](https://nepdate.rajuprasai.com.np/): The open-source .NET library powering every BS date calculation in NepDate Widget — use it if you need Bikram Sambat date support in your own .NET application

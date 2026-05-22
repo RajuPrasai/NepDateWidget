@@ -50,4 +50,50 @@ Allow: /
 User-agent: cohere-ai
 Allow: /
 
+# Microsoft Copilot (uses Bing index)
+User-agent: bingbot
+Allow: /
+
+User-agent: msnbot
+Allow: /
+
+# Meta AI
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+# Common Crawl — foundation dataset used by most LLM training pipelines
+User-agent: CCBot
+Allow: /
+
+# Google Vertex AI / Gemini grounding
+User-agent: Google-CloudVertexBot
+Allow: /
+
+# Alternate Anthropic identifier
+User-agent: anthropic-ai
+Allow: /
+
+# Allen Institute for AI (academic LLM training)
+User-agent: AI2Bot
+Allow: /
+
+# Diffbot — knowledge graph used by several AI systems
+User-agent: Diffbot
+Allow: /
+
+# iAsk AI
+User-agent: iaskspider
+Allow: /
+
+# Timpi knowledge graph
+User-agent: Timpibot
+Allow: /
+
+# Friendly Crawler (open AI training data)
+User-agent: FriendlyCrawler
+Allow: /
+
 Sitemap: https://nepdatewidget.rajuprasai.com.np/sitemap.xml

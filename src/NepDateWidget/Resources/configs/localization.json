@@ -1533,7 +1533,7 @@
   },
   "docs.no_docs_hint": {
     "en": "Add your important documents for quick access",
-    "ne": "छिटो पहुँचका लागि आफ्ना महत्त्वपूर्ण कागजातहरू थप्नुहोस्"
+    "ne": "जरुरी फाइलहरू थप्नुहोस् - एक क्लिकमा खुल्छन्"
   },
   "docs.add": {
     "en": "Add Document",
@@ -1641,7 +1641,7 @@
   },
   "notes.date_invalid": {
     "en": "Invalid date format (YYYY/MM/DD)",
-    "ne": "अमान्य मिति ढाँचा (YYYY/MM/DD)"
+    "ne": "मिति ढाँचा मिलेन (YYYY/MM/DD)"
   },
   "notes.text_required": {
     "en": "Note text cannot be empty",
@@ -1697,7 +1697,7 @@
   },
   "settings.data_import_ok": {
     "en": "Backup restored. Restart the app to apply all changes.",
-    "ne": "ब्याकअप पुनर्स्थापित भयो। सबै परिवर्तन लागू गर्न एप पुनः सुरु गर्नुहोस्।"
+    "ne": "ब्याकअप राखियो। परिवर्तन लागू गर्न app फेरि खोल्नुहोस्।"
   },
   "settings.data_import_failed": {
     "en": "Restore failed. See log for details.",
@@ -1721,7 +1721,7 @@
   },
   "help.converter.convert.desc": {
     "en": "Converts dates between the Bikram Sambat (BS) and Gregorian (AD) calendars in both directions.",
-    "ne": "बिक्रम संवत (वि.सं.) र इस्वी संवत (ई.सं.) बीच दुवै दिशामा मिति रूपान्तरण गर्छ।"
+    "ne": "वि.सं. र ई.सं. मिति दुवैतर्फ बदल्छ।"
   },
   "help.converter.convert.how1": {
     "en": "Select AD → BS or BS → AD using the direction buttons, then type your date.",
@@ -1733,7 +1733,7 @@
   },
   "help.converter.convert.how3": {
     "en": "Click either result box to copy the converted date to your clipboard.",
-    "ne": "जुनसुकै नतिजा बक्समा क्लिक गर्नाले रूपान्तरित मिति क्लिपबोर्डमा कपी हुन्छ।"
+    "ne": "जुनसुकै नतिजामा क्लिक गर्नाले मिति कपी हुन्छ।"
   },
   "help.converter.convert.why1": {
     "en": "Quickly check BS dates when filling official Nepali forms.",
@@ -1741,7 +1741,7 @@
   },
   "help.converter.convert.why2": {
     "en": "No need to manually count calendar months or look up conversion tables.",
-    "ne": "क्यालेन्डरका महिना हातैले गन्नु वा रूपान्तरण तालिका हेर्नु पर्दैन।"
+    "ne": "क्यालेन्डर गनेर वा तालिका हेरेर मिति निकाल्नु पर्दैन।"
   },
   "help.converter.convert.why3": {
     "en": "Works for the full range of valid BS dates.",
@@ -1753,7 +1753,7 @@
   },
   "help.converter.days.desc": {
     "en": "Adds or subtracts days from a BS date, or calculates the difference between two BS dates in years, months, and days.",
-    "ne": "वि.सं. मितिमा दिन जोड वा घटाउँछ, वा दुई वि.सं. मितिबीचको अन्तर वर्ष, महिना र दिनमा देखाउँछ।"
+    "ne": "वि.सं. मितिमा दिन जोड/घटाउ गर्न र दुई मितिबीचको फरक वर्ष, महिना, दिनमा थाहा पाउन।"
   },
   "help.converter.days.how1": {
     "en": "Use Diff mode to find how many years, months, and days lie between two BS dates.",
@@ -1765,7 +1765,7 @@
   },
   "help.converter.days.how3": {
     "en": "The second date in Diff mode is pre-filled with today so you can find your age or tenure instantly.",
-    "ne": "अन्तर मोडमा दोस्रो मिति आजको मितिले स्वतः भरिन्छ, त्यसैले उमेर वा सेवाकाल तुरुन्त थाहा पाउन मिल्छ।"
+    "ne": "दोस्रो मिति आजैको मिति हुन्छ - उमेर वा सेवाकाल झट्टै थाहा पाउन मिल्छ।"
   },
   "help.converter.days.why1": {
     "en": "Calculate contract duration, loan periods, or age directly in the BS calendar.",
@@ -1777,7 +1777,7 @@
   },
   "help.converter.days.why3": {
     "en": "The breakdown display makes it easy to fill official age fields on forms.",
-    "ne": "ब्रेकडाउन देखाउने सुविधाले फाराममा उमेर भर्न सजिलो बनाउँछ।"
+    "ne": "वर्ष/महिना/दिनमा देखाउनाले फाराममा उमेर भर्न सजिलो हुन्छ।"
   },
   "help.converter.time.title": {
     "en": "Timezone Converter",
@@ -1785,7 +1785,7 @@
   },
   "help.converter.time.desc": {
     "en": "Converts a time from any timezone to any other timezone, supporting all system timezones including Nepal Standard Time.",
-    "ne": "नेपाल मानक समयसहित कुनै पनि टाइमजोनबाट अर्को टाइमजोनमा समय रूपान्तरण गर्छ।"
+    "ne": "नेपाल समयसहित जुनसुकै टाइमजोनको समय अर्कोमा बदल्छ।"
   },
   "help.converter.time.how1": {
     "en": "Select source and destination timezones from the dropdowns, then enter the time.",
@@ -1801,15 +1801,15 @@
   },
   "help.converter.time.why1": {
     "en": "Schedule meetings with overseas contacts without doing mental arithmetic.",
-    "ne": "विदेशी सम्पर्कसँग बैठक निर्धारण गर्दा मानसिक गणना गर्नु पर्दैन।"
+    "ne": "विदेशीसँग मिटिङ मिलाउँदा दिमागमा हिसाब गर्नु पर्दैन।"
   },
   "help.converter.time.why2": {
     "en": "Verify meeting times from emails or invitations in your local timezone.",
-    "ne": "इमेल वा निमन्त्रणाबाट आएका बैठक समयलाई आफ्नो स्थानीय समयमा जाँच गर्न मिल्छ।"
+    "ne": "इमेलमा आएको मिटिङ समय आफ्नो ठाउँमा कति हो भनेर छिटो थाहा पाउन मिल्छ।"
   },
   "help.converter.time.why3": {
     "en": "Works with every timezone available on your system, not just a fixed list.",
-    "ne": "सीमित सूचीमा नभई तपाईंको सिस्टममा उपलब्ध सबै टाइमजोनमा काम गर्छ।"
+    "ne": "सिस्टममा भएका सबै टाइमजोन काम गर्छन्।"
   },
   "help.unit.area.title": {
     "en": "Area Converter",
@@ -1817,11 +1817,11 @@
   },
   "help.unit.area.desc": {
     "en": "Converts area between Nepali traditional units (Ropani, Aana, Paisa, Dam) and metric units (sq. m, sq. ft, hectares).",
-    "ne": "नेपाली परम्परागत एकाइ (रोपनी, आना, पैसा, दाम) र मेट्रिक एकाइ (वर्ग मिटर, वर्ग फिट, हेक्टर) बीच क्षेत्रफल रूपान्तरण गर्छ।"
+    "ne": "रोपनी, आना, पैसा, दाम र मेट्रिक (वर्ग मिटर, फिट, हेक्टर) बीच जग्गा क्षेत्रफल बदल्छ।"
   },
   "help.unit.area.how1": {
     "en": "Select the source unit from the From dropdown and the target unit from the To dropdown.",
-    "ne": "From ड्रपडाउनबाट स्रोत एकाइ र To ड्रपडाउनबाट लक्ष्य एकाइ छान्नुहोस्।"
+    "ne": "From र To मा एकाइ छान्नुहोस्।"
   },
   "help.unit.area.how2": {
     "en": "Enter the value and the result updates instantly.",
@@ -1837,7 +1837,7 @@
   },
   "help.unit.area.why2": {
     "en": "Verify land registration documents in the Ropani system against metric measurements.",
-    "ne": "रोपनी प्रणालीमा लेखिएका जग्गा दर्ता कागजातलाई मेट्रिक मापनसँग मिलाएर जाँच्न मिल्छ।"
+    "ne": "जग्गा दर्ताका कागजात रोपनीमा हुँदा मेट्रिकसँग तुलना गर्न सकिन्छ।"
   },
   "help.unit.area.why3": {
     "en": "Covers all major units used in Nepal and internationally.",
@@ -1849,11 +1849,11 @@
   },
   "help.unit.weight.desc": {
     "en": "Converts weight between Nepali units (Tola, Pau, Dharni, Chatak) and international units (kg, g, lb, oz).",
-    "ne": "नेपाली एकाइ (तोला, पाउ, धार्नी, छटाक) र अन्तर्राष्ट्रिय एकाइ (किलोग्राम, ग्राम, पाउन्ड, औंस) बीच तौल रूपान्तरण गर्छ।"
+    "ne": "तोला, पाउ, धार्नी, छटाक र अन्तर्राष्ट्रिय एकाइ (किलो, ग्राम, पाउन्ड, औंस) बीच तौल बदल्छ।"
   },
   "help.unit.weight.how1": {
     "en": "Select source and target weight units using the From and To dropdowns.",
-    "ne": "From र To ड्रपडाउनबाट स्रोत र लक्ष्य तौल एकाइ छान्नुहोस्।"
+    "ne": "From र To मा तौलको एकाइ छान्नुहोस्।"
   },
   "help.unit.weight.how2": {
     "en": "Enter the weight value and the conversion result appears immediately.",
@@ -1897,7 +1897,7 @@
   },
   "help.text.password.why1": {
     "en": "Passwords are cryptographically random, not predictable patterns.",
-    "ne": "पासवर्डहरू क्रिप्टोग्राफिक रूपमा अनियमित हुन्छन्, कुनै अनुमान गर्न सकिने ढाँचामा आधारित हुँदैनन्।"
+    "ne": "पासवर्डहरू पूरै random हुन्छन् - कसैले अनुमान गर्न मिल्दैन।"
   },
   "help.text.password.why2": {
     "en": "Including Nepali characters makes passwords resistant to standard dictionary attacks.",
@@ -1905,7 +1905,7 @@
   },
   "help.text.password.why3": {
     "en": "Instant strength feedback helps you understand what makes a password weak or strong.",
-    "ne": "तत्काल बल प्रतिक्रियाले पासवर्ड कमजोर वा बलियो हुनुको कारण बुझाउँछ।"
+    "ne": "पासवर्ड कमजोर छ कि बलियो, र किन हो भनेर झट्ट देखाउँछ।"
   },
   "help.text.word.title": {
     "en": "Word Counter",
@@ -1929,11 +1929,11 @@
   },
   "help.text.word.why1": {
     "en": "Useful for meeting social media character limits or academic word count requirements.",
-    "ne": "सोसल मिडियाको अक्षर सीमा वा शैक्षिक शब्द आवश्यकता पूरा गर्न उपयोगी छ।"
+    "ne": "social media को character limit मिलाउन वा assignment को word count जाँच्न काम लाग्छ।"
   },
   "help.text.word.why2": {
     "en": "Case transforms save time when reformatting copied text from different sources.",
-    "ne": "फरक स्रोतबाट कपी गरिएको टेक्स्ट पुनः ढाँचा गर्दा समय बचत हुन्छ।"
+    "ne": "कपी गरेको टेक्स्टको case बदल्न हातले गर्नु पर्दैन।"
   },
   "help.text.word.why3": {
     "en": "snake_case and camelCase conversions are especially handy for developers.",
@@ -1945,7 +1945,7 @@
   },
   "help.text.unicode.desc": {
     "en": "Converts text between Preeti (legacy Nepali encoding) and Unicode (standard Devanagari).",
-    "ne": "Preeti (पुरानो नेपाली इन्कोडिङ) र Unicode (मानक देवनागरी) बीच टेक्स्ट रूपान्तरण गर्छ।"
+    "ne": "Preeti (पुरानो encoding) र Unicode देवनागरी बीच टेक्स्ट बदल्छ।"
   },
   "help.text.unicode.how1": {
     "en": "Select Preeti → Unicode or Unicode → Preeti, then type or paste your text.",
@@ -1961,7 +1961,7 @@
   },
   "help.text.unicode.why1": {
     "en": "Rescues old documents written in Preeti that display as garbled text in modern apps.",
-    "ne": "आधुनिक एप्समा बिग्रिएको जस्तो देखिने पुराना Preeti कागजातहरू पुनः उपयोग गर्न मिल्छ।"
+    "ne": "Preeti मा लेखिएका पुराना फाइल नयाँ app मा देखाउँदा बिग्रन्छ - यसले ठीक गर्छ।"
   },
   "help.text.unicode.why2": {
     "en": "Ensures Nepali text is properly indexed and searchable in digital systems.",
@@ -1969,7 +1969,7 @@
   },
   "help.text.unicode.why3": {
     "en": "Handles batch file conversion so you can process entire documents at once.",
-    "ne": "ब्याच फाइल रूपान्तरण गरेर एकैपटक पूरै कागजात प्रशोधन गर्न मिल्छ।"
+    "ne": "एउटा पूरो फाइल एकैपटक बदल्न मिल्छ।"
   },
   "help.text.script.title": {
     "en": "Transliteration",
@@ -1977,7 +1977,7 @@
   },
   "help.text.script.desc": {
     "en": "Converts text between Romanized Nepali and Devanagari script using standard transliteration rules.",
-    "ne": "मानक लिप्यन्तरण नियमअनुसार रोमन अक्षरमा लेखिएको नेपाली र देवनागरी बीच टेक्स्ट रूपान्तरण गर्छ।"
+    "ne": "Roman अक्षरमा लेखिएको नेपाली देवनागरीमा बदल्छ - र उल्टो पनि।"
   },
   "help.text.script.how1": {
     "en": "Select Roman → Devanagari to type in Roman characters and get Devanagari output.",
@@ -2001,7 +2001,7 @@
   },
   "help.text.script.why3": {
     "en": "Follows standard IAST-based rules so the output is consistent and predictable.",
-    "ne": "मानक IAST-आधारित नियमहरू पालना गर्छ, त्यसैले आउटपुट एकरूप र अनुमानयोग्य हुन्छ।"
+    "ne": "एकै नियमले बदल्छ - नतिजा हरेक पटक मिल्दोजुल्दो हुन्छ।"
   },
   "help.banking.interest.title": {
     "en": "Interest Calculator",
@@ -2009,7 +2009,7 @@
   },
   "help.banking.interest.desc": {
     "en": "Calculates simple interest for loans or savings using one or more time periods with different rates.",
-    "ne": "एक वा बढी फरक दरका अवधिहरूमा ऋण वा बचतको साधारण ब्याज गणना गर्छ।"
+    "ne": "ऋण वा बचतको साधारण ब्याज गणना गर्छ। दर बीचमा बदलिए धेरै period थप्न मिल्छ।"
   },
   "help.banking.interest.how1": {
     "en": "Enter the principal amount, the From date, and the To date in BS format (YYYY/MM/DD).",
@@ -2017,7 +2017,7 @@
   },
   "help.banking.interest.how2": {
     "en": "Add multiple rate rows if the interest rate changed during the period.",
-    "ne": "ब्याज दर अवधिमा परिवर्तन भएको छ भने धेरै दर पङ्क्तिहरू थप्नुहोस्।"
+    "ne": "बीचमा दर बदलियो भने नयाँ row थप्नुहोस्।"
   },
   "help.banking.interest.how3": {
     "en": "Click Calculate to see total interest, daily breakdown, and effective rate.",
@@ -2025,11 +2025,11 @@
   },
   "help.banking.interest.why1": {
     "en": "Calculates interest directly in the BS calendar without needing to convert dates to AD.",
-    "ne": "मिति AD मा बदल्नु नपरी सिधै वि.सं. क्यालेन्डरमा ब्याज गणना गर्छ।"
+    "ne": "मिति AD मा बदल्नु पर्दैन - वि.सं. मा सिधै हिसाब गर्छ।"
   },
   "help.banking.interest.why2": {
     "en": "Multiple rate rows let you model scenarios where the rate changes mid-period.",
-    "ne": "धेरै दर पङ्क्तिहरू थपेर ब्याज दर बीचमा बदलिने अवस्था सजिलै मोडल गर्न मिल्छ।"
+    "ne": "बीचमा दर बदलियो भने row थपेर सजिलै हिसाब गर्न मिल्छ।"
   },
   "help.banking.interest.why3": {
     "en": "Useful for verifying bank statements or loan interest invoices.",
@@ -2057,15 +2057,15 @@
   },
   "help.banking.emi.why1": {
     "en": "Compare loan offers from different banks by calculating the true total cost of each.",
-    "ne": "प्रत्येकको वास्तविक कुल लागत गणना गरी फरक बैंकका ऋण प्रस्तावहरू तुलना गर्न मिल्छ।"
+    "ne": "फरक बैंकको ऋण प्रस्ताव तुलना गर्न कुल लागत हिसाब गर्न मिल्छ।"
   },
   "help.banking.emi.why2": {
     "en": "Understand exactly how much of each payment goes to principal versus interest.",
-    "ne": "प्रत्येक भुक्तानीको कति मूलधनमा र कति ब्याजमा जान्छ, सटीक रूपमा बुझ्न मिल्छ।"
+    "ne": "हरेक किस्तामा कति मूलधन र कति ब्याज जान्छ छर्लङ्ग देखिन्छ।"
   },
   "help.banking.emi.why3": {
     "en": "Plan prepayments by seeing the outstanding balance at any point in the schedule.",
-    "ne": "तालिकाको जुनसुकै बिन्दुमा बाँकी रकम हेरेर अगावै भुक्तानी गर्ने योजना बनाउन मिल्छ।"
+    "ne": "कुनै बेला अगावै तिर्नु छ भने बाँकी रकम तालिकामा हेरेर योजना बनाउन मिल्छ।"
   },
   "help.network.myip.title": {
     "en": "My IP Address",
@@ -2073,15 +2073,15 @@
   },
   "help.network.myip.desc": {
     "en": "Fetches your public IP address and lists local network interface addresses.",
-    "ne": "तपाईंको सार्वजनिक IP ठेगाना ल्याउँछ र स्थानीय नेटवर्क इन्टरफेस ठेगानाहरू देखाउँछ।"
+    "ne": "public IP ल्याउँछ र local network का IP हरू देखाउँछ।"
   },
   "help.network.myip.how1": {
     "en": "Click Fetch to retrieve your current public IP address from an external service.",
-    "ne": "बाह्य सेवाबाट हालको सार्वजनिक IP ठेगाना ल्याउन Fetch क्लिक गर्नुहोस्।"
+    "ne": "public IP जान्न Fetch क्लिक गर्नुहोस्।"
   },
   "help.network.myip.how2": {
     "en": "Local IP addresses from all active network interfaces are listed automatically.",
-    "ne": "सबै सक्रिय नेटवर्क इन्टरफेसका स्थानीय IP ठेगानाहरू स्वतः सूचीबद्ध हुन्छन्।"
+    "ne": "सक्रिय network का local IP हरू आफैं देखिन्छन्।"
   },
   "help.network.myip.how3": {
     "en": "Click any IP address to copy it to your clipboard.",
@@ -2105,7 +2105,7 @@
   },
   "help.network.ping.desc": {
     "en": "Sends ICMP echo requests to a host and measures response time and packet loss.",
-    "ne": "होस्टमा ICMP echo अनुरोध पठाउँछ र प्रतिक्रिया समय र प्याकेट हानि मापन गर्छ।"
+    "ne": "host लाई ping गरेर जवाफ कति छिटो आउँछ र कति packet खेर जान्छ थाहा पाउन मिल्छ।"
   },
   "help.network.ping.how1": {
     "en": "Enter a hostname or IP address, set the ping count, and click Ping.",
@@ -2113,7 +2113,7 @@
   },
   "help.network.ping.how2": {
     "en": "Results show RTT for each echo, plus average, min, and max latency.",
-    "ne": "नतिजाले प्रत्येक इकोको RTT, औसत, न्यूनतम र अधिकतम विलम्बता देखाउँछ।"
+    "ne": "हरेक ping को RTT, औसत, कम र बढी latency देखाउँछ।"
   },
   "help.network.ping.how3": {
     "en": "High packet loss indicates network instability between you and the host.",
@@ -2121,15 +2121,15 @@
   },
   "help.network.ping.why1": {
     "en": "Quickly check if a server or website is reachable before deeper troubleshooting.",
-    "ne": "गहिरो समस्या निवारण अघि सर्भर वा वेबसाइट पुग्न सकिन्छ कि सकिँदैन छिटो जाँच्नुहोस्।"
+    "ne": "server वा साइट चलिरहेको छ कि छैन झट्ट जाँच्न मिल्छ।"
   },
   "help.network.ping.why2": {
     "en": "Measure latency to identify slow hops in your network path.",
-    "ne": "नेटवर्क मार्गमा ढिलो हप पहिचान गर्न विलम्बता मापन गर्नुहोस्।"
+    "ne": "network ढिलो छ भने कहाँ अड्कियो पत्ता लगाउन latency मापन गर्नुहोस्।"
   },
   "help.network.ping.why3": {
     "en": "Verify that DNS is resolving names correctly by pinging hostnames.",
-    "ne": "होस्टनाम पिङ गरेर DNS ले नाम सही रूपमा रिजोल्भ गर्दैछ कि गर्दैन प्रमाणित गर्नुहोस्।"
+    "ne": "hostname ping गरेर DNS काम गर्दैछ कि गर्दैन जाँच्न मिल्छ।"
   },
   "help.network.scan.title": {
     "en": "Network Scanner",
@@ -2137,15 +2137,15 @@
   },
   "help.network.scan.desc": {
     "en": "Scans the local subnet to discover all active hosts, their MAC addresses, and device types.",
-    "ne": "स्थानीय सबनेट स्क्यान गरेर सबै सक्रिय होस्ट, MAC ठेगाना र उपकरण प्रकारहरू पत्ता लगाउँछ।"
+    "ne": "local network स्क्यान गरेर जोडिएका सबै device, MAC ठेगाना र प्रकार देखाउँछ।"
   },
   "help.network.scan.how1": {
     "en": "Click Scan to start scanning the current subnet. Progress is shown as each host is checked.",
-    "ne": "हालको सबनेट स्क्यान सुरु गर्न Scan क्लिक गर्नुहोस्। प्रत्येक होस्ट जाँच हुँदा प्रगति देखिन्छ।"
+    "ne": "Scan क्लिक गर्नुहोस् - network स्क्यान सुरु हुन्छ, प्रगति देखिन्छ।"
   },
   "help.network.scan.how2": {
     "en": "The results table shows IP, hostname, MAC address, and detected device type for each active host.",
-    "ne": "नतिजा तालिकाले प्रत्येक सक्रिय होस्टको IP, होस्टनाम, MAC ठेगाना र उपकरण प्रकार देखाउँछ।"
+    "ne": "नतिजामा प्रत्येक device को IP, hostname, MAC र प्रकार देखिन्छ।"
   },
   "help.network.scan.how3": {
     "en": "Click any row to copy that host's IP address.",
@@ -2153,7 +2153,7 @@
   },
   "help.network.scan.why1": {
     "en": "Identify unknown devices connected to your home or office network.",
-    "ne": "घर वा कार्यालय नेटवर्कमा जोडिएका अज्ञात उपकरणहरू पहिचान गर्नुहोस्।"
+    "ne": "घर वा अफिसको network मा अनजान device जोडिएको छ कि छैन जाँच गर्नुहोस्।"
   },
   "help.network.scan.why2": {
     "en": "Useful for finding a device's IP before configuring remote desktop or SSH.",
@@ -2169,7 +2169,7 @@
   },
   "help.network.trace.desc": {
     "en": "Traces the network path to a destination host, showing each intermediate router hop and its latency.",
-    "ne": "गन्तव्य होस्टतर्फको नेटवर्क मार्ग ट्रेस गर्छ, बीचमा पर्ने प्रत्येक राउटर हप र त्यसको विलम्बता देखाउँछ।"
+    "ne": "गन्तव्यसम्म जाँदा बाटोमा कुन-कुन router हुँदै जान्छ र कति ढिलो छ देखाउँछ।"
   },
   "help.network.trace.how1": {
     "en": "Enter a hostname or IP address and click Trace to start route discovery.",
@@ -2177,23 +2177,23 @@
   },
   "help.network.trace.how2": {
     "en": "Each line shows hop number, IP address, hostname (if resolvable), and round-trip time.",
-    "ne": "प्रत्येक लाइनले हप नम्बर, IP ठेगाना, होस्टनाम (रिजोल्भ हुँदा) र राउन्ड-ट्रिप समय देखाउँछ।"
+    "ne": "हरेक लाइनमा hop नम्बर, IP, hostname र round-trip समय देखिन्छ।"
   },
   "help.network.trace.how3": {
     "en": "A * symbol means the router at that hop did not respond to the trace probe.",
-    "ne": "* चिन्हको अर्थ सो हपको राउटरले ट्रेस प्रोबलाई प्रतिक्रिया दिएन।"
+    "ne": "* को मतलब त्यो router ले जवाफ दिएन।"
   },
   "help.network.trace.why1": {
     "en": "Pinpoint exactly where in the network path packets are being dropped or delayed.",
-    "ne": "नेटवर्क मार्गमा ठीक कहाँ प्याकेट हराउँदैछ वा ढिलाइ हुँदैछ पहिचान गर्नुहोस्।"
+    "ne": "network मा कहाँ गएर packet हराउँदैछ वा ढिलाइ हुँदैछ पत्ता लगाउन मिल्छ।"
   },
   "help.network.trace.why2": {
     "en": "Useful for identifying if slowness is in your ISP, a transit provider, or at the destination.",
-    "ne": "ढिलाइ ISP, कुनै ट्रान्जिट प्रोभाइडर वा गन्तव्यमा छ कि छैन पहिचान गर्न उपयोगी छ।"
+    "ne": "ढिलाइ आफ्नो ISP मा छ कि अरूतर्फ छ, थाहा पाउन मिल्छ।"
   },
   "help.network.trace.why3": {
     "en": "Shows the full geographic path packets take to reach an international server.",
-    "ne": "अन्तर्राष्ट्रिय सर्भरसम्म प्याकेटले लिने पूरा मार्ग देखाउँछ।"
+    "ne": "अन्तर्राष्ट्रिय server सम्म packet कुन बाटो जान्छ देखाउँछ।"
   },
   "help.network.whois.title": {
     "en": "WHOIS Lookup",
@@ -2201,7 +2201,7 @@
   },
   "help.network.whois.desc": {
     "en": "Retrieves domain registration information including owner, registrar, creation date, expiry date, and nameservers.",
-    "ne": "मालिक, रजिस्ट्रार, सिर्जना मिति, म्याद सकिने मिति र नेमसर्भरहरूसहित डोमेन दर्ता जानकारी ल्याउँछ।"
+    "ne": "domain को मालिक, दर्ता मिति, म्याद र nameserver जानकारी ल्याउँछ।"
   },
   "help.network.whois.how1": {
     "en": "Enter a domain name (e.g. example.com) and click Lookup.",
@@ -2209,15 +2209,15 @@
   },
   "help.network.whois.how2": {
     "en": "The result shows the full Whois record as returned by the authoritative registrar.",
-    "ne": "नतिजाले आधिकारिक रजिस्ट्रारबाट फर्किएको सम्पूर्ण Whois रेकर्ड देखाउँछ।"
+    "ne": "WHOIS रेकर्ड पूरै देखाउँछ।"
   },
   "help.network.whois.how3": {
     "en": "Check the expiry date field to see when the domain registration needs to be renewed.",
-    "ne": "डोमेन दर्ता कहिले नवीकरण गर्नुपर्छ हेर्न म्याद सकिने मिति फिल्ड जाँच गर्नुहोस्।"
+    "ne": "म्याद सकिने मिति हेरेर कहिले renew गर्नुपर्छ थाहा पाउनुहोस्।"
   },
   "help.network.whois.why1": {
     "en": "Verify domain ownership before reaching out for a purchase or partnership.",
-    "ne": "खरिद वा साझेदारीका लागि सम्पर्क गर्नुअघि डोमेन स्वामित्व प्रमाणित गर्नुहोस्।"
+    "ne": "domain किन्न वा सम्पर्क गर्नुअघि स्वामित्व जाँच गर्नुहोस्।"
   },
   "help.network.whois.why2": {
     "en": "Check if a domain is about to expire before planning a project around it.",
@@ -2233,7 +2233,7 @@
   },
   "help.network.dns.desc": {
     "en": "Resolves DNS records for a domain, showing A, AAAA, MX, NS, TXT, CNAME, and other record types.",
-    "ne": "डोमेनको DNS रेकर्डहरू रिजोल्भ गर्छ - A, AAAA, MX, NS, TXT, CNAME र अन्य प्रकारहरू देखाउँदै।"
+    "ne": "domain का DNS record (A, AAAA, MX, NS, TXT, CNAME) हेर्न मिल्छ।"
   },
   "help.network.dns.how1": {
     "en": "Enter a domain name, select the record type from the dropdown, and click Lookup.",
@@ -2245,19 +2245,19 @@
   },
   "help.network.dns.how3": {
     "en": "Use TXT lookup to verify domain ownership tokens for Google, Microsoft, or similar services.",
-    "ne": "Google, Microsoft वा यस्तै सेवाका डोमेन स्वामित्व टोकनहरू प्रमाणित गर्न TXT लुकअप प्रयोग गर्नुहोस्।"
+    "ne": "Google वा Microsoft जस्ता सेवाको verification token जाँच्न TXT lookup प्रयोग गर्नुहोस्।"
   },
   "help.network.dns.why1": {
     "en": "Diagnose email delivery problems by checking MX records directly.",
-    "ne": "MX रेकर्ड सिधै जाँचेर इमेल डेलिभरी समस्याहरू निदान गर्नुहोस्।"
+    "ne": "इमेल नपुगेको छ भने MX record सिधै जाँच्नुहोस्।"
   },
   "help.network.dns.why2": {
     "en": "Verify that DNS changes have propagated correctly after updating records at your registrar.",
-    "ne": "रजिस्ट्रारमा रेकर्ड अपडेट गरेपछि DNS परिवर्तन सही रूपमा प्रसारित भयो कि भएन प्रमाणित गर्नुहोस्।"
+    "ne": "DNS record बदलेपछि सबैतर्फ सही छ कि छैन जाँच गर्नुहोस्।"
   },
   "help.network.dns.why3": {
     "en": "Quickly check nameservers during a domain migration to confirm the cutover is complete.",
-    "ne": "डोमेन माइग्रेसनको क्रममा कटओभर पूरा भयो कि भएन पुष्टि गर्न नेमसर्भरहरू छिटो जाँच्नुहोस्।"
+    "ne": "domain सर्दैछ भने nameserver बदलियो कि बदलिएन छिटो जाँच्न मिल्छ।"
   },
   "help.more.documents.title": {
     "en": "Documents",
@@ -2265,7 +2265,7 @@
   },
   "help.more.documents.desc": {
     "en": "A quick-access library for your important files. Open any saved document with a single click.",
-    "ne": "महत्त्वपूर्ण फाइलहरूको छिटो पहुँच पुस्तकालय। एक क्लिकमा कुनै पनि सुरक्षित कागजात खोल्नुहोस्।"
+    "ne": "जरुरी फाइलहरूको छिटो list। एक क्लिकमा जुनसुकै फाइल खुल्छ।"
   },
   "help.more.documents.how1": {
     "en": "Click Add Document, give it a title, browse to the file, and save.",
@@ -2273,7 +2273,7 @@
   },
   "help.more.documents.how2": {
     "en": "Search by title or use #tag syntax in the search box to filter by tag.",
-    "ne": "शीर्षकद्वारा खोज्नुहोस् वा खोज बक्समा #ट्याग सिन्ट्याक्स प्रयोग गरेर ट्यागद्वारा फिल्टर गर्नुहोस्।"
+    "ne": "शीर्षकले खोज्नुहोस् वा #tag लेखेर filter गर्नुहोस्।"
   },
   "help.more.documents.how3": {
     "en": "Click the document title to open the file, or use the edit icon to update its details.",
@@ -2281,11 +2281,11 @@
   },
   "help.more.documents.why1": {
     "en": "Keeps frequently used documents one click away without navigating file explorer.",
-    "ne": "फाइल एक्सप्लोरर नेभिगेट नगरीकन बारम्बार प्रयोग हुने कागजातहरू एक क्लिकमा राख्छ।"
+    "ne": "बारम्बार खोल्ने फाइलहरू File Explorer नगई एक क्लिकमा खुल्छन्।"
   },
   "help.more.documents.why2": {
     "en": "Tags let you organise documents by project, category, or priority.",
-    "ne": "ट्यागहरूले कागजातहरू परियोजना, श्रेणी वा प्राथमिकताद्वारा व्यवस्थित गर्न सक्षम बनाउँछन्।"
+    "ne": "tag लगाएर document project, श्रेणी वा priority अनुसार मिलाउन मिल्छ।"
   },
   "help.more.documents.why3": {
     "en": "Useful for contracts, certificates, and forms you regularly need to open or reference.",
@@ -2297,7 +2297,7 @@
   },
   "help.more.notes.desc": {
     "en": "Create and manage short notes tied to specific BS dates. Useful for diary entries, events, or day-specific memos.",
-    "ne": "विशिष्ट वि.सं. मितिसँग जोडिएका छोटा नोटहरू बनाउनुहोस् र व्यवस्थापन गर्नुहोस्। डायरी प्रविष्टि, घटना वा दिन-विशेष मेमोका लागि उपयोगी।"
+    "ne": "वि.सं. मितिमा छोटा नोट राख्न मिल्छ। डायरी, घटना वा कुनै याद गर्नु पर्ने कुरा लेख्न।"
   },
   "help.more.notes.how1": {
     "en": "Click Add Note, enter the BS date (YYYY/MM/DD) and your note text, then save.",
@@ -2313,11 +2313,11 @@
   },
   "help.more.notes.why1": {
     "en": "Keep a running log of important days without a separate app.",
-    "ne": "छुट्टै अनुप्रयोग बिना महत्त्वपूर्ण दिनहरूको चलिरहेको लग राख्नुहोस्।"
+    "ne": "छुट्टै app नखोलीकन महत्त्वपूर्ण दिनहरूको record राख्न मिल्छ।"
   },
   "help.more.notes.why2": {
     "en": "Notes are stored locally and persist across sessions without any account needed.",
-    "ne": "नोटहरू स्थानीय रूपमा सुरक्षित हुन्छन् र कुनै खाता नचाहिकन सत्रहरूमा कायम रहन्छन्।"
+    "ne": "नोटहरू PC मा सेभ हुन्छन् - account वा internet चाहिँदैन।"
   },
   "help.more.notes.why3": {
     "en": "Cross-referenced with the calendar so you can browse your notes by date visually.",
@@ -2329,7 +2329,7 @@
   },
   "help.more.reminders.desc": {
     "en": "Set time-based reminders for any BS date. Supports one-time and repeating reminders with desktop notifications.",
-    "ne": "कुनै पनि वि.सं. मितिका लागि समय-आधारित रिमाइन्डरहरू सेट गर्नुहोस्। एक-पटक र दोहोरिने दुवै किसिमका रिमाइन्डर काम गर्छन्।"
+    "ne": "वि.सं. मितिमा समय-आधारित रिमाइन्डर राख्न मिल्छ - एकपटक वा बारम्बार दोहोरिने, दुवै चल्छ।"
   },
   "help.more.reminders.how1": {
     "en": "Click Add Reminder, enter the title, date (BS), time, and optional recurrence.",
@@ -2345,11 +2345,11 @@
   },
   "help.more.reminders.why1": {
     "en": "Never miss bill payment deadlines, renewal dates, or important anniversaries.",
-    "ne": "बिल भुक्तानी समयसीमा, नवीकरण मिति वा महत्त्वपूर्ण वार्षिकोत्सवहरू कहिल्यै नछुटाउनुहोस्।"
+    "ne": "बिल, नवीकरण मिति वा वार्षिकोत्सव छुट्न दिनु हुँदैन भने यो काम लाग्छ।"
   },
   "help.more.reminders.why2": {
     "en": "Recurring reminders are ideal for monthly savings deposits or weekly check-ins.",
-    "ne": "मासिक बचत जम्मा वा साप्ताहिक जाँचका लागि दोहोरिने रिमाइन्डरहरू उपयुक्त छन्।"
+    "ne": "मासिक बचत वा साप्ताहिक routine काममा दोहोरिने रिमाइन्डर सेट गर्न मिल्छ।"
   },
   "help.more.reminders.why3": {
     "en": "All reminders work in the BS calendar so you don't need to convert dates.",
@@ -2361,7 +2361,7 @@
   },
   "help.runbox.desc": {
     "en": "A keyboard-driven command bar for launching apps, opening URLs, running scripts, searching the web, and doing quick calculations.",
-    "ne": "अनुप्रयोग सुरु गर्न, URL खोल्न, स्क्रिप्ट चलाउन, वेब खोज्न र छिटो गणना गर्न मिल्ने किबोर्ड-चालित कमान्ड बार।"
+    "ne": "keyboard बाट app खोल्न, URL जान, script चलाउन, वेब खोज्न र हिसाब गर्न मिल्ने bar।"
   },
   "help.runbox.how1": {
     "en": "Type 'help' and press Enter to open this window at any time.",
@@ -2369,7 +2369,7 @@
   },
   "help.runbox.how2": {
     "en": "Type a prefix like 'yt ' (YouTube) followed by your query to search a specific site.",
-    "ne": "कुनै साइट खोज्न 'yt ' (YouTube) जस्तो उपसर्ग टाइप गर्नुहोस् र त्यसपछि खोज टाइप गर्नुहोस्।"
+    "ne": "कुनै साइट खोज्न 'yt ' (YouTube) जस्तो prefix टाइप गर्नुहोस् अनि खोज लेख्नुहोस्।"
   },
   "help.runbox.how3": {
     "en": "Start a line with '=' to evaluate a math expression; press Enter to copy the result.",
@@ -2381,7 +2381,7 @@
   },
   "help.runbox.why2": {
     "en": "Scripts let you automate repetitive tasks with a short name from the keyboard.",
-    "ne": "स्क्रिप्टले किबोर्डबाट छोटो नामले दोहोरिने कार्यहरू स्वचालित गर्न दिन्छ।"
+    "ne": "script ले keyboard बाट छोटो नामले दोहोरिने काम गर्न मिल्छ।"
   },
   "help.runbox.why3": {
     "en": "The inline calculator gives instant answers without switching to another tool.",
@@ -2401,19 +2401,19 @@
   },
   "help.runbox.key.enter": {
     "en": "Execute command, open URL, or copy calc result",
-    "ne": "कमान्ड चलाउनुहोस्, URL खोल्नुहोस् वा गणना नतिजा कपी गर्नुहोस्"
+    "ne": "command चलाउनुहोस्, URL खोल्नुहोस् वा हिसाब नतिजा कपी गर्नुहोस्"
   },
   "help.runbox.key.tab": {
     "en": "Complete selected history suggestion",
-    "ne": "छानिएको इतिहास सुझाव पूरा गर्नुहोस्"
+    "ne": "इतिहासको सुझाव पूरा गर्नुहोस्"
   },
   "help.runbox.key.arrows": {
     "en": "Navigate history dropdown",
-    "ne": "इतिहास ड्रपडाउन नेभिगेट गर्नुहोस्"
+    "ne": "इतिहासमा माथि/तल जानुहोस्"
   },
   "help.runbox.key.esc": {
     "en": "Close dropdown, clear prefix, or collapse widget",
-    "ne": "ड्रपडाउन बन्द गर्नुहोस्, उपसर्ग हटाउनुहोस् वा विजेट सानो बनाउनुहोस्"
+    "ne": "dropdown बन्द गर्नुहोस् / prefix हटाउनुहोस् / widget सानो"
   },
   "help.runbox.key.calc": {
     "en": "Calculator mode - type =2+3*4 to evaluate",
@@ -2421,11 +2421,11 @@
   },
   "help.runbox.key.prefix": {
     "en": "Lock a search prefix - type prefix then Space",
-    "ne": "खोज उपसर्ग लक गर्नुहोस् (उपसर्ग टाइप गर्नुहोस् त्यसपछि Space)"
+    "ne": "खोज prefix lock गर्नुहोस् (prefix टाइप गर्नुहोस् अनि Space)"
   },
   "help.runbox.key.scr": {
     "en": "Run a registered script - type scr then Space",
-    "ne": "दर्ता गरिएको स्क्रिप्ट चलाउनुहोस् (scr टाइप गर्नुहोस् त्यसपछि Space)"
+    "ne": "script चलाउनुहोस् (scr टाइप गर्नुहोस् अनि Space)"
   },
   "compress.drop_images_pdf": {
     "en": "Drop images or PDFs here",
@@ -2649,7 +2649,7 @@
   },
   "help.compress.how1": {
     "en": "Drop images or PDFs onto the drop zone, or click Browse to select files.",
-    "ne": "Drop zone मा छवि वा PDF राख्नुहोस्, वा फाइल छान्न Browse थिच्नुहोस्।"
+    "ne": "Drop zone मा फोटो वा PDF राख्नुहोस् वा Browse थिच्नुहोस्।"
   },
   "help.compress.how2": {
     "en": "Adjust the compression level from Smallest File to Best Quality.",
@@ -2661,7 +2661,7 @@
   },
   "help.compress.why1": {
     "en": "Saves storage space and speeds up file transfers and uploads.",
-    "ne": "भण्डारण ठाउँ बचत गर्छ र फाइल ट्रान्सफर तथा अपलोड छिटो बनाउँछ।"
+    "ne": "storage ठाउँ बच्छ र share/upload गर्दा छिटो हुन्छ।"
   },
   "help.compress.why2": {
     "en": "Supports JPEG, PNG, WebP, GIF, TIFF, and PDF formats.",
@@ -2669,7 +2669,7 @@
   },
   "help.compress.why3": {
     "en": "Advanced options let you strip metadata, convert to WebP, or resize while compressing.",
-    "ne": "उन्नत विकल्पले metadata हटाउन, WebP मा रूपान्तरण गर्न, वा कम्प्रेस गर्दा Resize गर्न दिन्छ।"
+    "ne": "Advanced मा metadata हटाउन, WebP मा बदल्न वा Resize पनि गर्न मिल्छ।"
   },
   "help.resize.title": {
     "en": "Image Resize",
@@ -2677,7 +2677,7 @@
   },
   "help.resize.desc": {
     "en": "Resize images to exact pixel dimensions with optional compression.",
-    "ne": "वैकल्पिक कम्प्रेसनसहित छविहरूलाई सटीक pixel आयाममा Resize गर्नुहोस्।"
+    "ne": "फोटो सटीक pixel साइजमा Resize गर्न - compress पनि सँगसँगै गर्न मिल्छ।"
   },
   "help.resize.how1": {
     "en": "Drop images onto the drop zone, or click Browse to select files.",
@@ -2693,7 +2693,7 @@
   },
   "help.resize.why1": {
     "en": "Leave one dimension blank to automatically preserve the aspect ratio.",
-    "ne": "अनुपात स्वचालित जोगाउन एउटा आयाम खाली राख्नुहोस्।"
+    "ne": "aspect ratio जोगाउन एउटा dimension खाली छोड्नुहोस्।"
   },
   "help.resize.why2": {
     "en": "Enable 'Also Compress' to reduce file size while resizing.",
@@ -2869,7 +2869,7 @@
   },
   "help.idphoto.desc": {
     "en": "Crop and resize any photo to standard ID or passport dimensions.",
-    "ne": "कुनै पनि फोटोलाई मानक आईडी वा राहदानी आयाममा क्रप र Resize गर्नुहोस्।"
+    "ne": "जुनसुकै फोटो आईडी वा राहदानी साइजमा crop गर्नुहोस्।"
   },
   "help.idphoto.how1": {
     "en": "Drop a photo or click to browse, then drag the crop frame to position the face.",
@@ -2877,7 +2877,7 @@
   },
   "help.idphoto.how2": {
     "en": "Choose a format preset (Passport, Auto, Stamp, or US/DV) or enter custom mm dimensions.",
-    "ne": "ढाँचा प्रिसेट छान्नुहोस् (राहदानी, अटो, स्ट्याम्प, वा US/DV) वा कस्टम मि.मि. आयाम लेख्नुहोस्।"
+    "ne": "प्रिसेट छान्नुहोस् (राहदानी, अटो, स्ट्याम्प, US/DV) वा आफ्नो mm साइज लेख्नुहोस्।"
   },
   "help.idphoto.how3": {
     "en": "Save Photo exports a single JPEG. Save Print Sheet tiles multiple copies on an A4 page.",
@@ -2885,11 +2885,15 @@
   },
   "help.idphoto.why1": {
     "en": "Enable Replace Background to flood-fill the photo background with white, blue, or a custom color.",
-    "ne": "Replace Background सक्षम गरेर फोटोको पृष्ठभूमि सेतो, नीलो, वा कस्टम रङले भर्नुहोस्।"
+    "ne": "Replace Background खोलेर background सेतो, नीलो वा आफ्नो रङमा बदल्नुहोस्।"
   },
   "help.idphoto.why2": {
     "en": "Output is always 300 DPI JPEG for print-ready quality.",
     "ne": "आउटपुट सधैं 300 DPI JPEG हुन्छ - प्रिन्टका लागि तयार।"
+  },
+  "help.idphoto.why3": {
+    "en": "Saved files include a single-photo JPEG and a print sheet with multiple copies on an A4 page.",
+    "ne": "सेभ गरिएका फाइलहरूमा एकल JPEG र A4 पेजमा धेरै प्रति सहितको प्रिन्ट सिट दुवै हुन्छन्।"
   },
   "more.imgconv_label": { "en": "Convert", "ne": "रूपान्तरण" },
   "imgconv.drop": { "en": "Drop images or folders here", "ne": "यहाँ तस्बिर वा फोल्डरहरू छोड्नुहोस्" },
@@ -2916,11 +2920,13 @@
   "imgconv.summary_seg_files_many": { "en": "{0} files done", "ne": "{0} फाइलहरू सकिए" },
   "imgconv.summary_seg_partial": { "en": "{0} done, {1} failed", "ne": "{0} सफल, {1} असफल" },
   "help.imgconv.title": { "en": "Image Converter", "ne": "तस्बिर परिवर्तक" },
-  "help.imgconv.desc": { "en": "Convert images between JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO and TGA. RAW camera files and HEIC are accepted as input.", "ne": "JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO र TGA बीच तस्बिरहरू रूपान्तरण गर्नुहोस्।" },
+  "help.imgconv.desc": { "en": "Convert images between JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO and TGA. RAW camera files and HEIC are accepted as input.", "ne": "JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO र TGA बीच तस्बिर बदल्न मिल्छ।" },
   "help.imgconv.how1": { "en": "Drop one or more images or click to browse. All major formats are accepted including RAW camera files and HEIC.", "ne": "एक वा बढी तस्बिरहरू थप्नुहोस्। RAW र HEIC सहित सबै प्रमुख ढाँचाहरू स्वीकार्य छन्।" },
   "help.imgconv.how2": { "en": "Select the output format using the format chips, adjust quality if needed, then click Convert.", "ne": "आउटपुट ढाँचा छान्नुहोस्, गुणस्तर मिलाउनुहोस् र Convert क्लिक गर्नुहोस्।" },
   "help.imgconv.how3": { "en": "Choose an output folder when prompted. Converted files are saved there with the new extension.", "ne": "आउटपुट फोल्डर छान्नुस्। रूपान्तरित फाइलहरू नयाँ एक्सटेन्सनसहित त्यहाँ सेभ हुन्छन्।" },
   "help.imgconv.why1": { "en": "Quality slider applies only to lossy formats (JPEG, WebP, AVIF). Higher means better quality and larger file size.", "ne": "गुणस्तर स्लाइडर केवल lossy ढाँचाहरू (JPEG, WebP, AVIF) का लागि लागू हुन्छ।" },
+  "help.imgconv.why2": { "en": "RAW camera files and HEIC are accepted as input but always converted to the chosen output format.", "ne": "RAW camera फाइल र HEIC इनपुटको रूपमा चल्छन् - छानेको ढाँचामा बदलिन्छन्।" },
+  "help.imgconv.why3": { "en": "Strip metadata removes EXIF and GPS data from the output file before saving.", "ne": "Strip metadata ले सेभ गर्नु अघि आउटपुट फाइलबाट EXIF र GPS डेटा हटाउँछ।" },
   "more.qrcode_label": { "en": "QR Code", "ne": "क्यूआर" },
   "qr.type_text":    { "en": "Text / URL", "ne": "टेक्स्ट / URL" },
   "qr.type_wifi":    { "en": "WiFi", "ne": "वाइफाइ" },
@@ -2953,7 +2959,14 @@
   "qr.decode_result_label": { "en": "Decoded content",          "ne": "परिणाम" },
   "qr.decode_no_qr":        { "en": "No QR code found in image","ne": "तस्बिरमा QR कोड भेटिएन" },
   "qr.decode_copy":         { "en": "Copy Result",              "ne": "परिणाम कपी" },
-  "help.qrcode":    { "en": "", "ne": "" },
+  "help.qrcode.title": { "en": "QR Code Generator", "ne": "क्यूआर कोड" },
+  "help.qrcode.desc": { "en": "Generate QR codes for text, URLs, WiFi networks, or contact cards. Switch to Read QR to decode an image.", "ne": "टेक्स्ट, URL, WiFi, वा सम्पर्ककार्डको लागि QR कोड बनाउनुहोस्। इमेज पढ्न Read QR मोड प्रयोग गर्नुहोस्।" },
+  "help.qrcode.how1": { "en": "Choose a type (Text/URL, WiFi, or Contact) then fill in the fields.", "ne": "प्रकार छान्नुहोस् (टेक्स्ट/URL, WiFi, वा सम्पर्क) अनि विवरण भर्नुहोस्।" },
+  "help.qrcode.how2": { "en": "Tap Generate to create the QR code.", "ne": "QR कोड बनाउन Generate थिच्नुहोस्।" },
+  "help.qrcode.how3": { "en": "Save as PNG or copy to clipboard.", "ne": "PNG मा सेभ गर्नुहोस् वा क्लिपबोर्डमा कपी गर्नुहोस्।" },
+  "help.qrcode.why1": { "en": "WiFi mode reads saved networks and auto-fills the password when available.", "ne": "WiFi मोडले सेभ गरिएका नेटवर्कहरू पढ्छ र पासवर्ड स्वतः भर्छ।" },
+  "help.qrcode.why2": { "en": "Contact mode creates a vCard QR anyone can scan to save your details directly.", "ne": "सम्पर्क मोडले vCard QR बनाउँछ - स्क्यान गरेर सिधै सेभ गर्न मिल्छ।" },
+  "help.qrcode.why3": { "en": "QR codes are always black on white so any scanner can read them regardless of app theme.", "ne": "QR कोड सधैं सेतो पृष्ठभूमिमा कालो हुन्छ - थिमले फरक पार्दैन।" },
 
   "more.imgtools_label":         { "en": "Image Tools", "ne": "तस्बिर उपकरण" },
   "imgtools.run_btn":            { "en": "Process", "ne": "प्रशोधन" },
@@ -2985,7 +2998,7 @@
   "imgtools.img_to_pdf_combined":     { "en": "Combined PDF",      "ne": "एकीकृत PDF" },
   "imgtools.mixed_pdf_image_convert": { "en": "Cannot mix PDF and image files for conversion - use one type at a time", "ne": "रूपान्तरणका लागि PDF र तस्बिर सँगै राख्न मिल्दैन" },
   "help.imgtools.title":   { "en": "Image Tools Help", "ne": "तस्बिर उपकरण सहायता" },
-  "help.imgtools.desc":    { "en": "Compress, resize, or convert images and PDFs in one place. Drag files or use the toggles below.", "ne": "तस्बिर र PDF हरूलाई एउटै स्थानमा कम्प्रेस, साइज बदल्न वा रूपान्तरण गर्न सकिन्छ। फाइल तान्नुहोस् वा तलका टगलहरू प्रयोग गर्नुहोस्।" },
+  "help.imgtools.desc":    { "en": "Compress, resize, or convert images and PDFs in one place. Drag files or use the toggles below.", "ne": "तस्बिर र PDF compress, resize वा convert - सब एकै ठाउँमा। फाइल तान्नुहोस् वा toggle गर्नुहोस्।" },
   "help.imgtools.how1":    { "en": "Drop images or PDFs into the box.", "ne": "तस्बिर वा PDF बाकसमा छोड्नुहोस्।" },
   "help.imgtools.how2":    { "en": "Choose Compress, Resize, or Convert as needed.", "ne": "आवश्यक अनुसार कम्प्रेस, साइज बदल्नुहोस्, वा रूपान्तरण छान्नुहोस्।" },
   "help.imgtools.how3":    { "en": "Click Process to save the results.", "ne": "नतिजा सुरक्षित गर्न Process क्लिक गर्नुहोस्।" },
