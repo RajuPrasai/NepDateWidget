@@ -123,20 +123,6 @@ public sealed class SettingsService : ISettingsService, IDisposable
 
     private WidgetSettings? ParseDefaultSettings(string json)
     {
-        if (string.IsNullOrEmpty(json)) return null;
-        try
-        {
-            return JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
-        }
-        catch (Exception ex)
-        {
-            Helpers.Log.Warn($"SettingsService: failed to parse defaults: {ex.Message}");
-            return null;
-        }
-    }
-
-    private WidgetSettings? ParseDefaultSettings(string json)
-    {
         if (string.IsNullOrEmpty(json))
         {
             return null;
