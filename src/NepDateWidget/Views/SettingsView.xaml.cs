@@ -44,7 +44,7 @@ public partial class SettingsView : UserControl
     // this view.  Animates or snaps the toggle thumb based on AnimationEnabled.
     private void OnSettingsCheckChanged(object sender, RoutedEventArgs e)
     {
-        if (sender is not CheckBox cb) return;
+        if (e.OriginalSource is not CheckBox cb) return;
         cb.ApplyTemplate();
         if (cb.Template?.FindName("ThumbTranslate", cb) is not TranslateTransform thumb) return;
 

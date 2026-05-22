@@ -268,7 +268,7 @@
     <Setter Property="FontSize"   Value="12" />
     <Setter Property="FontWeight" Value="SemiBold" />
     <Setter Property="Opacity" Value="0.8" />
-    
+    <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
   </Style>
 
   <!-- iOS-style toggle CheckBox - use everywhere instead of the default WPF CheckBox -->
