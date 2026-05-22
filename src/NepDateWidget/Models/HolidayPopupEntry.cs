@@ -8,16 +8,16 @@ namespace NepDateWidget.Models;
 /// </summary>
 public sealed class HolidayPopupEntry
 {
-    public string Name      { get; }
+    public string Name { get; }
     public string DateLabel { get; }
     public string WhenLabel { get; }
-    public bool   IsToday   { get; }
+    public bool IsToday { get; }
 
     public HolidayPopupEntry(string name, string dateLabel, string whenLabel, bool isToday)
     {
-        Name      = name;
+        Name = name;
         DateLabel = dateLabel;
         WhenLabel = whenLabel;
-        IsToday   = isToday;
+        IsToday = isToday;
     }
 }

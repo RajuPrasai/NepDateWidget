@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -23,7 +22,7 @@ public static class DocumentConverterService
     private static readonly XmlWriterSettings _xmlWriterSettings = new()
     {
         Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
-        Indent   = false
+        Indent = false
     };
 
     // Common legacy Nepali font name fragments (all lowercase for comparison).
@@ -32,10 +31,20 @@ public static class DocumentConverterService
 
     public static bool IsLegacyNepaliFont(string? fontName)
     {
-        if (string.IsNullOrWhiteSpace(fontName)) return false;
+        if (string.IsNullOrWhiteSpace(fontName))
+        {
+            return false;
+        }
+
         var lower = fontName.ToLowerInvariant();
         foreach (var prefix in _legacyNepaliFonts)
-            if (lower.Contains(prefix)) return true;
+        {
+            if (lower.Contains(prefix))
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -45,9 +54,9 @@ public static class DocumentConverterService
     /// </summary>
     public static string BuildOutputPath(string inputPath)
     {
-        var dir  = Path.GetDirectoryName(inputPath) ?? string.Empty;
+        var dir = Path.GetDirectoryName(inputPath) ?? string.Empty;
         var stem = Path.GetFileNameWithoutExtension(inputPath);
-        var ext  = Path.GetExtension(inputPath);
+        var ext = Path.GetExtension(inputPath);
         return Path.Combine(dir, stem + "_converted" + ext);
     }
 
@@ -94,7 +103,9 @@ public static class DocumentConverterService
         // "Save As Unicode"), and falls back to UTF-8 for files without a recognisable BOM.
         string text;
         using (var sr = new StreamReader(inputPath, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
+        {
             text = sr.ReadToEnd();
+        }
         // font = null → caller converts unconditionally
         string converted = transform(text, null);
         File.WriteAllText(outputPath, converted, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
@@ -124,16 +135,21 @@ public static class DocumentConverterService
         {
             XDocument xdoc;
             using (var s = entry.Open())
+            {
                 xdoc = XDocument.Load(s);
+            }
 
-            if (!ProcessXmlTexts(xdoc, transform, fontMapper)) continue;
+            if (!ProcessXmlTexts(xdoc, transform, fontMapper))
+            {
+                continue;
+            }
 
             // Replace the entry: delete then re-create with the same name.
             string entryName = entry.FullName;
             entry.Delete();
             var updated = zip.CreateEntry(entryName);
             using var outStream = updated.Open();
-            using var writer    = XmlWriter.Create(outStream, _xmlWriterSettings);
+            using var writer = XmlWriter.Create(outStream, _xmlWriterSettings);
             xdoc.Save(writer);
         }
     }
@@ -148,7 +164,10 @@ public static class DocumentConverterService
         foreach (var textEl in xdoc.Descendants(_w + "t").ToList())
         {
             string original = textEl.Value;
-            if (original.Length == 0) continue;
+            if (original.Length == 0)
+            {
+                continue;
+            }
 
             // Resolve font name from the parent w:r > w:rPr > w:rFonts.
             string? fontName = null;
@@ -165,7 +184,10 @@ public static class DocumentConverterService
             }
 
             string converted = transform(original, fontName);
-            if (converted == original) continue;
+            if (converted == original)
+            {
+                continue;
+            }
 
             textEl.Value = converted;
             changed = true;
@@ -178,7 +200,9 @@ public static class DocumentConverterService
             {
                 string? newFont = fontMapper(fontName);
                 if (newFont is not null)
+                {
                     ApplyRunFont(run, newFont);
+                }
             }
         }
 
@@ -209,7 +233,7 @@ public static class DocumentConverterService
                 rFonts = new XElement(_w + "rFonts");
                 rPr.AddFirst(rFonts);
             }
-            rFonts.SetAttributeValue(_w + "ascii",  font);
+            rFonts.SetAttributeValue(_w + "ascii", font);
             rFonts.SetAttributeValue(_w + "hAnsi", font);
         }
     }

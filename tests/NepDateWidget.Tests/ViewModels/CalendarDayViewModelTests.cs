@@ -181,7 +181,7 @@ public class CalendarDayViewModelTests
     {
         var vm = new CalendarDayViewModel(MakeDay());
         var raised = false;
-        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.HasReminders)) raised = true; };
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.HasReminders)) { raised = true; } };
         vm.HasReminders = true;
         Assert.True(raised);
     }
@@ -191,7 +191,7 @@ public class CalendarDayViewModelTests
     {
         var vm = new CalendarDayViewModel(MakeDay());
         var raised = false;
-        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.ReminderTooltip)) raised = true; };
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.ReminderTooltip)) { raised = true; } };
         vm.ReminderTooltip = "test";
         Assert.True(raised);
     }

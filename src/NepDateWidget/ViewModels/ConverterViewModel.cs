@@ -1,7 +1,6 @@
 using NepDateWidget.Helpers;
 using NepDateWidget.Services;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows.Input;
 
 namespace NepDateWidget.ViewModels;
@@ -41,9 +40,9 @@ public sealed class ConverterViewModel : ViewModelBase
         }
     }
 
-    public bool IsModeConvert { get => _activeMode == 0; set { if (value) ActiveMode = 0; } }
-    public bool IsModeDays    { get => _activeMode == 1; set { if (value) ActiveMode = 1; } }
-    public bool IsModeTime    { get => _activeMode == 2; set { if (value) ActiveMode = 2; } }
+    public bool IsModeConvert { get => _activeMode == 0; set { if (value) { ActiveMode = 0; } } }
+    public bool IsModeDays { get => _activeMode == 1; set { if (value) { ActiveMode = 1; } } }
+    public bool IsModeTime { get => _activeMode == 2; set { if (value) { ActiveMode = 2; } } }
 
     // ═════════════════════════════════════════════════════════════════════════
     // MODE: CONVERT (BS↔AD)
@@ -64,7 +63,10 @@ public sealed class ConverterViewModel : ViewModelBase
                 ConvertHasError = false;
                 ConvertError = string.Empty;
                 if (!string.IsNullOrWhiteSpace(_convertInput))
+                {
                     AutoConvert(_convertInput);
+                }
+
                 UpdateConvertPlaceholder();
             }
         }
@@ -84,7 +86,9 @@ public sealed class ConverterViewModel : ViewModelBase
                 ConvertHasError = false;
                 ConvertError = string.Empty;
                 if (!string.IsNullOrWhiteSpace(value))
+                {
                     AutoConvert(value);
+                }
             }
         }
     }
@@ -125,7 +129,11 @@ public sealed class ConverterViewModel : ViewModelBase
             if (SetProperty(ref _isDaysDiff, value))
             {
                 OnPropertyChanged(nameof(IsDaysAddSub));
-                if (!_initializing) Log.Action($"tools days sub-mode → {(value ? "Diff" : "AddSub")}");
+                if (!_initializing)
+                {
+                    Log.Action($"tools days sub-mode → {(value ? "Diff" : "AddSub")}");
+                }
+
                 if (value)
                 {
                     // Diff mode: pre-fill Input2 with today's BS date if it's currently empty
@@ -296,30 +304,30 @@ public sealed class ConverterViewModel : ViewModelBase
     public string TitleLabel { get => _titleLabel; private set => SetProperty(ref _titleLabel, value); }
 
     public string ModeLabelConvert { get; private set; } = string.Empty;
-    public string ModeLabelDays    { get; private set; } = string.Empty;
-    public string ModeLabelTime    { get; private set; } = string.Empty;
+    public string ModeLabelDays { get; private set; } = string.Empty;
+    public string ModeLabelTime { get; private set; } = string.Empty;
     public string DaysAddSubLabel { get; private set; } = string.Empty;
     public string DaysDiffLabel { get; private set; } = string.Empty;
     public string SwitchLabel { get; private set; } = string.Empty;
-    public string InputLabel  { get; private set; } = string.Empty;
+    public string InputLabel { get; private set; } = string.Empty;
     public string TimeFromLabel { get; private set; } = string.Empty;
     public string TimeToLabel { get; private set; } = string.Empty;
-    public string TooltipSwapTz      { get; private set; } = string.Empty;
+    public string TooltipSwapTz { get; private set; } = string.Empty;
     public string TooltipToggleFormat { get; private set; } = string.Empty;
-    public string HintTime           { get; private set; } = string.Empty;
+    public string HintTime { get; private set; } = string.Empty;
 
     // ═════════════════════════════════════════════════════════════════════════
     // COMMANDS
     // ═════════════════════════════════════════════════════════════════════════
 
     public ICommand SetModeConvertCommand { get; }
-    public ICommand SetModeDaysCommand    { get; }
-    public ICommand SetModeTimeCommand    { get; }
+    public ICommand SetModeDaysCommand { get; }
+    public ICommand SetModeTimeCommand { get; }
     public ICommand SetAdToBsCommand { get; }
     public ICommand SetBsToAdCommand { get; }
     public ICommand SetDaysAddSubCommand { get; }
-    public ICommand SetDaysDiffCommand     { get; }
-    public ICommand OpenHelpCommand        { get; }
+    public ICommand SetDaysDiffCommand { get; }
+    public ICommand OpenHelpCommand { get; }
 
     // ═════════════════════════════════════════════════════════════════════════
     // CONSTRUCTION
@@ -342,8 +350,8 @@ public sealed class ConverterViewModel : ViewModelBase
         _isAdToBs = !string.Equals(defaultDirection, "BStoAD", StringComparison.OrdinalIgnoreCase);
 
         SetModeConvertCommand = new RelayCommand(() => ActiveMode = 0);
-        SetModeDaysCommand    = new RelayCommand(() => ActiveMode = 1);
-        SetModeTimeCommand    = new RelayCommand(() => ActiveMode = 2);
+        SetModeDaysCommand = new RelayCommand(() => ActiveMode = 1);
+        SetModeTimeCommand = new RelayCommand(() => ActiveMode = 2);
         SetAdToBsCommand = new RelayCommand(() => IsAdToBs = true);
         SetBsToAdCommand = new RelayCommand(() => IsAdToBs = false);
         SetDaysAddSubCommand = new RelayCommand(() => IsDaysDiff = false);
@@ -413,7 +421,11 @@ public sealed class ConverterViewModel : ViewModelBase
         {
             ConvertOutputShort = result.Result;
             ConvertOutputLong = result.ResultLong;
-            if (!_initializing) Log.Action($"convert {(_isAdToBs ? "AD→BS" : "BS→AD")} | {trimmed} → {result.Result}");
+            if (!_initializing)
+            {
+                Log.Action($"convert {(_isAdToBs ? "AD→BS" : "BS→AD")} | {trimmed} → {result.Result}");
+            }
+
             return;
         }
 
@@ -422,7 +434,7 @@ public sealed class ConverterViewModel : ViewModelBase
         if (LooksLikeCommittedDateAttempt(trimmed))
         {
             ConvertHasError = true;
-            ConvertError    = result.ErrorMessage;
+            ConvertError = result.ErrorMessage;
         }
     }
 
@@ -432,10 +444,24 @@ public sealed class ConverterViewModel : ViewModelBase
     /// </summary>
     private static bool LooksLikeCommittedDateAttempt(string s)
     {
-        if (string.IsNullOrEmpty(s)) return false;
-        if (s.Length >= 6) return true;
+        if (string.IsNullOrEmpty(s))
+        {
+            return false;
+        }
+
+        if (s.Length >= 6)
+        {
+            return true;
+        }
+
         foreach (var c in s)
-            if (c == '/' || c == '-' || c == '.' || c == ' ') return true;
+        {
+            if (c == '/' || c == '-' || c == '.' || c == ' ')
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -460,13 +486,17 @@ public sealed class ConverterViewModel : ViewModelBase
 
     private void RecomputeDays()
     {
-        if (string.IsNullOrWhiteSpace(_daysInput1)) return;
+        if (string.IsNullOrWhiteSpace(_daysInput1))
+        {
+            return;
+        }
+
         if (!TryParseBsDate(_daysInput1, out int y1, out int m1, out int d1))
         {
             if (LooksLikeCommittedDateAttempt(_daysInput1.Trim()))
             {
                 DaysHasError = true;
-                DaysError    = "Invalid date";
+                DaysError = "Invalid date";
             }
             return;
         }
@@ -474,13 +504,17 @@ public sealed class ConverterViewModel : ViewModelBase
         if (_isDaysDiff)
         {
             // Difference mode: two BS dates → years/months/days breakdown + total integer days
-            if (string.IsNullOrWhiteSpace(_daysInput2)) return;
+            if (string.IsNullOrWhiteSpace(_daysInput2))
+            {
+                return;
+            }
+
             if (!TryParseBsDate(_daysInput2, out int y2, out int m2, out int d2))
             {
                 if (LooksLikeCommittedDateAttempt(_daysInput2.Trim()))
                 {
                     DaysHasError = true;
-                    DaysError    = "Invalid date";
+                    DaysError = "Invalid date";
                 }
                 return;
             }
@@ -498,17 +532,24 @@ public sealed class ConverterViewModel : ViewModelBase
             var (years, months, days) = breakdown.Value;
             DaysOutputBreakdown = $"{years} years, {months} months, {days} days";
             DaysOutputTotal = Math.Abs(total.Value).ToString();
-            if (!_initializing) Log.Action($"days diff | {_daysInput1}→{_daysInput2} | {DaysOutputBreakdown} | {DaysOutputTotal} days");
+            if (!_initializing)
+            {
+                Log.Action($"days diff | {_daysInput1}→{_daysInput2} | {DaysOutputBreakdown} | {DaysOutputTotal} days");
+            }
         }
         else
         {
             // Add/Subtract mode: BS date + integer offset → result BS date
-            if (string.IsNullOrWhiteSpace(_daysInput2)) return;
+            if (string.IsNullOrWhiteSpace(_daysInput2))
+            {
+                return;
+            }
+
             if (!int.TryParse(_daysInput2.Trim(), out int offset))
             {
                 // Anything non-empty that isn't an integer is a real error - tell the user.
                 DaysHasError = true;
-                DaysError    = "Enter a whole number of days (e.g. 30 or -10)";
+                DaysError = "Enter a whole number of days (e.g. 30 or -10)";
                 return;
             }
 
@@ -544,7 +585,7 @@ public sealed class ConverterViewModel : ViewModelBase
         foreach (var tz in TimeZoneInfo.GetSystemTimeZones())
         {
             var fromItem = TimezoneItem.FromTimeZoneInfo(tz);
-            var toItem   = TimezoneItem.FromTimeZoneInfo(tz);
+            var toItem = TimezoneItem.FromTimeZoneInfo(tz);
             TimeFromZones.Add(fromItem);
             TimeToZones.Add(toItem);
 
@@ -590,8 +631,15 @@ public sealed class ConverterViewModel : ViewModelBase
 
     private void RecomputeTime()
     {
-        if (string.IsNullOrWhiteSpace(_timeInput)) return;
-        if (_timeFromZone is null || _timeToZone is null) return;
+        if (string.IsNullOrWhiteSpace(_timeInput))
+        {
+            return;
+        }
+
+        if (_timeFromZone is null || _timeToZone is null)
+        {
+            return;
+        }
 
         if (!TryParseTime(_timeInput.Trim(), out DateTime parsed, out bool hadExplicitAmPm))
         {
@@ -615,9 +663,13 @@ public sealed class ConverterViewModel : ViewModelBase
         {
             // Apply button state: shift parsed time to match AM/PM toggle
             if (parsed.Hour < 12 && !_timeIsAm)
+            {
                 parsed = parsed.AddHours(12);
+            }
             else if (parsed.Hour >= 12 && _timeIsAm)
+            {
                 parsed = parsed.AddHours(-12);
+            }
         }
 
         try
@@ -652,7 +704,10 @@ public sealed class ConverterViewModel : ViewModelBase
 
             TimeOutput = $"{timeStr}  (UTC{fromUtc} → UTC{toUtc})";
 
-            if (!_initializing) Log.Action($"time convert | {_timeInput} {_timeFromZone.Id} → {TimeOutput} {_timeToZone.Id}");
+            if (!_initializing)
+            {
+                Log.Action($"time convert | {_timeInput} {_timeFromZone.Id} → {TimeOutput} {_timeToZone.Id}");
+            }
         }
         catch (Exception ex)
         {
@@ -676,7 +731,10 @@ public sealed class ConverterViewModel : ViewModelBase
     {
         result = default;
         hadExplicitAmPm = false;
-        if (string.IsNullOrWhiteSpace(input)) return false;
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return false;
+        }
 
         var text = input.Trim();
 
@@ -768,7 +826,9 @@ public sealed class ConverterViewModel : ViewModelBase
         {
             // Separate hour + minute strings (space-separated path)
             if (!int.TryParse(hourOrDigits, out hour) || !int.TryParse(minuteStr, out minute))
+            {
                 return false;
+            }
         }
         else
         {
@@ -795,15 +855,23 @@ public sealed class ConverterViewModel : ViewModelBase
         // Apply AM/PM
         if (meridiem is "pm" or "p")
         {
-            if (hour < 12) hour += 12;
+            if (hour < 12)
+            {
+                hour += 12;
+            }
         }
         else if (meridiem is "am" or "a")
         {
-            if (hour == 12) hour = 0;
+            if (hour == 12)
+            {
+                hour = 0;
+            }
         }
 
         if (hour is < 0 or > 23 || minute is < 0 or > 59)
+        {
             return false;
+        }
 
         result = new DateTime(1, 1, 1, hour, minute, 0);
         return true;
@@ -855,17 +923,17 @@ public sealed class ConverterViewModel : ViewModelBase
         TitleLabel = _loc.Get("converter.title");
 
         ModeLabelConvert = _loc.Get("tools.mode_convert");
-        ModeLabelDays    = _loc.Get("tools.mode_days");
-        ModeLabelTime    = _loc.Get("tools.mode_time");
+        ModeLabelDays = _loc.Get("tools.mode_days");
+        ModeLabelTime = _loc.Get("tools.mode_time");
         DaysAddSubLabel = _loc.Get("tools.days_addsub");
         DaysDiffLabel = _loc.Get("tools.days_diff");
         SwitchLabel = _loc.Get("converter.switch_label");
-        InputLabel  = _loc.Get("converter.input_label");
+        InputLabel = _loc.Get("converter.input_label");
         TimeFromLabel = _loc.Get("tools.time_from");
         TimeToLabel = _loc.Get("tools.time_to");
-        TooltipSwapTz      = _loc.Get("tooltip.swap_tz");
+        TooltipSwapTz = _loc.Get("tooltip.swap_tz");
         TooltipToggleFormat = _loc.Get("tooltip.toggle_format");
-        HintTime           = _loc.Get("hint.time");
+        HintTime = _loc.Get("hint.time");
 
         UpdateConvertPlaceholder();
 

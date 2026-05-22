@@ -34,7 +34,9 @@ public partial class NotificationPopup : Window
         DismissButton.Content = dismissLabel;
 
         if (string.IsNullOrWhiteSpace(reminder.Notes))
+        {
             NotesText.Visibility = Visibility.Collapsed;
+        }
 
         PositionOnScreen(stackIndex);
 
@@ -76,17 +78,19 @@ public partial class NotificationPopup : Window
         ReminderId = string.Empty;
 
         HeaderText.Text = headerLabel;
-        TitleText.Text  = title;
+        TitleText.Text = title;
         TimeText.Visibility = Visibility.Collapsed;   // no time row for daily events
-        NotesText.Text  = body;
+        NotesText.Text = body;
         DismissButton.Content = dismissLabel;
 
         // Allow more vertical room than a reminder note so multiple events
         // remain readable instead of being clipped to a single visible line.
-        NotesText.MaxHeight = 140;
+        NotesText.MaxHeight = 200;
 
         if (string.IsNullOrWhiteSpace(body))
+        {
             NotesText.Visibility = Visibility.Collapsed;
+        }
 
         PositionOnScreen(stackIndex);
 
@@ -143,7 +147,10 @@ public partial class NotificationPopup : Window
         while (source is not null)
         {
             if (source is System.Windows.Controls.Button btn && btn.Name == "DismissButton")
+            {
                 return;
+            }
+
             source = System.Windows.Media.VisualTreeHelper.GetParent(source);
         }
 
@@ -167,13 +174,19 @@ public partial class NotificationPopup : Window
     private static string FormatTime12(string hhmm)
     {
         if (!TimeSpan.TryParse(hhmm, out var ts))
+        {
             return hhmm;
+        }
 
         int h = ts.Hours;
         int m = ts.Minutes;
         string period = h < 12 ? "AM" : "PM";
         int h12 = h % 12;
-        if (h12 == 0) h12 = 12;
+        if (h12 == 0)
+        {
+            h12 = 12;
+        }
+
         return $"{h12}:{m:D2} {period}";
     }
 }

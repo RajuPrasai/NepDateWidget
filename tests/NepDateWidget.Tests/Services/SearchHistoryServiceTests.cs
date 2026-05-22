@@ -20,7 +20,9 @@ public sealed class SearchHistoryServiceTests : IDisposable
     public void Dispose()
     {
         foreach (var f in _tempFiles)
+        {
             try { File.Delete(f); } catch { }
+        }
     }
 
     // ── Load ───────────────────────────────────────────────────────────────────
@@ -154,7 +156,11 @@ public sealed class SearchHistoryServiceTests : IDisposable
     public void GetMatching_RespectsMaxCount()
     {
         var svc = new SearchHistoryService(TempPath());
-        for (var i = 0; i < 10; i++) svc.Record($"item{i}");
+        for (var i = 0; i < 10; i++)
+        {
+            svc.Record($"item{i}");
+        }
+
         Assert.Equal(3, svc.GetMatching("", 3).Count);
     }
 

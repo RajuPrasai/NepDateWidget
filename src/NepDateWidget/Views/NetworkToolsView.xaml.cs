@@ -15,24 +15,41 @@ public partial class NetworkToolsView : UserControl
         IsVisibleChanged += (_, e) =>
         {
             if ((bool)e.NewValue && DataContext is NetworkToolsViewModel vm)
+            {
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input,
                     new Action(() => FocusModeInput(vm.ActiveMode)));
+            }
         };
 
         DataContextChanged += (_, e) =>
         {
             if (e.OldValue is NetworkToolsViewModel oldVm)
+            {
                 oldVm.PropertyChanged -= OnVmPropertyChanged;
+            }
+
             if (e.NewValue is NetworkToolsViewModel vm)
+            {
                 vm.PropertyChanged += OnVmPropertyChanged;
+            }
+        };
+
+        Unloaded += (_, _) =>
+        {
+            if (DataContext is NetworkToolsViewModel vm)
+            {
+                vm.PropertyChanged -= OnVmPropertyChanged;
+            }
         };
     }
 
     private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(NetworkToolsViewModel.ActiveMode) && sender is NetworkToolsViewModel vm)
+        {
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input,
                 new Action(() => FocusModeInput(vm.ActiveMode)));
+        }
     }
 
     private void FocusModeInput(int mode)
@@ -50,7 +67,10 @@ public partial class NetworkToolsView : UserControl
 
     private void OutputBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
-        if (sender is TextBox tb) tb.SelectAll();
+        if (sender is TextBox tb)
+        {
+            tb.SelectAll();
+        }
     }
 
     private void OutputBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)

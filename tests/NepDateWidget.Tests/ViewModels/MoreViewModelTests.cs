@@ -33,7 +33,11 @@ public sealed class MoreViewModelTests
         public void Update(ReminderEntry entry)
         {
             var idx = _items.FindIndex(r => r.Id == entry.Id);
-            if (idx >= 0) _items[idx] = entry;
+            if (idx >= 0)
+            {
+                _items[idx] = entry;
+            }
+
             RemindersChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -61,10 +65,18 @@ public sealed class MoreViewModelTests
 
         public string? GetNote(string dateKey) => _notes.GetValueOrDefault(dateKey);
         public IReadOnlyDictionary<string, string> GetAll() => _notes;
+        public HashSet<int> GetHasNotesForMonth(int bsYear, int bsMonth) => new();
         public void SetNote(string dateKey, string? text)
         {
-            if (string.IsNullOrEmpty(text)) _notes.Remove(dateKey);
-            else _notes[dateKey] = text;
+            if (string.IsNullOrEmpty(text))
+            {
+                _notes.Remove(dateKey);
+            }
+            else
+            {
+                _notes[dateKey] = text;
+            }
+
             NotesChanged?.Invoke(this, EventArgs.Empty);
         }
         public void DeleteNote(string dateKey)

@@ -30,7 +30,10 @@ internal static class AppEnvironment
     {
         int length = 0;
         if (GetCurrentPackageFamilyName(ref length, null) == ErrorAppModelNoPackage || length == 0)
+        {
             return null;
+        }
+
         var buf = new char[length];
         return GetCurrentPackageFamilyName(ref length, buf) == 0
             ? new string(buf, 0, length - 1) // length includes null terminator

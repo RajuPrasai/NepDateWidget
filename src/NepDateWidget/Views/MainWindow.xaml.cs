@@ -89,17 +89,16 @@ public partial class MainWindow : Window
         viewModel.Settings.SettingsApplied += (_, _) =>
         {
             if (_hwnd != IntPtr.Zero)
+            {
                 RegisterRunBoxHotkey();
+            }
         };
 
-        if (Application.Current is not null)
-        {
-            Application.Current.SessionEnding += (_, _) =>
+        Application.Current?.SessionEnding += (_, _) =>
             {
                 ViewModel.SaveSettings();
                 _allowClose = true;
             };
-        }
 
         _saveTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(SaveDebounceMs) };
         _saveTimer.Tick += (_, _) =>
@@ -188,7 +187,9 @@ public partial class MainWindow : Window
     {
         base.OnStateChanged(e);
         if (WindowState == WindowState.Minimized)
+        {
             WindowState = WindowState.Normal;
+        }
     }
 
     protected override void OnClosing(CancelEventArgs e)
@@ -239,7 +240,11 @@ public partial class MainWindow : Window
     protected override void OnLocationChanged(EventArgs e)
     {
         base.OnLocationChanged(e);
-        if (!_initialized) return;
+        if (!_initialized)
+        {
+            return;
+        }
+
         ViewModel.UpdatePosition(Left, Top);
         _saveTimer.Stop();
         _saveTimer.Start();
@@ -266,33 +271,32 @@ public partial class MainWindow : Window
         if (ViewModel.IsExpanded)
         {
             _shell ??= CreateShell();
-            _shell.Show();
+            // ShowOrReveal handles both the normal hidden→visible case and the
+            // mid-hide race where AnimateAndHide started but has not finished yet.
+            _shell.ShowOrReveal();
             _shell.Activate();
 
             if (ViewModel.AnimationEnabled)
+            {
                 PlayPillBounce();
+            }
         }
         else
         {
             if (_shell is not null)
             {
-                // Detach and destroy the shell once the hide animation finishes.
-                // Nulling _shell immediately so the expand path can recreate it fresh
-                // without waiting for the animation. ForceClose() inside the handler
-                // triggers OnClosing (which persists size/position and saves settings)
-                // and then tears down the window for real.
-                var dying = _shell;
-                _shell = null;
-                dying.IsVisibleChanged += (_, e) =>
-                {
-                    if ((bool)e.NewValue == false)
-                        dying.ForceClose();
-                };
-                dying.AnimateAndHide();
+                // Hide the shell without destroying it. PrepareToHide flushes the
+                // debounced position/size save synchronously so no state is lost.
+                // The shell instance is reused on the next expand, eliminating
+                // the full visual-tree rebuild cost on every open.
+                _shell.PrepareToHide();
+                _shell.AnimateAndHide();
             }
 
             if (ViewModel.AnimationEnabled)
+            {
                 PlayPillBounce();
+            }
             else
             {
                 PillScale.BeginAnimation(System.Windows.Media.ScaleTransform.ScaleXProperty, null);
@@ -301,8 +305,10 @@ public partial class MainWindow : Window
 
             EnsureShellOwner();
             if (_hwnd != IntPtr.Zero)
+            {
                 Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
                     Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
+            }
         }
     }
 
@@ -311,6 +317,36 @@ public partial class MainWindow : Window
     /// Quickly expands slightly then settles back, giving tactile feedback without
     /// a disruptive scale-down/scale-up transition.
     /// </summary>
+    private void WidgetBorder_MouseEnter(object sender, MouseEventArgs e)
+    {
+        if (ViewModel.AnimationEnabled)
+        {
+            var anim = new DoubleAnimation(-2, TimeSpan.FromMilliseconds(100));
+            anim.EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut };
+            PillLift.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, anim);
+        }
+        else
+        {
+            PillLift.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, null);
+            PillLift.Y = -2;
+        }
+    }
+
+    private void WidgetBorder_MouseLeave(object sender, MouseEventArgs e)
+    {
+        if (ViewModel.AnimationEnabled)
+        {
+            var anim = new DoubleAnimation(0, TimeSpan.FromMilliseconds(150));
+            anim.EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut };
+            PillLift.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, anim);
+        }
+        else
+        {
+            PillLift.BeginAnimation(System.Windows.Media.TranslateTransform.YProperty, null);
+            PillLift.Y = 0;
+        }
+    }
+
     private void PlayPillBounce()
     {
         var anim = new DoubleAnimationUsingKeyFrames();
@@ -346,12 +382,16 @@ public partial class MainWindow : Window
 
         // Collapse the shell if it is open so it does not overlap the spotlight.
         if (ViewModel.IsExpanded)
+        {
             ViewModel.ToggleExpandedCommand.Execute(null);
+        }
 
         var monitor = GetTargetMonitor();
 
         if (_spotlight is null)
+        {
             _spotlight = CreateSpotlight();
+        }
 
         _spotlight.PrepareForShow();
         _spotlight.Show();
@@ -374,7 +414,9 @@ public partial class MainWindow : Window
         {
             var shellInterop = new WindowInteropHelper(_shell);
             if (shellInterop.Handle != IntPtr.Zero)
+            {
                 targetHwnd = shellInterop.Handle;
+            }
         }
 
         var hMon = Win32Interop.MonitorFromWindow(targetHwnd, Win32Interop.MONITOR_DEFAULTTONEAREST);
@@ -386,10 +428,26 @@ public partial class MainWindow : Window
     private static string FormatHotkey(int modifiers, int virtualKey)
     {
         var parts = new System.Collections.Generic.List<string>();
-        if ((modifiers & 0x0002) != 0) parts.Add("Ctrl");
-        if ((modifiers & 0x0004) != 0) parts.Add("Shift");
-        if ((modifiers & 0x0001) != 0) parts.Add("Alt");
-        if ((modifiers & 0x0008) != 0) parts.Add("Win");
+        if ((modifiers & 0x0002) != 0)
+        {
+            parts.Add("Ctrl");
+        }
+
+        if ((modifiers & 0x0004) != 0)
+        {
+            parts.Add("Shift");
+        }
+
+        if ((modifiers & 0x0001) != 0)
+        {
+            parts.Add("Alt");
+        }
+
+        if ((modifiers & 0x0008) != 0)
+        {
+            parts.Add("Win");
+        }
+
         try
         {
             var key = KeyInterop.KeyFromVirtualKey(virtualKey);
@@ -404,6 +462,15 @@ public partial class MainWindow : Window
 
     private void ViewModel_ExitRequested(object? sender, EventArgs e)
     {
+        if (ViewModel.More.ImageTools?.IsJobRunning == true)
+        {
+            System.Windows.MessageBox.Show(
+                "A job is in progress. Please wait for it to finish or cancel it first.",
+                "NepDate Widget",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Information);
+            return;
+        }
         _allowClose = true;
         Close();
     }
@@ -446,7 +513,10 @@ public partial class MainWindow : Window
 
     private void RegisterRunBoxHotkey()
     {
-        if (_hwnd == IntPtr.Zero) return;
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
 
         if (_hotkeyRegistered)
         {
@@ -458,7 +528,9 @@ public partial class MainWindow : Window
         var key = _settingsService.Current.RunBoxHotkeyKey;
 
         if (mod == 0 && key == 0)
+        {
             return;
+        }
 
         if (Win32Interop.RegisterHotKey(_hwnd, HOTKEY_ID_RUNBOX, (uint)mod, (uint)key))
         {
@@ -482,29 +554,46 @@ public partial class MainWindow : Window
     private IntPtr GetShellTrayWnd()
     {
         if (_cachedShellTrayHwnd != IntPtr.Zero && Win32Interop.IsWindow(_cachedShellTrayHwnd))
+        {
             return _cachedShellTrayHwnd;
+        }
+
         _cachedShellTrayHwnd = Win32Interop.FindWindow("Shell_TrayWnd", null);
         return _cachedShellTrayHwnd;
     }
 
     private void EnsureShellOwner()
     {
-        if (_hwnd == IntPtr.Zero) return;
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
 
         IntPtr shellTray = GetShellTrayWnd();
-        if (shellTray == IntPtr.Zero) return;
+        if (shellTray == IntPtr.Zero)
+        {
+            return;
+        }
 
         var interop = new WindowInteropHelper(this);
         if (interop.Owner != shellTray)
+        {
             interop.Owner = shellTray;
+        }
     }
 
     private void RelocateToTopmost()
     {
-        if (_hwnd == IntPtr.Zero) return;
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
 
         IntPtr shellTray = GetShellTrayWnd();
-        if (shellTray == IntPtr.Zero) return;
+        if (shellTray == IntPtr.Zero)
+        {
+            return;
+        }
 
         for (IntPtr h = Win32Interop.GetWindow(_hwnd, Win32Interop.GW_HWNDPREV);
              h != IntPtr.Zero;
@@ -534,7 +623,10 @@ public partial class MainWindow : Window
 
     private void FullScreenCheck()
     {
-        if (_hwnd == IntPtr.Zero) return;
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
 
         // Only the pill needs explicit hide-for-fullscreen treatment.
         // The shell is a normal (non-topmost) window and goes behind fullscreen
@@ -596,10 +688,14 @@ public partial class MainWindow : Window
     private void WidgetBorder_MouseMove(object sender, MouseEventArgs e)
     {
         if (e.LeftButton != MouseButtonState.Pressed || _hasDragged)
+        {
             return;
+        }
 
         if (Mouse.Captured != null && !ReferenceEquals(Mouse.Captured, sender))
+        {
             return;
+        }
 
         var pos = e.GetPosition(this);
         var dx = Math.Abs(pos.X - _mouseDownPos.X);
@@ -630,9 +726,13 @@ public partial class MainWindow : Window
                 // Shell is open: bring to front if not foreground, collapse if already foreground
                 var shellHwnd = new WindowInteropHelper(_shell).Handle;
                 if (shellHwnd != IntPtr.Zero && Win32Interop.GetForegroundWindow() != shellHwnd)
+                {
                     _shell.Activate();
+                }
                 else
+                {
                     ViewModel.ToggleExpandedCommand.Execute(null);
+                }
             }
             else
             {
@@ -672,16 +772,20 @@ public partial class MainWindow : Window
 
     private void ShowTestNotification()
     {
-        if (_localizationService is null) return;
-        var header  = _localizationService.Get("settings.notification");
-        var title   = _localizationService.Get("settings.test_notification");
-        var body    = "This is a test reminder notification.";
+        if (_localizationService is null)
+        {
+            return;
+        }
+
+        var header = _localizationService.Get("settings.notification");
+        var title = _localizationService.Get("settings.test_notification");
+        var body = "This is a test reminder notification.";
         var dismiss = _localizationService.Get("reminder.dismiss");
-        bool sound  = ViewModel.Settings.NotificationSound;
-        int  dur    = ViewModel.Settings.NotificationDurationSeconds;
+        bool sound = ViewModel.Settings.NotificationSound;
+        int dur = ViewModel.Settings.NotificationDurationSeconds;
         _activeNotifications.RemoveAll(n => !n.IsLoaded);
         var popup = new NotificationPopup(header, title, body, dismiss, _activeNotifications.Count, sound, dur);
-        popup.Closed += (s, _) => { if (s is NotificationPopup n) _activeNotifications.Remove(n); };
+        popup.Closed += (s, _) => { if (s is NotificationPopup n) { _activeNotifications.Remove(n); } };
         _activeNotifications.Add(popup);
         popup.Show();
     }
@@ -722,7 +826,10 @@ public partial class MainWindow : Window
 
     public void OpenReminderPopup(int bsYear, int bsMonth, int bsDay)
     {
-        if (_reminderService is null || _localizationService is null || _nepaliDateAdapter is null) return;
+        if (_reminderService is null || _localizationService is null || _nepaliDateAdapter is null)
+        {
+            return;
+        }
 
         if (_currentReminderPopup is { IsLoaded: true } existing)
         {
@@ -742,7 +849,7 @@ public partial class MainWindow : Window
         var anchor = AnchorWindow;
         popup.WindowStartupLocation = WindowStartupLocation.Manual;
         popup.Left = anchor.Left + (anchor.ActualWidth - 300) / 2;
-        popup.Top  = anchor.Top  + 40;
+        popup.Top = anchor.Top + 40;
         popup.Topmost = true;
         _currentReminderPopup = popup;
         popup.Closed += (_, _) =>
@@ -755,7 +862,10 @@ public partial class MainWindow : Window
 
     public void OpenDayInfoPopup(int bsYear, int bsMonth, int bsDay)
     {
-        if (_localizationService is null || _nepaliDateAdapter is null) return;
+        if (_localizationService is null || _nepaliDateAdapter is null)
+        {
+            return;
+        }
 
         if (_currentDayInfoPopup is { IsLoaded: true } existing)
         {
@@ -770,12 +880,12 @@ public partial class MainWindow : Window
         var anchor = AnchorWindow;
         popup.WindowStartupLocation = WindowStartupLocation.Manual;
         popup.Left = anchor.Left + (anchor.ActualWidth - 300) / 2;
-        popup.Top  = anchor.Top  + 40;
+        popup.Top = anchor.Top + 40;
         popup.Topmost = true;
         _currentDayInfoPopup = popup;
 
         vm.NavigateToMoreRequested += OnMoreNavigateToMore;
-        vm.EditReminderRequested   += OnMoreEditReminder;
+        vm.EditReminderRequested += OnMoreEditReminder;
 
         popup.Closed += (_, _) =>
         {
@@ -788,10 +898,16 @@ public partial class MainWindow : Window
 
     private void CheckAndFireReminders()
     {
-        if (_reminderService is null || _localizationService is null) return;
+        if (_reminderService is null || _localizationService is null)
+        {
+            return;
+        }
 
         var fired = _reminderService.CheckAndFireDueReminders(DateTime.UtcNow);
-        if (fired.Count == 0) return;
+        if (fired.Count == 0)
+        {
+            return;
+        }
 
         _activeNotifications.RemoveAll(n => !n.IsLoaded);
 
@@ -801,7 +917,10 @@ public partial class MainWindow : Window
         int shown = 0;
         foreach (var reminder in fired)
         {
-            if (_activeNotifications.Count >= 5) break;
+            if (_activeNotifications.Count >= 5)
+            {
+                break;
+            }
 
             bool playSound = shown == 0 && ViewModel.NotificationSound;
             var notification = new NotificationPopup(reminder, headerLabel, dismissLabel,
@@ -819,7 +938,9 @@ public partial class MainWindow : Window
         }
 
         if (shown > 0)
+        {
             Log.Action($"fired {shown} reminder notification(s)");
+        }
     }
 
     /// <summary>
@@ -833,12 +954,18 @@ public partial class MainWindow : Window
     /// </summary>
     private void MaybeShowDailyEventsNotification()
     {
-        if (_localizationService is null || _nepaliDateAdapter is null) return;
+        if (_localizationService is null || _nepaliDateAdapter is null)
+        {
+            return;
+        }
 
         try
         {
             var settings = _settingsService.Current;
-            if (!settings.ShowDailyEventsNotification) return;
+            if (!settings.ShowDailyEventsNotification)
+            {
+                return;
+            }
 
             var todayAd = _nepaliDateAdapter.GetTodayAd().Date;
             var (bsY, bsM, bsD) = _nepaliDateAdapter.GetTodayBs();
@@ -852,12 +979,14 @@ public partial class MainWindow : Window
             if (!Helpers.DailyEventsAnnouncer.ShouldFire(
                     todayAd, _appStateService.Current.LastDailyEventsNotificationDate,
                     settings.ShowDailyEventsNotification, events?.Length ?? 0))
+            {
                 return;
+            }
 
-            var headerLabel  = _localizationService.Get("daily_events.header");
-            var titleLabel   = _localizationService.Get("daily_events.title");
+            var headerLabel = _localizationService.Get("daily_events.header");
+            var titleLabel = _localizationService.Get("daily_events.title");
             var dismissLabel = _localizationService.Get("reminder.dismiss");
-            var body         = Helpers.DailyEventsAnnouncer.FormatBody(events!);
+            var body = Helpers.DailyEventsAnnouncer.FormatBody(events!);
 
             _activeNotifications.RemoveAll(n => !n.IsLoaded);
 
@@ -869,7 +998,10 @@ public partial class MainWindow : Window
 
             popup.Closed += (s, _) =>
             {
-                if (s is NotificationPopup n) _activeNotifications.Remove(n);
+                if (s is NotificationPopup n)
+                {
+                    _activeNotifications.Remove(n);
+                }
             };
             _activeNotifications.Add(popup);
             popup.Show();
@@ -890,7 +1022,10 @@ public partial class MainWindow : Window
     private void OnNotificationNavigateRequested(string reminderId)
     {
         if (!ViewModel.IsExpanded)
+        {
             ViewModel.ToggleExpandedCommand.Execute(null);
+        }
+
         ViewModel.SelectedTabIndex = 6;
         ViewModel.More.NavigateToReminder(reminderId);
 

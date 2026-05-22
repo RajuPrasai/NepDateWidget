@@ -19,8 +19,6 @@
         mc:Ignorable="d">
 
     <Window.Resources>
-        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
-        <conv:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True" />
         <conv:IntEqualConverter x:Key="IntEqual" />
 
         <!-- InputBoxStyle: from global TextBoxStyles.xaml -->
@@ -69,12 +67,6 @@
                             </Border>
                         </Grid>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
-                            </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="Root" Property="Opacity" Value="0.40" />
                             </Trigger>
@@ -121,9 +113,6 @@
                                 <Setter TargetName="Bd" Property="Background" Value="{DynamicResource WidgetAccentBrush}" />
                                 <Setter Property="Foreground" Value="{DynamicResource WidgetDayTodayTextBrush}" />
                                 <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Opacity" Value="0.85" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -177,7 +166,7 @@
                 <Button Grid.Column="1" Click="CloseButton_Click"
                         Style="{StaticResource RBtnIcon}" Width="28" Height="28"
                         VerticalAlignment="Top">
-                    <Path Data="M18 6L6 18M6 6l12 12"
+                    <Path Data="{StaticResource IconWindowClose}"
                           Stroke="{DynamicResource WidgetForegroundBrush}"
                           StrokeThickness="1.5" Stretch="Uniform"
                           Width="12" Height="12" />
@@ -259,7 +248,7 @@
                                             Command="{Binding DataContext.EditCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             CommandParameter="{Binding Id}"
                                             Visibility="{Binding IsCompleted, Converter={StaticResource InverseBoolToVis}}">
-                                        <Path Data="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                        <Path Data="{StaticResource IconEdit}"
                                               Stroke="{DynamicResource WidgetForegroundBrush}"
                                               StrokeThickness="1.2" Stretch="Uniform"
                                               Width="14" Height="14" />
@@ -269,7 +258,7 @@
                                             Width="30" Height="30"
                                             Command="{Binding DataContext.DeleteCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                             CommandParameter="{Binding Id}">
-                                        <Path Data="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                        <Path Data="{StaticResource IconTrash}"
                                               Stroke="White"
                                               StrokeThickness="1.2" Stretch="Uniform"
                                               Width="14" Height="14" />

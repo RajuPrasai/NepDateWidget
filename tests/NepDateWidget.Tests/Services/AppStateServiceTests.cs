@@ -21,7 +21,9 @@ public sealed class AppStateServiceTests : IDisposable
     public void Dispose()
     {
         foreach (var f in _tempFiles)
+        {
             try { File.Delete(f); } catch { }
+        }
     }
 
     // ── Constructor ───────────────────────────────────────────────────────────

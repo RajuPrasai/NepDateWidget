@@ -1,7 +1,6 @@
 using NepDateWidget.Helpers;
 using System.IO;
 using System.Text.Json;
-using System.Threading;
 
 namespace NepDateWidget.Services;
 
@@ -32,6 +31,26 @@ public sealed class NotesService : INotesService, IDisposable
     {
         _notes.TryGetValue(dateKey, out string? value);
         return value;
+    }
+
+    /// <summary>
+    /// Returns the set of day numbers (1-based) that have a note in the given BS year/month.
+    /// One dictionary pass instead of per-cell key lookups during grid refresh.
+    /// </summary>
+    public HashSet<int> GetHasNotesForMonth(int bsYear, int bsMonth)
+    {
+        var result = new HashSet<int>();
+        string prefix = $"{bsYear:D4}-{bsMonth:D2}-";
+        foreach (var key in _notes.Keys)
+        {
+            if (key.Length == prefix.Length + 2
+                && key.StartsWith(prefix, StringComparison.Ordinal)
+                && int.TryParse(key.AsSpan(prefix.Length), out int day))
+            {
+                result.Add(day);
+            }
+        }
+        return result;
     }
 
     public static string FormatKey(int year, int month, int day) => $"{year:D4}-{month:D2}-{day:D2}";
@@ -76,18 +95,30 @@ public sealed class NotesService : INotesService, IDisposable
         {
             // Suppress reloads triggered by our own writes (self-induced FSW noise).
             var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));
-            if (elapsed.TotalSeconds < 1.0) return;
+            if (elapsed.TotalSeconds < 1.0)
+            {
+                return;
+            }
+
             LoadFromDisk();
             if (_syncContext is not null)
+            {
                 _syncContext.Post(_ => NotesChanged?.Invoke(this, EventArgs.Empty), null);
+            }
             else
+            {
                 NotesChanged?.Invoke(this, EventArgs.Empty);
+            }
         });
     }
 
     private void LoadFromDisk()
     {
-        if (!File.Exists(_filePath)) return;
+        if (!File.Exists(_filePath))
+        {
+            return;
+        }
+
         try
         {
             var json = File.ReadAllText(_filePath);
@@ -109,7 +140,9 @@ public sealed class NotesService : INotesService, IDisposable
             var json = JsonSerializer.Serialize(_notes, SerializerOptions);
             // Atomic write so a crash mid-write cannot leave a zero-byte file.
             if (!AtomicFile.WriteAllText(_filePath, json))
+            {
                 Log.Error("Failed to save notes (atomic write returned false)");
+            }
         }
         catch (Exception ex)
         {
@@ -125,7 +158,11 @@ public sealed class NotesService : INotesService, IDisposable
     /// </summary>
     public void MigrateFromSettings(Dictionary<string, string> dayNotes)
     {
-        if (dayNotes is null || dayNotes.Count == 0) return;
+        if (dayNotes is null || dayNotes.Count == 0)
+        {
+            return;
+        }
+
         bool changed = false;
         foreach (var (key, value) in dayNotes)
         {
@@ -135,6 +172,9 @@ public sealed class NotesService : INotesService, IDisposable
                 changed = true;
             }
         }
-        if (changed) Save();
+        if (changed)
+        {
+            Save();
+        }
     }
 }

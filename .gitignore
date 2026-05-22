@@ -48,6 +48,7 @@ store-identity.ps1
 *.VC.VC.opendb
 TestResults/
 *.TestResults/
+*.trx
 *.coverage
 *.coveragexml
 
@@ -78,6 +79,7 @@ $RECYCLE.BIN/
 *.bak
 *.swp
 *.orig
+testout.txt
 *~
 
 # ── Environment / local config ───────────────────────────────────────────────

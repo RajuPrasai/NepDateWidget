@@ -93,7 +93,10 @@ public class AtomicFileTests : IDisposable
     {
         var path = Path.Combine(_dir, "settings.json");
         for (int i = 0; i < 10; i++)
+        {
             Write(path, "v" + i);
+        }
+
         Assert.Equal("v9", File.ReadAllText(path));
         Assert.False(File.Exists(path + ".bak"));
         Assert.False(File.Exists(path + ".tmp"));

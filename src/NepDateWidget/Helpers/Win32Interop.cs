@@ -32,6 +32,7 @@ internal static class Win32Interop
     internal const int WM_HOTKEY = 0x0312;
     internal const int WM_NCHITTEST = 0x0084;
     internal const int WM_WINDOWPOSCHANGING = 0x0046;
+    internal const int WM_DISPLAYCHANGE = 0x007E;
 
     // ── Hit-test result codes ──────────────────────────────────────────────
     internal const int HTCLIENT = 1;
@@ -164,17 +165,17 @@ internal static class Win32Interop
     internal const int DWMWA_SYSTEMBACKDROP_TYPE = 38;
 
     // DWM_WINDOW_CORNER_PREFERENCE values
-    internal const int DWMWCP_DEFAULT     = 0;
-    internal const int DWMWCP_DONOTROUND  = 1;
-    internal const int DWMWCP_ROUND       = 2;
-    internal const int DWMWCP_ROUNDSMALL  = 3;
+    internal const int DWMWCP_DEFAULT = 0;
+    internal const int DWMWCP_DONOTROUND = 1;
+    internal const int DWMWCP_ROUND = 2;
+    internal const int DWMWCP_ROUNDSMALL = 3;
 
     // DWM_SYSTEMBACKDROP_TYPE values
-    internal const int DWMSBT_AUTO        = 0;
-    internal const int DWMSBT_NONE        = 1;
-    internal const int DWMSBT_MAINWINDOW  = 2; // Mica
+    internal const int DWMSBT_AUTO = 0;
+    internal const int DWMSBT_NONE = 1;
+    internal const int DWMSBT_MAINWINDOW = 2; // Mica
     internal const int DWMSBT_TRANSIENTWINDOW = 3; // Acrylic
-    internal const int DWMSBT_TABBEDWINDOW    = 4; // Mica Alt
+    internal const int DWMSBT_TABBEDWINDOW = 4; // Mica Alt
 
     [DllImport("dwmapi.dll", PreserveSig = true)]
     internal static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
@@ -192,27 +193,37 @@ internal static class Win32Interop
         if (SHQueryUserNotificationState(out int state) == 0)
         {
             if (state is QUNS_RUNNING_D3D_FULL_SCREEN or QUNS_PRESENTATION_MODE)
+            {
                 return true;
+            }
         }
 
         IntPtr hWnd = GetForegroundWindow();
         if (hWnd == IntPtr.Zero)
+        {
             return false;
+        }
 
         if (hWnd == GetDesktopWindow() || hWnd == GetShellWindow())
+        {
             return false;
+        }
 
         var className = new StringBuilder(256);
         GetClassName(hWnd, className, className.Capacity);
         if (className.ToString() == "WorkerW")
+        {
             return false;
+        }
 
         GetWindowRect(hWnd, out RECT rcApp);
 
         IntPtr hMon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
         var mi = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
         if (!GetMonitorInfo(hMon, ref mi))
+        {
             return false;
+        }
 
         RECT rcMon = mi.rcMonitor;
         const int T = 1;

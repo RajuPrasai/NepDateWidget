@@ -5,7 +5,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:views="clr-namespace:NepDateWidget.Views"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
-             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
              mc:Ignorable="d"
              UseLayoutRounding="True"
              TextOptions.TextFormattingMode="Display"
@@ -14,7 +13,6 @@
              d:Height="40" d:Width="340">
 
     <UserControl.Resources>
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVis" Invert="False" />
         <!-- Base style for mini-bar text: uses theme foreground normally,
              but switches to white + drop shadow when transparent mode is active
              so the text is readable against any desktop wallpaper. -->
@@ -57,7 +55,7 @@
             <TextBlock Text="{Binding Line1Text}"
                        Style="{StaticResource MiniBarText}"
                        FontSize="13"
-                       Opacity="0.9"
+                       Opacity="1"
                        FontWeight="Medium"
                        LineHeight="17">
                 <TextBlock.Visibility>

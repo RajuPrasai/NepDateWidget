@@ -50,7 +50,10 @@ internal sealed class HolidayWalkingFakeAdapter : INepaliDateAdapter
         // for advancing forward across month/year boundaries deterministically.
         const int monthLen = 30;
         int totalDay = (bsYear * 12 + (bsMonth - 1)) * monthLen + (bsDay - 1) + days;
-        if (totalDay < 0) return null;
+        if (totalDay < 0)
+        {
+            return null;
+        }
 
         int yearMonths = totalDay / monthLen;
         int day = totalDay % monthLen + 1;
@@ -65,11 +68,20 @@ internal sealed class HolidayWalkingFakeAdapter : INepaliDateAdapter
         GetCalendarInfoCalls++;
         var key = (bsYear, bsMonth, bsDay);
         if (_holidaysMulti.TryGetValue(key, out var multi))
+        {
             return (true, string.Empty, string.Empty, multi.En, multi.Np);
+        }
+
         if (_holidays.TryGetValue(key, out var ev))
+        {
             return (true, string.Empty, string.Empty, new[] { ev.En }, new[] { ev.Np });
+        }
+
         if (_holidaysWithoutNames.Contains(key))
+        {
             return (true, string.Empty, string.Empty, Array.Empty<string>(), Array.Empty<string>());
+        }
+
         return (false, string.Empty, string.Empty, Array.Empty<string>(), Array.Empty<string>());
     }
 

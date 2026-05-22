@@ -707,10 +707,23 @@ public sealed class ReminderServiceTests : IDisposable
 
         // Verify it produces correct 12h display
         string display;
-        if (h == 0) display = $"12:{m:D2}";
-        else if (h < 12) display = $"{h}:{m:D2}";
-        else if (h == 12) display = $"12:{m:D2}";
-        else display = $"{h - 12}:{m:D2}";
+        if (h == 0)
+        {
+            display = $"12:{m:D2}";
+        }
+        else if (h < 12)
+        {
+            display = $"{h}:{m:D2}";
+        }
+        else if (h == 12)
+        {
+            display = $"12:{m:D2}";
+        }
+        else
+        {
+            display = $"{h - 12}:{m:D2}";
+        }
+
         Assert.Equal(expectedDisplay12h, display);
     }
 

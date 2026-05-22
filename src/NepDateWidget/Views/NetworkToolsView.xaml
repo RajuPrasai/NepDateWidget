@@ -4,7 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NepDateWidget.ViewModels"
-             xmlns:cvt="clr-namespace:NepDateWidget.Converters"
              mc:Ignorable="d"
              UseLayoutRounding="True"
              TextOptions.TextFormattingMode="Display"
@@ -13,112 +12,7 @@
              d:Width="380">
 
     <UserControl.Resources>
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVis"        Invert="False" />
-        <cvt:BoolToVisibilityConverter x:Key="InverseBoolToVis" Invert="True"  />
 
-        <!-- Pill mode-selector button (inactive state) -->
-        <Style x:Key="PillButton" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderBrush"     Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="Height"          Value="28" />
-            <Setter Property="Padding"         Value="10,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="Opacity"         Value="0.55" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                    <Setter Property="Opacity" Value="0.9" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <!-- Accent (primary action) button -->
-        <Style x:Key="AccentButton" TargetType="Button">
-            <Setter Property="Background"      Value="{DynamicResource WidgetAccentBrush}" />
-            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetAccentBrush}" />
-            <Setter Property="BorderThickness" Value="0.7" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetDayTodayTextBrush}" />
-            <Setter Property="FontSize"        Value="12" />
-            <Setter Property="FontWeight"      Value="SemiBold" />
-            <Setter Property="Height"          Value="32" />
-            <Setter Property="Padding"         Value="12,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid x:Name="Root">
-                            <Border x:Name="BgLayer" Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="6" />
-                            <Border Padding="{TemplateBinding Padding}">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.70" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="BgLayer" Property="Opacity" Value="0.52" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Root" Property="Opacity" Value="0.4" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Secondary button (Copy) -->
-        <Style x:Key="SecondaryButton" TargetType="Button">
-            <Setter Property="Background"      Value="Transparent" />
-            <Setter Property="BorderBrush"     Value="{DynamicResource WidgetInputBorderBrush}" />
-            <Setter Property="BorderThickness" Value="0.7" />
-            <Setter Property="Foreground"      Value="{DynamicResource WidgetForegroundBrush}" />
-            <Setter Property="FontSize"        Value="11" />
-            <Setter Property="Height"          Value="28" />
-            <Setter Property="Padding"         Value="10,0" />
-            <Setter Property="Cursor"          Value="Hand" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="Bd"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5"
-                                Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
         <!-- InputBoxStyle, ResultBoxStyle: from global TextBoxStyles.xaml -->
 
@@ -184,7 +78,7 @@
             <Setter Property="Foreground" Value="{DynamicResource WidgetForegroundBrush}" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
+                    <Setter Property="Background" Value="{DynamicResource WidgetAccentBrushLight}" />
                 </Trigger>
                 <Trigger Property="IsSelected" Value="True">
                     <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
@@ -216,7 +110,7 @@
                 BorderThickness="0.7"
                 CornerRadius="7"
                 Padding="3"
-                Margin="8,4,8,0">
+                Margin="8,8,8,0">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -229,7 +123,7 @@
                 <Grid Grid.Column="0">
                     <Button Command="{Binding SetModeMyIpCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeMyIp}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -260,7 +154,7 @@
                 <Grid Grid.Column="1">
                     <Button Command="{Binding SetModePingCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModePing}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -291,7 +185,7 @@
                 <Grid Grid.Column="2">
                     <Button Command="{Binding SetModeScanCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeScan}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -322,7 +216,7 @@
                 <Grid Grid.Column="3">
                     <Button Command="{Binding SetModeTraceCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeTrace}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -353,7 +247,7 @@
                 <Grid Grid.Column="4">
                     <Button Command="{Binding SetModeWhoisCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeWhois}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -384,7 +278,7 @@
                 <Grid Grid.Column="5">
                     <Button Command="{Binding SetModeDnsCommand}">
                         <Button.Style>
-                            <Style TargetType="Button" BasedOn="{StaticResource PillButton}">
+                            <Style TargetType="Button" BasedOn="{StaticResource PillButtonSm}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsModeDns}" Value="True">
                                         <Setter Property="Opacity"         Value="1" />
@@ -420,7 +314,7 @@
                 BorderBrush="{DynamicResource WidgetBorderBrush}"
                 BorderThickness="0.7"
                 CornerRadius="8"
-                Padding="12,10">
+                Padding="12,14">
             <Grid>
 
                         <!-- ── MODE 0: MY IP ─────────────────────────────── -->
@@ -429,7 +323,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                                 <Button Style="{StaticResource AccentButton}"
                                         Command="{Binding FetchMyIpCommand}"
                                         MinWidth="90">
@@ -459,7 +353,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="8" />
@@ -509,7 +403,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,8">
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
                                 <Button Style="{StaticResource AccentButton}"
                                         Command="{Binding ScanCommand}"
                                         MinWidth="90">
@@ -670,7 +564,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="8" />
@@ -707,7 +601,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="8" />
@@ -749,7 +643,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <Grid Grid.Row="0" Margin="0,0,0,8">
+                            <Grid Grid.Row="0" Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="8" />

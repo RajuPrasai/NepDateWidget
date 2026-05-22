@@ -61,7 +61,9 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         set
         {
             if (SetProperty(ref _expandedPinned, value))
+            {
                 OnPropertyChanged(nameof(TooltipPin));
+            }
         }
     }
 
@@ -99,9 +101,9 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
 
     // ── Copy-today labels (fetched live so they're always today's date) ────────
     public string CopyTodayBsShortLabel => GetTodayInfo().BsShortEn;
-    public string CopyTodayBsLongLabel  => GetTodayInfo().BsLongEn;
+    public string CopyTodayBsLongLabel => GetTodayInfo().BsLongEn;
     public string CopyTodayAdShortLabel => GetTodayInfo().AdDate.ToString("yyyy-MM-dd");
-    public string CopyTodayAdLongLabel  => GetTodayInfo().AdLong;
+    public string CopyTodayAdLongLabel => GetTodayInfo().AdLong;
     public string MenuCopyTodayLabel { get; private set; } = string.Empty;
 
     // ── Context menu labels (localized) ──────────────────────────────────────
@@ -128,21 +130,21 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     public string MenuMoreLabel { get; private set; } = string.Empty;
 
     // ── Tab labels (localized) ───────────────────────────────────────────────
-    public string TabHomeLabel    { get; private set; } = string.Empty;
-    public string TabDateLabel     { get; private set; } = string.Empty;
+    public string TabHomeLabel { get; private set; } = string.Empty;
+    public string TabDateLabel { get; private set; } = string.Empty;
     public string TabSettingsLabel { get; private set; } = string.Empty;
-    public string TabUnitLabel     { get; private set; } = string.Empty;
-    public string TabBankLabel     { get; private set; } = string.Empty;
-    public string TabNetworkLabel  { get; private set; } = string.Empty;
-    public string TabTextLabel     { get; private set; } = string.Empty;
-    public string TabAboutLabel    { get; private set; } = string.Empty;
-    public string TabMoreLabel     { get; private set; } = string.Empty;
+    public string TabUnitLabel { get; private set; } = string.Empty;
+    public string TabBankLabel { get; private set; } = string.Empty;
+    public string TabNetworkLabel { get; private set; } = string.Empty;
+    public string TabTextLabel { get; private set; } = string.Empty;
+    public string TabAboutLabel { get; private set; } = string.Empty;
+    public string TabMoreLabel { get; private set; } = string.Empty;
 
     // ── Chrome tooltip labels (localized) ─────────────────────────────────────
-    public string TooltipAbout    { get; private set; } = string.Empty;
+    public string TooltipAbout { get; private set; } = string.Empty;
     public string TooltipMinimize { get; private set; } = string.Empty;
     public string TooltipSettings { get; private set; } = string.Empty;
-    public string TooltipPin      { get; private set; } = string.Empty;
+    public string TooltipPin { get; private set; } = string.Empty;
     // ── Selected tab index (for programmatic tab switching) ────────────────
     private int _selectedTabIndex;
     /// <summary>
@@ -162,7 +164,10 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
                 var name = value switch { 0 => "Calendar", 1 => "Tools", 2 => "Unit", 3 => "Text", 4 => "Banking", 5 => "Network", 6 => "More", 7 => "About", 8 => "Settings", _ => value.ToString() };
                 Log.Action($"tab → {name}");
                 if (value == 0)
+                {
                     Calendar.ClearMissedBadge();
+                }
+
                 if (value == 6)
                 {
                     More.RefreshNotes();
@@ -192,10 +197,17 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _theme, value))
             {
                 _settingsService.Current.Theme = value;
-                if (!_syncingFromSettings) _themeService.Apply(value, _backgroundPreset);
+                if (!_syncingFromSettings)
+                {
+                    _themeService.Apply(value, _backgroundPreset);
+                }
+
                 OnPropertyChanged(nameof(IsThemeDark));
                 OnPropertyChanged(nameof(IsThemeLight));
-                if (!_syncingFromSettings) _settingsService.Save();
+                if (!_syncingFromSettings)
+                {
+                    _settingsService.Save();
+                }
             }
         }
     }
@@ -211,9 +223,16 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _backgroundPreset, value))
             {
                 _settingsService.Current.BackgroundPreset = value;
-                if (!_syncingFromSettings) _themeService.Apply(_theme, value);
+                if (!_syncingFromSettings)
+                {
+                    _themeService.Apply(_theme, value);
+                }
+
                 NotifyPresetSelection();
-                if (!_syncingFromSettings) _settingsService.Save();
+                if (!_syncingFromSettings)
+                {
+                    _settingsService.Save();
+                }
             }
         }
     }
@@ -240,7 +259,10 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
                 OnPropertyChanged(nameof(CornerRadiusValue));
                 OnPropertyChanged(nameof(IsCornerRounded));
                 OnPropertyChanged(nameof(IsCornerSharp));
-                if (!_syncingFromSettings) _settingsService.Save();
+                if (!_syncingFromSettings)
+                {
+                    _settingsService.Save();
+                }
             }
         }
     }
@@ -258,7 +280,12 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _animationEnabled, value))
             {
                 _settingsService.Current.AnimationEnabled = value;
-                if (!_syncingFromSettings) _settingsService.Save();
+                if (!value)
+                    Helpers.UIAnimations.ResetAllScales();
+                if (!_syncingFromSettings)
+                {
+                    _settingsService.Save();
+                }
             }
         }
     }
@@ -273,7 +300,10 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             {
                 _settingsService.Current.TransparentWhenCollapsed = value;
                 OnPropertyChanged(nameof(IsCollapsedTransparent));
-                if (!_syncingFromSettings) _settingsService.Save();
+                if (!_syncingFromSettings)
+                {
+                    _settingsService.Save();
+                }
             }
         }
     }
@@ -291,7 +321,10 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
             {
                 _settingsService.Current.AutoStart = value;
                 _autoStartService.SetEnabled(value);
-                if (!_syncingFromSettings) _settingsService.Save();
+                if (!_syncingFromSettings)
+                {
+                    _settingsService.Save();
+                }
             }
         }
     }
@@ -385,21 +418,21 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     public ICommand OpenUnitWeightCommand { get; }
 
     // Network shortcuts (context menu)
-    public ICommand OpenNetworkMyIpCommand    { get; }
-    public ICommand OpenNetworkPingCommand    { get; }
-    public ICommand OpenNetworkScanCommand    { get; }
-    public ICommand OpenNetworkTraceCommand   { get; }
-    public ICommand OpenNetworkWhoisCommand   { get; }
-    public ICommand OpenNetworkDnsCommand     { get; }
+    public ICommand OpenNetworkMyIpCommand { get; }
+    public ICommand OpenNetworkPingCommand { get; }
+    public ICommand OpenNetworkScanCommand { get; }
+    public ICommand OpenNetworkTraceCommand { get; }
+    public ICommand OpenNetworkWhoisCommand { get; }
+    public ICommand OpenNetworkDnsCommand { get; }
 
     // Quick-toggle for the pin button in the tab strip
     public ICommand ToggleExpandedPinCommand { get; }
 
     // Text tools shortcuts (context menu)
-    public ICommand OpenTextUnicodeCommand  { get; }
-    public ICommand OpenTextWordCommand     { get; }
+    public ICommand OpenTextUnicodeCommand { get; }
+    public ICommand OpenTextWordCommand { get; }
     public ICommand OpenTextPasswordCommand { get; }
-    public ICommand OpenTextScriptCommand   { get; }
+    public ICommand OpenTextScriptCommand { get; }
 
     // ── Context menu Tools labels ─────────────────────────────────────────
     public string MenuToolsConvertLabel { get; private set; } = string.Empty;
@@ -420,18 +453,18 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
 
     // ── Context menu Network labels ──────────────────────────────────
     public string MenuNetworkSectionLabel { get; private set; } = string.Empty;
-    public string MenuNetworkMyIpLabel    { get; private set; } = string.Empty;
-    public string MenuNetworkPingLabel    { get; private set; } = string.Empty;
-    public string MenuNetworkScanLabel    { get; private set; } = string.Empty;
-    public string MenuNetworkTraceLabel   { get; private set; } = string.Empty;
-    public string MenuNetworkWhoisLabel   { get; private set; } = string.Empty;
-    public string MenuNetworkDnsLabel     { get; private set; } = string.Empty;
+    public string MenuNetworkMyIpLabel { get; private set; } = string.Empty;
+    public string MenuNetworkPingLabel { get; private set; } = string.Empty;
+    public string MenuNetworkScanLabel { get; private set; } = string.Empty;
+    public string MenuNetworkTraceLabel { get; private set; } = string.Empty;
+    public string MenuNetworkWhoisLabel { get; private set; } = string.Empty;
+    public string MenuNetworkDnsLabel { get; private set; } = string.Empty;
 
     // ── Context menu Text Tools labels ───────────────────────────────
-    public string MenuTextSectionLabel  { get; private set; } = string.Empty;
-    public string MenuTextUnicodeLabel  { get; private set; } = string.Empty;
-    public string MenuTextWordLabel     { get; private set; } = string.Empty;
-    public string MenuTextPasswordLabel { get; private set; } = string.Empty;    public string MenuTextScriptLabel   { get; private set; } = string.Empty;
+    public string MenuTextSectionLabel { get; private set; } = string.Empty;
+    public string MenuTextUnicodeLabel { get; private set; } = string.Empty;
+    public string MenuTextWordLabel { get; private set; } = string.Empty;
+    public string MenuTextPasswordLabel { get; private set; } = string.Empty; public string MenuTextScriptLabel { get; private set; } = string.Empty;
     // ── Exit signal ──────────────────────────────────────────────────────────
 
     /// <summary>
@@ -469,7 +502,10 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         INepaliDateAdapter? adapter = null,
         IShortcutsService? shortcutsService = null,
         IAppStateService? appStateService = null,
-        IScriptService? scriptService = null)
+        IScriptService? scriptService = null,
+        IFileTypeService? fileTypeService = null,
+        IJobOrchestrationService? jobOrchestrationService = null,
+        IImageConversionService? imageConversionService = null)
     {
         _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
@@ -498,7 +534,9 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         _notificationSound = s.NotificationSound;
         // On first launch, register auto-start automatically; the user can disable it in Settings.
         if (_settingsService.IsFirstLaunch && !_autoStartService.IsEnabled)
+        {
             _autoStartService.SetEnabled(true);
+        }
 
         // AutoStart: read live state from service (registry), not persisted bool
         _autoStart = _autoStartService.IsEnabled;
@@ -536,7 +574,7 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         TextTools = new TextToolsViewModel(localizationService);
         RunBox = new RunBoxViewModel(runHistoryService, localizationService, shortcutsService ?? ShortcutsService.CreateBuiltInOnly(AppPaths.DefaultShortcutsPath), scriptService);
         About = new AboutViewModel(localizationService);
-        More = new MoreViewModel(localizationService, notesService, reminderService, documentService, adapter: adapter);
+        More = new MoreViewModel(localizationService, notesService, reminderService, documentService, adapter: adapter, fileTypeService: fileTypeService, jobOrchestrationService: jobOrchestrationService, imageConversionService: imageConversionService);
 
         // When settings are applied from the Settings tab, sync live state
         Settings.SettingsApplied += (_, _) => SyncFromSettings();
@@ -545,20 +583,22 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         Calendar.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName == nameof(CalendarViewModel.MissedReminderCount))
+            {
                 RefreshCalendarTabLabel();
+            }
         };
 
         ToggleExpandedCommand = new RelayCommand(ToggleExpanded);
         ExitCommand = new RelayCommand(RequestExit);
         OpenSettingsCommand = new RelayCommand(OpenSettings);
-        OpenAboutCommand    = new RelayCommand(OpenAbout);
-        OpenMoreCommand     = new RelayCommand(OpenMore);
+        OpenAboutCommand = new RelayCommand(OpenAbout);
+        OpenMoreCommand = new RelayCommand(OpenMore);
         ToggleExpandedPinCommand = new RelayCommand(() => ExpandedPinned = !ExpandedPinned);
         SetLanguageEnCommand = new RelayCommand(() => Language = "en");
         SetLanguageNeCommand = new RelayCommand(() => Language = "ne");
         SetThemeDarkCommand = new RelayCommand(() => Theme = "Dark");
         SetThemeLightCommand = new RelayCommand(() => Theme = "Light");
-        SetPresetCommand = new RelayCommand<string>(s => { if (s is not null) BackgroundPreset = s; });
+        SetPresetCommand = new RelayCommand<string>(s => { if (s is not null) { BackgroundPreset = s; } });
         SetPresetDefaultCommand = new RelayCommand(() => BackgroundPreset = "Default");
         SetPresetOceanCommand = new RelayCommand(() => BackgroundPreset = "Ocean");
         SetPresetForestCommand = new RelayCommand(() => BackgroundPreset = "Forest");
@@ -578,31 +618,31 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         CopyTodayAdLongCommand = new RelayCommand(() => TryCopyToClipboard(CopyTodayAdLongLabel));
 
         OpenToolsConvertCommand = new RelayCommand(() => OpenToolsMode(0));
-        OpenToolsDaysCommand    = new RelayCommand(() => OpenToolsMode(1));
-        OpenToolsTimeCommand    = new RelayCommand(() => OpenToolsMode(2));
+        OpenToolsDaysCommand = new RelayCommand(() => OpenToolsMode(1));
+        OpenToolsTimeCommand = new RelayCommand(() => OpenToolsMode(2));
 
         OpenBankingInterestCommand = new RelayCommand(() => OpenBankingMode(0));
-        OpenBankingEmiCommand      = new RelayCommand(() => OpenBankingMode(1));
+        OpenBankingEmiCommand = new RelayCommand(() => OpenBankingMode(1));
 
         OpenUnitAreaCommand = new RelayCommand(() => OpenUnitMode(0));
         OpenUnitScriptCommand = new RelayCommand(() => OpenUnitMode(1));
         OpenUnitWeightCommand = new RelayCommand(() => OpenUnitMode(2));
 
-        OpenNetworkMyIpCommand  = new RelayCommand(() => OpenNetworkMode(0));
-        OpenNetworkPingCommand  = new RelayCommand(() => OpenNetworkMode(1));
-        OpenNetworkScanCommand  = new RelayCommand(() => OpenNetworkMode(2));
+        OpenNetworkMyIpCommand = new RelayCommand(() => OpenNetworkMode(0));
+        OpenNetworkPingCommand = new RelayCommand(() => OpenNetworkMode(1));
+        OpenNetworkScanCommand = new RelayCommand(() => OpenNetworkMode(2));
         OpenNetworkTraceCommand = new RelayCommand(() => OpenNetworkMode(3));
         OpenNetworkWhoisCommand = new RelayCommand(() => OpenNetworkMode(4));
-        OpenNetworkDnsCommand   = new RelayCommand(() => OpenNetworkMode(5));
+        OpenNetworkDnsCommand = new RelayCommand(() => OpenNetworkMode(5));
 
         // TextToolsViewModel's ActiveMode follows the on-screen tab strip order in
         // TextToolsView.xaml: 0 = Password, 1 = Word, 2 = Unicode, 3 = Script.
         // The shortcut commands map the user's intent ("open Unicode") to the
         // matching internal mode index. Do NOT change without updating both sides.
-        OpenTextUnicodeCommand  = new RelayCommand(() => OpenTextMode(2));
-        OpenTextWordCommand     = new RelayCommand(() => OpenTextMode(1));
+        OpenTextUnicodeCommand = new RelayCommand(() => OpenTextMode(2));
+        OpenTextWordCommand = new RelayCommand(() => OpenTextMode(1));
         OpenTextPasswordCommand = new RelayCommand(() => OpenTextMode(0));
-        OpenTextScriptCommand   = new RelayCommand(() => OpenTextMode(3));
+        OpenTextScriptCommand = new RelayCommand(() => OpenTextMode(3));
 
         RefreshMenuLabels();
     }
@@ -615,7 +655,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     public void OnMouseWheel(int delta)
     {
-        if (!_isExpanded) return;
+        if (!_isExpanded)
+        {
+            return;
+        }
+
         Calendar.NavigateMonths(delta > 0 ? -1 : +1);
     }
 
@@ -624,31 +668,39 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenSettings()
     {
-        if (!_isExpanded) ToggleExpanded();
-        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
+        if (!_isExpanded)
+            ToggleExpanded();
         SelectedTabIndex = 8;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void OpenAbout()
     {
-        if (!_isExpanded) ToggleExpanded();
-        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
+        if (!_isExpanded)
+            ToggleExpanded();
         SelectedTabIndex = 7;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void OpenMore()
     {
-        if (!_isExpanded) ToggleExpanded();
-        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
+        if (!_isExpanded)
+            ToggleExpanded();
         SelectedTabIndex = 6;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void OpenToolsMode(int mode)
     {
-        if (!_isExpanded) ToggleExpanded();
-        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
+        if (!_isExpanded)
+            ToggleExpanded();
         SelectedTabIndex = 1;
         Calendar.Converter.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -657,10 +709,12 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenBankingMode(int mode)
     {
-        if (!_isExpanded) ToggleExpanded();
-        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
+        if (!_isExpanded)
+            ToggleExpanded();
         SelectedTabIndex = 4;
         Banking.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -669,10 +723,12 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenUnitMode(int mode)
     {
-        if (!_isExpanded) ToggleExpanded();
-        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
+        if (!_isExpanded)
+            ToggleExpanded();
         SelectedTabIndex = 2;
         Unit.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -683,10 +739,12 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenTextMode(int mode)
     {
-        if (!_isExpanded) ToggleExpanded();
-        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
+        if (!_isExpanded)
+            ToggleExpanded();
         SelectedTabIndex = 3;
         TextTools.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -695,10 +753,12 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// </summary>
     private void OpenNetworkMode(int mode)
     {
-        if (!_isExpanded) ToggleExpanded();
-        else ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
+        if (!_isExpanded)
+            ToggleExpanded();
         SelectedTabIndex = 5;
         Network.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     // ── Public helpers used by the View ──────────────────────────────────────
@@ -715,7 +775,9 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         const double collapsedEstimateH = 44;
 
         if (_settingsService.IsFirstLaunch)
+        {
             return ScreenBoundsHelper.GetFirstRunPosition(collapsedEstimateW, collapsedEstimateH);
+        }
 
         var s = _settingsService.Current;
         return ScreenBoundsHelper.GetStartupPosition(
@@ -793,43 +855,54 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     /// <summary>Maps a font display name to a WPF FontFamily and updates the global resource.</summary>
     private static void ApplyFont(string fontName)
     {
-        if (System.Windows.Application.Current is null) return;
+        if (System.Windows.Application.Current is null)
+        {
+            return;
+        }
 
         System.Windows.Media.FontFamily ff;
         var embeddedBase = fontName switch
         {
-            "Cascadia Code"  => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Cascadia/",
-            "Inter"          => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Inter/",
-            "Source Sans 3"  => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/SourceSans3/",
-            "IBM Plex Sans"  => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/IBMPlexSans/",
-            "Roboto"         => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Roboto/",
-            "Noto Sans"      => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/NotoSans/",
-            "Poppins"        => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Poppins/",
-            "Imprima"        => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Imprima/",
-            "Lato"           => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Lato/",
-            "Nunito"         => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Nunito/",
-            "Raleway"        => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Raleway/",
-            "Open Sans"      => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/OpenSans/",
-            "Montserrat"     => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Montserrat/",
-            "Work Sans"      => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/WorkSans/",
-            "Quicksand"      => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Quicksand/",
-            "Rubik"          => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Rubik/",
-            "DM Sans"        => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/DMSans/",
+            "Cascadia Code" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Cascadia/",
+            "Inter" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Inter/",
+            "Source Sans 3" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/SourceSans3/",
+            "IBM Plex Sans" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/IBMPlexSans/",
+            "Roboto" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Roboto/",
+            "Noto Sans" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/NotoSans/",
+            "Poppins" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Poppins/",
+            "Imprima" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Imprima/",
+            "Lato" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Lato/",
+            "Nunito" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Nunito/",
+            "Raleway" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Raleway/",
+            "Open Sans" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/OpenSans/",
+            "Montserrat" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Montserrat/",
+            "Work Sans" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/WorkSans/",
+            "Quicksand" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Quicksand/",
+            "Rubik" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/Rubik/",
+            "DM Sans" => "pack://application:,,,/NepDateWidget;component/Assets/Fonts/DMSans/",
             _ => null
         };
 
         if (embeddedBase is not null)
+        {
             ff = new System.Windows.Media.FontFamily(new Uri(embeddedBase), "./#" + fontName);
+        }
         else
+        {
             // System font - fall back through Segoe UI then Tahoma.
             ff = new System.Windows.Media.FontFamily(fontName + ", Segoe UI, Tahoma");
+        }
 
         System.Windows.Application.Current.Resources["WidgetFontFamily"] = ff;
     }
 
     private static void ApplyHelpBadgeVisibility(bool show)
     {
-        if (System.Windows.Application.Current is null) return;
+        if (System.Windows.Application.Current is null)
+        {
+            return;
+        }
+
         System.Windows.Application.Current.Resources["HelpBadgeVisibility"] =
             show ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
     }
@@ -887,6 +960,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         {
             _syncingFromSettings = false;
         }
+
+        // Theme and background preset were assigned above but their setters were
+        // blocked by _syncingFromSettings. Apply the palette explicitly now that
+        // all properties are committed and the guard is cleared.
+        _themeService.Apply(_theme, _backgroundPreset);
     }
 
     private void RequestExit()
@@ -902,11 +980,16 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     public void ActivateRunBox()
     {
         if (!_isExpanded)
+        {
             ToggleExpanded();
+        }
         // Switch to Calendar tab (index 0) so the RunBox at the bottom is visible
         // alongside the most useful default content.
         if (_selectedTabIndex == 8) // don't leave Settings tab showing
+        {
             SelectedTabIndex = 0;
+        }
+
         RunBoxFocusRequested?.Invoke(this, EventArgs.Empty);
     }
 
@@ -919,7 +1002,9 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         // Recompute the cache only if the AD date has rolled over since last call.
         var today = DateTime.Today;
         if (_todayInfo is null || _todayInfo.AdDate.Date != today)
+        {
             _todayInfo = _calendarService.GetCurrentDateInfo();
+        }
 
         OnPropertyChanged(nameof(CopyTodayBsShortLabel));
         OnPropertyChanged(nameof(CopyTodayBsLongLabel));
@@ -954,42 +1039,42 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
         MenuMoreLabel = _localizationService.Get("tab.more");
         MenuCopyTodayLabel = _localizationService.Get("menu.copy_today");
         RefreshCalendarTabLabel();
-        TabDateLabel     = _localizationService.Get("tab.converter");
+        TabDateLabel = _localizationService.Get("tab.converter");
         TabSettingsLabel = _localizationService.Get("tab.settings");
-        TabUnitLabel     = _localizationService.Get("tab.unit");
-        TabBankLabel     = _localizationService.Get("tab.banking");
-        TabNetworkLabel  = _localizationService.Get("tab.network");
-        TabTextLabel     = _localizationService.Get("tab.text");
-        TabAboutLabel    = _localizationService.Get("tab.about");
-        TabMoreLabel     = _localizationService.Get("tab.more");
+        TabUnitLabel = _localizationService.Get("tab.unit");
+        TabBankLabel = _localizationService.Get("tab.banking");
+        TabNetworkLabel = _localizationService.Get("tab.network");
+        TabTextLabel = _localizationService.Get("tab.text");
+        TabAboutLabel = _localizationService.Get("tab.about");
+        TabMoreLabel = _localizationService.Get("tab.more");
         MenuToolsConvertLabel = _localizationService.Get("menu.tools_convert");
-        MenuToolsDaysLabel    = _localizationService.Get("menu.tools_days");
-        MenuToolsTimeLabel    = _localizationService.Get("menu.tools_time");
+        MenuToolsDaysLabel = _localizationService.Get("menu.tools_days");
+        MenuToolsTimeLabel = _localizationService.Get("menu.tools_time");
         MenuToolsSectionLabel = _localizationService.Get("menu.tools_section");
-        MenuBankingSectionLabel  = _localizationService.Get("menu.banking_section");
+        MenuBankingSectionLabel = _localizationService.Get("menu.banking_section");
         MenuBankingInterestLabel = _localizationService.Get("menu.banking_interest");
-        MenuBankingEmiLabel      = _localizationService.Get("menu.banking_emi");
+        MenuBankingEmiLabel = _localizationService.Get("menu.banking_emi");
         MenuUnitSectionLabel = _localizationService.Get("menu.unit_section");
         MenuUnitAreaLabel = _localizationService.Get("menu.unit_area");
         MenuUnitScriptLabel = _localizationService.Get("menu.unit_script");
         MenuUnitWeightLabel = _localizationService.Get("menu.unit_weight");
         MenuNetworkSectionLabel = _localizationService.Get("menu.network_section");
-        MenuNetworkMyIpLabel    = _localizationService.Get("net.mode_myip");
-        MenuNetworkPingLabel    = _localizationService.Get("net.mode_ping");
-        MenuNetworkScanLabel    = _localizationService.Get("net.mode_scan");
-        MenuNetworkTraceLabel   = _localizationService.Get("net.mode_trace");
-        MenuNetworkWhoisLabel   = _localizationService.Get("net.mode_whois");
-        MenuNetworkDnsLabel     = _localizationService.Get("net.mode_dns");
-        MenuTextSectionLabel  = _localizationService.Get("menu.text_section");
-        MenuTextUnicodeLabel  = _localizationService.Get("menu.text_unicode");
-        MenuTextWordLabel     = _localizationService.Get("menu.text_word");
+        MenuNetworkMyIpLabel = _localizationService.Get("net.mode_myip");
+        MenuNetworkPingLabel = _localizationService.Get("net.mode_ping");
+        MenuNetworkScanLabel = _localizationService.Get("net.mode_scan");
+        MenuNetworkTraceLabel = _localizationService.Get("net.mode_trace");
+        MenuNetworkWhoisLabel = _localizationService.Get("net.mode_whois");
+        MenuNetworkDnsLabel = _localizationService.Get("net.mode_dns");
+        MenuTextSectionLabel = _localizationService.Get("menu.text_section");
+        MenuTextUnicodeLabel = _localizationService.Get("menu.text_unicode");
+        MenuTextWordLabel = _localizationService.Get("menu.text_word");
         MenuTextPasswordLabel = _localizationService.Get("menu.text_password");
-        MenuTextScriptLabel   = _localizationService.Get("menu.text_script");
+        MenuTextScriptLabel = _localizationService.Get("menu.text_script");
 
-        TooltipAbout    = _localizationService.Get("tooltip.about");
+        TooltipAbout = _localizationService.Get("tooltip.about");
         TooltipMinimize = _localizationService.Get("tooltip.minimize");
         TooltipSettings = _localizationService.Get("tooltip.settings");
-        TooltipPin      = ExpandedPinned
+        TooltipPin = ExpandedPinned
             ? _localizationService.Get("tooltip.unpin")
             : _localizationService.Get("tooltip.pin");
 
@@ -1070,9 +1155,14 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     {
         int missed = Calendar.MissedReminderCount;
         if (missed > 0)
+        {
             TabHomeLabel = string.Format(_localizationService.Get("reminder.missed_badge"), missed);
+        }
         else
+        {
             TabHomeLabel = _localizationService.Get("tab.calendar");
+        }
+
         OnPropertyChanged(nameof(TabHomeLabel));
     }
 

@@ -13,10 +13,10 @@ public partial class HelpPopup : Window
     {
         InitializeComponent();
 
-        TitleText.Text   = title;
-        DescText.Text    = desc;
-        HowHeading.Text  = howHeading;
-        WhyHeading.Text  = whyHeading;
+        TitleText.Text = title;
+        DescText.Text = desc;
+        HowHeading.Text = howHeading;
+        WhyHeading.Text = whyHeading;
         HowList.ItemsSource = howTo;
         WhyList.ItemsSource = benefits;
 
@@ -36,12 +36,12 @@ public partial class HelpPopup : Window
     /// </summary>
     public static void ShowFor(string keyPrefix, ILocalizationService loc, Window owner)
     {
-        var title    = loc.Get(keyPrefix + ".title");
-        var desc     = loc.Get(keyPrefix + ".desc");
-        var howTo    = new[] { loc.Get(keyPrefix + ".how1"), loc.Get(keyPrefix + ".how2"), loc.Get(keyPrefix + ".how3") };
+        var title = loc.Get(keyPrefix + ".title");
+        var desc = loc.Get(keyPrefix + ".desc");
+        var howTo = new[] { loc.Get(keyPrefix + ".how1"), loc.Get(keyPrefix + ".how2"), loc.Get(keyPrefix + ".how3") };
         var benefits = new[] { loc.Get(keyPrefix + ".why1"), loc.Get(keyPrefix + ".why2"), loc.Get(keyPrefix + ".why3") };
-        var howHead  = loc.Get("help.heading.howto");
-        var whyHead  = loc.Get("help.heading.benefits");
+        var howHead = loc.Get("help.heading.howto");
+        var whyHead = loc.Get("help.heading.benefits");
 
         var popup = new HelpPopup(title, desc, howTo, benefits, howHead, whyHead)
         {
@@ -52,10 +52,10 @@ public partial class HelpPopup : Window
         popup.WindowStartupLocation = WindowStartupLocation.Manual;
         popup.Loaded += (_, _) =>
         {
-            double left = owner.Left + (owner.Width  - popup.ActualWidth)  / 2;
-            double top  = owner.Top  + (owner.Height - popup.ActualHeight) / 2;
+            double left = owner.Left + (owner.Width - popup.ActualWidth) / 2;
+            double top = owner.Top + (owner.Height - popup.ActualHeight) / 2;
             popup.Left = Math.Max(0, left);
-            popup.Top  = Math.Max(0, top);
+            popup.Top = Math.Max(0, top);
         };
 
         popup.Show();
@@ -66,10 +66,18 @@ public partial class HelpPopup : Window
 
     private void OnDeactivated(object? sender, EventArgs e)
     {
-        if (_isClosing) return;
+        if (_isClosing)
+        {
+            return;
+        }
+
         Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, () =>
         {
-            if (_isClosing) return;
+            if (_isClosing)
+            {
+                return;
+            }
+
             DoClose();
         });
     }
@@ -86,7 +94,11 @@ public partial class HelpPopup : Window
 
     private void DoClose()
     {
-        if (_isClosing) return;
+        if (_isClosing)
+        {
+            return;
+        }
+
         _isClosing = true;
         Deactivated -= OnDeactivated;
         try { Close(); } catch { }

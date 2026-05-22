@@ -43,13 +43,24 @@ public sealed class ReminderEntry
 
     public static (int Year, int Month, int Day)? ParseDate(string? date)
     {
-        if (string.IsNullOrEmpty(date)) return null;
+        if (string.IsNullOrEmpty(date))
+        {
+            return null;
+        }
+
         var parts = date.Split('/', '-');
-        if (parts.Length != 3) return null;
+        if (parts.Length != 3)
+        {
+            return null;
+        }
+
         if (!int.TryParse(parts[0], out int y) ||
             !int.TryParse(parts[1], out int m) ||
             !int.TryParse(parts[2], out int d))
+        {
             return null;
+        }
+
         return (y, m, d);
     }
 
@@ -58,7 +69,10 @@ public sealed class ReminderEntry
     // Called after deserialization to migrate old 6-int format to 2-string format
     internal void MigrateFromLegacyIfNeeded()
     {
-        if (!string.IsNullOrEmpty(BsDate) || ExtensionData is null) return;
+        if (!string.IsNullOrEmpty(BsDate) || ExtensionData is null)
+        {
+            return;
+        }
 
         if (ExtensionData.TryGetValue("BsYear", out var y) &&
             ExtensionData.TryGetValue("BsMonth", out var m) &&

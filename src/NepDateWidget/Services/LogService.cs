@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 using System.Threading.Channels;
 
@@ -38,9 +38,9 @@ public sealed class LogService : ILogService, IDisposable
 
     // ── ILogService ───────────────────────────────────────────────────────────
 
-    public void Info(string message)   => Enqueue("INFO  ", message);
+    public void Info(string message) => Enqueue("INFO  ", message);
     public void Action(string message) => Enqueue("ACTION", message);
-    public void Warn(string message)   => Enqueue("WARN  ", message);
+    public void Warn(string message) => Enqueue("WARN  ", message);
 
     public void Error(string message, Exception? ex = null) =>
         Enqueue("ERROR ", ex is null ? message : $"{message} | {ex}");
@@ -87,15 +87,25 @@ public sealed class LogService : ILogService, IDisposable
 
     private void TrimIfNeeded()
     {
-        if (!File.Exists(_logPath)) return;
+        if (!File.Exists(_logPath))
+        {
+            return;
+        }
+
         long maxBytes = Interlocked.Read(ref _maxBytes);
         var info = new FileInfo(_logPath);
-        if (info.Length < maxBytes) return;
+        if (info.Length < maxBytes)
+        {
+            return;
+        }
 
         byte[] bytes = File.ReadAllBytes(_logPath);
         int start = bytes.Length / 2;
         while (start < bytes.Length && bytes[start] != (byte)'\n')
+        {
             start++;
+        }
+
         start++;
 
         byte[] banner = Encoding.UTF8.GetBytes(
@@ -105,7 +115,9 @@ public sealed class LogService : ILogService, IDisposable
         using var fs = new FileStream(_logPath, FileMode.Create, FileAccess.Write, FileShare.None);
         fs.Write(banner, 0, banner.Length);
         if (start < bytes.Length)
+        {
             fs.Write(bytes, start, bytes.Length - start);
+        }
     }
 
     private static int Clamp(int v, int lo, int hi) => v < lo ? lo : v > hi ? hi : v;

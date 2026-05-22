@@ -65,7 +65,7 @@
                             <ControlTemplate.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="Bd" Property="Background"
-                                            Value="{DynamicResource WidgetHoverBrush}" />
+                                            Value="{DynamicResource WidgetAccentBrushLight}" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -271,55 +271,103 @@
                                           ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
                                           ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
                                           IsHitTestVisible="False" />
-                        <TextBlock Text="▾" FontSize="11"
-                                   Foreground="{TemplateBinding Foreground}"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Right"
-                                   Margin="0,0,8,0" IsHitTestVisible="False" />
+                        <Path Data="{DynamicResource IconChevronDown}"
+                              Stroke="{TemplateBinding Foreground}"
+                              StrokeThickness="1.6" Fill="Transparent"
+                              Stretch="Uniform" Width="10" Height="10"
+                              VerticalAlignment="Center" HorizontalAlignment="Right"
+                              Margin="0,0,9,0" IsHitTestVisible="False" />
                         <Popup Placement="Bottom"
                                IsOpen="{TemplateBinding IsDropDownOpen}"
-                               AllowsTransparency="False" Focusable="False"
-                               PopupAnimation="None">
-                            <Border MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
-                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                    Background="{DynamicResource WidgetInputBrush}"
-                                    BorderBrush="{DynamicResource WidgetInputBorderBrush}"
-                                    BorderThickness="0.7" CornerRadius="4" Margin="0,2,0,0">
-                                <Border.Resources>
-                                    <Style TargetType="ComboBoxItem">
-                                        <Setter Property="Background"  Value="{DynamicResource WidgetInputBrush}" />
-                                        <Setter Property="Foreground"  Value="{DynamicResource WidgetForegroundBrush}" />
-                                        <Setter Property="Padding"     Value="8,5" />
-                                        <Setter Property="BorderThickness" Value="0" />
-                                        <Style.Triggers>
-                                            <Trigger Property="IsHighlighted" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                                            </Trigger>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource WidgetHoverBrush}" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Resources>
-                                <ScrollViewer SnapsToDevicePixels="True">
-                                    <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
-                                </ScrollViewer>
+                               AllowsTransparency="True" Focusable="False"
+                               PopupAnimation="Fade">
+                            <Border Background="Transparent" Margin="0,3,0,0">
+                                <Border.Effect>
+                                    <DropShadowEffect Direction="270" ShadowDepth="4" BlurRadius="12"
+                                                      Color="#000000" Opacity="0.15"
+                                                      RenderingBias="Performance" />
+                                </Border.Effect>
+                                <Border MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                        MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                        Background="{DynamicResource WidgetInputBrush}"
+                                        BorderBrush="{DynamicResource WidgetInputBorderBrush}"
+                                        BorderThickness="0.8" CornerRadius="8"
+                                        ClipToBounds="True" Padding="0,4,0,0">
+                                    <Border.Resources>
+                                        <Style TargetType="ComboBoxItem">
+                                            <Setter Property="OverridesDefaultStyle" Value="True" />
+                                            <Setter Property="Background"  Value="Transparent" />
+                                            <Setter Property="Foreground"  Value="{DynamicResource WidgetForegroundBrush}" />
+                                            <Setter Property="Padding"     Value="10,7" />
+                                            <Setter Property="Cursor"      Value="Hand" />
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ComboBoxItem">
+                                                        <Border x:Name="ItemBd"
+                                                                Background="{TemplateBinding Background}"
+                                                                CornerRadius="5"
+                                                                Padding="{TemplateBinding Padding}"
+                                                                Margin="4,1">
+                                                            <ContentPresenter TextElement.Foreground="{TemplateBinding Foreground}" />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter TargetName="ItemBd" Property="Background"
+                                                                        Value="{DynamicResource WidgetAccentBrushLight}" />
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource WidgetAccentBrush}" />
+                                                            </Trigger>
+                                                            <Trigger Property="IsHighlighted" Value="True">
+                                                                <Setter TargetName="ItemBd" Property="Background"
+                                                                        Value="{DynamicResource WidgetAccentBrush}" />
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource WidgetDayTodayTextBrush}" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Border.Resources>
+                                    <ScrollViewer SnapsToDevicePixels="True">
+                                        <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+                                    </ScrollViewer>
+                                </Border>
                             </Border>
                         </Popup>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="MainBorder" Property="Background"
-                                    Value="{DynamicResource WidgetHoverBrush}" />
+                                    Value="{DynamicResource WidgetAccentBrushLight}" />
                         </Trigger>
                         <Trigger Property="IsDropDownOpen" Value="True">
                             <Setter TargetName="MainBorder" Property="Background"
-                                    Value="{DynamicResource WidgetHoverBrush}" />
+                                    Value="{DynamicResource WidgetAccentBrushLight}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <!-- ══ CompactInputStyle: H=30 text input for tool forms ════════════════ -->
+    <Style x:Key="CompactInputStyle" TargetType="TextBox" BasedOn="{StaticResource InputBoxStyle}">
+        <Setter Property="Height"  Value="30" />
+        <Setter Property="Padding" Value="6,0" />
+    </Style>
+
+    <!-- ══ LargeComboBoxStyle: H=36 dropdown (unit/timezone views) ══════════ -->
+    <Style x:Key="LargeComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource ThemedComboBoxStyle}">
+        <Setter Property="Height"   Value="36" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <!-- ══ CompactComboBoxStyle: H=28 dropdown (settings page) ════════════════ -->
+    <Style x:Key="CompactComboBoxStyle" TargetType="ComboBox" BasedOn="{StaticResource ThemedComboBoxStyle}">
+        <Setter Property="Height"   Value="28" />
+        <Setter Property="FontSize" Value="12" />
     </Style>
 
 </ResourceDictionary>

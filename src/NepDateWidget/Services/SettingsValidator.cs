@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Models;
+using NepDateWidget.Models;
 
 namespace NepDateWidget.Services;
 
@@ -43,42 +43,54 @@ public static class SettingsValidator
         // Schema version - values below 1 are corrupt; reset to current.
         // Values above CurrentSchemaVersion are from a future app version; preserve.
         if (s.SchemaVersion < 1)
+        {
             s.SchemaVersion = CurrentSchemaVersion;
+        }
 
         // Window position - allow any value including negatives (multi-monitor);
         // off-screen recovery is handled by ScreenBoundsHelper at startup.
 
         // Window dimensions
-        s.ExpandedWidth  = Clamp(s.ExpandedWidth,  560,       MaxWindowDim, defaults.ExpandedWidth);
+        s.ExpandedWidth = Clamp(s.ExpandedWidth, 560, MaxWindowDim, defaults.ExpandedWidth);
         s.ExpandedHeight = Clamp(s.ExpandedHeight, 497.33333, MaxWindowDim, defaults.ExpandedHeight);
 
         // String enums
-        s.Language         = ValidOrDefault(s.Language,         ValidLanguages,   defaults.Language);
-        s.Theme            = ValidOrDefault(s.Theme,            ValidThemes,      defaults.Theme);
-        s.BackgroundPreset = ValidOrDefault(s.BackgroundPreset, ValidPresets,     defaults.BackgroundPreset);
-        s.CornerStyle      = ValidOrDefault(s.CornerStyle,      ValidCorners,     defaults.CornerStyle);
-        s.ClockFormat      = ValidOrDefault(s.ClockFormat,      ValidClockFormats,defaults.ClockFormat);
-        s.FontFamily       = ValidOrDefault(s.FontFamily,       ValidFonts,       defaults.FontFamily);
+        s.Language = ValidOrDefault(s.Language, ValidLanguages, defaults.Language);
+        s.Theme = ValidOrDefault(s.Theme, ValidThemes, defaults.Theme);
+        s.BackgroundPreset = ValidOrDefault(s.BackgroundPreset, ValidPresets, defaults.BackgroundPreset);
+        s.CornerStyle = ValidOrDefault(s.CornerStyle, ValidCorners, defaults.CornerStyle);
+        s.ClockFormat = ValidOrDefault(s.ClockFormat, ValidClockFormats, defaults.ClockFormat);
+        s.FontFamily = ValidOrDefault(s.FontFamily, ValidFonts, defaults.FontFamily);
 
         // Log size: clamp to supported range
         if (s.LogMaxSizeMb < 5 || s.LogMaxSizeMb > 100)
+        {
             s.LogMaxSizeMb = defaults.LogMaxSizeMb;
+        }
 
         // Hotkey modifiers: must be a valid combination (0 = disabled, or 1..15)
         if (s.RunBoxHotkeyModifiers < 0 || s.RunBoxHotkeyModifiers > 15)
+        {
             s.RunBoxHotkeyModifiers = defaults.RunBoxHotkeyModifiers;
+        }
 
         // Hotkey key: must be a valid virtual key code (0 = disabled, or 1..254)
         if (s.RunBoxHotkeyKey < 0 || s.RunBoxHotkeyKey > 254)
+        {
             s.RunBoxHotkeyKey = defaults.RunBoxHotkeyKey;
+        }
 
         // Notification duration: 5-60 seconds
         if (s.NotificationDurationSeconds < 5 || s.NotificationDurationSeconds > 60)
+        {
             s.NotificationDurationSeconds = defaults.NotificationDurationSeconds;
+        }
 
         // Last expanded tab: 0-MaxTabIndex
         if (s.LastExpandedTab < 0 || s.LastExpandedTab > MaxTabIndex)
+        {
             s.LastExpandedTab = defaults.LastExpandedTab;
+        }
     }
 
     /// <summary>
@@ -92,14 +104,20 @@ public static class SettingsValidator
     private static double Clamp(double value, double min, double max, double fallback)
     {
         if (double.IsNaN(value) || double.IsInfinity(value))
+        {
             return fallback;
+        }
+
         return Math.Max(min, Math.Min(max, value));
     }
 
     private static string ValidOrDefault(string? value, IReadOnlySet<string> allowed, string fallback)
     {
         if (value is not null && allowed.Contains(value))
+        {
             return value;
+        }
+
         return fallback;
     }
 }

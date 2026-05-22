@@ -2,7 +2,6 @@ using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using System.IO;
 using System.Text.Json;
-using System.Threading;
 
 namespace NepDateWidget.Services;
 
@@ -40,7 +39,11 @@ public sealed class DocumentService : IDocumentService, IDisposable
     public void Update(DocumentEntry entry)
     {
         var idx = _documents.FindIndex(d => d.Id == entry.Id);
-        if (idx < 0) return;
+        if (idx < 0)
+        {
+            return;
+        }
+
         _documents[idx] = entry;
         Save();
         DocumentsChanged?.Invoke(this, EventArgs.Empty);
@@ -70,12 +73,20 @@ public sealed class DocumentService : IDocumentService, IDisposable
         _reloader ??= new DebouncedFileReloader(_filePath, debounceMs: 500, onReload: () =>
         {
             var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));
-            if (elapsed.TotalSeconds < 1.0) return;
+            if (elapsed.TotalSeconds < 1.0)
+            {
+                return;
+            }
+
             LoadFromDisk();
             if (_syncContext is not null)
+            {
                 _syncContext.Post(_ => DocumentsChanged?.Invoke(this, EventArgs.Empty), null);
+            }
             else
+            {
                 DocumentsChanged?.Invoke(this, EventArgs.Empty);
+            }
         });
     }
 
@@ -86,7 +97,9 @@ public sealed class DocumentService : IDocumentService, IDisposable
         {
             var json = JsonSerializer.Serialize(_documents, SerializerOptions);
             if (!AtomicFile.WriteAllText(_filePath, json))
+            {
                 Log.Error("Failed to save documents (atomic write returned false)");
+            }
         }
         catch (Exception ex)
         {
@@ -98,7 +111,11 @@ public sealed class DocumentService : IDocumentService, IDisposable
 
     private void LoadFromDisk()
     {
-        if (!File.Exists(_filePath)) return;
+        if (!File.Exists(_filePath))
+        {
+            return;
+        }
+
         try
         {
             var json = File.ReadAllText(_filePath);
@@ -129,7 +146,10 @@ public sealed class DocumentService : IDocumentService, IDisposable
     /// </summary>
     private void MigrateVirtualPaths()
     {
-        if (!AppEnvironment.IsPackaged) return;
+        if (!AppEnvironment.IsPackaged)
+        {
+            return;
+        }
 
         // Reconstruct the OLD virtual Documents path that was used before the fix.
         // Before: Path.Combine(GetFolderPath(LocalApplicationData), DataFolderName, DataSubfolder, "data", "Documents")
@@ -144,18 +164,33 @@ public sealed class DocumentService : IDocumentService, IDisposable
         // Nothing to migrate when the two bases are the same (shouldn't happen in
         // a correctly packaged build, but guards against edge cases such as a packaged
         // debug sideload where the LocalCache path coincidentally matches the standard path).
-        if (string.Equals(virtualBase, physicalBase, StringComparison.OrdinalIgnoreCase)) return;
+        if (string.Equals(virtualBase, physicalBase, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
 
         var changed = 0;
         foreach (var doc in _documents)
         {
-            if (string.IsNullOrEmpty(doc.FilePath)) continue;
-            if (!doc.FilePath.StartsWith(virtualBase, StringComparison.OrdinalIgnoreCase)) continue;
+            if (string.IsNullOrEmpty(doc.FilePath))
+            {
+                continue;
+            }
+
+            if (!doc.FilePath.StartsWith(virtualBase, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
             doc.FilePath = physicalBase + doc.FilePath.Substring(virtualBase.Length);
             changed++;
         }
 
-        if (changed == 0) return;
+        if (changed == 0)
+        {
+            return;
+        }
+
         Save();
         Log.Info($"documents.json: rewrote {changed} path(s) from virtual AppData to physical LocalCache.");
     }

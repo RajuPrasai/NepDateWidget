@@ -1,4 +1,5 @@
-﻿using NepDateWidget.ViewModels;
+using NepDateWidget.ViewModels;
+using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -13,21 +14,41 @@ public partial class ConverterView : UserControl
         IsVisibleChanged += (_, e) =>
         {
             if ((bool)e.NewValue)
+            {
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input,
                     new Action(FocusActiveInput));
+            }
         };
 
-        // Also re-focus when the mode changes
-        DataContextChanged += (_, _) =>
+        DataContextChanged += (_, e) =>
+        {
+            if (e.OldValue is ConverterViewModel oldVm)
+            {
+                oldVm.PropertyChanged -= OnVmPropertyChanged;
+            }
+
+            if (e.NewValue is ConverterViewModel vm)
+            {
+                vm.PropertyChanged += OnVmPropertyChanged;
+            }
+        };
+
+        Unloaded += (_, _) =>
         {
             if (DataContext is ConverterViewModel vm)
-                vm.PropertyChanged += (_, pe) =>
-                {
-                    if (pe.PropertyName is nameof(ConverterViewModel.ActiveMode))
-                        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input,
-                            new Action(FocusActiveInput));
-                };
+            {
+                vm.PropertyChanged -= OnVmPropertyChanged;
+            }
         };
+    }
+
+    private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(ConverterViewModel.ActiveMode))
+        {
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input,
+                new Action(FocusActiveInput));
+        }
     }
 
     private void FocusActiveInput()
@@ -38,7 +59,10 @@ public partial class ConverterView : UserControl
     // Select-all when a read-only output box receives keyboard focus (Tab / Shift+Tab).
     private void OutputBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
-        if (sender is TextBox tb) tb.SelectAll();
+        if (sender is TextBox tb)
+        {
+            tb.SelectAll();
+        }
     }
 
     // Also select-all on mouse click so the user can just Ctrl+C immediately.

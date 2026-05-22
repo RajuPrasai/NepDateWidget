@@ -1,10 +1,9 @@
-﻿using NepDateWidget.Helpers;
+using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
 
 namespace NepDateWidget.Services;
 
@@ -54,13 +53,18 @@ public sealed class SettingsService : ISettingsService, IDisposable
     public SettingsService(string settingsFilePath, string defaultFilePath)
     {
         if (string.IsNullOrWhiteSpace(settingsFilePath))
+        {
             throw new ArgumentException("Settings file path must not be empty.", nameof(settingsFilePath));
-        if (string.IsNullOrWhiteSpace(defaultFilePath))
-            throw new ArgumentException("Default settings file path must not be empty.", nameof(defaultFilePath));
+        }
 
-        _settingsPath    = settingsFilePath;
+        if (string.IsNullOrWhiteSpace(defaultFilePath))
+        {
+            throw new ArgumentException("Default settings file path must not be empty.", nameof(defaultFilePath));
+        }
+
+        _settingsPath = settingsFilePath;
         _defaultFilePath = defaultFilePath;
-        _syncContext     = SynchronizationContext.Current;
+        _syncContext = SynchronizationContext.Current;
     }
 
     // ── ISettingsService ──────────────────────────────────────────────────────
@@ -90,7 +94,9 @@ public sealed class SettingsService : ISettingsService, IDisposable
             _isFirstLaunch = true;
             CopyDefaultToAppData();
             if (File.Exists(_settingsPath))
+            {
                 LoadAndValidateFromDisk();
+            }
             else
             {
                 _current = _cachedDefaults ?? new WidgetSettings();
@@ -106,7 +112,11 @@ public sealed class SettingsService : ISettingsService, IDisposable
         _reloader ??= new DebouncedFileReloader(_settingsPath, debounceMs: 500, onReload: () =>
         {
             var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));
-            if (elapsed.TotalSeconds < 1.0) return;
+            if (elapsed.TotalSeconds < 1.0)
+            {
+                return;
+            }
+
             ReloadFromDisk();
         });
     }
@@ -125,11 +135,33 @@ public sealed class SettingsService : ISettingsService, IDisposable
         }
     }
 
+    private WidgetSettings? ParseDefaultSettings(string json)
+    {
+        if (string.IsNullOrEmpty(json))
+        {
+            return null;
+        }
+
+        try
+        {
+            return JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
+        }
+        catch (Exception ex)
+        {
+            Helpers.Log.Warn($"SettingsService: failed to parse defaults: {ex.Message}");
+            return null;
+        }
+    }
+
     private WidgetSettings? LoadDefaultSettings()
     {
         try
         {
-            if (!File.Exists(_defaultFilePath)) return null;
+            if (!File.Exists(_defaultFilePath))
+            {
+                return null;
+            }
+
             var json = File.ReadAllText(_defaultFilePath);
             return ParseDefaultSettings(json);
         }
@@ -166,17 +198,23 @@ public sealed class SettingsService : ISettingsService, IDisposable
     /// </summary>
     private void MergeNewSettingKeys(string defaultJson)
     {
-        if (string.IsNullOrEmpty(defaultJson)) return;
+        if (string.IsNullOrEmpty(defaultJson))
+        {
+            return;
+        }
+
         try
         {
-            var userJson    = File.ReadAllText(_settingsPath);
+            var userJson = File.ReadAllText(_settingsPath);
 
-            using var userDoc    = JsonDocument.Parse(userJson);
+            using var userDoc = JsonDocument.Parse(userJson);
             using var defaultDoc = JsonDocument.Parse(defaultJson);
 
             var userProps = new Dictionary<string, JsonElement>(StringComparer.OrdinalIgnoreCase);
             foreach (var prop in userDoc.RootElement.EnumerateObject())
+            {
                 userProps[prop.Name] = prop.Value;
+            }
 
             bool added = false;
             foreach (var prop in defaultDoc.RootElement.EnumerateObject())
@@ -188,7 +226,10 @@ public sealed class SettingsService : ISettingsService, IDisposable
                 }
             }
 
-            if (!added) return;
+            if (!added)
+            {
+                return;
+            }
 
             using var stream = new MemoryStream();
             using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
@@ -204,9 +245,13 @@ public sealed class SettingsService : ISettingsService, IDisposable
             var mergedJson = Encoding.UTF8.GetString(stream.ToArray());
             Interlocked.Exchange(ref _lastSelfWriteTicks, DateTime.UtcNow.Ticks);
             if (!AtomicFile.WriteAllText(_settingsPath, mergedJson))
+            {
                 Helpers.Log.Warn("SettingsService: atomic write failed during key merge.");
+            }
             else
+            {
                 Helpers.Log.Info("SettingsService: merged new default setting keys into settings.json.");
+            }
         }
         catch (Exception ex)
         {
@@ -216,10 +261,14 @@ public sealed class SettingsService : ISettingsService, IDisposable
 
     private void LoadAndValidateFromDisk()
     {
-        if (!File.Exists(_settingsPath)) return;
+        if (!File.Exists(_settingsPath))
+        {
+            return;
+        }
+
         try
         {
-            var json   = File.ReadAllText(_settingsPath);
+            var json = File.ReadAllText(_settingsPath);
             var loaded = JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
             if (loaded is null)
             {
@@ -244,7 +293,11 @@ public sealed class SettingsService : ISettingsService, IDisposable
     {
         try
         {
-            if (!File.Exists(_settingsPath)) return;
+            if (!File.Exists(_settingsPath))
+            {
+                return;
+            }
+
             var stamp = DateTime.Now.ToString("yyyyMMdd-HHmmss");
             var dest = _settingsPath + $".broken-{stamp}";
             File.Copy(_settingsPath, dest, overwrite: true);
@@ -301,7 +354,23 @@ public sealed class SettingsService : ISettingsService, IDisposable
     /// </summary>
     public void ResetToDefaults()
     {
-        _current = _cachedDefaults ?? new WidgetSettings();
+        // Re-read from the default file to get a fresh object rather than aliasing _cachedDefaults.
+        // If _current were set to _cachedDefaults directly, any subsequent Apply() call (which writes
+        // to _current) would silently mutate _cachedDefaults, so the next reset would restore
+        // whatever the user had applied - not the actual factory defaults.
+        var defaults = LoadDefaultSettings() ?? new WidgetSettings();
+
+        // Preserve positional/session state - these are not user preferences.
+        defaults.WindowLeft = _current.WindowLeft;
+        defaults.WindowTop = _current.WindowTop;
+        defaults.ExpandedWindowLeft = _current.ExpandedWindowLeft;
+        defaults.ExpandedWindowTop = _current.ExpandedWindowTop;
+        defaults.ExpandedWidth = _current.ExpandedWidth;
+        defaults.ExpandedHeight = _current.ExpandedHeight;
+        defaults.IsExpanded = _current.IsExpanded;
+        defaults.LastExpandedTab = _current.LastExpandedTab;
+
+        _current = defaults;
         Save();
     }
 
@@ -311,19 +380,31 @@ public sealed class SettingsService : ISettingsService, IDisposable
 
     private void ReloadFromDisk()
     {
-        if (!File.Exists(_settingsPath)) return;
+        if (!File.Exists(_settingsPath))
+        {
+            return;
+        }
+
         try
         {
-            var json   = File.ReadAllText(_settingsPath);
+            var json = File.ReadAllText(_settingsPath);
             var loaded = JsonSerializer.Deserialize<WidgetSettings>(json, SerializerOptions);
-            if (loaded is null) return;
+            if (loaded is null)
+            {
+                return;
+            }
+
             loaded = Migrate(loaded, json);
             SettingsValidator.Validate(loaded, _cachedDefaults ?? new WidgetSettings());
             _current = loaded;
             if (_syncContext is not null)
+            {
                 _syncContext.Post(_ => SettingsChanged?.Invoke(this, EventArgs.Empty), null);
+            }
             else
+            {
                 SettingsChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
         {
@@ -354,7 +435,9 @@ public sealed class SettingsService : ISettingsService, IDisposable
             {
                 using var doc = System.Text.Json.JsonDocument.Parse(rawJson);
                 if (doc.RootElement.TryGetProperty("ShowTime", out var showTimeElem))
+                {
                     s.ShowTimezone = showTimeElem.GetBoolean();
+                }
             }
             catch { /* best-effort */ }
         }

@@ -47,7 +47,10 @@ public sealed class CalendarViewModelCopyDateTests
     {
         var (vm, _) = Create();
         var pad     = vm.Days.FirstOrDefault(d => d.IsPadding);
-        if (pad is null) return; // months that start on Sunday have no leading pad
+        if (pad is null)
+        {
+            return; // months that start on Sunday have no leading pad
+        }
 
         Assert.False(pad.HasCopyOptions);
         Assert.Empty(pad.CopyFormatOptions);

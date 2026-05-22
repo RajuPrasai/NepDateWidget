@@ -6,6 +6,7 @@ public interface INotesService
     void SetNote(string dateKey, string? text);
     void DeleteNote(string dateKey);
     IReadOnlyDictionary<string, string> GetAll();
+    HashSet<int> GetHasNotesForMonth(int bsYear, int bsMonth);
     void Load();
     void Save();
     event EventHandler? NotesChanged;

@@ -1,4 +1,4 @@
-﻿using Microsoft.Win32;
+using Microsoft.Win32;
 using System.Diagnostics;
 using Windows.ApplicationModel;
 
@@ -13,8 +13,8 @@ namespace NepDateWidget.Services;
 public sealed class AutoStartService : IAutoStartService
 {
     private const string RegistryKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Run";
-    private const string ValueName       = "NepDateWidget";
-    internal const string StartupTaskId  = "NepDateWidgetStartupTask";
+    private const string ValueName = "NepDateWidget";
+    internal const string StartupTaskId = "NepDateWidgetStartupTask";
 
     // Cached at construction: StartupTask object for the MSIX channel.
     // Null when running unpackaged or when the task is not declared in the manifest.
@@ -26,7 +26,11 @@ public sealed class AutoStartService : IAutoStartService
 
     public AutoStartService()
     {
-        if (!Helpers.AppEnvironment.IsPackaged) return;
+        if (!Helpers.AppEnvironment.IsPackaged)
+        {
+            return;
+        }
+
         try
         {
             // Run on a thread-pool thread to avoid deadlocking the UI thread
@@ -53,12 +57,18 @@ public sealed class AutoStartService : IAutoStartService
             try
             {
                 using var key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath, writable: false);
-                if (key?.GetValue(ValueName) is not string stored) return false;
+                if (key?.GetValue(ValueName) is not string stored)
+                {
+                    return false;
+                }
 
                 // Verify the stored entry still points to this executable so the
                 // UI toggle reflects reality after a move/reinstall.
                 var exePath = CurrentExePath;
-                if (string.IsNullOrEmpty(exePath)) return false;
+                if (string.IsNullOrEmpty(exePath))
+                {
+                    return false;
+                }
 
                 var storedExe = ParseStoredExePath(stored);
                 return string.Equals(storedExe, exePath, StringComparison.OrdinalIgnoreCase);
@@ -87,7 +97,9 @@ public sealed class AutoStartService : IAutoStartService
             {
                 var exePath = CurrentExePath ?? string.Empty;
                 if (!string.IsNullOrEmpty(exePath))
+                {
                     key.SetValue(ValueName, $"\"{exePath}\"");
+                }
             }
             else
             {
@@ -102,15 +114,23 @@ public sealed class AutoStartService : IAutoStartService
 
     private void SetPackagedStartupState(bool enable)
     {
-        if (_startupTask is null) return;
+        if (_startupTask is null)
+        {
+            return;
+        }
+
         try
         {
             if (enable)
+            {
                 // RequestEnableAsync may prompt the user or be overridden by policy.
                 // Return value is informational; we treat all outcomes as best-effort.
                 Task.Run(() => _startupTask.RequestEnableAsync().AsTask()).GetAwaiter().GetResult();
+            }
             else
+            {
                 _startupTask.Disable();
+            }
         }
         catch
         {
@@ -127,18 +147,30 @@ public sealed class AutoStartService : IAutoStartService
     public void RefreshIfStale()
     {
         // Windows updates the StartupTask exe reference on every MSIX package update.
-        if (Helpers.AppEnvironment.IsPackaged) return;
+        if (Helpers.AppEnvironment.IsPackaged)
+        {
+            return;
+        }
+
         try
         {
             using var key = Registry.CurrentUser.OpenSubKey(RegistryKeyPath, writable: true);
-            if (key?.GetValue(ValueName) is not string stored) return;
+            if (key?.GetValue(ValueName) is not string stored)
+            {
+                return;
+            }
 
             var exePath = CurrentExePath;
-            if (string.IsNullOrEmpty(exePath)) return;
+            if (string.IsNullOrEmpty(exePath))
+            {
+                return;
+            }
 
             var storedExe = ParseStoredExePath(stored);
             if (!string.Equals(storedExe, exePath, StringComparison.OrdinalIgnoreCase))
+            {
                 key.SetValue(ValueName, $"\"{exePath}\"");
+            }
         }
         catch
         {
@@ -157,9 +189,16 @@ public sealed class AutoStartService : IAutoStartService
     /// </summary>
     internal static string ParseStoredExePath(string raw)
     {
-        if (string.IsNullOrEmpty(raw)) return string.Empty;
+        if (string.IsNullOrEmpty(raw))
+        {
+            return string.Empty;
+        }
+
         var s = raw.TrimStart();
-        if (s.Length == 0) return string.Empty;
+        if (s.Length == 0)
+        {
+            return string.Empty;
+        }
 
         if (s[0] == '"')
         {

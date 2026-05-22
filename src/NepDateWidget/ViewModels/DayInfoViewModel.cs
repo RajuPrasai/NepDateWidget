@@ -1,5 +1,4 @@
 using NepDateWidget.Helpers;
-using NepDateWidget.Models;
 using NepDateWidget.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
@@ -63,7 +62,9 @@ public sealed class DayInfoViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _noteText, value))
+            {
                 OnPropertyChanged(nameof(HasExistingNote));
+            }
         }
     }
     public bool HasExistingNote => !string.IsNullOrEmpty(_noteText);
@@ -140,26 +141,26 @@ public sealed class DayInfoViewModel : ViewModelBase
         LoadReminders();
 
         // Labels
-        TithiLabel       = _loc.Get("dayinfo.tithi_label");
-        EventsLabel      = _loc.Get("dayinfo.events_label");
-        NoEventsLabel    = _loc.Get("dayinfo.no_events");
-        NoteLabel        = _loc.Get("dayinfo.note_label");
-        AddNoteLabel     = _loc.Get("dayinfo.add_note");
-        EditNoteLabel    = _loc.Get("dayinfo.edit_note");
+        TithiLabel = _loc.Get("dayinfo.tithi_label");
+        EventsLabel = _loc.Get("dayinfo.events_label");
+        NoEventsLabel = _loc.Get("dayinfo.no_events");
+        NoteLabel = _loc.Get("dayinfo.note_label");
+        AddNoteLabel = _loc.Get("dayinfo.add_note");
+        EditNoteLabel = _loc.Get("dayinfo.edit_note");
         AddReminderLabel = _loc.Get("dayinfo.add_reminder");
-        RemindersLabel   = _loc.Get("dayinfo.reminders_label");
+        RemindersLabel = _loc.Get("dayinfo.reminders_label");
         NoRemindersLabel = _loc.Get("dayinfo.no_reminders");
-        NoNoteLabel      = _loc.Get("dayinfo.no_note");
-        DeleteLabel      = _loc.Get("dayinfo.delete");
+        NoNoteLabel = _loc.Get("dayinfo.no_note");
+        DeleteLabel = _loc.Get("dayinfo.delete");
 
         // Commands
-        AddNoteCommand       = new RelayCommand(DoAddNote);
-        EditNoteCommand      = new RelayCommand(DoEditNote);
-        DeleteNoteCommand    = new RelayCommand(DoDeleteNote);
-        AddReminderCommand   = new RelayCommand(DoAddReminder);
-        EditReminderCommand  = new RelayCommand<string>(DoEditReminder);
+        AddNoteCommand = new RelayCommand(DoAddNote);
+        EditNoteCommand = new RelayCommand(DoEditNote);
+        DeleteNoteCommand = new RelayCommand(DoDeleteNote);
+        AddReminderCommand = new RelayCommand(DoAddReminder);
+        EditReminderCommand = new RelayCommand<string>(DoEditReminder);
         DeleteReminderCommand = new RelayCommand<string>(DoDeleteReminder);
-        CloseCommand         = new RelayCommand(() => RequestClose?.Invoke());
+        CloseCommand = new RelayCommand(() => RequestClose?.Invoke());
     }
 
     // ── Private ─────────────────────────────────────────────────────────────
@@ -178,7 +179,11 @@ public sealed class DayInfoViewModel : ViewModelBase
 
     private void DoDeleteNote()
     {
-        if (_notesService is null) return;
+        if (_notesService is null)
+        {
+            return;
+        }
+
         _notesService.SetNote(_dateKey, null);
         RequestClose?.Invoke();
     }
@@ -191,14 +196,22 @@ public sealed class DayInfoViewModel : ViewModelBase
 
     private void DoEditReminder(string? id)
     {
-        if (id is null) return;
+        if (id is null)
+        {
+            return;
+        }
+
         RequestClose?.Invoke();
         EditReminderRequested?.Invoke(id);
     }
 
     private void DoDeleteReminder(string? id)
     {
-        if (id is null || _reminderService is null) return;
+        if (id is null || _reminderService is null)
+        {
+            return;
+        }
+
         _reminderService.Delete(id);
         RequestClose?.Invoke();
     }
@@ -206,13 +219,23 @@ public sealed class DayInfoViewModel : ViewModelBase
     private void LoadReminders()
     {
         Reminders.Clear();
-        if (_reminderService is null) return;
+        if (_reminderService is null)
+        {
+            return;
+        }
 
         foreach (var r in _reminderService.GetForDate(_bsYear, _bsMonth, _bsDay))
-            if (!r.IsCompleted) Reminders.Add(new PopupReminderItem(r.Id, r.Title));
+        {
+            if (!r.IsCompleted)
+            {
+                Reminders.Add(new PopupReminderItem(r.Id, r.Title));
+            }
+        }
 
         foreach (var r in _reminderService.GetRecurringForDate(_bsYear, _bsMonth, _bsDay))
+        {
             Reminders.Add(new PopupReminderItem(r.Id, r.Title));
+        }
 
         OnPropertyChanged(nameof(HasReminders));
     }

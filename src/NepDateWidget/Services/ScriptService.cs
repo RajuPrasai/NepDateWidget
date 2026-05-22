@@ -3,7 +3,6 @@ using NepDateWidget.Models;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
 
 namespace NepDateWidget.Services;
 
@@ -31,9 +30,9 @@ public sealed class ScriptService : IScriptService, IDisposable
 
     public ScriptService(string filePath, string? defaultFilePath = null)
     {
-        _filePath        = filePath        ?? throw new ArgumentNullException(nameof(filePath));
+        _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
         _defaultFilePath = defaultFilePath;
-        _syncContext     = SynchronizationContext.Current;
+        _syncContext = SynchronizationContext.Current;
     }
 
     public IReadOnlyList<ScriptEntry> GetAll() => _scripts.AsReadOnly();
@@ -44,7 +43,10 @@ public sealed class ScriptService : IScriptService, IDisposable
     public void Load()
     {
         if (!File.Exists(_filePath))
+        {
             SeedFile();
+        }
+
         LoadFromFile();
         MergeNewDefaults();
         _reloader ??= new DebouncedFileReloader(_filePath, debounceMs: 500, onReload: () =>
@@ -60,9 +62,13 @@ public sealed class ScriptService : IScriptService, IDisposable
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
             if (_defaultFilePath is not null && File.Exists(_defaultFilePath))
+            {
                 File.Copy(_defaultFilePath, _filePath, overwrite: false);
+            }
             else
+            {
                 File.WriteAllText(_filePath, "[]", System.Text.Encoding.UTF8);
+            }
         }
         catch (Exception ex)
         {
@@ -78,11 +84,15 @@ public sealed class ScriptService : IScriptService, IDisposable
     /// </summary>
     private void MergeNewDefaults()
     {
-        if (_defaultFilePath is null || !File.Exists(_defaultFilePath)) return;
+        if (_defaultFilePath is null || !File.Exists(_defaultFilePath))
+        {
+            return;
+        }
+
         try
         {
-            var defaultJson     = File.ReadAllText(_defaultFilePath);
-            var defaultEntries  = JsonSerializer.Deserialize<List<ScriptEntry>>(defaultJson, SerializerOptions) ?? new();
+            var defaultJson = File.ReadAllText(_defaultFilePath);
+            var defaultEntries = JsonSerializer.Deserialize<List<ScriptEntry>>(defaultJson, SerializerOptions) ?? new();
 
             var existingNames = new HashSet<string>(
                 _scripts.Where(s => s.Name is not null).Select(s => s.Name!),
@@ -92,15 +102,22 @@ public sealed class ScriptService : IScriptService, IDisposable
                 .Where(d => !string.IsNullOrWhiteSpace(d.Name) && !existingNames.Contains(d.Name))
                 .ToList();
 
-            if (toAdd.Count == 0) return;
+            if (toAdd.Count == 0)
+            {
+                return;
+            }
 
             _scripts.AddRange(toAdd);
 
             var merged = JsonSerializer.Serialize(_scripts, SerializerOptions);
             if (!AtomicFile.WriteAllText(_filePath, merged))
+            {
                 Log.Warn("scripts.json: atomic write failed during merge.");
+            }
             else
+            {
                 Log.Info($"scripts.json: merged {toAdd.Count} new default script(s).");
+            }
         }
         catch (Exception ex)
         {
@@ -132,9 +149,13 @@ public sealed class ScriptService : IScriptService, IDisposable
     private void RaiseScriptsChanged()
     {
         if (_syncContext is not null)
+        {
             _syncContext.Post(_ => ScriptsChanged?.Invoke(this, EventArgs.Empty), null);
+        }
         else
+        {
             ScriptsChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public void Dispose() => _reloader?.Dispose();

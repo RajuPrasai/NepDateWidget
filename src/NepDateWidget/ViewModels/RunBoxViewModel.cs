@@ -6,7 +6,6 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -71,7 +70,9 @@ public sealed class RunBoxViewModel : ViewModelBase
                 // OneWay binding sees no change and the highlight is dropped on the next keystroke.
                 SelectedHistoryIndex = -1;
                 if (_isHistoryOpen && FilteredHistory.Count > 0)
+                {
                     SelectedHistoryIndex = 0;
+                }
             }
         }
     }
@@ -111,7 +112,9 @@ public sealed class RunBoxViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _activePrefix, value))
+            {
                 OnPropertyChanged(nameof(HasActivePrefix));
+            }
         }
     }
 
@@ -134,9 +137,9 @@ public sealed class RunBoxViewModel : ViewModelBase
     public ObservableCollection<HistoryEntry> FilteredHistory { get; } = new();
 
     // Labels
-    public string PlaceholderLabel   { get; private set; } = string.Empty;
-    public string HotkeyHintLabel    { get; private set; } = string.Empty;
-    public string SearchHintLabel    { get; private set; } = string.Empty;
+    public string PlaceholderLabel { get; private set; } = string.Empty;
+    public string HotkeyHintLabel { get; private set; } = string.Empty;
+    public string SearchHintLabel { get; private set; } = string.Empty;
 
     // Commands
     public ICommand ExecuteCommand { get; }
@@ -162,8 +165,7 @@ public sealed class RunBoxViewModel : ViewModelBase
         _errorTimer.Tick += (_, _) => DismissError();
 
         _shortcuts.ShortcutsChanged += OnShortcutsChanged;
-        if (_scriptService is not null)
-            _scriptService.ScriptsChanged += OnScriptsChanged;
+        _scriptService?.ScriptsChanged += OnScriptsChanged;
 
         ExecuteCommand = new RelayCommand(Execute);
         SelectHistoryItemCommand = new RelayCommand<HistoryEntry>(SelectHistoryItem);
@@ -237,11 +239,19 @@ public sealed class RunBoxViewModel : ViewModelBase
         }
 
         if (FilteredHistory.Count == 0)
+        {
             return false;
+        }
 
         int next = _selectedHistoryIndex + delta;
-        if (next < 0) next = FilteredHistory.Count - 1;
-        else if (next >= FilteredHistory.Count) next = 0;
+        if (next < 0)
+        {
+            next = FilteredHistory.Count - 1;
+        }
+        else if (next >= FilteredHistory.Count)
+        {
+            next = 0;
+        }
 
         SelectedHistoryIndex = next;
         var entry = FilteredHistory[next];
@@ -288,7 +298,9 @@ public sealed class RunBoxViewModel : ViewModelBase
     private void ApplyPrefixHintLabel(string prefix)
     {
         if (string.Equals(prefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
+        {
             SearchHintLabel = _loc.Get("runbox.script_search_hint");
+        }
         else
         {
             string site = _shortcuts.PrefixSiteNames.TryGetValue(prefix, out var n) ? n : prefix;
@@ -420,12 +432,15 @@ public sealed class RunBoxViewModel : ViewModelBase
         if (string.Equals(_activePrefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
         {
             var scriptInput = _runText?.Trim() ?? string.Empty;
-            if (string.IsNullOrEmpty(scriptInput)) return;
+            if (string.IsNullOrEmpty(scriptInput))
+            {
+                return;
+            }
 
             // First token is the script name; remainder are arguments.
             var scriptSpaceAt = scriptInput.IndexOf(' ');
-            var scriptName    = scriptSpaceAt > 0 ? scriptInput[..scriptSpaceAt].Trim() : scriptInput;
-            var scriptArgs    = scriptSpaceAt > 0 ? scriptInput[(scriptSpaceAt + 1)..].Trim() : string.Empty;
+            var scriptName = scriptSpaceAt > 0 ? scriptInput[..scriptSpaceAt].Trim() : scriptInput;
+            var scriptArgs = scriptSpaceAt > 0 ? scriptInput[(scriptSpaceAt + 1)..].Trim() : string.Empty;
 
             var script = _scriptService?.Find(scriptName);
             if (script is null)
@@ -447,7 +462,10 @@ public sealed class RunBoxViewModel : ViewModelBase
         if (_activePrefix is not null)
         {
             var query = _runText?.Trim() ?? string.Empty;
-            if (string.IsNullOrEmpty(query)) return;
+            if (string.IsNullOrEmpty(query))
+            {
+                return;
+            }
 
             DismissError();
             string url = BuildPrefixUrl(_activePrefix, Uri.EscapeDataString(query));
@@ -473,7 +491,9 @@ public sealed class RunBoxViewModel : ViewModelBase
         var input = _runText?.Trim();
 
         if (string.IsNullOrEmpty(input))
+        {
             return;
+        }
 
         DismissError();
         IsHistoryOpen = false;
@@ -484,7 +504,7 @@ public sealed class RunBoxViewModel : ViewModelBase
         if (spaceAt > 0)
         {
             string potentialPrefix = input[..spaceAt];
-            string potentialQuery  = input[(spaceAt + 1)..].Trim();
+            string potentialQuery = input[(spaceAt + 1)..].Trim();
             if (potentialQuery.Length > 0 && _shortcuts.Prefixes.ContainsKey(potentialPrefix))
             {
                 string url = BuildPrefixUrl(potentialPrefix, Uri.EscapeDataString(potentialQuery));
@@ -524,9 +544,13 @@ public sealed class RunBoxViewModel : ViewModelBase
             if (!success)
             {
                 if (IsUrl(input))
+                {
                     success = TryOpenUrl(input);
+                }
                 else
+                {
                     success = TrySearchFallback(input);
+                }
             }
         }
 
@@ -543,7 +567,9 @@ public sealed class RunBoxViewModel : ViewModelBase
         var url = input;
         if (!url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) &&
             !url.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        {
             url = "https://" + url;
+        }
 
         try
         {
@@ -611,7 +637,9 @@ public sealed class RunBoxViewModel : ViewModelBase
         {
             var close = input.IndexOf('"', 1);
             if (close > 1)
+            {
                 return (input[1..close].Trim(), input[(close + 1)..].TrimStart());
+            }
             // Unclosed quote: strip the leading quote and fall through to space-split.
             input = input[1..].TrimStart();
         }
@@ -653,25 +681,43 @@ public sealed class RunBoxViewModel : ViewModelBase
 
     public void RemoveHistoryItem(HistoryEntry? item)
     {
-        if (item is null) return;
+        if (item is null)
+        {
+            return;
+        }
         // Script entries exist only in the registry; they are never in run history.
         // Removing them from the visible list is meaningless - they reappear on the
         // next filter update. Treat as a no-op so the UX is not misleading.
-        if (string.Equals(item.Prefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase)) return;
+        if (string.Equals(item.Prefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
         _runHistoryService?.Remove(item.Raw);
 
         var match = FilteredHistory.FirstOrDefault(h => string.Equals(h.Raw, item.Raw, StringComparison.OrdinalIgnoreCase));
         if (match is not null)
+        {
             FilteredHistory.Remove(match);
+        }
+
         if (FilteredHistory.Count == 0)
+        {
             IsHistoryOpen = false;
+        }
         else if (_selectedHistoryIndex >= FilteredHistory.Count)
+        {
             SelectedHistoryIndex = FilteredHistory.Count - 1;
+        }
     }
 
     private void SelectHistoryItem(HistoryEntry? item)
     {
-        if (item is null) return;
+        if (item is null)
+        {
+            return;
+        }
+
         IsHistoryOpen = false;
         SelectedHistoryIndex = -1;
 
@@ -688,7 +734,10 @@ public sealed class RunBoxViewModel : ViewModelBase
                     return;
                 }
                 if (LaunchScript(script, string.Empty))
+                {
                     ExecutedSuccessfully?.Invoke(this, EventArgs.Empty);
+                }
+
                 return;
             }
 
@@ -750,7 +799,10 @@ public sealed class RunBoxViewModel : ViewModelBase
             }
 
             foreach (var s in ranked.Take(10))
+            {
                 FilteredHistory.Add(new HistoryEntry($"{ScriptPrefix} {s.Name}", ScriptPrefix, s.Name));
+            }
+
             IsHistoryOpen = FilteredHistory.Count > 0;
             return;
         }
@@ -784,7 +836,9 @@ public sealed class RunBoxViewModel : ViewModelBase
                 .Take(10);
 
             foreach (var m in prefixMatches)
+            {
                 FilteredHistory.Add(m);
+            }
 
             IsHistoryOpen = FilteredHistory.Count > 0;
             return;
@@ -813,14 +867,20 @@ public sealed class RunBoxViewModel : ViewModelBase
         }
 
         foreach (var m in matches)
+        {
             FilteredHistory.Add(m);
+        }
 
         // Auto-open while typing when there are matches.
         // Stays closed when filter is empty (opened explicitly via arrow-down).
         if (FilteredHistory.Count == 0)
+        {
             IsHistoryOpen = false;
+        }
         else if (!string.IsNullOrEmpty(filter))
+        {
             IsHistoryOpen = true;
+        }
     }
 
     // ── Input classification ─────────────────────────────────────────────────
@@ -831,13 +891,13 @@ public sealed class RunBoxViewModel : ViewModelBase
     /// are not mistaken for URLs before the shell has had a chance to run.
     /// </summary>
     private static bool IsExplicitUrl(string input) =>
-        input.StartsWith("http://",  StringComparison.OrdinalIgnoreCase) ||
+        input.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
         input.StartsWith("https://", StringComparison.OrdinalIgnoreCase) ||
         input.StartsWith("www.", StringComparison.OrdinalIgnoreCase) ||
         input.EndsWith(".com", StringComparison.OrdinalIgnoreCase) ||
         input.EndsWith(".np", StringComparison.OrdinalIgnoreCase) ||
         input.EndsWith(".net", StringComparison.OrdinalIgnoreCase) ||
-        input.StartsWith("ftp://",   StringComparison.OrdinalIgnoreCase);
+        input.StartsWith("ftp://", StringComparison.OrdinalIgnoreCase);
 
     // Compiled regex for URL detection including domains, IPs, localhost, ports, query strings
     private static readonly Regex UrlPattern = new(
@@ -889,7 +949,11 @@ public sealed class RunBoxViewModel : ViewModelBase
 
     public void ClearPrefix()
     {
-        if (_activePrefix is null) return;
+        if (_activePrefix is null)
+        {
+            return;
+        }
+
         ActivePrefix = null;
         SearchHintLabel = PlaceholderLabel;
         OnPropertyChanged(nameof(SearchHintLabel));
@@ -907,9 +971,11 @@ public sealed class RunBoxViewModel : ViewModelBase
         if (space > 0)
         {
             string prefix = raw[..space];
-            string query  = raw[(space + 1)..].Trim();
+            string query = raw[(space + 1)..].Trim();
             if (query.Length > 0 && _shortcuts.Prefixes.ContainsKey(prefix))
+            {
                 return new HistoryEntry(raw, prefix, query);
+            }
         }
         return new HistoryEntry(raw, null, raw);
     }
@@ -930,7 +996,9 @@ public sealed class RunBoxViewModel : ViewModelBase
                 .ToList();
 
             foreach (var h in purgeList)
+            {
                 _runHistoryService?.Remove(h);
+            }
 
             if (purgeList.Count > 0 && _activePrefix is not null && removedKeys.Contains(_activePrefix))
             {
@@ -947,12 +1015,18 @@ public sealed class RunBoxViewModel : ViewModelBase
     private void OnScriptsChanged(object? sender, EventArgs e)
     {
         if (string.Equals(_activePrefix, ScriptPrefix, StringComparison.OrdinalIgnoreCase))
+        {
             UpdateFilteredHistory();
+        }
     }
 
     private static string? EvaluateExpression(string expr)
     {
-        if (string.IsNullOrWhiteSpace(expr)) return null;
+        if (string.IsNullOrWhiteSpace(expr))
+        {
+            return null;
+        }
+
         try
         {
             var result = new DataTable().Compute(expr, null);
@@ -994,9 +1068,9 @@ public sealed class RunBoxViewModel : ViewModelBase
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName         = fileName,
-                Arguments        = arguments,
-                UseShellExecute  = true,
+                FileName = fileName,
+                Arguments = arguments,
+                UseShellExecute = true,
                 // Run in the script's own directory so relative paths inside scripts resolve correctly.
                 WorkingDirectory = Path.GetDirectoryName(resolvedPath) ?? string.Empty,
             });
@@ -1014,7 +1088,7 @@ public sealed class RunBoxViewModel : ViewModelBase
     private static (string fileName, string arguments) BuildInterpreterCommand(ScriptEntry script, string resolvedPath, string args)
     {
         var quotedPath = $"\"{resolvedPath}\"";
-        var fullArgs   = string.IsNullOrEmpty(args) ? quotedPath : $"{quotedPath} {args}";
+        var fullArgs = string.IsNullOrEmpty(args) ? quotedPath : $"{quotedPath} {args}";
 
         if (script.Interpreter.Equals("wsl", StringComparison.OrdinalIgnoreCase))
         {
@@ -1032,10 +1106,10 @@ public sealed class RunBoxViewModel : ViewModelBase
 
         return script.Interpreter.ToLowerInvariant() switch
         {
-            "cmd"    => ("cmd.exe",        $"/k {fullArgs}"),
-            "python" => ("cmd.exe",        $"/k python.exe {fullArgs}"),
-            "pwsh"   => ("pwsh.exe",       $"-NoExit -ExecutionPolicy Bypass -File {fullArgs}"),
-            _        => ("powershell.exe", $"-NoExit -ExecutionPolicy Bypass -File {fullArgs}"),
+            "cmd" => ("cmd.exe", $"/k {fullArgs}"),
+            "python" => ("cmd.exe", $"/k python.exe {fullArgs}"),
+            "pwsh" => ("pwsh.exe", $"-NoExit -ExecutionPolicy Bypass -File {fullArgs}"),
+            _ => ("powershell.exe", $"-NoExit -ExecutionPolicy Bypass -File {fullArgs}"),
         };
     }
 
@@ -1045,7 +1119,10 @@ public sealed class RunBoxViewModel : ViewModelBase
     private static string ToWslPath(string windowsPath)
     {
         if (windowsPath.Length >= 2 && char.IsLetter(windowsPath[0]) && windowsPath[1] == ':')
+        {
             return $"/mnt/{char.ToLower(windowsPath[0])}{windowsPath[2..].Replace('\\', '/')}";
+        }
+
         return windowsPath.Replace('\\', '/');
     }
 

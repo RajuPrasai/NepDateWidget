@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Helpers;
+using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using NepDateWidget.Services;
 using System.Collections.ObjectModel;
@@ -50,7 +50,11 @@ public sealed class CalendarViewModel : ViewModelBase
         get => _displayYear;
         set
         {
-            if (value < 1901 || value > 2199 || value == _displayYear) return;
+            if (value < 1901 || value > 2199 || value == _displayYear)
+            {
+                return;
+            }
+
             NavigateTo(value, _displayMonth);
         }
     }
@@ -68,7 +72,11 @@ public sealed class CalendarViewModel : ViewModelBase
         get => _displayMonth - 1;
         set
         {
-            if (value < 0 || value > 11 || value == _displayMonth - 1) return;
+            if (value < 0 || value > 11 || value == _displayMonth - 1)
+            {
+                return;
+            }
+
             NavigateTo(_displayYear, value + 1);
         }
     }
@@ -109,7 +117,11 @@ public sealed class CalendarViewModel : ViewModelBase
         set
         {
             int year = value + YearRangeStart;
-            if (year < YearRangeStart || year > YearRangeEnd || year == _displayYear) return;
+            if (year < YearRangeStart || year > YearRangeEnd || year == _displayYear)
+            {
+                return;
+            }
+
             NavigateTo(year, _displayMonth);
         }
     }
@@ -128,7 +140,7 @@ public sealed class CalendarViewModel : ViewModelBase
     public IReadOnlyList<DayOfWeekHeader> DayOfWeekHeaders { get; private set; } = Array.Empty<DayOfWeekHeader>();
 
     public bool HighlightSaturdays => _highlightSaturdays;
-    public bool HighlightSundays   => _highlightSundays;
+    public bool HighlightSundays => _highlightSundays;
 
     // ── Grid cells ────────────────────────────────────────────────────────────
 
@@ -218,7 +230,9 @@ public sealed class CalendarViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _showFiscalYear, value))
+            {
                 RefreshGrid();
+            }
         }
     }
 
@@ -237,7 +251,13 @@ public sealed class CalendarViewModel : ViewModelBase
     public bool ShowHolidayCountdown
     {
         get => _showHolidayCountdown;
-        set { if (SetProperty(ref _showHolidayCountdown, value)) RefreshHolidayCountdown(); }
+        set
+        {
+            if (SetProperty(ref _showHolidayCountdown, value))
+            {
+                RefreshHolidayCountdown();
+            }
+        }
     }
 
     private IReadOnlyList<string> _holidayCountdownLines = Array.Empty<string>();
@@ -249,7 +269,13 @@ public sealed class CalendarViewModel : ViewModelBase
     public IReadOnlyList<string> HolidayCountdownLines
     {
         get => _holidayCountdownLines;
-        private set { if (SetProperty(ref _holidayCountdownLines, value)) OnPropertyChanged(nameof(HasHolidayCountdown)); }
+        private set
+        {
+            if (SetProperty(ref _holidayCountdownLines, value))
+            {
+                OnPropertyChanged(nameof(HasHolidayCountdown));
+            }
+        }
     }
 
     /// <summary>True only when there is at least one line to show.</summary>
@@ -285,13 +311,13 @@ public sealed class CalendarViewModel : ViewModelBase
 
     private int _visibleEventCount = 1;
 
-    public double DayNumberFontSize  { get; private set; } = 14.0;
-    public double EventFontSize      { get; private set; } =  10;
-    public double TithiFontSize      { get; private set; } =  10;
-    public double AdBadgeFontSize    { get; private set; } =  10;
-    public double HeaderFontSize     { get; private set; } = 13.5;  // fixed - does not scale with cell size
-    public double SubHeaderFontSize  { get; private set; } = 12.0;  // fixed
-    public double DowFontSize        { get; private set; } = 12.0;
+    public double DayNumberFontSize { get; private set; } = 14.0;
+    public double EventFontSize { get; private set; } = 10;
+    public double TithiFontSize { get; private set; } = 10;
+    public double AdBadgeFontSize { get; private set; } = 10;
+    public double HeaderFontSize { get; private set; } = 13.5;  // fixed - does not scale with cell size
+    public double SubHeaderFontSize { get; private set; } = 12.0;  // fixed
+    public double DowFontSize { get; private set; } = 12.0;
 
     /// <summary>
     /// Called from CalendarView.xaml.cs whenever the day grid changes size.
@@ -299,7 +325,10 @@ public sealed class CalendarViewModel : ViewModelBase
     /// </summary>
     public void UpdateCellLayout(double cellHeight, double cellWidth)
     {
-        if (cellWidth <= 0 || cellHeight <= 0) return;
+        if (cellWidth <= 0 || cellHeight <= 0)
+        {
+            return;
+        }
 
         // Scale factor: ReferenceCellWidthPx cell width = reference (800px widget / 7 cols)
         // Base sizes are intentionally larger so the default view starts with comfortable text.
@@ -309,38 +338,38 @@ public sealed class CalendarViewModel : ViewModelBase
         // Integer font sizes only. Fractional sizes (e.g. 16.4) cause WPF text
         // hinting to land on different sub-pixels each resize, which produces
         // visibly jagged curves ("8", "3") even with ClearType enabled.
-        double newDayFont    = Math.Round(Math.Clamp(16.0 * ws, 13.0, 18.0));
-        double newEventFont  = Math.Round(Math.Clamp(12.0 * ws,  9.0, 12.0));
-        double newTithiFont  = Math.Round(Math.Clamp(11.0 * ws,  9.0, 11.0));
-        double newBadgeFont  = Math.Round(Math.Clamp(10.0 * ws,  8.0, 11.0));
-        double newDowFont    = Math.Round(Math.Clamp(13.0 * ws, 12.0, 15.0));
+        double newDayFont = Math.Round(Math.Clamp(16.0 * ws, 13.0, 18.0));
+        double newEventFont = Math.Round(Math.Clamp(12.0 * ws, 9.0, 12.0));
+        double newTithiFont = Math.Round(Math.Clamp(11.0 * ws, 9.0, 11.0));
+        double newBadgeFont = Math.Round(Math.Clamp(10.0 * ws, 8.0, 11.0));
+        double newDowFont = Math.Round(Math.Clamp(13.0 * ws, 12.0, 15.0));
 
         // Visible-event count: use capped reference heights so that as the day-number
         // font grows (making the cell taller and wider) the event rows don't shrink.
         // Caps here must match the hard maxima above so the formula is monotone.
-        const double EventRowCapPx  = 13.0 * 1.5;   // 19.5px - fixed once font hits max
-        const double DayRowCapPx    = 20.0 * 1.6;   // 32px - conservative cap for day row
-        const double TithiRowCapPx  = 12.0 * 1.6;   // 19.2px - cap for tithi row
+        const double EventRowCapPx = 13.0 * 1.5;   // 19.5px - fixed once font hits max
+        const double DayRowCapPx = 20.0 * 1.6;   // 32px - conservative cap for day row
+        const double TithiRowCapPx = 12.0 * 1.6;   // 19.2px - cap for tithi row
         double eventRowH = Math.Min(newEventFont * 1.5, EventRowCapPx);
-        double dayRowH   = Math.Min(newDayFont   * 1.6, DayRowCapPx);
+        double dayRowH = Math.Min(newDayFont * 1.6, DayRowCapPx);
         double tithiRowH = Math.Min(newTithiFont * 1.6, TithiRowCapPx);
-        double eventsH   = cellHeight - dayRowH - tithiRowH - 6.0;
+        double eventsH = cellHeight - dayRowH - tithiRowH - 6.0;
         int newVisibleEvents = Math.Max(1, (int)(eventsH / eventRowH));
 
         bool fontsChanged =
-            Math.Abs(newDayFont   - DayNumberFontSize)  > 0.05 ||
-            Math.Abs(newEventFont  - EventFontSize)      > 0.05 ||
-            Math.Abs(newTithiFont  - TithiFontSize)      > 0.05 ||
-            Math.Abs(newBadgeFont  - AdBadgeFontSize)    > 0.05 ||
-            Math.Abs(newDowFont    - DowFontSize)        > 0.05;
+            Math.Abs(newDayFont - DayNumberFontSize) > 0.05 ||
+            Math.Abs(newEventFont - EventFontSize) > 0.05 ||
+            Math.Abs(newTithiFont - TithiFontSize) > 0.05 ||
+            Math.Abs(newBadgeFont - AdBadgeFontSize) > 0.05 ||
+            Math.Abs(newDowFont - DowFontSize) > 0.05;
 
         if (fontsChanged)
         {
             DayNumberFontSize = newDayFont;
-            EventFontSize     = newEventFont;
-            TithiFontSize     = newTithiFont;
-            AdBadgeFontSize   = newBadgeFont;
-            DowFontSize       = newDowFont;
+            EventFontSize = newEventFont;
+            TithiFontSize = newTithiFont;
+            AdBadgeFontSize = newBadgeFont;
+            DowFontSize = newDowFont;
             OnPropertyChanged(nameof(DayNumberFontSize));
             OnPropertyChanged(nameof(EventFontSize));
             OnPropertyChanged(nameof(TithiFontSize));
@@ -352,7 +381,9 @@ public sealed class CalendarViewModel : ViewModelBase
         {
             _visibleEventCount = newVisibleEvents;
             foreach (var dayVm in Days)
+            {
                 dayVm.UpdateVisibleEventCount(_visibleEventCount);
+            }
         }
     }
 
@@ -433,8 +464,7 @@ public sealed class CalendarViewModel : ViewModelBase
             RefreshMissedBadge();
         }
 
-        if (_notesService is not null)
-            _notesService.NotesChanged += (_, _) => RefreshNoteDots();
+        _notesService?.NotesChanged += (_, _) => RefreshNoteDots();
     }
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -457,7 +487,10 @@ public sealed class CalendarViewModel : ViewModelBase
         void DoNav()
         {
             var (y, m) = _calendarService.NavigateMonth(_displayYear, _displayMonth, delta);
-            if (y == _displayYear && m == _displayMonth) return;
+            if (y == _displayYear && m == _displayMonth)
+            {
+                return;
+            }
 
             _displayYear = y;
             _displayMonth = m;
@@ -470,15 +503,22 @@ public sealed class CalendarViewModel : ViewModelBase
         }
 
         if (NavigationRequested != null)
+        {
             NavigationRequested(delta > 0 ? 1 : -1, DoNav);
+        }
         else
+        {
             DoNav();
+        }
     }
 
     /// <summary>Jumps directly to the specified BS year and month.</summary>
     public void NavigateTo(int year, int month)
     {
-        if (year == _displayYear && month == _displayMonth) return;
+        if (year == _displayYear && month == _displayMonth)
+        {
+            return;
+        }
 
         void DoNav()
         {
@@ -493,16 +533,19 @@ public sealed class CalendarViewModel : ViewModelBase
         }
 
         if (NavigationRequested != null)
+        {
             NavigationRequested(0, DoNav);
+        }
         else
+        {
             DoNav();
+        }
     }
 
     /// <summary>Called when the language changes - refreshes all labels.</summary>
     public void OnLanguageChanged()
     {
-        RefreshLabels();
-        RefreshGrid(); // month name in header depends on language
+        RefreshLabels(); // calls RefreshGrid() internally at the end
         RefreshHolidayCountdown();
         Converter.OnLanguageChanged();
     }
@@ -527,7 +570,10 @@ public sealed class CalendarViewModel : ViewModelBase
     private void GoToToday()
     {
         var today = _calendarService.GetCurrentDateInfo();
-        if (today.BsYear == _displayYear && today.BsMonth == _displayMonth) return;
+        if (today.BsYear == _displayYear && today.BsMonth == _displayMonth)
+        {
+            return;
+        }
 
         void DoNav()
         {
@@ -542,9 +588,13 @@ public sealed class CalendarViewModel : ViewModelBase
         }
 
         if (NavigationRequested != null)
+        {
             NavigationRequested(0, DoNav);
+        }
         else
+        {
             DoNav();
+        }
     }
 
     private void RefreshGrid()
@@ -555,9 +605,14 @@ public sealed class CalendarViewModel : ViewModelBase
 
         // Batch reminder-dot query: one pass over all reminders for the month rather
         // than calling HasRemindersForDateExpanded per cell (O(cells × reminders)).
-        var reminderDays = _reminderService is not null
-            ? _reminderService.GetHasRemindersForMonth(_displayYear, _displayMonth)
-            : null;
+        var reminderDays = _reminderService?.GetHasRemindersForMonth(_displayYear, _displayMonth);
+
+        // Batch note-dot query: same pattern as reminder dots - one dictionary pass for
+        // the month rather than a per-cell GetNote call with per-cell key allocations.
+        var noteDays = _notesService?.GetHasNotesForMonth(_displayYear, _displayMonth);
+
+        // Compute the copy-menu title once per refresh - it does not vary per cell.
+        string copyMenuTitle = _loc.Get("calendar.copy.title");
 
         if (Days.Count == month.Days.Count)
         {
@@ -568,11 +623,16 @@ public sealed class CalendarViewModel : ViewModelBase
                 var day = month.Days[i];
                 Days[i].Update(day, isNepali, _showEnglishDayNumbers, _highlightSaturdays,
                     _highlightSundays, _showTithi, _showEvents, _highlightPublicHolidays,
-                    _adapter, _loc, _visibleEventCount);
+                    _adapter, _loc, _visibleEventCount, copyMenuTitle);
                 if (reminderDays is not null)
+                {
                     Days[i].HasReminders = day.IsCurrentMonth && reminderDays.Contains(day.Day);
-                if (_notesService is not null)
-                    Days[i].HasNote = day.IsCurrentMonth && _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
+                }
+
+                if (noteDays is not null)
+                {
+                    Days[i].HasNote = day.IsCurrentMonth && noteDays.Contains(day.Day);
+                }
             }
         }
         else
@@ -585,11 +645,16 @@ public sealed class CalendarViewModel : ViewModelBase
                 var day = month.Days[i];
                 Days[i].Update(day, isNepali, _showEnglishDayNumbers, _highlightSaturdays,
                     _highlightSundays, _showTithi, _showEvents, _highlightPublicHolidays,
-                    _adapter, _loc, _visibleEventCount);
+                    _adapter, _loc, _visibleEventCount, copyMenuTitle);
                 if (reminderDays is not null)
+                {
                     Days[i].HasReminders = day.IsCurrentMonth && reminderDays.Contains(day.Day);
-                if (_notesService is not null)
-                    Days[i].HasNote = day.IsCurrentMonth && _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
+                }
+
+                if (noteDays is not null)
+                {
+                    Days[i].HasNote = day.IsCurrentMonth && noteDays.Contains(day.Day);
+                }
             }
             for (int i = overlap; i < month.Days.Count; i++)
             {
@@ -598,13 +663,26 @@ public sealed class CalendarViewModel : ViewModelBase
                     _highlightSundays, _showTithi, _showEvents, _highlightPublicHolidays,
                     _adapter, _loc);
                 if (reminderDays is not null && day.IsCurrentMonth)
+                {
                     vm.HasReminders = reminderDays.Contains(day.Day);
-                if (_notesService is not null && day.IsCurrentMonth)
-                    vm.HasNote = _notesService.GetNote(NotesService.FormatKey(day.Year, day.Month, day.Day)) is not null;
+                }
+
+                if (noteDays is not null && day.IsCurrentMonth)
+                {
+                    vm.HasNote = noteDays.Contains(day.Day);
+                }
+
+                if (_visibleEventCount > 1)
+                {
+                    vm.UpdateVisibleEventCount(_visibleEventCount);
+                }
+
                 Days.Add(vm);
             }
             for (int i = Days.Count - 1; i >= month.Days.Count; i--)
+            {
                 Days.RemoveAt(i);
+            }
         }
 
         // Dual-format header: "Chaitra 2082 | Mar/Apr 2026"
@@ -617,18 +695,10 @@ public sealed class CalendarViewModel : ViewModelBase
             : $"{bsPart} | {month.AdMonthLabel}";
 
         AdMonthLabel = month.AdMonthLabel ?? string.Empty;
-
-        IsShowingToday = month.ContainsToday;
         RefreshNavState();
         RefreshFiscalFooter();
 
-        // For VMs created via the slow path (count change), re-apply the current visible-event
-        // count since the constructor defaults to 1. In-place-updated VMs already got the
-        // correct count from Update(). The loop is a no-op for them (UpdateVisibleEventCount
-        // is idempotent).
-        if (_visibleEventCount > 1)
-            foreach (var dayVm in Days)
-                dayVm.UpdateVisibleEventCount(_visibleEventCount);
+        IsShowingToday = month.ContainsToday;
     }
 
     private void RefreshLabels()
@@ -657,7 +727,10 @@ public sealed class CalendarViewModel : ViewModelBase
         // Year dropdown: rebuild display strings when language changes
         var years = new string[YearRangeEnd - YearRangeStart + 1];
         for (int y = YearRangeStart; y <= YearRangeEnd; y++)
+        {
             years[y - YearRangeStart] = isNepali ? NepaliScriptConverter.ToNepaliDigits(y) : y.ToString();
+        }
+
         YearNames = years;
         OnPropertyChanged(nameof(YearNames));
         OnPropertyChanged(nameof(SelectedYearIndex));
@@ -679,7 +752,7 @@ public sealed class CalendarViewModel : ViewModelBase
         if (!_showHolidayCountdown || _holidayLookup is null)
         {
             HolidayCountdownLines = Array.Empty<string>();
-            HolidayPopupEntries   = Array.Empty<HolidayPopupEntry>();
+            HolidayPopupEntries = Array.Empty<HolidayPopupEntry>();
             return;
         }
 
@@ -693,20 +766,20 @@ public sealed class CalendarViewModel : ViewModelBase
         catch
         {
             HolidayCountdownLines = Array.Empty<string>();
-            HolidayPopupEntries   = Array.Empty<HolidayPopupEntry>();
+            HolidayPopupEntries = Array.Empty<HolidayPopupEntry>();
             return;
         }
 
         if (next is null)
         {
             HolidayCountdownLines = Array.Empty<string>();
-            HolidayPopupEntries   = Array.Empty<HolidayPopupEntry>();
+            HolidayPopupEntries = Array.Empty<HolidayPopupEntry>();
             return;
         }
 
         bool isNepali = string.Equals(_loc.CurrentLanguage, "ne", StringComparison.OrdinalIgnoreCase);
         HolidayCountdownLines = BuildCountdownLines(next, isNepali);
-        HolidayPopupEntries   = BuildPopupEntries(upcoming, isNepali);
+        HolidayPopupEntries = BuildPopupEntries(upcoming, isNepali);
         HolidayCountdownTooltip = _loc.Get("calendar.holiday.popup_title");
         OnPropertyChanged(nameof(HolidayPopupTitle));
     }
@@ -720,7 +793,10 @@ public sealed class CalendarViewModel : ViewModelBase
     private IReadOnlyList<string> BuildCountdownLines(UpcomingHoliday h, bool isNepali)
     {
         var names = PickNames(h, isNepali);
-        if (names.Count == 0) return Array.Empty<string>();
+        if (names.Count == 0)
+        {
+            return Array.Empty<string>();
+        }
 
         string daysText = isNepali
             ? NepaliScriptConverter.ToNepaliDigits(h.DaysUntil)
@@ -738,7 +814,9 @@ public sealed class CalendarViewModel : ViewModelBase
             : string.Format(template, names[0]);
 
         if (names.Count == 1)
+        {
             return new[] { primary };
+        }
 
         int extra = names.Count - 1;
         string moreKey = extra == 1
@@ -763,18 +841,29 @@ public sealed class CalendarViewModel : ViewModelBase
         IReadOnlyList<UpcomingHoliday> upcoming, bool isNepali)
     {
         if (upcoming is null || upcoming.Count == 0)
+        {
             return Array.Empty<HolidayPopupEntry>();
+        }
 
         var list = new List<HolidayPopupEntry>(upcoming.Count);
         for (int i = 0; i < upcoming.Count; i++)
         {
             var h = upcoming[i];
             var names = PickNames(h, isNepali);
-            if (names.Count == 0) continue;
+            if (names.Count == 0)
+            {
+                continue;
+            }
 
             string when;
-            if (h.DaysUntil == 0)       when = _loc.Get("calendar.holiday.popup_today");
-            else if (h.DaysUntil == 1)  when = _loc.Get("calendar.holiday.popup_tomorrow");
+            if (h.DaysUntil == 0)
+            {
+                when = _loc.Get("calendar.holiday.popup_today");
+            }
+            else if (h.DaysUntil == 1)
+            {
+                when = _loc.Get("calendar.holiday.popup_tomorrow");
+            }
             else
             {
                 string days = isNepali
@@ -785,7 +874,9 @@ public sealed class CalendarViewModel : ViewModelBase
             string date = isNepali ? h.BsLongNp : h.BsLongEn;
 
             for (int j = 0; j < names.Count; j++)
+            {
                 list.Add(new HolidayPopupEntry(names[j], date, when, isToday: h.DaysUntil == 0));
+            }
         }
         return list;
     }
@@ -793,7 +884,11 @@ public sealed class CalendarViewModel : ViewModelBase
     private static IReadOnlyList<string> PickNames(UpcomingHoliday h, bool isNepali)
     {
         var primary = isNepali ? h.NamesNp : h.NamesEn;
-        if (primary.Count > 0) return primary;
+        if (primary.Count > 0)
+        {
+            return primary;
+        }
+
         var fallback = isNepali ? h.NamesEn : h.NamesNp;
         return fallback;
     }
@@ -842,7 +937,11 @@ public sealed class CalendarViewModel : ViewModelBase
 
     private void OnDayCellClicked(CalendarDayViewModel? dayVm)
     {
-        if (dayVm is null || dayVm.IsPadding) return;
+        if (dayVm is null || dayVm.IsPadding)
+        {
+            return;
+        }
+
         OpenDayInfoRequested?.Invoke(dayVm.BsYear, dayVm.BsMonth, dayVm.Day);
     }
 
@@ -854,24 +953,39 @@ public sealed class CalendarViewModel : ViewModelBase
     /// </summary>
     private void OnCopyDate(DateFormatOption? option)
     {
-        if (option is null || string.IsNullOrEmpty(option.Value)) return;
+        if (option is null || string.IsNullOrEmpty(option.Value))
+        {
+            return;
+        }
+
         bool ok = _clipboard.SetText(option.Value);
         Log.Action($"cal copy {option.Key} {(ok ? "ok" : "failed")}");
     }
 
     private void RefreshNoteDots()
     {
-        if (_notesService is null) return;
+        if (_notesService is null)
+        {
+            return;
+        }
+
+        var noteDays = _notesService.GetHasNotesForMonth(_displayYear, _displayMonth);
+
         foreach (var dayVm in Days)
         {
             if (dayVm.IsCurrentMonth)
-                dayVm.HasNote = _notesService.GetNote(NotesService.FormatKey(dayVm.BsYear, dayVm.BsMonth, dayVm.Day)) is not null;
+            {
+                dayVm.HasNote = noteDays.Contains(dayVm.Day);
+            }
         }
     }
 
     private void RefreshReminderDots()
     {
-        if (_reminderService is null) return;
+        if (_reminderService is null)
+        {
+            return;
+        }
 
         // One batch query for the whole month instead of a per-cell call.
         var reminderDays = _reminderService.GetHasRemindersForMonth(
@@ -889,10 +1003,15 @@ public sealed class CalendarViewModel : ViewModelBase
                     var titles = new List<string>();
                     foreach (var r in _reminderService.GetForDate(dayVm.BsYear, dayVm.BsMonth, dayVm.Day))
                     {
-                        if (!r.IsCompleted) titles.Add(r.Title);
+                        if (!r.IsCompleted)
+                        {
+                            titles.Add(r.Title);
+                        }
                     }
                     foreach (var r in _reminderService.GetRecurringForDate(dayVm.BsYear, dayVm.BsMonth, dayVm.Day))
+                    {
                         titles.Add(r.Title);
+                    }
 
                     dayVm.ReminderTooltip = titles.Count > 0 ? string.Join("\n", titles) : null;
                 }
@@ -906,7 +1025,11 @@ public sealed class CalendarViewModel : ViewModelBase
 
     private void RefreshMissedBadge()
     {
-        if (_reminderService is null) return;
+        if (_reminderService is null)
+        {
+            return;
+        }
+
         MissedReminderCount = _reminderService.GetMissedReminders().Count;
     }
 

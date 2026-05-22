@@ -1403,6 +1403,18 @@
     "en": "Save",
     "ne": "सेभ"
   },
+  "more.save_note": {
+    "en": "Save Note",
+    "ne": "नोट सेभ"
+  },
+  "more.save_reminder": {
+    "en": "Save Reminder",
+    "ne": "रिमाइन्डर सेभ"
+  },
+  "more.save_doc": {
+    "en": "Save Document",
+    "ne": "कागजात सेभ"
+  },
   "more.cancel": {
     "en": "Cancel",
     "ne": "रद्द"
@@ -1536,8 +1548,8 @@
     "ne": "कागजात सम्पादन"
   },
   "docs.browse": {
-    "en": "Browse",
-    "ne": "ब्राउज"
+    "en": "or click to browse",
+    "ne": "वा क्लिक गरेर खोज्नुहोस्"
   },
   "docs.open": {
     "en": "Open file",
@@ -1582,6 +1594,10 @@
   "docs.clear_file": {
     "en": "Remove file",
     "ne": "फाइल हटाउनुहोस्"
+  },
+  "docs.drop_label": {
+    "en": "Drop a file here",
+    "ne": "यहाँ फाइल छोड्नुहोस्"
   },
   "docs.search_hint": {
     "en": "Search... or #tag to filter by tag",
@@ -2410,5 +2426,571 @@
   "help.runbox.key.scr": {
     "en": "Run a registered script - type scr then Space",
     "ne": "दर्ता गरिएको स्क्रिप्ट चलाउनुहोस् (scr टाइप गर्नुहोस् त्यसपछि Space)"
-  }
+  },
+  "compress.drop_images_pdf": {
+    "en": "Drop images or PDFs here",
+    "ne": "यहाँ तस्वीर वा PDF छोड्नुहोस्"
+  },
+  "compress.drop_images": {
+    "en": "Drop images here",
+    "ne": "यहाँ तस्वीर छोड्नुहोस्"
+  },
+  "compress.browse": {
+    "en": "or click to browse",
+    "ne": "वा क्लिक गरेर खोज्नुहोस्"
+  },
+  "compress.compress_btn": {
+    "en": "Compress",
+    "ne": "कम्प्रेस"
+  },
+  "compress.resize_btn": {
+    "en": "Resize",
+    "ne": "साइज"
+  },
+  "compress.cancel_btn": {
+    "en": "Cancel",
+    "ne": "रद्द"
+  },
+  "compress.level_section": {
+    "en": "Compression level",
+    "ne": "कम्प्रेसन स्तर"
+  },
+  "compress.level_smallest": {
+    "en": "Smallest",
+    "ne": "सबैभन्दा सानो"
+  },
+  "compress.level_low": {
+    "en": "Low",
+    "ne": "कम"
+  },
+  "compress.level_balanced": {
+    "en": "Balanced",
+    "ne": "सन्तुलित"
+  },
+  "compress.level_high": {
+    "en": "High",
+    "ne": "धेरै"
+  },
+  "compress.level_best": {
+    "en": "Best",
+    "ne": "सबैभन्दा राम्रो"
+  },
+  "compress.advanced_btn": {
+    "en": "Advanced options",
+    "ne": "थप विकल्प"
+  },
+  "compress.compressing": {
+    "en": "Compressing…",
+    "ne": "कम्प्रेस हुँदैछ…"
+  },
+  "compress.resizing": {
+    "en": "Resizing…",
+    "ne": "साइज मिलाउँदैछ…"
+  },
+  "compress.progress_of": {
+    "en": "of",
+    "ne": "मध्ये"
+  },
+  "compress.dimensions_section": {
+    "en": "Target dimensions",
+    "ne": "लक्षित आकार"
+  },
+  "compress.also_compress": {
+    "en": "Also compress after resizing",
+    "ne": "साइज मिलाएपछि कम्प्रेस पनि गर्नुहोस्"
+  },
+  "compress.width_label": {
+    "en": "Width (px)",
+    "ne": "चौडाइ (px)"
+  },
+  "compress.height_label": {
+    "en": "Height (px)",
+    "ne": "उचाइ (px)"
+  },
+  "compress.aspect_ratio_hint": {
+    "en": "Leave blank to keep ratio",
+    "ne": "अनुपात राख्न खाली छोड्नुहोस्"
+  },
+  "compress.stretch_warning": {
+    "en": "Both dimensions set - aspect ratio will not be preserved.",
+    "ne": "दुवै आयाम तोकियो - अनुपात जोगाइनेछैन।"
+  },
+  "compress.pdf_not_supported": {
+    "en": "Resize is not supported for PDF files. Use the Compress tool instead.",
+    "ne": "PDF को साइज मिलाउन मिल्दैन। Compress उपकरण प्रयोग गर्नुहोस्।"
+  },
+  "compress.adv_image": {
+    "en": "Image",
+    "ne": "तस्वीर"
+  },
+  "compress.adv_optional_resize": {
+    "en": "Optional resize",
+    "ne": "वैकल्पिक साइज"
+  },
+  "compress.adv_strip_meta": {
+    "en": "Strip EXIF metadata (recommended)",
+    "ne": "EXIF मेटाडेटा हटाउनुहोस् (सुझाव)"
+  },
+  "compress.adv_to_webp": {
+    "en": "Convert to WebP format",
+    "ne": "WebP ढाँचामा बदल्नुहोस्"
+  },
+  "compress.adv_lossless_webp": {
+    "en": "Lossless WebP (larger, no quality loss)",
+    "ne": "Lossless WebP (ठूलो, गुणस्तर हानि छैन)"
+  },
+  "compress.adv_gif": {
+    "en": "GIF",
+    "ne": "GIF"
+  },
+  "compress.adv_optimize_gif": {
+    "en": "Optimize animation frames",
+    "ne": "एनिमेसन फ्रेम सुधार गर्नुहोस्"
+  },
+  "compress.adv_tiff": {
+    "en": "TIFF compression",
+    "ne": "TIFF कम्प्रेसन"
+  },
+  "compress.adv_pdf": {
+    "en": "PDF - slider controls compression level and image quality",
+    "ne": "PDF - स्लाइडरले कम्प्रेसन स्तर र छवि गुणस्तर नियन्त्रण गर्छ"
+  },
+  "compress.adv_linearize": {
+    "en": "Linearize (optimize for web / fast open)",
+    "ne": "Linearize गर्नुहोस् (वेब / छिटो खोल्न)"
+  },
+  "compress.adv_resize_width_hint": {
+    "en": "Width px",
+    "ne": "चौडाइ px"
+  },
+  "compress.adv_resize_height_hint": {
+    "en": "Height px",
+    "ne": "उचाइ px"
+  },
+  "compress.adv_aspect_hint": {
+    "en": "Leave either side blank to preserve aspect ratio",
+    "ne": "अनुपात जोगाउन कुनै एक पाटो खाली राख्नुहोस्"
+  },
+  "compress.mixed_type_warning": {
+    "en": "Mixed file types detected. Please select files of the same type.",
+    "ne": "मिश्रित फाइल प्रकार भेटियो। एकै प्रकारका फाइलहरू छान्नुहोस्।"
+  },
+  "compress.summary_done_one": {
+    "en": "1 file done - saved {0} in total, new size is {1}",
+    "ne": "१ फाइल सम्पन्न - कुल {0} बचत, नयाँ आकार {1}"
+  },
+  "compress.summary_done_many": {
+    "en": "{0} files done - saved {1} in total, new size is {2}",
+    "ne": "{0} फाइल सम्पन्न - कुल {1} बचत, नयाँ आकार {2}"
+  },
+  "compress.summary_partial": {
+    "en": "{0} done, {1} failed - saved {2} in total, new size is {3}",
+    "ne": "{0} सम्पन्न, {1} असफल - कुल {2} बचत, नयाँ आकार {3}"
+  },
+  "compress.summary_seg_files_one": {
+    "en": "1 file done",
+    "ne": "१ फाइल सम्पन्न"
+  },
+  "compress.summary_seg_files_many": {
+    "en": "{0} files done",
+    "ne": "{0} फाइल सम्पन्न"
+  },
+  "compress.summary_seg_partial": {
+    "en": "{0} done, {1} failed",
+    "ne": "{0} सम्पन्न, {1} असफल"
+  },
+  "compress.summary_seg_new_size": {
+    "en": "New size {0}",
+    "ne": "नयाँ आकार {0}"
+  },
+  "compress.summary_seg_orig_size": {
+    "en": "Was {0}",
+    "ne": "थियो {0}"
+  },
+  "compress.summary_seg_saved": {
+    "en": "Saved {0}",
+    "ne": "{0} बचत"
+  },
+  "compress.remove_file": {
+    "en": "Remove",
+    "ne": "हटाउनुहोस्"
+  },
+  "compress.tooltip_resize_width": {
+    "en": "Resize width in pixels (leave blank to preserve original)",
+    "ne": "चौडाइ pixels मा (मूल राख्न खाली छोड्नुहोस्)"
+  },
+  "compress.tooltip_resize_height": {
+    "en": "Resize height in pixels (leave blank to preserve original)",
+    "ne": "उचाइ pixels मा (मूल राख्न खाली छोड्नुहोस्)"
+  },
+  "more.essentials_heading": {
+    "en": "Essentials",
+    "ne": "आवश्यक"
+  },
+  "more.tools_heading": {
+    "en": "Tools",
+    "ne": "उपकरण"
+  },
+  "more.compress_label": {
+    "en": "Compress",
+    "ne": "कम्प्रेस"
+  },
+  "more.resize_label": {
+    "en": "Resize",
+    "ne": "साइज"
+  },
+  "help.compress.title": {
+    "en": "File Compression",
+    "ne": "फाइल कम्प्रेसन"
+  },
+  "help.compress.desc": {
+    "en": "Reduce file size for images and PDFs without compromising quality.",
+    "ne": "गुणस्तरमा सम्झौता नगरी छवि र PDF को आकार घटाउनुहोस्।"
+  },
+  "help.compress.how1": {
+    "en": "Drop images or PDFs onto the drop zone, or click Browse to select files.",
+    "ne": "Drop zone मा छवि वा PDF राख्नुहोस्, वा फाइल छान्न Browse थिच्नुहोस्।"
+  },
+  "help.compress.how2": {
+    "en": "Adjust the compression level from Smallest File to Best Quality.",
+    "ne": "Smallest File देखि Best Quality सम्म कम्प्रेसन स्तर मिलाउनुहोस्।"
+  },
+  "help.compress.how3": {
+    "en": "Click Compress and choose an output folder to save results.",
+    "ne": "Compress थिच्नुहोस् र नतिजा बचत गर्न आउटपुट फोल्डर छान्नुहोस्।"
+  },
+  "help.compress.why1": {
+    "en": "Saves storage space and speeds up file transfers and uploads.",
+    "ne": "भण्डारण ठाउँ बचत गर्छ र फाइल ट्रान्सफर तथा अपलोड छिटो बनाउँछ।"
+  },
+  "help.compress.why2": {
+    "en": "Supports JPEG, PNG, WebP, GIF, TIFF, and PDF formats.",
+    "ne": "JPEG, PNG, WebP, GIF, TIFF र PDF ढाँचाहरू समर्थन गर्छ।"
+  },
+  "help.compress.why3": {
+    "en": "Advanced options let you strip metadata, convert to WebP, or resize while compressing.",
+    "ne": "उन्नत विकल्पले metadata हटाउन, WebP मा रूपान्तरण गर्न, वा कम्प्रेस गर्दा Resize गर्न दिन्छ।"
+  },
+  "help.resize.title": {
+    "en": "Image Resize",
+    "ne": "छवि साइज मिलाउनुहोस्"
+  },
+  "help.resize.desc": {
+    "en": "Resize images to exact pixel dimensions with optional compression.",
+    "ne": "वैकल्पिक कम्प्रेसनसहित छविहरूलाई सटीक pixel आयाममा Resize गर्नुहोस्।"
+  },
+  "help.resize.how1": {
+    "en": "Drop images onto the drop zone, or click Browse to select files.",
+    "ne": "Drop zone मा छवि राख्नुहोस्, वा फाइल छान्न Browse थिच्नुहोस्।"
+  },
+  "help.resize.how2": {
+    "en": "Enter the desired width and/or height in pixels.",
+    "ne": "इच्छित चौडाइ र/वा उचाइ pixels मा लेख्नुहोस्।"
+  },
+  "help.resize.how3": {
+    "en": "Click Resize and choose an output folder to save results.",
+    "ne": "Resize थिच्नुहोस् र नतिजा बचत गर्न आउटपुट फोल्डर छान्नुहोस्।"
+  },
+  "help.resize.why1": {
+    "en": "Leave one dimension blank to automatically preserve the aspect ratio.",
+    "ne": "अनुपात स्वचालित जोगाउन एउटा आयाम खाली राख्नुहोस्।"
+  },
+  "help.resize.why2": {
+    "en": "Enable 'Also Compress' to reduce file size while resizing.",
+    "ne": "Resize गर्दा आकार घटाउन 'Also Compress' सक्षम गर्नुहोस्।"
+  },
+  "help.resize.why3": {
+    "en": "Supports JPEG, PNG, WebP, GIF, and TIFF formats.",
+    "ne": "JPEG, PNG, WebP, GIF र TIFF ढाँचाहरू समर्थन गर्छ।"
+  },
+  "more.idphoto_label": {
+    "en": "ID Photo",
+    "ne": "आईडी फोटो"
+  },
+  "idphoto.drop_label": {
+    "en": "Drop photo here",
+    "ne": "यहाँ फोटो राख्नुहोस्"
+  },
+  "idphoto.browse": {
+    "en": "Click to browse",
+    "ne": "ब्राउज गर्न क्लिक गर्नुहोस्"
+  },
+  "idphoto.format_section": {
+    "en": "Format",
+    "ne": "ढाँचा"
+  },
+  "idphoto.preset_passport": {
+    "en": "Passport / MRP  35×45 mm",
+    "ne": "राहदानी / MRP  ३५×४५ मि.मि."
+  },
+  "idphoto.preset_auto": {
+    "en": "Auto Size  25×30 mm",
+    "ne": "अटो साइज  २५×३० मि.मि."
+  },
+  "idphoto.preset_stamp": {
+    "en": "Stamp Size  20×25 mm",
+    "ne": "स्ट्याम्प साइज  २०×२५ मि.मि."
+  },
+  "idphoto.preset_usdv": {
+    "en": "US / DV  51×51 mm",
+    "ne": "अमेरिकी / DV  ५१×५१ मि.मि."
+  },
+  "idphoto.preset_custom": {
+    "en": "Custom",
+    "ne": "कस्टम"
+  },
+  "idphoto.width_label": {
+    "en": "W",
+    "ne": "चौ."
+  },
+  "idphoto.height_label": {
+    "en": "H",
+    "ne": "उ."
+  },
+  "idphoto.sheet_section": {
+    "en": "Print Sheet Size",
+    "ne": "प्रिन्ट पाना आकार"
+  },
+  "idphoto.sheet_a4": {
+    "en": "A4  210×297 mm",
+    "ne": "A4  २१०×२९७ मि.मि."
+  },
+  "idphoto.sheet_4r": {
+    "en": "4R  10×15 cm",
+    "ne": "4R  १०×१५ से.मि."
+  },
+  "idphoto.sheet_3r": {
+    "en": "3R  9×13 cm",
+    "ne": "3R  ९×१३ से.मि."
+  },
+  "idphoto.sheet_5r": {
+    "en": "5R  13×18 cm",
+    "ne": "5R  १३×१८ से.मि."
+  },
+  "idphoto.sheet_custom": {
+    "en": "Custom",
+    "ne": "आफ्नो"
+  },
+  "idphoto.unit_label": {
+    "en": "Unit",
+    "ne": "एकाइ"
+  },
+  "idphoto.sheet_dims_label": {
+    "en": "Paper Size",
+    "ne": "कागज साइज"
+  },
+  "idphoto.sheet_width_label": {
+    "en": "W",
+    "ne": "चौ"
+  },
+  "idphoto.sheet_height_label": {
+    "en": "H",
+    "ne": "उ"
+  },
+  "idphoto.layout_label": {
+    "en": "Layout",
+    "ne": "लेआउट"
+  },
+  "idphoto.orientation_label": {
+    "en": "Orientation",
+    "ne": "दिशा"
+  },
+  "idphoto.auto_label": {
+    "en": "Auto",
+    "ne": "स्वत:"
+  },
+  "idphoto.portrait": {
+    "en": "Portrait",
+    "ne": "खडा"
+  },
+  "idphoto.landscape": {
+    "en": "Landscape",
+    "ne": "आडा"
+  },
+  "idphoto.cols_label": {
+    "en": "Columns",
+    "ne": "स्तम्भ"
+  },
+  "idphoto.rows_label": {
+    "en": "Rows",
+    "ne": "पंक्ति"
+  },
+  "idphoto.crop_hint": {
+    "en": "Drag to reposition · Scroll to resize",
+    "ne": "तान्नुहोस् · स्क्रोल = साइज"
+  },
+  "idphoto.crop_square": {
+    "en": "Square",
+    "ne": "वर्ग"
+  },
+  "idphoto.crop_circle": {
+    "en": "Circle",
+    "ne": "वृत्त"
+  },
+  "idphoto.save_photo": {
+    "en": "Save Photo",
+    "ne": "फोटो सेभ गर्नुहोस्"
+  },
+  "idphoto.save_sheet": {
+    "en": "Save Print Sheet",
+    "ne": "प्रिन्ट शीट सेभ गर्नुहोस्"
+  },
+  "idphoto.processing": {
+    "en": "Processing...",
+    "ne": "प्रक्रिया हुँदैछ..."
+  },
+  "idphoto.done_photo": {
+    "en": "Photo saved",
+    "ne": "फोटो सेभ भयो"
+  },
+  "idphoto.done_sheet": {
+    "en": "Print sheet saved",
+    "ne": "प्रिन्ट शीट सेभ भयो"
+  },
+  "idphoto.reset": {
+    "en": "Reset",
+    "ne": "हटाउनुहोस्"
+  },
+  "idphoto.no_photo": {
+    "en": "No photo loaded",
+    "ne": "कुनै फोटो लोड भएको छैन"
+  },
+  "idphoto.invalid_hex": {
+    "en": "Invalid color - use #RRGGBB",
+    "ne": "अमान्य रङ - #RRGGBB प्रयोग गर्नुहोस्"
+  },
+  "idphoto.invalid_dims": {
+    "en": "Width and height must be positive numbers",
+    "ne": "चौडाइ र उचाइ धनात्मक संख्या हुनुपर्छ"
+  },
+  "help.idphoto.title": {
+    "en": "ID / Passport Photo",
+    "ne": "आईडी / राहदानी फोटो"
+  },
+  "help.idphoto.desc": {
+    "en": "Crop and resize any photo to standard ID or passport dimensions.",
+    "ne": "कुनै पनि फोटोलाई मानक आईडी वा राहदानी आयाममा क्रप र Resize गर्नुहोस्।"
+  },
+  "help.idphoto.how1": {
+    "en": "Drop a photo or click to browse, then drag the crop frame to position the face.",
+    "ne": "फोटो राख्नुहोस् वा ब्राउज गर्न क्लिक गर्नुहोस्, अनि अनुहार मिलाउन फ्रेम तान्नुहोस्।"
+  },
+  "help.idphoto.how2": {
+    "en": "Choose a format preset (Passport, Auto, Stamp, or US/DV) or enter custom mm dimensions.",
+    "ne": "ढाँचा प्रिसेट छान्नुहोस् (राहदानी, अटो, स्ट्याम्प, वा US/DV) वा कस्टम मि.मि. आयाम लेख्नुहोस्।"
+  },
+  "help.idphoto.how3": {
+    "en": "Save Photo exports a single JPEG. Save Print Sheet tiles multiple copies on an A4 page.",
+    "ne": "Save Photo ले एउटा JPEG निर्यात गर्छ। Save Print Sheet ले A4 पेजमा धेरै प्रतिहरू राख्छ।"
+  },
+  "help.idphoto.why1": {
+    "en": "Enable Replace Background to flood-fill the photo background with white, blue, or a custom color.",
+    "ne": "Replace Background सक्षम गरेर फोटोको पृष्ठभूमि सेतो, नीलो, वा कस्टम रङले भर्नुहोस्।"
+  },
+  "help.idphoto.why2": {
+    "en": "Output is always 300 DPI JPEG for print-ready quality.",
+    "ne": "आउटपुट सधैं 300 DPI JPEG हुन्छ - प्रिन्टका लागि तयार।"
+  },
+  "more.imgconv_label": { "en": "Convert", "ne": "रूपान्तरण" },
+  "imgconv.drop": { "en": "Drop images or folders here", "ne": "यहाँ तस्बिर वा फोल्डरहरू छोड्नुहोस्" },
+  "imgconv.browse": { "en": "or click to browse files", "ne": "वा फाइल ब्राउज गर्न क्लिक गर्नुहोस्" },
+  "imgconv.format_section": { "en": "Output format", "ne": "आउटपुट ढाँचा" },
+  "imgconv.quality_section": { "en": "Quality", "ne": "गुणस्तर" },
+  "imgconv.level_smallest": { "en": "Smallest", "ne": "सबैभन्दा सानो" },
+  "imgconv.level_low": { "en": "Low", "ne": "कम" },
+  "imgconv.level_balanced": { "en": "Balanced", "ne": "सन्तुलित" },
+  "imgconv.level_high": { "en": "High", "ne": "उच्च" },
+  "imgconv.level_best": { "en": "Best", "ne": "सर्वोत्तम" },
+  "imgconv.strip_meta": { "en": "Strip metadata", "ne": "मेटाडेटा हटाउनुहोस्" },
+  "imgconv.compress_toggle": { "en": "Apply compression", "ne": "कम्प्रेसन लागू गर्ने" },
+  "imgconv.convert_btn": { "en": "Convert", "ne": "रूपान्तरण गर्नुहोस्" },
+  "imgconv.cancel_btn": { "en": "Cancel", "ne": "रद्द गर्नुहोस्" },
+  "imgconv.converting": { "en": "Converting", "ne": "रूपान्तरण हुँदैछ" },
+  "imgconv.progress_of": { "en": "of", "ne": "मध्ये" },
+  "imgconv.remove_file": { "en": "Remove", "ne": "हटाउनुहोस्" },
+  "imgconv.summary_done_one": { "en": "1 file converted - new size is {0}", "ne": "१ फाइल रूपान्तरण भयो - नयाँ आकार {0}" },
+  "imgconv.summary_done_many": { "en": "{0} files converted - total size is {1}", "ne": "{0} फाइलहरू रूपान्तरण भए - कुल आकार {1}" },
+  "imgconv.summary_partial": { "en": "{0} done, {1} failed - total size is {2}", "ne": "{0} सफल, {1} असफल - कुल आकार {2}" },
+  "imgconv.summary_seg_size": { "en": "total {0}", "ne": "कुल {0}" },
+  "imgconv.summary_seg_files_one": { "en": "1 file done", "ne": "१ फाइल सकियो" },
+  "imgconv.summary_seg_files_many": { "en": "{0} files done", "ne": "{0} फाइलहरू सकिए" },
+  "imgconv.summary_seg_partial": { "en": "{0} done, {1} failed", "ne": "{0} सफल, {1} असफल" },
+  "help.imgconv.title": { "en": "Image Converter", "ne": "तस्बिर परिवर्तक" },
+  "help.imgconv.desc": { "en": "Convert images between JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO and TGA. RAW camera files and HEIC are accepted as input.", "ne": "JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO र TGA बीच तस्बिरहरू रूपान्तरण गर्नुहोस्।" },
+  "help.imgconv.how1": { "en": "Drop one or more images or click to browse. All major formats are accepted including RAW camera files and HEIC.", "ne": "एक वा बढी तस्बिरहरू थप्नुहोस्। RAW र HEIC सहित सबै प्रमुख ढाँचाहरू स्वीकार्य छन्।" },
+  "help.imgconv.how2": { "en": "Select the output format using the format chips, adjust quality if needed, then click Convert.", "ne": "आउटपुट ढाँचा छान्नुहोस्, गुणस्तर मिलाउनुहोस् र Convert क्लिक गर्नुहोस्।" },
+  "help.imgconv.how3": { "en": "Choose an output folder when prompted. Converted files are saved there with the new extension.", "ne": "आउटपुट फोल्डर छान्नुस्। रूपान्तरित फाइलहरू नयाँ एक्सटेन्सनसहित त्यहाँ सेभ हुन्छन्।" },
+  "help.imgconv.why1": { "en": "Quality slider applies only to lossy formats (JPEG, WebP, AVIF). Higher means better quality and larger file size.", "ne": "गुणस्तर स्लाइडर केवल lossy ढाँचाहरू (JPEG, WebP, AVIF) का लागि लागू हुन्छ।" },
+  "more.qrcode_label": { "en": "QR Code", "ne": "क्यूआर" },
+  "qr.type_text":    { "en": "Text / URL", "ne": "टेक्स्ट / URL" },
+  "qr.type_wifi":    { "en": "WiFi", "ne": "वाइफाइ" },
+  "qr.type_vcard":   { "en": "Contact", "ne": "सम्पर्क" },
+  "qr.input_label":  { "en": "Text or URL", "ne": "टेक्स्ट वा URL" },
+  "qr.input_hint":   { "en": "Enter text or URL", "ne": "टेक्स्ट वा URL राख्नुहोस्" },
+  "qr.wifi_network": { "en": "Network", "ne": "नेटवर्क" },
+  "qr.wifi_password":         { "en": "Password", "ne": "पासवर्ड" },
+  "qr.wifi_password_hint":    { "en": "Enter WiFi password", "ne": "WiFi पासवर्ड राख्नुहोस्" },
+  "qr.wifi_password_tooltip": { "en": "Auto-filled when available; you can edit it", "ne": "उपलब्ध भएमा स्वचालित भरिन्छ; सम्पादन गर्न सकिन्छ" },
+  "qr.wifi_refresh":     { "en": "Refresh", "ne": "रिफ्रेस" },
+  "qr.wifi_no_networks": { "en": "No saved networks found", "ne": "कुनै नेटवर्क भेटिएन" },
+  "qr.wifi_hidden":      { "en": "Hidden network", "ne": "लुकेको नेटवर्क" },
+  "qr.vcard_first": { "en": "First name", "ne": "पहिलो नाम" },
+  "qr.vcard_last":  { "en": "Last name",  "ne": "थर" },
+  "qr.vcard_phone": { "en": "Phone",      "ne": "फोन" },
+  "qr.vcard_email": { "en": "Email",      "ne": "इमेल" },
+  "qr.size_label":  { "en": "Size",       "ne": "साइज" },
+  "qr.generate":    { "en": "Generate",   "ne": "बनाउनुहोस्" },
+  "qr.save":        { "en": "Save PNG",   "ne": "PNG सेभ" },
+  "qr.copy":        { "en": "Copy",       "ne": "कपी" },
+  "qr.no_content":  { "en": "Enter content above and tap Generate", "ne": "माथि सामग्री राख्नुहोस् र Generate थिच्नुहोस्" },
+  "qr.save_title":  { "en": "Save QR Code as PNG", "ne": "QR कोड PNG मा सेभ" },
+  "qr.copied":      { "en": "Copied to clipboard", "ne": "क्लिपबोर्डमा कपी भयो" },
+  "qr.wifi_password_copied": { "en": "Password copied", "ne": "पासवर्ड कपी भयो" },
+  "qr.mode_generate": { "en": "Generate", "ne": "बनाउनुहोस्" },
+  "qr.mode_decode":   { "en": "Read QR",  "ne": "QR पढ्नुहोस्" },
+  "qr.decode_browse":       { "en": "Browse Image",             "ne": "तस्बिर छान्नुहोस्" },
+  "qr.decode_hint":         { "en": "Drop a PNG / JPG / BMP here, or browse", "ne": "PNG / JPG / BMP छान्नुहोस्" },
+  "qr.decode_result_label": { "en": "Decoded content",          "ne": "परिणाम" },
+  "qr.decode_no_qr":        { "en": "No QR code found in image","ne": "तस्बिरमा QR कोड भेटिएन" },
+  "qr.decode_copy":         { "en": "Copy Result",              "ne": "परिणाम कपी" },
+  "help.qrcode":    { "en": "", "ne": "" },
+
+  "more.imgtools_label":         { "en": "Image Tools", "ne": "तस्बिर उपकरण" },
+  "imgtools.run_btn":            { "en": "Process", "ne": "प्रशोधन" },
+  "imgtools.compress_toggle":    { "en": "Compress", "ne": "कम्प्रेस" },
+  "imgtools.resize_toggle":      { "en": "Resize", "ne": "साइज बदल्नुहोस्" },
+  "imgtools.convert_toggle":     { "en": "Convert", "ne": "रूपान्तरण" },
+  "imgtools.drop":               { "en": "Drop images or PDFs here", "ne": "यहाँ तस्बिर वा PDF छोड्नुहोस्" },
+  "imgtools.browse":             { "en": "or click to browse files", "ne": "वा फाइलहरू खोज्न क्लिक गर्नुहोस्" },
+  "imgtools.progress_title":     { "en": "Processing", "ne": "प्रशोधन" },
+  "imgtools.progress_of":        { "en": "of", "ne": "मध्ये" },
+  "imgtools.summary_output_size":{ "en": "Output: {0}", "ne": "आउटपुट: {0}" },
+  "imgtools.section_compress":   { "en": "Compression options", "ne": "कम्प्रेशन विकल्पहरू" },
+  "imgtools.section_resize":     { "en": "Resize options", "ne": "साइज विकल्पहरू" },
+  "imgtools.section_convert":    { "en": "Output format", "ne": "आउटपुट ढाँचा" },
+  "imgtools.mixed_type_warning": { "en": "Mixed file types - enable Convert to proceed", "ne": "मिश्रित फाइल प्रकार - जारी राख्न Convert सक्षम गर्नुहोस्" },
+  "imgtools.pdf_no_resize":      { "en": "Resize is not available for PDF files", "ne": "PDF का लागि साइज बदल्न मिल्दैन" },
+  "imgtools.pdf_no_convert":     { "en": "Format conversion is not available for PDF files", "ne": "PDF का लागि ढाँचा रूपान्तरण मिल्दैन" },
+  "imgtools.raw_no_compress":    { "en": "RAW files cannot be compressed directly. Convert to JPEG first.", "ne": "RAW फाइल सिधै कम्प्रेस गर्न सकिँदैन। पहिले JPEG मा रूपान्तरण गर्नुहोस्।" },
+  "imgtools.width_label":        { "en": "Width",          "ne": "चौडाइ" },
+  "imgtools.height_label":       { "en": "Height",         "ne": "उचाइ" },
+  "imgtools.add_more":           { "en": "Add more files", "ne": "थप फाइल थप्नुहोस्" },
+  "imgtools.more_formats":       { "en": "More",           "ne": "थप" },
+  "imgtools.advanced":           { "en": "Advanced",       "ne": "उन्नत" },
+  "imgtools.reset_btn":          { "en": "Reset",          "ne": "रिसेट" },
+  "imgtools.pdf_page_first":     { "en": "First page",     "ne": "पहिलो पृष्ठ" },
+  "imgtools.pdf_page_per_file":  { "en": "All pages (one file each)", "ne": "सबै पृष्ठ (हरेक छुट्टै फाइल)" },
+  "imgtools.pdf_page_combined":  { "en": "All pages (one image)", "ne": "सबै पृष्ठ (एउटै तस्बिर)" },
+  "imgtools.img_to_pdf_one_per_file": { "en": "One PDF per image", "ne": "प्रत्येक तस्बिरका लागि छुट्टै PDF" },
+  "imgtools.img_to_pdf_combined":     { "en": "Combined PDF",      "ne": "एकीकृत PDF" },
+  "imgtools.mixed_pdf_image_convert": { "en": "Cannot mix PDF and image files for conversion - use one type at a time", "ne": "रूपान्तरणका लागि PDF र तस्बिर सँगै राख्न मिल्दैन" },
+  "help.imgtools.title":   { "en": "Image Tools Help", "ne": "तस्बिर उपकरण सहायता" },
+  "help.imgtools.desc":    { "en": "Compress, resize, or convert images and PDFs in one place. Drag files or use the toggles below.", "ne": "तस्बिर र PDF हरूलाई एउटै स्थानमा कम्प्रेस, साइज बदल्न वा रूपान्तरण गर्न सकिन्छ। फाइल तान्नुहोस् वा तलका टगलहरू प्रयोग गर्नुहोस्।" },
+  "help.imgtools.how1":    { "en": "Drop images or PDFs into the box.", "ne": "तस्बिर वा PDF बाकसमा छोड्नुहोस्।" },
+  "help.imgtools.how2":    { "en": "Choose Compress, Resize, or Convert as needed.", "ne": "आवश्यक अनुसार कम्प्रेस, साइज बदल्नुहोस्, वा रूपान्तरण छान्नुहोस्।" },
+  "help.imgtools.how3":    { "en": "Click Process to save the results.", "ne": "नतिजा सुरक्षित गर्न Process क्लिक गर्नुहोस्।" },
+  "help.imgtools.why1":    { "en": "Reduce file size for sharing or storage.", "ne": "सेयर वा भण्डारणका लागि फाइल साइज घटाउनुहोस्।" },
+  "help.imgtools.why2":    { "en": "Convert formats for compatibility.", "ne": "अनुकूलताको लागि ढाँचा रूपान्तरण गर्नुहोस्।" },
+  "help.imgtools.why3":    { "en": "Batch process many files at once.", "ne": "धेरै फाइलहरू एकै पटक प्रशोधन गर्नुहोस्।" },
+  "help.imgtools":         { "en": "", "ne": "" }
 }

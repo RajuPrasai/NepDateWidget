@@ -7,7 +7,7 @@ public interface IReminderService
     IReadOnlyList<ReminderEntry> GetAll();
     IReadOnlyList<ReminderEntry> GetForDate(int bsYear, int bsMonth, int bsDay);
     bool HasRemindersForDate(int bsYear, int bsMonth, int bsDay);
-    
+
     /// <summary>
     /// Returns true if any reminder (direct or expanded recurring) falls on the given date.
     /// Expands recurring reminders up to the given date for dot display.

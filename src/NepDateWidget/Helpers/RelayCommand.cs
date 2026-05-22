@@ -4,7 +4,11 @@ namespace NepDateWidget.Helpers;
 
 /// <summary>
 /// Minimal ICommand implementation backed by delegates.
-/// CanExecuteChanged is wired to CommandManager.RequerySuggested so WPF re-evaluates automatically.
+/// When a canExecute delegate is provided, CanExecuteChanged is wired to
+/// CommandManager.RequerySuggested so WPF re-evaluates automatically.
+/// When no canExecute is provided, CanExecute always returns true and
+/// RequerySuggested is not hooked - avoiding needless CanExecute calls on
+/// every mouse move across all 9 cached tab visual trees.
 /// </summary>
 public sealed class RelayCommand : ICommand
 {
@@ -19,8 +23,8 @@ public sealed class RelayCommand : ICommand
 
     public event EventHandler? CanExecuteChanged
     {
-        add => CommandManager.RequerySuggested += value;
-        remove => CommandManager.RequerySuggested -= value;
+        add    { if (_canExecute is not null) CommandManager.RequerySuggested += value; }
+        remove { if (_canExecute is not null) CommandManager.RequerySuggested -= value; }
     }
 
     public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
@@ -30,6 +34,7 @@ public sealed class RelayCommand : ICommand
 
 /// <summary>
 /// Generic variant that passes a typed parameter to the execute and canExecute delegates.
+/// Same RequerySuggested opt-in rule as <see cref="RelayCommand"/>.
 /// </summary>
 public sealed class RelayCommand<T> : ICommand
 {
@@ -44,8 +49,8 @@ public sealed class RelayCommand<T> : ICommand
 
     public event EventHandler? CanExecuteChanged
     {
-        add => CommandManager.RequerySuggested += value;
-        remove => CommandManager.RequerySuggested -= value;
+        add    { if (_canExecute is not null) CommandManager.RequerySuggested += value; }
+        remove { if (_canExecute is not null) CommandManager.RequerySuggested -= value; }
     }
 
     public bool CanExecute(object? parameter) => _canExecute?.Invoke((T?)parameter) ?? true;

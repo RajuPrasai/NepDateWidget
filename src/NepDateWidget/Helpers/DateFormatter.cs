@@ -1,6 +1,6 @@
-using System.Globalization;
 using NepDateWidget.Models;
 using NepDateWidget.Services;
+using System.Globalization;
 
 namespace NepDateWidget.Helpers;
 
@@ -28,8 +28,15 @@ internal static class DateFormatter
         ILocalizationService loc,
         bool isNepali)
     {
-        if (adapter is null) throw new ArgumentNullException(nameof(adapter));
-        if (loc is null)     throw new ArgumentNullException(nameof(loc));
+        if (adapter is null)
+        {
+            throw new ArgumentNullException(nameof(adapter));
+        }
+
+        if (loc is null)
+        {
+            throw new ArgumentNullException(nameof(loc));
+        }
 
         // BS short / long, language-aware
         string bsShort = isNepali
@@ -48,9 +55,11 @@ internal static class DateFormatter
 
         // If any required formatter returned empty (out-of-range BS date), skip
         if (string.IsNullOrEmpty(bsShort) || string.IsNullOrEmpty(bsLong) || !ad.HasValue)
+        {
             return Array.Empty<DateFormatOption>();
+        }
 
-        string adIso  = ad.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        string adIso = ad.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         string adLong = ad.Value.ToString("d MMM yyyy", CultureInfo.InvariantCulture);
 
         return new[]
@@ -72,17 +81,26 @@ internal static class DateFormatter
         ILocalizationService loc,
         bool isNepali)
     {
-        if (loc is null) throw new ArgumentNullException(nameof(loc));
-        if (!day.IsCurrentMonth || !day.AdDate.HasValue) return Array.Empty<DateFormatOption>();
+        if (loc is null)
+        {
+            throw new ArgumentNullException(nameof(loc));
+        }
+
+        if (!day.IsCurrentMonth || !day.AdDate.HasValue)
+        {
+            return Array.Empty<DateFormatOption>();
+        }
 
         string bsShort = isNepali ? day.BsShortNe : day.BsShortEn;
-        string bsLong  = isNepali ? day.BsLongNe  : day.BsLongEn;
+        string bsLong = isNepali ? day.BsLongNe : day.BsLongEn;
 
         if (string.IsNullOrEmpty(bsShort) || string.IsNullOrEmpty(bsLong))
+        {
             return Array.Empty<DateFormatOption>();
+        }
 
         var ad = day.AdDate.Value;
-        string adIso  = ad.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        string adIso = ad.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         string adLong = ad.ToString("d MMM yyyy", CultureInfo.InvariantCulture);
 
         return new[]

@@ -15,9 +15,9 @@
     <Border Background="{DynamicResource WidgetBackgroundBrush}"
             BorderBrush="{DynamicResource WidgetAccentBrush}"
             BorderThickness="0.7"
-            CornerRadius="10"
+            CornerRadius="12"
             ClipToBounds="True"
-            MinWidth="280" MaxWidth="340"
+            MinWidth="340" MaxWidth="460"
             Cursor="Hand"
             MouseLeftButtonDown="Body_MouseLeftButtonDown">
         <Border.Effect>
@@ -30,7 +30,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Margin="14,10,14,8">
+            <Grid Grid.Row="0" Margin="18,14,18,12">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -39,24 +39,24 @@
                 <StackPanel Grid.Column="0" Margin="0,0,8,0">
                     <TextBlock x:Name="HeaderText"
                                Foreground="{DynamicResource WidgetAccentBrush}"
-                               FontSize="11" FontWeight="SemiBold" />
+                               FontSize="13" FontWeight="SemiBold" />
                     <TextBlock x:Name="TitleText"
                                Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="13" FontWeight="SemiBold"
-                               TextTrimming="CharacterEllipsis" Margin="0,2,0,0" />
+                               FontSize="17" FontWeight="SemiBold"
+                               TextTrimming="CharacterEllipsis" Margin="0,3,0,0" />
                     <TextBlock x:Name="TimeText"
                                Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="11" Opacity="0.6" />
+                               FontSize="13" Opacity="0.6" />
                     <TextBlock x:Name="NotesText"
                                Foreground="{DynamicResource WidgetForegroundBrush}"
-                               FontSize="11" Opacity="0.5"
+                               FontSize="13" Opacity="0.5"
                                TextTrimming="CharacterEllipsis"
-                               TextWrapping="Wrap" MaxHeight="36" />
+                               TextWrapping="Wrap" MaxHeight="80" />
                 </StackPanel>
 
                 <Button x:Name="DismissButton" Grid.Column="1"
                         VerticalAlignment="Top"
-                        Padding="8,4" FontSize="11" Cursor="Hand"
+                        Padding="10,5" FontSize="13" Cursor="Hand"
                         Click="DismissButton_Click">
                     <Button.Style>
                         <Style TargetType="Button">
@@ -70,11 +70,8 @@
                                                 CornerRadius="4" Padding="{TemplateBinding Padding}">
                                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
                                         </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Opacity" Value="0.8" />
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
+                                        <ControlTemplate.Triggers />
+
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>

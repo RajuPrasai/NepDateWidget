@@ -41,7 +41,6 @@ public class UiConsistencyTests
         public void Load()  { }
         public void Save()  { }
         public void ResetToDefaults() { Current = new WidgetSettings(); }
-        public event EventHandler? SettingsChanged;
     }
 
     private sealed class FakeThemeService : IThemeService

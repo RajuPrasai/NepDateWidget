@@ -73,7 +73,11 @@ public class CalendarViewModelRegressionTests
             GetCellData(int y, int m, int d)
         {
             var r = _inner.GetCellData(y, m, d);
-            if (!_cfg.TryGetValue((y, m, d), out var c)) return r;
+            if (!_cfg.TryGetValue((y, m, d), out var c))
+            {
+                return r;
+            }
+
             return (r.IsPublicHoliday, c.TithiEn, c.TithiEn.Length > 0 ? c.TithiEn + "-np" : "",
                     c.EventsEn, c.EventsEn.Select(e => e + "-np").ToArray(),
                     r.AdDate, r.BsShortEn, r.BsShortNe, r.BsLongEn, r.BsLongNe);
@@ -117,10 +121,32 @@ public class CalendarViewModelRegressionTests
         public void Seed(string dateKey, string text) => _notes[dateKey] = text;
         public string? GetNote(string dateKey)         => _notes.GetValueOrDefault(dateKey);
         public IReadOnlyDictionary<string, string> GetAll() => _notes;
+        public HashSet<int> GetHasNotesForMonth(int bsYear, int bsMonth)
+        {
+            var result = new HashSet<int>();
+            string prefix = $"{bsYear:D4}-{bsMonth:D2}-";
+            foreach (var key in _notes.Keys)
+            {
+                if (key.Length == prefix.Length + 2
+                    && key.StartsWith(prefix, StringComparison.Ordinal)
+                    && int.TryParse(key.AsSpan(prefix.Length), out int day))
+                {
+                    result.Add(day);
+                }
+            }
+            return result;
+        }
         public void SetNote(string dateKey, string? text)
         {
-            if (string.IsNullOrEmpty(text)) _notes.Remove(dateKey);
-            else _notes[dateKey] = text!;
+            if (string.IsNullOrEmpty(text))
+            {
+                _notes.Remove(dateKey);
+            }
+            else
+            {
+                _notes[dateKey] = text!;
+            }
+
             NotesChanged?.Invoke(this, EventArgs.Empty);
         }
         public void DeleteNote(string dateKey)
@@ -192,7 +218,7 @@ public class CalendarViewModelRegressionTests
         vm.PrevMonthCommand.Execute(null);
 
         Assert.True(vm.Days[2].IsPadding, "Cell[2] must be padding in 2082/11 (leading 6 pads).");
-        Assert.False(vm.Days[2].HasReminders, "HasReminders must be false for a padding cell — stale reminder dot regression.");
+        Assert.False(vm.Days[2].HasReminders, "HasReminders must be false for a padding cell - stale reminder dot regression.");
     }
 
     [Fact]
@@ -207,11 +233,13 @@ public class CalendarViewModelRegressionTests
         var vm = CreateAt12(rs: rs);
         // Cells 2-7 are days 1-6 of 2082/12 → all armed
         for (int i = 2; i <= 7; i++)
+        {
             Assert.True(vm.Days[i].HasReminders, $"Precondition: cell[{i}] should be armed.");
+        }
 
         vm.PrevMonthCommand.Execute(null); // → 2082/11
 
-        // Cells 0-5 are now padding in 2082/11 — none may show a reminder dot.
+        // Cells 0-5 are now padding in 2082/11 - none may show a reminder dot.
         for (int i = 0; i <= 5; i++)
         {
             Assert.True(vm.Days[i].IsPadding, $"Cell[{i}] must be padding in 2082/11.");
@@ -237,7 +265,7 @@ public class CalendarViewModelRegressionTests
         vm.PrevMonthCommand.Execute(null); // → 2082/11
 
         Assert.True(vm.Days[2].IsPadding, "Cell[2] must be padding in 2082/11.");
-        Assert.False(vm.Days[2].HasNote, "HasNote must be false for a padding cell — stale note-dot regression.");
+        Assert.False(vm.Days[2].HasNote, "HasNote must be false for a padding cell - stale note-dot regression.");
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -343,7 +371,7 @@ public class CalendarViewModelRegressionTests
         // So cell[3] transitions FROM padding (2082/10) TO day-1-of-2082/09.
         // We want the REVERSE: from current-month WITH reminder TO padding.
         // cell[4] in 2082/10 = day 1 (has reminder).
-        // cell[4] in 2082/09 = day 2 (no reminder) — still current-month. Not padding.
+        // cell[4] in 2082/09 = day 2 (no reminder) - still current-month. Not padding.
         // Hmm, with same leading padding difference, hard to find a position that goes
         // from current-month to padding.
         //
@@ -413,7 +441,7 @@ public class CalendarViewModelRegressionTests
 
         Assert.Equal(35, vm.Days.Count); // count unchanged confirms fast path
         Assert.True(vm.Days[2].IsPadding, "Cell[2] must be padding in 2082/3 (leadingPad=4).");
-        Assert.False(vm.Days[2].HasVisibleEvents, "HasVisibleEvents must be false for padding cell — fast-path events-repeating regression.");
+        Assert.False(vm.Days[2].HasVisibleEvents, "HasVisibleEvents must be false for padding cell - fast-path events-repeating regression.");
         Assert.Empty(vm.Days[2].VisibleEvents);
     }
 
@@ -631,7 +659,9 @@ public class CalendarViewModelRegressionTests
         var vm = CreateAt12();
         var currentCells = vm.Days.Where(d => d.IsCurrentMonth).ToList();
         for (int i = 0; i < currentCells.Count; i++)
+        {
             Assert.Equal(i + 1, currentCells[i].Day);
+        }
     }
 
     [Fact]
@@ -670,7 +700,11 @@ public class CalendarViewModelRegressionTests
             },
             Collapse: () =>
             {
-                if (handler is not null) vm.NavigationRequested -= handler;
+                if (handler is not null)
+                {
+                    vm.NavigationRequested -= handler;
+                }
+
                 handler = null;
             }
         );
@@ -684,7 +718,7 @@ public class CalendarViewModelRegressionTests
 
         expand();
         collapse(); // widget collapsed
-        expand();   // widget expanded again — should have exactly 1 subscription
+        expand();   // widget expanded again - should have exactly 1 subscription
 
         vm.NavigateMonths(1);
 
@@ -724,7 +758,7 @@ public class CalendarViewModelRegressionTests
         // After 3 expands without cleanup → 3 subscriptions → 3-month jump.
         var vm = CreateAt12();
 
-        // Subscribe 3 times (no matching unsubscribes — the old bug)
+        // Subscribe 3 times (no matching unsubscribes - the old bug)
         vm.NavigationRequested += (_, doNav) => doNav();
         vm.NavigationRequested += (_, doNav) => doNav();
         vm.NavigationRequested += (_, doNav) => doNav();
@@ -740,15 +774,15 @@ public class CalendarViewModelRegressionTests
     public void ExpandCollapse_StatePreserved_DisplayMonthUnchangedAfterCollapse()
     {
         // CalendarViewModel is a singleton. Navigation state must survive
-        // a collapse/expand cycle — the user left off at a specific month.
+        // a collapse/expand cycle - the user left off at a specific month.
         var vm = CreateAt12();
         var (expand, collapse) = ViewLifecycle(vm);
 
         expand();
         vm.NavigateTo(2082, 6); // user navigated to Ashwin before closing
-        collapse(); // widget collapsed — VM stays alive
+        collapse(); // widget collapsed - VM stays alive
 
-        // Widget reopened — should show the same month the user was on
+        // Widget reopened - should show the same month the user was on
         Assert.Equal(2082, vm.DisplayYear);
         Assert.Equal(6, vm.DisplayMonth);
     }
@@ -810,7 +844,7 @@ public class CalendarViewModelRegressionTests
 
         expand(); // reopen
 
-        // cell[2] is padding in 2082/11 — no events from the old month should bleed through
+        // cell[2] is padding in 2082/11 - no events from the old month should bleed through
         Assert.True(vm.Days[2].IsPadding);
         Assert.False(vm.Days[2].HasVisibleEvents);
         Assert.Empty(vm.Days[2].VisibleEvents);
@@ -887,7 +921,7 @@ public class CalendarViewModelRegressionTests
         rs.SetReminders(2082, 6, 10);
         rs.FireChanged(); // triggers RefreshReminderDots for the CURRENT display month
 
-        // Month must stay at 6 — RemindersChanged must NOT trigger navigation
+        // Month must stay at 6 - RemindersChanged must NOT trigger navigation
         Assert.Equal(2082, vm.DisplayYear);
         Assert.Equal(6, vm.DisplayMonth);
     }
@@ -1000,7 +1034,9 @@ public class CalendarViewModelRegressionTests
 
         // Seed notes for every real day in the month
         for (int d = 1; d <= 30; d++)
+        {
             ns.Seed(NotesService.FormatKey(2082, 12, d), "note");
+        }
 
         // Force a NotesChanged event by deleting one real note (triggers RefreshNoteDots)
         ns.DeleteNote(NotesService.FormatKey(2082, 12, 1));
@@ -1029,7 +1065,7 @@ public class CalendarViewModelRegressionTests
     // CalendarView calls UpdateCellLayout when the grid resizes. This adjusts
     // font sizes and the visible-event count. The visible count directly controls
     // how many event rows show per cell and whether the "..." overflow indicator
-    // appears. On reopen, the View will call this again once it renders — so the
+    // appears. On reopen, the View will call this again once it renders - so the
     // grid must respond correctly to these calls at any time.
     // ════════════════════════════════════════════════════════════════════════
 
@@ -1043,7 +1079,7 @@ public class CalendarViewModelRegressionTests
         var vm = CreateAt12(adapter: adapter);
 
         // Default: visibleCount=1 → 1 visible, 2 hidden
-        Assert.Equal(1, vm.Days[2].VisibleEvents.Count);
+        Assert.Single(vm.Days[2].VisibleEvents);
         Assert.True(vm.Days[2].HasHiddenEvents);
 
         // Simulate the View reporting large cell dimensions (e.g. 200px × 114px)
@@ -1064,7 +1100,7 @@ public class CalendarViewModelRegressionTests
 
         vm.UpdateCellLayout(cellHeight: 10, cellWidth: 20);
 
-        Assert.Equal(1, vm.Days[2].VisibleEvents.Count);
+        Assert.Single(vm.Days[2].VisibleEvents);
     }
 
     [Fact]
@@ -1084,7 +1120,7 @@ public class CalendarViewModelRegressionTests
 
         Assert.Null(ex);
         // visibleCount must still be 1 (unchanged from default)
-        Assert.Equal(1, vm.Days[2].VisibleEvents.Count);
+        Assert.Single(vm.Days[2].VisibleEvents);
     }
 
     [Fact]
@@ -1094,18 +1130,24 @@ public class CalendarViewModelRegressionTests
         // update all of them, not just a subset.
         var adapter = new EventfulAdapter();
         for (int d = 1; d <= 5; d++)
+        {
             adapter.Set(2082, 12, d, eventsEn: ["Ev1", "Ev2"]);
+        }
 
         var vm = CreateAt12(adapter: adapter);
 
         // Before: all show 1 visible, 1 hidden
         for (int i = 2; i <= 6; i++) // cells 2-6 = days 1-5
+        {
             Assert.True(vm.Days[i].HasHiddenEvents, $"Pre-check: cell[{i}] should have hidden events.");
+        }
 
         vm.UpdateCellLayout(cellHeight: 200, cellWidth: 114); // visibleCount → 8
 
         for (int i = 2; i <= 6; i++)
+        {
             Assert.False(vm.Days[i].HasHiddenEvents, $"After layout: cell[{i}] must show all events.");
+        }
     }
 
     [Fact]
@@ -1168,7 +1210,7 @@ public class CalendarViewModelRegressionTests
     public void HumanSequence_AddReminderThenNavigateAwayAndBack_DotPersists()
     {
         // User adds a reminder, navigates to next month (dot should be gone),
-        // navigates back — dot should reappear.
+        // navigates back - dot should reappear.
         var rs = new ConfigurableReminderService();
         rs.SetReminders(2082, 12, 5);
         var vm = CreateAt12(rs: rs);
@@ -1176,7 +1218,7 @@ public class CalendarViewModelRegressionTests
         Assert.True(vm.Days[6].HasReminders, "Precondition: day 5 reminder visible."); // cell[6]=day5
 
         vm.NextMonthCommand.Execute(null); // → 2083/01
-        // day 5 of 2082/12 is no longer in view — reminder dot on current-month cells only
+        // day 5 of 2082/12 is no longer in view - reminder dot on current-month cells only
         var armedCells = vm.Days.Where(d => d.HasReminders).ToList();
         Assert.Empty(armedCells); // no reminders in 2083/01
 

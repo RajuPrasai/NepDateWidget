@@ -1,10 +1,7 @@
 using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using NepDateWidget.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text;
 using System.Windows.Input;
 
@@ -40,8 +37,8 @@ public sealed class BankingViewModel : ViewModelBase
         }
     }
 
-    public bool IsModeInterest { get => _activeMode == 0; set { if (value) ActiveMode = 0; } }
-    public bool IsModeEmi      { get => _activeMode == 1; set { if (value) ActiveMode = 1; } }
+    public bool IsModeInterest { get => _activeMode == 0; set { if (value) { ActiveMode = 0; } } }
+    public bool IsModeEmi { get => _activeMode == 1; set { if (value) { ActiveMode = 1; } } }
 
     // ═════════════════════════════════════════════════════════════════════════
     // MODE: INTEREST CALCULATOR
@@ -51,7 +48,13 @@ public sealed class BankingViewModel : ViewModelBase
     public string InterestPrincipal
     {
         get => _interestPrincipal;
-        set { if (SetProperty(ref _interestPrincipal, value)) ClearInterestResult(); }
+        set
+        {
+            if (SetProperty(ref _interestPrincipal, value))
+            {
+                ClearInterestResult();
+            }
+        }
     }
 
     private string _interestFromDate = string.Empty;
@@ -64,7 +67,9 @@ public sealed class BankingViewModel : ViewModelBase
             {
                 ClearInterestResult();
                 if (InterestRows.Count > 0)
+                {
                     InterestRows[0].SyncFromDate(value);
+                }
             }
         }
     }
@@ -73,7 +78,13 @@ public sealed class BankingViewModel : ViewModelBase
     public string InterestToDate
     {
         get => _interestToDate;
-        set { if (SetProperty(ref _interestToDate, value)) ClearInterestResult(); }
+        set
+        {
+            if (SetProperty(ref _interestToDate, value))
+            {
+                ClearInterestResult();
+            }
+        }
     }
 
     private bool _interestUseBs = true;
@@ -111,12 +122,12 @@ public sealed class BankingViewModel : ViewModelBase
     private string _interestTotalText = string.Empty;
     public string InterestTotalText { get => _interestTotalText; private set => SetProperty(ref _interestTotalText, value); }
 
-    public ICommand SetModeInterestCommand   { get; }
-    public ICommand SetModeEmiCommand        { get; }
-    public ICommand AddInterestRowCommand    { get; }
+    public ICommand SetModeInterestCommand { get; }
+    public ICommand SetModeEmiCommand { get; }
+    public ICommand AddInterestRowCommand { get; }
     public ICommand CalculateInterestCommand { get; }
-    public ICommand SetInterestBsCommand     { get; }
-    public ICommand SetInterestAdCommand     { get; }
+    public ICommand SetInterestBsCommand { get; }
+    public ICommand SetInterestAdCommand { get; }
 
     // ═════════════════════════════════════════════════════════════════════════
     // MODE: EMI CALCULATOR
@@ -149,28 +160,52 @@ public sealed class BankingViewModel : ViewModelBase
     public string EmiLoanAmount
     {
         get => _emiLoanAmount;
-        set { if (SetProperty(ref _emiLoanAmount, value)) ClearEmiResult(); }
+        set
+        {
+            if (SetProperty(ref _emiLoanAmount, value))
+            {
+                ClearEmiResult();
+            }
+        }
     }
 
     private string _emiAnnualRate = string.Empty;
     public string EmiAnnualRate
     {
         get => _emiAnnualRate;
-        set { if (SetProperty(ref _emiAnnualRate, value)) ClearEmiResult(); }
+        set
+        {
+            if (SetProperty(ref _emiAnnualRate, value))
+            {
+                ClearEmiResult();
+            }
+        }
     }
 
     private string _emiMonths = string.Empty;
     public string EmiMonths
     {
         get => _emiMonths;
-        set { if (SetProperty(ref _emiMonths, value)) ClearEmiResult(); }
+        set
+        {
+            if (SetProperty(ref _emiMonths, value))
+            {
+                ClearEmiResult();
+            }
+        }
     }
 
     private string _emiStartDate = string.Empty;
     public string EmiStartDate
     {
         get => _emiStartDate;
-        set { if (SetProperty(ref _emiStartDate, value)) ClearEmiResult(); }
+        set
+        {
+            if (SetProperty(ref _emiStartDate, value))
+            {
+                ClearEmiResult();
+            }
+        }
     }
 
     private bool _emiHasResult;
@@ -197,39 +232,39 @@ public sealed class BankingViewModel : ViewModelBase
     // Full grouped data retained so toggle re-renders without recomputing
     private readonly List<(EmiScheduleRow YearRow, List<EmiScheduleRow> Months)> _emiGroups = new();
 
-    public ICommand CalculateEmiCommand   { get; }
-    public ICommand ToggleEmiYearCommand  { get; }
-    public ICommand OpenHelpCommand       { get; }
+    public ICommand CalculateEmiCommand { get; }
+    public ICommand ToggleEmiYearCommand { get; }
+    public ICommand OpenHelpCommand { get; }
 
     // ═════════════════════════════════════════════════════════════════════════
 
-    public string ModeInterestLabel      { get; private set; } = string.Empty;
-    public string ModeEmiLabel           { get; private set; } = string.Empty;
+    public string ModeInterestLabel { get; private set; } = string.Empty;
+    public string ModeEmiLabel { get; private set; } = string.Empty;
     public string InterestPrincipalLabel { get; private set; } = string.Empty;
-    public string InterestFromLabel      { get; private set; } = string.Empty;
-    public string InterestToLabel        { get; private set; } = string.Empty;
-    public string InterestRateColLabel   { get; private set; } = string.Empty;
-    public string InterestAddLabel       { get; private set; } = string.Empty;
-    public string InterestCalcLabel      { get; private set; } = string.Empty;
-    public string EmiLoanLabel           { get; private set; } = string.Empty;
-    public string EmiRateLabel           { get; private set; } = string.Empty;
-    public string EmiMonthsLabel         { get; private set; } = string.Empty;
-    public string EmiStartDateLabel      => _loc.Get(_emiUseBs ? "banking.emi_start_date_bs" : "banking.emi_start_date_ad");
-    public string EmiCalcLabel           { get; private set; } = string.Empty;
-    public string EmiMonthlyLabel        { get; private set; } = string.Empty;
-    public string EmiTotalPaymentLabel   { get; private set; } = string.Empty;
-    public string EmiTotalInterestLabel  { get; private set; } = string.Empty;
-    public string EmiColYearLabel        { get; private set; } = string.Empty;
-    public string EmiColPrincipalLabel   { get; private set; } = string.Empty;
-    public string EmiColInterestLabel    { get; private set; } = string.Empty;
-    public string EmiColTotalLabel       { get; private set; } = string.Empty;
-    public string EmiColBalanceLabel     { get; private set; } = string.Empty;
+    public string InterestFromLabel { get; private set; } = string.Empty;
+    public string InterestToLabel { get; private set; } = string.Empty;
+    public string InterestRateColLabel { get; private set; } = string.Empty;
+    public string InterestAddLabel { get; private set; } = string.Empty;
+    public string InterestCalcLabel { get; private set; } = string.Empty;
+    public string EmiLoanLabel { get; private set; } = string.Empty;
+    public string EmiRateLabel { get; private set; } = string.Empty;
+    public string EmiMonthsLabel { get; private set; } = string.Empty;
+    public string EmiStartDateLabel => _loc.Get(_emiUseBs ? "banking.emi_start_date_bs" : "banking.emi_start_date_ad");
+    public string EmiCalcLabel { get; private set; } = string.Empty;
+    public string EmiMonthlyLabel { get; private set; } = string.Empty;
+    public string EmiTotalPaymentLabel { get; private set; } = string.Empty;
+    public string EmiTotalInterestLabel { get; private set; } = string.Empty;
+    public string EmiColYearLabel { get; private set; } = string.Empty;
+    public string EmiColPrincipalLabel { get; private set; } = string.Empty;
+    public string EmiColInterestLabel { get; private set; } = string.Empty;
+    public string EmiColTotalLabel { get; private set; } = string.Empty;
+    public string EmiColBalanceLabel { get; private set; } = string.Empty;
 
     public string HintPrincipal { get; private set; } = string.Empty;
-    public string HintRate      { get; private set; } = string.Empty;
-    public string HintMonths    { get; private set; } = string.Empty;
-    public string HintLoan      { get; private set; } = string.Empty;
-    public string HintDateBs    { get; private set; } = string.Empty;
+    public string HintRate { get; private set; } = string.Empty;
+    public string HintMonths { get; private set; } = string.Empty;
+    public string HintLoan { get; private set; } = string.Empty;
+    public string HintDateBs { get; private set; } = string.Empty;
 
     // ═════════════════════════════════════════════════════════════════════════
     // CONSTRUCTION
@@ -237,20 +272,20 @@ public sealed class BankingViewModel : ViewModelBase
 
     public BankingViewModel(ILocalizationService localizationService, INepaliDateAdapter? adapter = null)
     {
-        _loc     = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
+        _loc = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _adapter = adapter ?? new NepaliDateAdapter();
 
-        SetModeInterestCommand   = new RelayCommand(() => ActiveMode = 0);
-        SetModeEmiCommand        = new RelayCommand(() => ActiveMode = 1);
-        AddInterestRowCommand    = new RelayCommand(DoAddInterestRow);
+        SetModeInterestCommand = new RelayCommand(() => ActiveMode = 0);
+        SetModeEmiCommand = new RelayCommand(() => ActiveMode = 1);
+        AddInterestRowCommand = new RelayCommand(DoAddInterestRow);
         CalculateInterestCommand = new RelayCommand(DoCalculateInterest);
-        SetInterestBsCommand     = new RelayCommand(() => InterestUseBs = true);
-        SetInterestAdCommand     = new RelayCommand(() => InterestUseBs = false);
-        CalculateEmiCommand      = new RelayCommand(DoCalculateEmi);
-        ToggleEmiYearCommand     = new RelayCommand<EmiScheduleRow>(DoToggleEmiYear);
-        SetEmiBsCommand          = new RelayCommand(() => EmiUseBs = true);
-        SetEmiAdCommand          = new RelayCommand(() => EmiUseBs = false);
-        OpenHelpCommand          = new RelayCommand<string>(key =>
+        SetInterestBsCommand = new RelayCommand(() => InterestUseBs = true);
+        SetInterestAdCommand = new RelayCommand(() => InterestUseBs = false);
+        CalculateEmiCommand = new RelayCommand(DoCalculateEmi);
+        ToggleEmiYearCommand = new RelayCommand<EmiScheduleRow>(DoToggleEmiYear);
+        SetEmiBsCommand = new RelayCommand(() => EmiUseBs = true);
+        SetEmiAdCommand = new RelayCommand(() => EmiUseBs = false);
+        OpenHelpCommand = new RelayCommand<string>(key =>
         {
             var shell = System.Windows.Application.Current.Windows
                 .OfType<NepDateWidget.Views.ExpandedShellWindow>()
@@ -278,7 +313,9 @@ public sealed class BankingViewModel : ViewModelBase
             // Interest: default From date to today, first row date to today
             InterestFromDate = todayBs;
             if (InterestRows.Count > 0)
+            {
                 InterestRows[0].FromDate = todayBs;
+            }
 
             // EMI: default start date to today
             EmiStartDate = todayBs;
@@ -302,7 +339,11 @@ public sealed class BankingViewModel : ViewModelBase
 
     private void RemoveInterestRow(InterestRateRowViewModel row)
     {
-        if (row.IsFirstRow) return;
+        if (row.IsFirstRow)
+        {
+            return;
+        }
+
         InterestRows.Remove(row);
         ClearInterestResult();
         Log.Action("banking interest: removed row");
@@ -312,7 +353,10 @@ public sealed class BankingViewModel : ViewModelBase
     {
         string nextFrom = string.Empty;
         if (InterestRows.Count > 0)
+        {
             nextFrom = GetNextMonthFirstDay(InterestRows[^1].FromDate);
+        }
+
         AddRowInternal(nextFrom, string.Empty, isFirstRow: false);
         ClearInterestResult();
         Log.Action("banking interest: added row");
@@ -329,7 +373,7 @@ public sealed class BankingViewModel : ViewModelBase
                 out double principal) || principal <= 0)
         {
             InterestHasError = true;
-            InterestError    = _loc.Get("interest.error_principal");
+            InterestError = _loc.Get("interest.error_principal");
             return;
         }
 
@@ -339,20 +383,23 @@ public sealed class BankingViewModel : ViewModelBase
         if (!toDateValid)
         {
             InterestHasError = true;
-            InterestError    = _loc.Get("interest.error_to");
+            InterestError = _loc.Get("interest.error_to");
             return;
         }
 
-        if (InterestRows.Count == 0) return;
+        if (InterestRows.Count == 0)
+        {
+            return;
+        }
 
-        var    breakdown     = new StringBuilder();
+        var breakdown = new StringBuilder();
         double totalInterest = 0;
 
         for (int i = 0; i < InterestRows.Count; i++)
         {
-            var row     = InterestRows[i];
+            var row = InterestRows[i];
             var fromStr = row.FromDate;
-            var toStr   = (i + 1 < InterestRows.Count)
+            var toStr = (i + 1 < InterestRows.Count)
                 ? DateMinusOneDay(InterestRows[i + 1].FromDate)
                 : _interestToDate;
 
@@ -363,7 +410,7 @@ public sealed class BankingViewModel : ViewModelBase
                     out double rate) || rate <= 0)
             {
                 InterestHasError = true;
-                InterestError    = $"{_loc.Get("interest.error_row_rate")} {i + 1}";
+                InterestError = $"{_loc.Get("interest.error_row_rate")} {i + 1}";
                 return;
             }
 
@@ -371,17 +418,17 @@ public sealed class BankingViewModel : ViewModelBase
             if (_interestUseBs)
             {
                 if (!TryParseInterestDate(fromStr, out int y1, out int m1, out int d1) ||
-                    !TryParseInterestDate(toStr,   out int y2, out int m2, out int d2))
+                    !TryParseInterestDate(toStr, out int y2, out int m2, out int d2))
                 {
                     InterestHasError = true;
-                    InterestError    = $"{_loc.Get("interest.error_row_date")} {i + 1}";
+                    InterestError = $"{_loc.Get("interest.error_row_date")} {i + 1}";
                     return;
                 }
                 int? diff = _adapter.DiffTotalDays(y1, m1, d1, y2, m2, d2);
                 if (diff == null || diff.Value <= 0)
                 {
                     InterestHasError = true;
-                    InterestError    = $"{_loc.Get("interest.error_negative_days")} (row {i + 1})";
+                    InterestError = $"{_loc.Get("interest.error_negative_days")} (row {i + 1})";
                     return;
                 }
                 days = diff.Value;
@@ -389,17 +436,17 @@ public sealed class BankingViewModel : ViewModelBase
             else
             {
                 if (!TryParseAdDate(fromStr, out DateTime adFrom) ||
-                    !TryParseAdDate(toStr,   out DateTime adTo))
+                    !TryParseAdDate(toStr, out DateTime adTo))
                 {
                     InterestHasError = true;
-                    InterestError    = $"{_loc.Get("interest.error_row_date")} {i + 1}";
+                    InterestError = $"{_loc.Get("interest.error_row_date")} {i + 1}";
                     return;
                 }
                 days = (int)(adTo.Date - adFrom.Date).TotalDays;
                 if (days <= 0)
                 {
                     InterestHasError = true;
-                    InterestError    = $"{_loc.Get("interest.error_negative_days")} (row {i + 1})";
+                    InterestError = $"{_loc.Get("interest.error_negative_days")} (row {i + 1})";
                     return;
                 }
             }
@@ -409,13 +456,17 @@ public sealed class BankingViewModel : ViewModelBase
             double interest = (principal * rate * days) / DaysPerYear100;
             totalInterest += interest;
 
-            if (breakdown.Length > 0) breakdown.Append('\n');
+            if (breakdown.Length > 0)
+            {
+                breakdown.Append('\n');
+            }
+
             breakdown.Append(
                 $"{fromStr}  \u2013  {toStr}  ({days} days)  @ {rate:0.##}%  =  {FormatAmount(interest)}");
         }
 
         InterestBreakdownText = breakdown.ToString();
-        InterestTotalText     =
+        InterestTotalText =
             $"{FormatAmount(principal)}  +  {FormatAmount(totalInterest)}  =  {FormatNpr(principal + totalInterest)}";
         InterestHasResult = true;
 
@@ -424,11 +475,11 @@ public sealed class BankingViewModel : ViewModelBase
 
     private void ClearInterestResult()
     {
-        InterestHasResult     = false;
-        InterestHasError      = false;
-        InterestError         = string.Empty;
+        InterestHasResult = false;
+        InterestHasError = false;
+        InterestError = string.Empty;
         InterestBreakdownText = string.Empty;
-        InterestTotalText     = string.Empty;
+        InterestTotalText = string.Empty;
     }
 
     private string GetNextMonthFirstDay(string dateStr)
@@ -465,14 +516,18 @@ public sealed class BankingViewModel : ViewModelBase
                     DateTime prev = adDate.Value.AddDays(-1);
                     var bs = _adapter.AdToBs(prev);
                     if (bs.HasValue)
+                    {
                         return $"{bs.Value.Year:D4}/{bs.Value.Month:D2}/{bs.Value.Day:D2}";
+                    }
                 }
             }
         }
         else
         {
             if (TryParseAdDate(dateStr, out DateTime dt))
+            {
                 return dt.AddDays(-1).ToString("yyyy-MM-dd");
+            }
         }
         return dateStr;
     }
@@ -486,7 +541,11 @@ public sealed class BankingViewModel : ViewModelBase
     private static bool TryParseAdDate(string text, out DateTime result)
     {
         result = default;
-        if (string.IsNullOrWhiteSpace(text)) return false;
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
         return DateTime.TryParse(
             text.Trim(),
             System.Globalization.CultureInfo.InvariantCulture,
@@ -502,7 +561,11 @@ public sealed class BankingViewModel : ViewModelBase
     private bool TryParseBsDate(string text, out DateTime adResult)
     {
         adResult = default;
-        if (string.IsNullOrWhiteSpace(text)) return false;
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
         text = text.Trim();
 
         if (_adapter.TryParseSmartBsDate(text, out int year, out int month, out int day))
@@ -539,7 +602,7 @@ public sealed class BankingViewModel : ViewModelBase
                 out double principal) || principal <= 0)
         {
             EmiHasError = true;
-            EmiError    = _loc.Get("banking.emi_error_loan");
+            EmiError = _loc.Get("banking.emi_error_loan");
             return;
         }
 
@@ -550,14 +613,14 @@ public sealed class BankingViewModel : ViewModelBase
                 out double annualRate) || annualRate < 0)
         {
             EmiHasError = true;
-            EmiError    = _loc.Get("banking.emi_error_rate");
+            EmiError = _loc.Get("banking.emi_error_rate");
             return;
         }
 
         if (!int.TryParse(_emiMonths.Trim(), out int months) || months <= 0)
         {
             EmiHasError = true;
-            EmiError    = _loc.Get("banking.emi_error_months");
+            EmiError = _loc.Get("banking.emi_error_months");
             return;
         }
 
@@ -572,7 +635,7 @@ public sealed class BankingViewModel : ViewModelBase
             if (!TryParseBsDate(_emiStartDate, out startAd))
             {
                 EmiHasError = true;
-                EmiError    = _loc.Get("banking.emi_error_start_date");
+                EmiError = _loc.Get("banking.emi_error_start_date");
                 return;
             }
         }
@@ -581,7 +644,7 @@ public sealed class BankingViewModel : ViewModelBase
             if (!TryParseAdDate(_emiStartDate, out startAd))
             {
                 EmiHasError = true;
-                EmiError    = _loc.Get("banking.emi_error_start_date_ad");
+                EmiError = _loc.Get("banking.emi_error_start_date_ad");
                 return;
             }
         }
@@ -592,11 +655,11 @@ public sealed class BankingViewModel : ViewModelBase
             ? principal / months
             : principal * r * Math.Pow(1 + r, months) / (Math.Pow(1 + r, months) - 1);
 
-        double totalPayment  = emi * months;
+        double totalPayment = emi * months;
         double totalInterest = totalPayment - principal;
 
-        EmiMonthlyText       = FormatNpr(emi);
-        EmiTotalPaymentText  = FormatNpr(totalPayment);
+        EmiMonthlyText = FormatNpr(emi);
+        EmiTotalPaymentText = FormatNpr(totalPayment);
         EmiTotalInterestText = FormatNpr(totalInterest);
 
         // Build amortisation schedule grouped by calendar year
@@ -619,17 +682,23 @@ public sealed class BankingViewModel : ViewModelBase
             else
             {
                 principalPart = emi - interest;
-                if (principalPart > balance) principalPart = balance;
+                if (principalPart > balance)
+                {
+                    principalPart = balance;
+                }
             }
             balance -= principalPart;
-            if (balance < 0) balance = 0;
+            if (balance < 0)
+            {
+                balance = 0;
+            }
 
             // Convert payment date to BS
             var bs = _adapter.AdToBs(paymentDate);
             string bsStr = bs.HasValue
                 ? $"{bs.Value.Year:D4}/{bs.Value.Month:D2}/{bs.Value.Day:D2}"
                 : string.Empty;
-            string adStr  = paymentDate.ToString("MMM yyyy");
+            string adStr = paymentDate.ToString("MMM yyyy");
             string period = paymentDate.ToString("MMM");
 
             allMonths.Add((paymentDate.Year, period, bsStr, adStr,
@@ -642,32 +711,32 @@ public sealed class BankingViewModel : ViewModelBase
         foreach (var yearGroup in allMonths.GroupBy(m => m.CalYear))
         {
             double yPrinc = yearGroup.Sum(m => m.Princ);
-            double yInt   = yearGroup.Sum(m => m.Int);
+            double yInt = yearGroup.Sum(m => m.Int);
             double yTotal = yearGroup.Sum(m => m.Total);
-            double yBal   = yearGroup.Last().Bal;
+            double yBal = yearGroup.Last().Bal;
 
             var yearRow = new EmiScheduleRow
             {
-                IsYearRow   = true,
-                IsExpanded  = yearGroup.Key == allMonths[0].CalYear, // first year open by default
-                Period      = yearGroup.Key.ToString(),
-                Principal   = FormatAmount(yPrinc),
-                Interest    = FormatAmount(yInt),
+                IsYearRow = true,
+                IsExpanded = yearGroup.Key == allMonths[0].CalYear, // first year open by default
+                Period = yearGroup.Key.ToString(),
+                Principal = FormatAmount(yPrinc),
+                Interest = FormatAmount(yInt),
                 TotalPayment = FormatAmount(yTotal),
-                Balance     = FormatAmount(yBal),
+                Balance = FormatAmount(yBal),
                 CalendarYear = yearGroup.Key,
             };
 
             var monthRows = yearGroup.Select(m => new EmiScheduleRow
             {
-                IsYearRow    = false,
-                Period       = m.Period,
-                BsDate       = m.BsDate,
-                AdDate       = m.AdDate,
-                Principal    = FormatAmount(m.Princ),
-                Interest     = FormatAmount(m.Int),
+                IsYearRow = false,
+                Period = m.Period,
+                BsDate = m.BsDate,
+                AdDate = m.AdDate,
+                Principal = FormatAmount(m.Princ),
+                Interest = FormatAmount(m.Int),
                 TotalPayment = FormatAmount(m.Total),
-                Balance      = FormatAmount(m.Bal),
+                Balance = FormatAmount(m.Bal),
                 CalendarYear = m.CalYear,
             }).ToList();
 
@@ -682,7 +751,11 @@ public sealed class BankingViewModel : ViewModelBase
 
     private void DoToggleEmiYear(EmiScheduleRow? row)
     {
-        if (row == null || !row.IsYearRow) return;
+        if (row == null || !row.IsYearRow)
+        {
+            return;
+        }
+
         row.IsExpanded = !row.IsExpanded;
         RebuildScheduleRows();
     }
@@ -696,18 +769,20 @@ public sealed class BankingViewModel : ViewModelBase
             if (yearRow.IsExpanded)
             {
                 foreach (var m in months)
+                {
                     EmiScheduleRows.Add(m);
+                }
             }
         }
     }
 
     private void ClearEmiResult()
     {
-        EmiHasResult         = false;
-        EmiHasError          = false;
-        EmiError             = string.Empty;
-        EmiMonthlyText       = string.Empty;
-        EmiTotalPaymentText  = string.Empty;
+        EmiHasResult = false;
+        EmiHasError = false;
+        EmiError = string.Empty;
+        EmiMonthlyText = string.Empty;
+        EmiTotalPaymentText = string.Empty;
         EmiTotalInterestText = string.Empty;
         _emiGroups.Clear();
         EmiScheduleRows.Clear();
@@ -718,16 +793,24 @@ public sealed class BankingViewModel : ViewModelBase
     {
         string newFrom = toBS ? ConvertAdToBsStr(_interestFromDate) : ConvertBsToAdStr(_interestFromDate);
         if (!string.IsNullOrWhiteSpace(_interestFromDate))
+        {
             InterestFromDate = newFrom; // also syncs InterestRows[0] via setter
+        }
 
         string newTo = toBS ? ConvertAdToBsStr(_interestToDate) : ConvertBsToAdStr(_interestToDate);
         if (!string.IsNullOrWhiteSpace(_interestToDate))
+        {
             InterestToDate = newTo;
+        }
 
         // Skip index 0: it is already synced from InterestFromDate above.
         for (int i = 1; i < InterestRows.Count; i++)
         {
-            if (string.IsNullOrWhiteSpace(InterestRows[i].FromDate)) continue;
+            if (string.IsNullOrWhiteSpace(InterestRows[i].FromDate))
+            {
+                continue;
+            }
+
             InterestRows[i].FromDate = toBS
                 ? ConvertAdToBsStr(InterestRows[i].FromDate)
                 : ConvertBsToAdStr(InterestRows[i].FromDate);
@@ -737,8 +820,16 @@ public sealed class BankingViewModel : ViewModelBase
     // BS "YYYY/MM/DD" → AD "yyyy-MM-dd". Returns empty string on parse failure.
     private string ConvertBsToAdStr(string bsDate)
     {
-        if (string.IsNullOrWhiteSpace(bsDate)) return bsDate;
-        if (!TryParseInterestDate(bsDate, out int y, out int m, out int d)) return string.Empty;
+        if (string.IsNullOrWhiteSpace(bsDate))
+        {
+            return bsDate;
+        }
+
+        if (!TryParseInterestDate(bsDate, out int y, out int m, out int d))
+        {
+            return string.Empty;
+        }
+
         var ad = _adapter.BsToAd(y, m, d);
         return ad.HasValue ? ad.Value.ToString("yyyy-MM-dd") : string.Empty;
     }
@@ -746,8 +837,16 @@ public sealed class BankingViewModel : ViewModelBase
     // AD "yyyy-MM-dd" → BS "YYYY/MM/DD". Returns empty string on parse failure.
     private string ConvertAdToBsStr(string adDate)
     {
-        if (string.IsNullOrWhiteSpace(adDate)) return adDate;
-        if (!TryParseAdDate(adDate, out DateTime dt)) return string.Empty;
+        if (string.IsNullOrWhiteSpace(adDate))
+        {
+            return adDate;
+        }
+
+        if (!TryParseAdDate(adDate, out DateTime dt))
+        {
+            return string.Empty;
+        }
+
         var bs = _adapter.AdToBs(dt);
         return bs.HasValue ? $"{bs.Value.Year:D4}/{bs.Value.Month:D2}/{bs.Value.Day:D2}" : string.Empty;
     }
@@ -768,33 +867,33 @@ public sealed class BankingViewModel : ViewModelBase
 
     private void RefreshLabels()
     {
-        ModeInterestLabel      = _loc.Get("banking.mode_interest");
-        ModeEmiLabel           = _loc.Get("banking.mode_emi");
+        ModeInterestLabel = _loc.Get("banking.mode_interest");
+        ModeEmiLabel = _loc.Get("banking.mode_emi");
         InterestPrincipalLabel = _loc.Get("interest.principal");
-        InterestFromLabel      = _loc.Get("interest.from");
-        InterestToLabel        = _loc.Get("interest.to");
-        InterestRateColLabel   = _loc.Get("interest.rate_col");
-        InterestAddLabel       = _loc.Get("interest.add_period");
-        InterestCalcLabel      = _loc.Get("interest.calculate");
-        EmiLoanLabel           = _loc.Get("banking.emi_loan");
-        EmiRateLabel           = _loc.Get("banking.emi_rate");
-        EmiMonthsLabel         = _loc.Get("banking.emi_months");
+        InterestFromLabel = _loc.Get("interest.from");
+        InterestToLabel = _loc.Get("interest.to");
+        InterestRateColLabel = _loc.Get("interest.rate_col");
+        InterestAddLabel = _loc.Get("interest.add_period");
+        InterestCalcLabel = _loc.Get("interest.calculate");
+        EmiLoanLabel = _loc.Get("banking.emi_loan");
+        EmiRateLabel = _loc.Get("banking.emi_rate");
+        EmiMonthsLabel = _loc.Get("banking.emi_months");
         // EmiStartDateLabel is a computed property - no assignment needed here.
-        EmiCalcLabel           = _loc.Get("banking.emi_calculate");
-        EmiMonthlyLabel        = _loc.Get("banking.emi_monthly");
-        EmiTotalPaymentLabel   = _loc.Get("banking.emi_total_payment");
-        EmiTotalInterestLabel  = _loc.Get("banking.emi_total_interest");
-        EmiColYearLabel        = _loc.Get("banking.emi_col_year");
-        EmiColPrincipalLabel   = _loc.Get("banking.emi_col_principal");
-        EmiColInterestLabel    = _loc.Get("banking.emi_col_interest");
-        EmiColTotalLabel       = _loc.Get("banking.emi_col_total");
-        EmiColBalanceLabel     = _loc.Get("banking.emi_col_balance");
+        EmiCalcLabel = _loc.Get("banking.emi_calculate");
+        EmiMonthlyLabel = _loc.Get("banking.emi_monthly");
+        EmiTotalPaymentLabel = _loc.Get("banking.emi_total_payment");
+        EmiTotalInterestLabel = _loc.Get("banking.emi_total_interest");
+        EmiColYearLabel = _loc.Get("banking.emi_col_year");
+        EmiColPrincipalLabel = _loc.Get("banking.emi_col_principal");
+        EmiColInterestLabel = _loc.Get("banking.emi_col_interest");
+        EmiColTotalLabel = _loc.Get("banking.emi_col_total");
+        EmiColBalanceLabel = _loc.Get("banking.emi_col_balance");
 
         HintPrincipal = _loc.Get("hint.principal");
-        HintRate      = _loc.Get("hint.rate");
-        HintMonths    = _loc.Get("hint.months");
-        HintLoan      = _loc.Get("hint.loan");
-        HintDateBs    = _loc.Get("hint.date_bs");
+        HintRate = _loc.Get("hint.rate");
+        HintMonths = _loc.Get("hint.months");
+        HintLoan = _loc.Get("hint.loan");
+        HintDateBs = _loc.Get("hint.date_bs");
 
         OnPropertyChanged(nameof(ModeInterestLabel));
         OnPropertyChanged(nameof(ModeEmiLabel));

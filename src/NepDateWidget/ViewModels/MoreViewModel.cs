@@ -16,23 +16,109 @@ public sealed class MoreViewModel : ViewModelBase
     private readonly IReminderService? _reminderService;
     private readonly IDocumentService? _documentService;
 
-    // ── Mode toggle (Documents | Notes | Reminders) ──────────────────────────
+    // ── Sub-view navigation (null = icon grid) ───────────────────────────────
 
-    private int _modeIndex = 1; // default to Notes tab
+    private string? _currentSubView;
+    public string? CurrentSubView
+    {
+        get => _currentSubView;
+        private set
+        {
+            if (SetProperty(ref _currentSubView, value))
+            {
+                OnPropertyChanged(nameof(IsGridVisible));
+                OnPropertyChanged(nameof(IsSubViewDocuments));
+                OnPropertyChanged(nameof(IsSubViewNotes));
+                OnPropertyChanged(nameof(IsSubViewReminders));
+                OnPropertyChanged(nameof(IsSubViewIdPhoto));
+                OnPropertyChanged(nameof(IsSubViewQrCode));
+                OnPropertyChanged(nameof(IsSubViewImageTools));
+                OnPropertyChanged(nameof(CurrentSubViewTitle));
+                OnPropertyChanged(nameof(CurrentSubViewHelpKey));
+            }
+        }
+    }
+
+    public bool IsGridVisible => _currentSubView is null;
+    public bool IsSubViewDocuments => _currentSubView == "Documents";
+    public bool IsSubViewNotes => _currentSubView == "Notes";
+    public bool IsSubViewReminders => _currentSubView == "Reminders";
+    public bool IsSubViewIdPhoto => _currentSubView == "IdPhoto";
+    public bool IsSubViewQrCode        => _currentSubView == "QrCode";
+    public bool IsSubViewImageTools     => _currentSubView == "ImageTools";
+
+    public string CurrentSubViewTitle => _currentSubView switch
+    {
+        "Notes" => NotesHeadingLabel,
+        "Reminders" => RemindersHeadingLabel,
+        "Documents" => DocsHeadingLabel,
+        "IdPhoto" => IdPhotoNavLabel,
+        "QrCode"         => QrCodeNavLabel,
+        "ImageTools"     => ImageToolsNavLabel,
+        _ => _currentSubView ?? string.Empty
+    };
+
+    public string CurrentSubViewHelpKey => _currentSubView switch
+    {
+        "Notes" => "help.more.notes",
+        "Reminders" => "help.more.reminders",
+        "Documents" => "help.more.documents",
+        "IdPhoto" => "help.idphoto",
+        "QrCode"         => "help.qrcode",
+        "ImageTools"     => "help.imgtools",
+        _ => string.Empty
+    };
+
+    public ICommand NavigateToCommand { get; private set; } = null!;
+    public ICommand GoBackCommand { get; private set; } = null!;
+
+    // ── Sub-ViewModels ───────────────────────────────────────────────────────
+
+    public IdPhotoViewModel IdPhoto { get; private set; } = null!;
+    public QrCodeViewModel QrCode { get; private set; } = null!;
+    public ImageToolsViewModel? ImageTools { get; private set; }
+    public string ImageToolsNavLabel { get; private set; } = string.Empty;
+
+    // ── Mode toggle (Documents | Notes | Reminders) ──────────────────────────
+    // Kept for cancel-on-navigate logic. Not used by MoreView.xaml directly -
+    // IsSubViewXxx properties drive visibility instead.
+
+    private int _modeIndex = 1; // 1 = Notes (default visible sub-view when navigating directly)
     public bool IsModeDocuments => _modeIndex == 0;
-    public bool IsModeNotes     => _modeIndex == 1;
+    public bool IsModeNotes => _modeIndex == 1;
     public bool IsModeReminders => _modeIndex == 2;
 
     private void SetMode(int index)
     {
-        if (_modeIndex == index) return;
-        if (_modeIndex == 0) DoCancelDocumentEdit();
-        if (_modeIndex == 1) DoCancelNoteForm();
-        if (_modeIndex == 2) DoCancelReminderForm();
+        // Skip re-entry only when this sub-view is ALREADY visible (CurrentSubView is set).
+        // When the grid is showing (CurrentSubView == null) always execute, even if modeIndex
+        // already matches - otherwise the initial grid → Notes tile click never navigates.
+        if (_modeIndex == index && _currentSubView is not null)
+        {
+            return;
+        }
+
+        if (_modeIndex == 0)
+        {
+            DoCancelDocumentEdit();
+        }
+
+        if (_modeIndex == 1)
+        {
+            DoCancelNoteForm();
+        }
+
+        if (_modeIndex == 2)
+        {
+            DoCancelReminderForm();
+        }
+
         _modeIndex = index;
         OnPropertyChanged(nameof(IsModeDocuments));
         OnPropertyChanged(nameof(IsModeNotes));
         OnPropertyChanged(nameof(IsModeReminders));
+        // Sync navigation state so CurrentSubView always reflects the active mode.
+        CurrentSubView = index switch { 0 => "Documents", 1 => "Notes", 2 => "Reminders", _ => null };
     }
 
     public ICommand SetModeDocumentsCommand { get; }
@@ -69,7 +155,9 @@ public sealed class MoreViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _noteFormDateInput, value))
+            {
                 NoteFormError = string.Empty;
+            }
         }
     }
 
@@ -87,7 +175,9 @@ public sealed class MoreViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _noteFormError, value))
+            {
                 OnPropertyChanged(nameof(HasNoteFormError));
+            }
         }
     }
     public bool HasNoteFormError => !string.IsNullOrEmpty(_noteFormError);
@@ -121,13 +211,13 @@ public sealed class MoreViewModel : ViewModelBase
             }
         }
     }
-    public bool IsNoteSearchActive    => !string.IsNullOrWhiteSpace(_noteSearchText);
+    public bool IsNoteSearchActive => !string.IsNullOrWhiteSpace(_noteSearchText);
     public bool NoteSearchClearVisible => IsNoteSearchActive;
 
     private IReadOnlyList<NoteItemViewModel> _filteredNotes = Array.Empty<NoteItemViewModel>();
-    public  IReadOnlyList<NoteItemViewModel> FilteredNotes => _filteredNotes;
-    public bool HasFilteredNotes  => _filteredNotes.Count > 0;
-    public bool ShowNoteEmpty     => !HasNotes && !IsNoteFormOpen;
+    public IReadOnlyList<NoteItemViewModel> FilteredNotes => _filteredNotes;
+    public bool HasFilteredNotes => _filteredNotes.Count > 0;
+    public bool ShowNoteEmpty => !HasNotes && !IsNoteFormOpen;
     public bool ShowNoteNoResults => HasNotes && IsNoteSearchActive && !HasFilteredNotes;
 
     // ── Reminders ─────────────────────────────────────────────────
@@ -164,7 +254,13 @@ public sealed class MoreViewModel : ViewModelBase
     public string ReminderFormTitle
     {
         get => _reminderFormTitle;
-        set { if (SetProperty(ref _reminderFormTitle, value)) ReminderTitleError = string.Empty; }
+        set
+        {
+            if (SetProperty(ref _reminderFormTitle, value))
+            {
+                ReminderTitleError = string.Empty;
+            }
+        }
     }
 
     private string _reminderFormTime = "9:00";
@@ -187,7 +283,7 @@ public sealed class MoreViewModel : ViewModelBase
             }
         }
     }
-    public bool   ReminderFormIsPm  => !_reminderFormIsAm;
+    public bool ReminderFormIsPm => !_reminderFormIsAm;
     public string ReminderAmPmLabel => _reminderFormIsAm ? "AM" : "PM";
 
     private string _reminderFormNotes = string.Empty;
@@ -197,7 +293,9 @@ public sealed class MoreViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _reminderFormNotes, value?.Length > 500 ? value[..500] : value ?? string.Empty))
+            {
                 OnPropertyChanged(nameof(ReminderFormNotesLength));
+            }
         }
     }
     public int ReminderFormNotesLength => _reminderFormNotes.Length;
@@ -206,7 +304,13 @@ public sealed class MoreViewModel : ViewModelBase
     public int ReminderFormRecurrenceIndex
     {
         get => _reminderFormRecurrenceIndex;
-        set { if (SetProperty(ref _reminderFormRecurrenceIndex, value)) OnPropertyChanged(nameof(ShowReminderEndDate)); }
+        set
+        {
+            if (SetProperty(ref _reminderFormRecurrenceIndex, value))
+            {
+                OnPropertyChanged(nameof(ShowReminderEndDate));
+            }
+        }
     }
     public bool ShowReminderEndDate => _reminderFormRecurrenceIndex > 0;
 
@@ -222,7 +326,13 @@ public sealed class MoreViewModel : ViewModelBase
     public string ReminderTitleError
     {
         get => _reminderTitleError;
-        private set { if (SetProperty(ref _reminderTitleError, value)) OnPropertyChanged(nameof(HasReminderTitleError)); }
+        private set
+        {
+            if (SetProperty(ref _reminderTitleError, value))
+            {
+                OnPropertyChanged(nameof(HasReminderTitleError));
+            }
+        }
     }
     public bool HasReminderTitleError => !string.IsNullOrEmpty(_reminderTitleError);
 
@@ -285,7 +395,7 @@ public sealed class MoreViewModel : ViewModelBase
             }
         }
     }
-    public bool IsReminderSearchActive    => !string.IsNullOrWhiteSpace(_reminderSearchText);
+    public bool IsReminderSearchActive => !string.IsNullOrWhiteSpace(_reminderSearchText);
     public bool ReminderSearchClearVisible => IsReminderSearchActive;
 
     private bool _showCompletedReminders;
@@ -301,14 +411,14 @@ public sealed class MoreViewModel : ViewModelBase
             }
         }
     }
-    public int  CompletedRemindersCount => Reminders.Count(r => r.IsCompleted);
-    public bool HasCompletedReminders   => CompletedRemindersCount > 0;
-    public string ToggleCompletedLabel  => _showCompletedReminders ? HideCompletedLabel : ShowCompletedLabel;
+    public int CompletedRemindersCount => Reminders.Count(r => r.IsCompleted);
+    public bool HasCompletedReminders => CompletedRemindersCount > 0;
+    public string ToggleCompletedLabel => _showCompletedReminders ? HideCompletedLabel : ShowCompletedLabel;
 
     private IReadOnlyList<ReminderItemViewModel> _filteredReminders = Array.Empty<ReminderItemViewModel>();
-    public  IReadOnlyList<ReminderItemViewModel> FilteredReminders => _filteredReminders;
-    public bool HasFilteredReminders  => _filteredReminders.Count > 0;
-    public bool ShowReminderEmpty     => !HasReminders && !IsReminderFormOpen;
+    public IReadOnlyList<ReminderItemViewModel> FilteredReminders => _filteredReminders;
+    public bool HasFilteredReminders => _filteredReminders.Count > 0;
+    public bool ShowReminderEmpty => !HasReminders && !IsReminderFormOpen;
     public bool ShowReminderNoResults => HasReminders && IsReminderSearchActive && !HasFilteredReminders;
 
     // ── Documents ────────────────────────────────────────────────────────────
@@ -351,7 +461,9 @@ public sealed class MoreViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _isEditingDoc, value))
+            {
                 OnPropertyChanged(nameof(DocFormTitleLabel));
+            }
         }
     }
 
@@ -396,9 +508,9 @@ public sealed class MoreViewModel : ViewModelBase
             }
         }
     }
-    public bool   DocEditHasFile        => !string.IsNullOrWhiteSpace(_docEditFilePath);
-    public string DocEditFileName       => DocEditHasFile ? Path.GetFileName(_docEditFilePath) : string.Empty;
-    public string DocEditFileExtension  => DocEditHasFile ? Path.GetExtension(_docEditFilePath).TrimStart('.').ToUpperInvariant() : string.Empty;
+    public bool DocEditHasFile => !string.IsNullOrWhiteSpace(_docEditFilePath);
+    public string DocEditFileName => DocEditHasFile ? Path.GetFileName(_docEditFilePath) : string.Empty;
+    public string DocEditFileExtension => DocEditHasFile ? Path.GetExtension(_docEditFilePath).TrimStart('.').ToUpperInvariant() : string.Empty;
 
     private string _docEditNotes = string.Empty;
     public string DocEditNotes
@@ -414,7 +526,9 @@ public sealed class MoreViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _docEditError, value))
+            {
                 OnPropertyChanged(nameof(HasDocEditError));
+            }
         }
     }
     public bool HasDocEditError => !string.IsNullOrEmpty(_docEditError);
@@ -435,14 +549,14 @@ public sealed class MoreViewModel : ViewModelBase
             }
         }
     }
-    public bool IsDocSearchActive    => !string.IsNullOrWhiteSpace(_docSearchText);
+    public bool IsDocSearchActive => !string.IsNullOrWhiteSpace(_docSearchText);
     public bool DocSearchClearVisible => IsDocSearchActive;
 
     private IReadOnlyList<DocItemViewModel> _filteredDocuments = Array.Empty<DocItemViewModel>();
-    public  IReadOnlyList<DocItemViewModel> FilteredDocuments => _filteredDocuments;
+    public IReadOnlyList<DocItemViewModel> FilteredDocuments => _filteredDocuments;
     public bool HasFilteredDocuments => _filteredDocuments.Count > 0;
 
-    public bool ShowDocEmpty     => !HasDocuments && !IsDocFormOpen;
+    public bool ShowDocEmpty => !HasDocuments && !IsDocFormOpen;
     public bool ShowDocNoResults => HasDocuments && IsDocSearchActive && !HasFilteredDocuments;
 
     public ObservableCollection<string> DocSearchSuggestions { get; } = new();
@@ -456,104 +570,113 @@ public sealed class MoreViewModel : ViewModelBase
 
     // ── Labels ───────────────────────────────────────────────────────────────
 
-    public string NotesHeadingLabel    { get; private set; } = string.Empty;
-    public string RemindersHeadingLabel{ get; private set; } = string.Empty;
-    public string NoNotesLabel         { get; private set; } = string.Empty;
-    public string NoRemindersLabel     { get; private set; } = string.Empty;
-    public string NoNotesHintLabel     { get; private set; } = string.Empty;
+    public string NotesHeadingLabel { get; private set; } = string.Empty;
+    public string RemindersHeadingLabel { get; private set; } = string.Empty;
+    public string NoNotesLabel { get; private set; } = string.Empty;
+    public string NoRemindersLabel { get; private set; } = string.Empty;
+    public string NoNotesHintLabel { get; private set; } = string.Empty;
     public string NoRemindersHintLabel { get; private set; } = string.Empty;
-    public string AddNoteLabel              { get; private set; } = string.Empty;
-    public string NoteSearchHintLabel       { get; private set; } = string.Empty;
-    public string NoNoteResultsLabel        { get; private set; } = string.Empty;
-    public string AddReminderLabel          { get; private set; } = string.Empty;
-    public string ReminderSearchHintLabel   { get; private set; } = string.Empty;
-    public string NoReminderResultsLabel    { get; private set; } = string.Empty;
-    public string ShowCompletedLabel        { get; private set; } = string.Empty;
-    public string HideCompletedLabel        { get; private set; } = string.Empty;
-    public string ReminderFieldTitleLabel   { get; private set; } = string.Empty;
-    public string ReminderFieldDateLabel    { get; private set; } = string.Empty;
-    public string ReminderFieldTimeLabel    { get; private set; } = string.Empty;
-    public string ReminderFieldNotesLabel   { get; private set; } = string.Empty;
-    public string ReminderFieldRecurLabel   { get; private set; } = string.Empty;
+    public string AddNoteLabel { get; private set; } = string.Empty;
+    public string NoteSearchHintLabel { get; private set; } = string.Empty;
+    public string NoNoteResultsLabel { get; private set; } = string.Empty;
+    public string AddReminderLabel { get; private set; } = string.Empty;
+    public string ReminderSearchHintLabel { get; private set; } = string.Empty;
+    public string NoReminderResultsLabel { get; private set; } = string.Empty;
+    public string ShowCompletedLabel { get; private set; } = string.Empty;
+    public string HideCompletedLabel { get; private set; } = string.Empty;
+    public string ReminderFieldTitleLabel { get; private set; } = string.Empty;
+    public string ReminderFieldDateLabel { get; private set; } = string.Empty;
+    public string ReminderFieldTimeLabel { get; private set; } = string.Empty;
+    public string ReminderFieldNotesLabel { get; private set; } = string.Empty;
+    public string ReminderFieldRecurLabel { get; private set; } = string.Empty;
     public string ReminderFieldEndDateLabel { get; private set; } = string.Empty;
-    public string ReminderDateInvalidLabel  { get; private set; } = string.Empty;
-    public string ReminderDatePastLabel     { get; private set; } = string.Empty;
-    public string ReminderTimeInvalidLabel  { get; private set; } = string.Empty;
-    public string ReminderEndDateInvalidLabel    { get; private set; } = string.Empty;
-    public string ReminderEndDateBeforeStartLabel{ get; private set; } = string.Empty;
-    public string ReminderTitleRequiredLabel     { get; private set; } = string.Empty;
-    public string NoteFieldDateLabel        { get; private set; } = string.Empty;
-    public string NoteFieldTextLabel        { get; private set; } = string.Empty;
-    public string NoteDateFormatHintLabel   { get; private set; } = string.Empty;
+    public string ReminderDateInvalidLabel { get; private set; } = string.Empty;
+    public string ReminderDatePastLabel { get; private set; } = string.Empty;
+    public string ReminderTimeInvalidLabel { get; private set; } = string.Empty;
+    public string ReminderEndDateInvalidLabel { get; private set; } = string.Empty;
+    public string ReminderEndDateBeforeStartLabel { get; private set; } = string.Empty;
+    public string ReminderTitleRequiredLabel { get; private set; } = string.Empty;
+    public string NoteFieldDateLabel { get; private set; } = string.Empty;
+    public string NoteFieldTextLabel { get; private set; } = string.Empty;
+    public string NoteDateFormatHintLabel { get; private set; } = string.Empty;
     public IReadOnlyList<string> ReminderRecurrenceOptions { get; private set; } = Array.Empty<string>();
-    public string HintReminderTitle         { get; private set; } = string.Empty;
-    public string HintReminderDate          { get; private set; } = string.Empty;
-    public string HintReminderTime          { get; private set; } = string.Empty;
-    public string HintReminderNotes         { get; private set; } = string.Empty;
-    public string SaveLabel            { get; private set; } = string.Empty;
-    public string CancelLabel          { get; private set; } = string.Empty;
-    public string DeleteLabel          { get; private set; } = string.Empty;
-    public string EditLabel            { get; private set; } = string.Empty;
+    public string HintReminderTitle { get; private set; } = string.Empty;
+    public string HintReminderDate { get; private set; } = string.Empty;
+    public string HintReminderTime { get; private set; } = string.Empty;
+    public string HintReminderNotes { get; private set; } = string.Empty;
+    public string SaveLabel { get; private set; } = string.Empty;
+    public string SaveNoteLabel { get; private set; } = string.Empty;
+    public string SaveReminderLabel { get; private set; } = string.Empty;
+    public string SaveDocLabel { get; private set; } = string.Empty;
+    public string CancelLabel { get; private set; } = string.Empty;
+    public string DeleteLabel { get; private set; } = string.Empty;
+    public string EditLabel { get; private set; } = string.Empty;
 
-    public string DocsHeadingLabel      { get; private set; } = string.Empty;
-    public string NoDocsLabel           { get; private set; } = string.Empty;
-    public string NoDocsHintLabel       { get; private set; } = string.Empty;
-    public string NoDocsResultsLabel    { get; private set; } = string.Empty;
-    public string AddDocLabel           { get; private set; } = string.Empty;
-    public string DocBrowseLabel        { get; private set; } = string.Empty;
-    public string DocOpenLabel          { get; private set; } = string.Empty;
-    public string DocFileNotFoundLabel  { get; private set; } = string.Empty;
+    public string EssentialsHeadingLabel { get; private set; } = string.Empty;
+    public string ToolsHeadingLabel { get; private set; } = string.Empty;
+    public string IdPhotoNavLabel { get; private set; } = string.Empty;
+    public string QrCodeNavLabel        { get; private set; } = string.Empty;
+
+    public string DocsHeadingLabel { get; private set; } = string.Empty;
+    public string NoDocsLabel { get; private set; } = string.Empty;
+    public string NoDocsHintLabel { get; private set; } = string.Empty;
+    public string NoDocsResultsLabel { get; private set; } = string.Empty;
+    public string AddDocLabel { get; private set; } = string.Empty;
+    public string DocBrowseLabel { get; private set; } = string.Empty;
+    public string DocOpenLabel { get; private set; } = string.Empty;
+    public string DocFileNotFoundLabel { get; private set; } = string.Empty;
     public string DocTitleRequiredLabel { get; private set; } = string.Empty;
-    public string DocFileRequiredLabel  { get; private set; } = string.Empty;
-    public string DocNoFileHintLabel    { get; private set; } = string.Empty;
-    public string DocFieldTitleLabel    { get; private set; } = string.Empty;
-    public string DocFieldTagsLabel     { get; private set; } = string.Empty;
-    public string DocFieldFileLabel     { get; private set; } = string.Empty;
-    public string DocFieldNotesLabel    { get; private set; } = string.Empty;
-    public string DocClearFileLabel     { get; private set; } = string.Empty;
-    public string DocSearchHintLabel    { get; private set; } = string.Empty;
+    public string DocFileRequiredLabel { get; private set; } = string.Empty;
+    public string DocNoFileHintLabel { get; private set; } = string.Empty;
+    public string DocFieldTitleLabel { get; private set; } = string.Empty;
+    public string DocFieldTagsLabel { get; private set; } = string.Empty;
+    public string DocFieldFileLabel { get; private set; } = string.Empty;
+    public string DocFieldNotesLabel { get; private set; } = string.Empty;
+    public string DocClearFileLabel { get; private set; } = string.Empty;
+    public string DocDropLabel { get; private set; } = string.Empty;
+    public string DocSearchHintLabel { get; private set; } = string.Empty;
     public string DocDuplicateTitleLabel { get; private set; } = string.Empty;
 
     // ── Commands ─────────────────────────────────────────────────────────────
 
-    public ICommand DeleteNoteCommand        { get; }
-    public ICommand StartEditNoteCommand     { get; }
-    public ICommand SaveNoteCommand          { get; }
-    public ICommand CancelNoteEditCommand    { get; }
-    public ICommand AddNoteCommand           { get; }
-    public ICommand ClearNoteSearchCommand   { get; }
-    public ICommand SaveNoteFormCommand      { get; }
-    public ICommand CancelNoteFormCommand    { get; }
-    public ICommand DeleteReminderCommand    { get; }
-    public ICommand EditReminderCommand      { get; }
-    public ICommand AddNewReminderCommand    { get; }
-    public ICommand ClearReminderSearchCommand  { get; }
-    public ICommand ToggleShowCompletedCommand   { get; }
-    public ICommand SaveReminderFormCommand  { get; }
-    public ICommand CancelReminderFormCommand{ get; }
+    public ICommand DeleteNoteCommand { get; }
+    public ICommand StartEditNoteCommand { get; }
+    public ICommand SaveNoteCommand { get; }
+    public ICommand CancelNoteEditCommand { get; }
+    public ICommand AddNoteCommand { get; }
+    public ICommand ClearNoteSearchCommand { get; }
+    public ICommand SaveNoteFormCommand { get; }
+    public ICommand CancelNoteFormCommand { get; }
+    public ICommand DeleteReminderCommand { get; }
+    public ICommand EditReminderCommand { get; }
+    public ICommand AddNewReminderCommand { get; }
+    public ICommand ClearReminderSearchCommand { get; }
+    public ICommand ToggleShowCompletedCommand { get; }
+    public ICommand SaveReminderFormCommand { get; }
+    public ICommand CancelReminderFormCommand { get; }
     public ICommand SetReminderAmCommand { get; }
     public ICommand SetReminderPmCommand { get; }
     public ICommand ToggleReminderAmPmCommand { get; }
 
-    public ICommand ShowAddDocumentCommand      { get; }
-    public ICommand SaveDocumentCommand         { get; }
-    public ICommand CancelDocumentEditCommand   { get; }
-    public ICommand BrowseDocumentFileCommand   { get; }
-    public ICommand ClearDocumentFileCommand    { get; }
-    public ICommand DeleteDocumentCommand       { get; }
-    public ICommand EditDocumentCommand         { get; }
-    public ICommand OpenDocumentCommand         { get; }
-    public ICommand OpenDocumentFolderCommand   { get; }
-    public ICommand SetDocTitlePresetCommand    { get; }
-    public ICommand AddDocTagPresetCommand      { get; }
-    public ICommand AddDocTagFromInputCommand   { get; }
-    public ICommand RemoveDocTagCommand         { get; }
-    public ICommand DocSearchGotFocusCommand    { get; }
-    public ICommand DocSearchLostFocusCommand   { get; }
-    public ICommand SelectDocSuggestionCommand  { get; }
-    public ICommand CommitDocSearchCommand      { get; }
-    public ICommand ClearDocSearchCommand       { get; }
-    public ICommand OpenHelpCommand              { get; }
+    public ICommand ShowAddDocumentCommand { get; }
+    public ICommand SaveDocumentCommand { get; }
+    public ICommand CancelDocumentEditCommand { get; }
+    public ICommand BrowseDocumentFileCommand { get; }
+    public ICommand ClearDocumentFileCommand { get; }
+    public ICommand DeleteDocumentCommand { get; }
+    public ICommand EditDocumentCommand { get; }
+    public ICommand OpenDocumentCommand { get; }
+    public ICommand OpenDocumentFolderCommand { get; }
+    public ICommand SetDocTitlePresetCommand { get; }
+    public ICommand AddDocTagPresetCommand { get; }
+    public ICommand AddDocTagFromInputCommand { get; }
+    public ICommand RemoveDocTagCommand { get; }
+    public ICommand DocSearchGotFocusCommand { get; }
+    public ICommand DocSearchLostFocusCommand { get; }
+    public ICommand SelectDocSuggestionCommand { get; }
+    public ICommand CommitDocSearchCommand { get; }
+    public ICommand ClearDocSearchCommand { get; }
+    public ICommand OpenHelpCommand { get; }
 
     // No popup events - add/edit is now handled inline within this ViewModel.
 
@@ -567,56 +690,105 @@ public sealed class MoreViewModel : ViewModelBase
         INotesService? notesService = null,
         IReminderService? reminderService = null,
         IDocumentService? documentService = null,
-        INepaliDateAdapter? adapter = null)
+        INepaliDateAdapter? adapter = null,
+        IFileTypeService? fileTypeService = null,
+        IJobOrchestrationService? jobOrchestrationService = null,
+        IImageConversionService? imageConversionService = null)
     {
-        _loc            = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
-        _notesService   = notesService;
+        _loc = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
+        _notesService = notesService;
         _reminderService = reminderService;
         _documentService = documentService;
-        _adapter        = adapter;
+        _adapter = adapter;
 
-        DeleteNoteCommand        = new RelayCommand<string>(DoDeleteNote);
-        StartEditNoteCommand     = new RelayCommand<string>(DoStartEditNote);
-        SaveNoteCommand          = new RelayCommand(DoSaveNote);
-        CancelNoteEditCommand    = new RelayCommand(DoCancelNoteEdit);
-        AddNoteCommand           = new RelayCommand(DoShowAddNoteForm);
-        ClearNoteSearchCommand   = new RelayCommand(() => NoteSearchText = string.Empty);
-        SaveNoteFormCommand      = new RelayCommand(DoSaveNoteForm);
-        CancelNoteFormCommand    = new RelayCommand(DoCancelNoteForm);
-        DeleteReminderCommand    = new RelayCommand<string>(DoDeleteReminder);
-        EditReminderCommand      = new RelayCommand<string>(DoShowEditReminderForm);
-        AddNewReminderCommand    = new RelayCommand(DoShowAddReminderForm);
-        ClearReminderSearchCommand       = new RelayCommand(() => ReminderSearchText = string.Empty);
-        ToggleShowCompletedCommand        = new RelayCommand(() => ShowCompletedReminders = !_showCompletedReminders);
-        SaveReminderFormCommand  = new RelayCommand(DoSaveReminderForm);
-        CancelReminderFormCommand= new RelayCommand(DoCancelReminderForm);
-        SetReminderAmCommand      = new RelayCommand(() => ReminderFormIsAm = true);
-        SetReminderPmCommand      = new RelayCommand(() => ReminderFormIsAm = false);
+        // Navigation
+        NavigateToCommand = new RelayCommand<string>(name =>
+        {
+            if (name is null)
+            {
+                return;
+            }
+
+            switch (name)
+            {
+                case "Documents": SetMode(0); break;
+                case "Notes": SetMode(1); break;
+                case "Reminders": SetMode(2); break;
+                default: CurrentSubView = name; break;
+            }
+        });
+        GoBackCommand = new RelayCommand(() =>
+        {
+            if (_currentSubView == "Documents")
+            {
+                DoCancelDocumentEdit();
+            }
+            else if (_currentSubView == "Notes")
+            {
+                DoCancelNoteForm();
+            }
+            else if (_currentSubView == "Reminders")
+            {
+                DoCancelReminderForm();
+            }
+
+            _modeIndex = -1;
+            OnPropertyChanged(nameof(IsModeDocuments));
+            OnPropertyChanged(nameof(IsModeNotes));
+            OnPropertyChanged(nameof(IsModeReminders));
+            CurrentSubView = null;
+        });
+
+        // IdPhoto / QrCode / ImageTools sub-ViewModels
+        IdPhoto = new IdPhotoViewModel(localizationService);
+        QrCode  = new QrCodeViewModel(localizationService);
+        if (fileTypeService is not null && jobOrchestrationService is not null && imageConversionService is not null)
+        {
+            ImageTools = new ImageToolsViewModel(fileTypeService, jobOrchestrationService, imageConversionService, localizationService);
+        }
+
+        DeleteNoteCommand = new RelayCommand<string>(DoDeleteNote);
+        StartEditNoteCommand = new RelayCommand<string>(DoStartEditNote);
+        SaveNoteCommand = new RelayCommand(DoSaveNote);
+        CancelNoteEditCommand = new RelayCommand(DoCancelNoteEdit);
+        AddNoteCommand = new RelayCommand(DoShowAddNoteForm);
+        ClearNoteSearchCommand = new RelayCommand(() => NoteSearchText = string.Empty);
+        SaveNoteFormCommand = new RelayCommand(DoSaveNoteForm);
+        CancelNoteFormCommand = new RelayCommand(DoCancelNoteForm);
+        DeleteReminderCommand = new RelayCommand<string>(DoDeleteReminder);
+        EditReminderCommand = new RelayCommand<string>(DoShowEditReminderForm);
+        AddNewReminderCommand = new RelayCommand(DoShowAddReminderForm);
+        ClearReminderSearchCommand = new RelayCommand(() => ReminderSearchText = string.Empty);
+        ToggleShowCompletedCommand = new RelayCommand(() => ShowCompletedReminders = !_showCompletedReminders);
+        SaveReminderFormCommand = new RelayCommand(DoSaveReminderForm);
+        CancelReminderFormCommand = new RelayCommand(DoCancelReminderForm);
+        SetReminderAmCommand = new RelayCommand(() => ReminderFormIsAm = true);
+        SetReminderPmCommand = new RelayCommand(() => ReminderFormIsAm = false);
         ToggleReminderAmPmCommand = new RelayCommand(() => ReminderFormIsAm = !_reminderFormIsAm);
 
         SetModeDocumentsCommand = new RelayCommand(() => SetMode(0));
-        SetModeNotesCommand     = new RelayCommand(() => SetMode(1));
+        SetModeNotesCommand = new RelayCommand(() => SetMode(1));
         SetModeRemindersCommand = new RelayCommand(() => SetMode(2));
 
-        ShowAddDocumentCommand    = new RelayCommand(DoShowAddDocument);
-        SaveDocumentCommand       = new RelayCommand(DoSaveDocument);
+        ShowAddDocumentCommand = new RelayCommand(DoShowAddDocument);
+        SaveDocumentCommand = new RelayCommand(DoSaveDocument);
         CancelDocumentEditCommand = new RelayCommand(DoCancelDocumentEdit);
         BrowseDocumentFileCommand = new RelayCommand(DoBrowseDocumentFile);
-        ClearDocumentFileCommand  = new RelayCommand(() => DocEditFilePath = string.Empty);
-        DeleteDocumentCommand     = new RelayCommand<string>(DoDeleteDocument);
-        EditDocumentCommand       = new RelayCommand<string>(DoEditDocument);
-        OpenDocumentCommand       = new RelayCommand<string>(DoOpenDocument);
+        ClearDocumentFileCommand = new RelayCommand(() => DocEditFilePath = string.Empty);
+        DeleteDocumentCommand = new RelayCommand<string>(DoDeleteDocument);
+        EditDocumentCommand = new RelayCommand<string>(DoEditDocument);
+        OpenDocumentCommand = new RelayCommand<string>(DoOpenDocument);
         OpenDocumentFolderCommand = new RelayCommand<string>(DoOpenDocumentFolder);
-        SetDocTitlePresetCommand  = new RelayCommand<string>(t => { if (t is not null) DocEditTitle = t; });
-        AddDocTagPresetCommand    = new RelayCommand<string>(DoAddDocTagPreset);
+        SetDocTitlePresetCommand = new RelayCommand<string>(t => { if (t is not null) { DocEditTitle = t; } });
+        AddDocTagPresetCommand = new RelayCommand<string>(DoAddDocTagPreset);
         AddDocTagFromInputCommand = new RelayCommand(DoAddDocTagFromInput);
-        RemoveDocTagCommand       = new RelayCommand<string>(DoRemoveDocTag);
-        DocSearchGotFocusCommand  = new RelayCommand(DoDocSearchGotFocus);
+        RemoveDocTagCommand = new RelayCommand<string>(DoRemoveDocTag);
+        DocSearchGotFocusCommand = new RelayCommand(DoDocSearchGotFocus);
         DocSearchLostFocusCommand = new RelayCommand(DoDocSearchLostFocus);
         SelectDocSuggestionCommand = new RelayCommand<string>(DoSelectDocSuggestion);
-        CommitDocSearchCommand    = new RelayCommand(CommitDocSearch);
-        ClearDocSearchCommand     = new RelayCommand(DoClearDocSearch);
-        OpenHelpCommand           = new RelayCommand<string>(key =>
+        CommitDocSearchCommand = new RelayCommand(CommitDocSearch);
+        ClearDocSearchCommand = new RelayCommand(DoClearDocSearch);
+        OpenHelpCommand = new RelayCommand<string>(key =>
         {
             var shell = System.Windows.Application.Current.Windows
                 .OfType<NepDateWidget.Views.ExpandedShellWindow>()
@@ -625,12 +797,11 @@ public sealed class MoreViewModel : ViewModelBase
             NepDateWidget.Views.HelpPopup.ShowFor(key!, _loc, shell);
         });
 
-        if (_notesService is not null)
-            _notesService.NotesChanged += (_, _) => RefreshNotes();
-        if (_reminderService is not null)
-            _reminderService.RemindersChanged += (_, _) => RefreshReminders();
-        if (_documentService is not null)
-            _documentService.DocumentsChanged += (_, _) => RefreshDocuments();
+        _notesService?.NotesChanged += (_, _) => RefreshNotes();
+
+        _reminderService?.RemindersChanged += (_, _) => RefreshReminders();
+
+        _documentService?.DocumentsChanged += (_, _) => RefreshDocuments();
 
         RefreshLabels();
         RefreshNotes();
@@ -683,6 +854,9 @@ public sealed class MoreViewModel : ViewModelBase
         RefreshNotes();
         RefreshReminders();
         RefreshDocuments();
+        IdPhoto.OnLanguageChanged();
+        QrCode.OnLanguageChanged();
+        ImageTools?.OnLanguageChanged();
     }
 
     /// <summary>
@@ -705,14 +879,18 @@ public sealed class MoreViewModel : ViewModelBase
         SetMode(2);
 
         foreach (var r in Reminders)
+        {
             r.IsHighlighted = r.Id == reminderId;
+        }
 
         var timer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(3) };
         timer.Tick += (_, _) =>
         {
             timer.Stop();
             foreach (var r in Reminders)
+            {
                 r.IsHighlighted = false;
+            }
         };
         timer.Start();
     }
@@ -721,40 +899,40 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void RefreshLabels()
     {
-        NotesHeadingLabel    = _loc.Get("more.notes_heading");
-        RemindersHeadingLabel= _loc.Get("more.reminders_heading");
-        NoNotesLabel         = _loc.Get("more.no_notes");
-        NoRemindersLabel     = _loc.Get("more.no_reminders");
-        NoNotesHintLabel     = _loc.Get("more.no_notes_hint");
+        NotesHeadingLabel = _loc.Get("more.notes_heading");
+        RemindersHeadingLabel = _loc.Get("more.reminders_heading");
+        NoNotesLabel = _loc.Get("more.no_notes");
+        NoRemindersLabel = _loc.Get("more.no_reminders");
+        NoNotesHintLabel = _loc.Get("more.no_notes_hint");
         NoRemindersHintLabel = _loc.Get("more.no_reminders_hint");
-        AddNoteLabel              = _loc.Get("notes.add");
-        NoteSearchHintLabel       = _loc.Get("notes.search_hint");
-        NoNoteResultsLabel        = _loc.Get("notes.no_results");
-        NoteFieldDateLabel        = _loc.Get("notes.field_date");
-        NoteFieldTextLabel        = _loc.Get("notes.field_text");
-        NoteDateFormatHintLabel   = _loc.Get("hint.date_bs");
-        AddReminderLabel          = _loc.Get("reminders.add");
-        ReminderSearchHintLabel   = _loc.Get("reminders.search_hint");
-        NoReminderResultsLabel    = _loc.Get("reminders.no_results");
-        ShowCompletedLabel        = _loc.Get("reminders.show_completed");
-        HideCompletedLabel        = _loc.Get("reminders.hide_completed");
+        AddNoteLabel = _loc.Get("notes.add");
+        NoteSearchHintLabel = _loc.Get("notes.search_hint");
+        NoNoteResultsLabel = _loc.Get("notes.no_results");
+        NoteFieldDateLabel = _loc.Get("notes.field_date");
+        NoteFieldTextLabel = _loc.Get("notes.field_text");
+        NoteDateFormatHintLabel = _loc.Get("hint.date_bs");
+        AddReminderLabel = _loc.Get("reminders.add");
+        ReminderSearchHintLabel = _loc.Get("reminders.search_hint");
+        NoReminderResultsLabel = _loc.Get("reminders.no_results");
+        ShowCompletedLabel = _loc.Get("reminders.show_completed");
+        HideCompletedLabel = _loc.Get("reminders.hide_completed");
         OnPropertyChanged(nameof(ToggleCompletedLabel));
-        ReminderFieldTitleLabel   = _loc.Get("reminder.title");
-        ReminderFieldDateLabel    = _loc.Get("reminder.date");
-        ReminderFieldTimeLabel    = _loc.Get("reminder.time");
-        ReminderFieldNotesLabel   = _loc.Get("reminder.notes");
-        ReminderFieldRecurLabel   = _loc.Get("reminder.recurrence");
+        ReminderFieldTitleLabel = _loc.Get("reminder.title");
+        ReminderFieldDateLabel = _loc.Get("reminder.date");
+        ReminderFieldTimeLabel = _loc.Get("reminder.time");
+        ReminderFieldNotesLabel = _loc.Get("reminder.notes");
+        ReminderFieldRecurLabel = _loc.Get("reminder.recurrence");
         ReminderFieldEndDateLabel = _loc.Get("reminder.end_date");
-        ReminderDateInvalidLabel  = _loc.Get("reminder.date_invalid");
-        ReminderDatePastLabel     = _loc.Get("reminder.date_past");
-        ReminderTimeInvalidLabel  = _loc.Get("reminder.time_invalid");
-        ReminderEndDateInvalidLabel     = _loc.Get("reminder.end_date_invalid");
+        ReminderDateInvalidLabel = _loc.Get("reminder.date_invalid");
+        ReminderDatePastLabel = _loc.Get("reminder.date_past");
+        ReminderTimeInvalidLabel = _loc.Get("reminder.time_invalid");
+        ReminderEndDateInvalidLabel = _loc.Get("reminder.end_date_invalid");
         ReminderEndDateBeforeStartLabel = _loc.Get("reminder.end_date_before_start");
-        ReminderTitleRequiredLabel      = _loc.Get("reminder.title_required");
-        HintReminderTitle         = _loc.Get("hint.reminder_title");
-        HintReminderDate          = _loc.Get("hint.date_bs");
-        HintReminderTime          = _loc.Get("hint.reminder_time");
-        HintReminderNotes         = _loc.Get("hint.reminder_notes");
+        ReminderTitleRequiredLabel = _loc.Get("reminder.title_required");
+        HintReminderTitle = _loc.Get("hint.reminder_title");
+        HintReminderDate = _loc.Get("hint.date_bs");
+        HintReminderTime = _loc.Get("hint.reminder_time");
+        HintReminderNotes = _loc.Get("hint.reminder_notes");
         ReminderRecurrenceOptions = new[]
         {
             _loc.Get("reminder.recurrence_none"),
@@ -763,28 +941,37 @@ public sealed class MoreViewModel : ViewModelBase
             _loc.Get("reminder.recurrence_monthly"),
             _loc.Get("reminder.recurrence_yearly"),
         };
-        SaveLabel            = _loc.Get("more.save");
-        CancelLabel          = _loc.Get("more.cancel");
-        DeleteLabel          = _loc.Get("more.delete");
-        EditLabel            = _loc.Get("more.edit");
+        SaveLabel = _loc.Get("more.save");
+        SaveNoteLabel = _loc.Get("more.save_note");
+        SaveReminderLabel = _loc.Get("more.save_reminder");
+        SaveDocLabel = _loc.Get("more.save_doc");
+        CancelLabel = _loc.Get("more.cancel");
+        DeleteLabel = _loc.Get("more.delete");
+        EditLabel = _loc.Get("more.edit");
 
-        DocsHeadingLabel      = _loc.Get("docs.heading");
-        NoDocsLabel           = _loc.Get("docs.no_docs");
-        NoDocsHintLabel       = _loc.Get("docs.no_docs_hint");
-        NoDocsResultsLabel    = _loc.Get("docs.no_results");
-        AddDocLabel           = _loc.Get("docs.add");
-        DocBrowseLabel        = _loc.Get("docs.browse");
-        DocOpenLabel          = _loc.Get("docs.open");
-        DocFileNotFoundLabel  = _loc.Get("docs.file_not_found");
+        DocsHeadingLabel = _loc.Get("docs.heading");
+        EssentialsHeadingLabel = _loc.Get("more.essentials_heading");
+        ToolsHeadingLabel = _loc.Get("more.tools_heading");
+        IdPhotoNavLabel = _loc.Get("more.idphoto_label");
+        QrCodeNavLabel          = _loc.Get("more.qrcode_label");
+        ImageToolsNavLabel      = _loc.Get("more.imgtools_label");
+        NoDocsLabel = _loc.Get("docs.no_docs");
+        NoDocsHintLabel = _loc.Get("docs.no_docs_hint");
+        NoDocsResultsLabel = _loc.Get("docs.no_results");
+        AddDocLabel = _loc.Get("docs.add");
+        DocBrowseLabel = _loc.Get("docs.browse");
+        DocOpenLabel = _loc.Get("docs.open");
+        DocFileNotFoundLabel = _loc.Get("docs.file_not_found");
         DocTitleRequiredLabel = _loc.Get("docs.title_required");
-        DocFileRequiredLabel  = _loc.Get("docs.file_required");
-        DocNoFileHintLabel    = _loc.Get("docs.no_file_hint");
-        DocFieldTitleLabel    = _loc.Get("docs.field_title");
-        DocFieldTagsLabel     = _loc.Get("docs.field_tags");
-        DocFieldFileLabel     = _loc.Get("docs.field_file");
-        DocFieldNotesLabel    = _loc.Get("docs.field_notes");
-        DocClearFileLabel     = _loc.Get("docs.clear_file");
-        DocSearchHintLabel    = _loc.Get("docs.search_hint");
+        DocFileRequiredLabel = _loc.Get("docs.file_required");
+        DocNoFileHintLabel = _loc.Get("docs.no_file_hint");
+        DocFieldTitleLabel = _loc.Get("docs.field_title");
+        DocFieldTagsLabel = _loc.Get("docs.field_tags");
+        DocFieldFileLabel = _loc.Get("docs.field_file");
+        DocFieldNotesLabel = _loc.Get("docs.field_notes");
+        DocClearFileLabel = _loc.Get("docs.clear_file");
+        DocDropLabel = _loc.Get("docs.drop_label");
+        DocSearchHintLabel = _loc.Get("docs.search_hint");
         DocDuplicateTitleLabel = _loc.Get("docs.duplicate_title");
 
         OnPropertyChanged(nameof(NotesHeadingLabel));
@@ -820,10 +1007,18 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(HintReminderNotes));
         OnPropertyChanged(nameof(ReminderRecurrenceOptions));
         OnPropertyChanged(nameof(SaveLabel));
+        OnPropertyChanged(nameof(SaveNoteLabel));
+        OnPropertyChanged(nameof(SaveReminderLabel));
+        OnPropertyChanged(nameof(SaveDocLabel));
         OnPropertyChanged(nameof(CancelLabel));
         OnPropertyChanged(nameof(DeleteLabel));
         OnPropertyChanged(nameof(EditLabel));
         OnPropertyChanged(nameof(DocsHeadingLabel));
+        OnPropertyChanged(nameof(EssentialsHeadingLabel));
+        OnPropertyChanged(nameof(ToolsHeadingLabel));
+        OnPropertyChanged(nameof(IdPhotoNavLabel));
+        OnPropertyChanged(nameof(QrCodeNavLabel));
+        OnPropertyChanged(nameof(ImageToolsNavLabel));
         OnPropertyChanged(nameof(NoDocsLabel));
         OnPropertyChanged(nameof(NoDocsHintLabel));
         OnPropertyChanged(nameof(NoDocsResultsLabel));
@@ -840,17 +1035,26 @@ public sealed class MoreViewModel : ViewModelBase
         OnPropertyChanged(nameof(DocFieldFileLabel));
         OnPropertyChanged(nameof(DocFieldNotesLabel));
         OnPropertyChanged(nameof(DocClearFileLabel));
+        OnPropertyChanged(nameof(DocDropLabel));
         OnPropertyChanged(nameof(DocSearchHintLabel));
         OnPropertyChanged(nameof(DocDuplicateTitleLabel));
+        OnPropertyChanged(nameof(CurrentSubViewTitle));
     }
 
     public void RefreshNotes()
     {
         Notes.Clear();
         _editingNoteKey = null;
-        if (_notesService is null) return;
+        if (_notesService is null)
+        {
+            return;
+        }
+
         foreach (var (key, value) in _notesService.GetAll().OrderByDescending(kv => kv.Key))
+        {
             Notes.Add(new NoteItemViewModel(key, value));
+        }
+
         OnPropertyChanged(nameof(HasNotes));
         OnPropertyChanged(nameof(ShowNoteEmpty));
         UpdateFilteredNotes();
@@ -937,7 +1141,9 @@ public sealed class MoreViewModel : ViewModelBase
         {
             var existing = _notesService?.GetNote(dateKey);
             if (!string.IsNullOrEmpty(existing))
+            {
                 text = existing + "\n" + text;
+            }
         }
 
         _notesService?.SetNote(dateKey, text);
@@ -950,9 +1156,16 @@ public sealed class MoreViewModel : ViewModelBase
     public void RefreshReminders()
     {
         Reminders.Clear();
-        if (_reminderService is null) return;
+        if (_reminderService is null)
+        {
+            return;
+        }
+
         foreach (var r in _reminderService.GetAll().OrderByDescending(r => r.BsDate))
+        {
             Reminders.Add(new ReminderItemViewModel(r));
+        }
+
         OnPropertyChanged(nameof(HasReminders));
         OnPropertyChanged(nameof(ShowReminderEmpty));
         OnPropertyChanged(nameof(CompletedRemindersCount));
@@ -1027,9 +1240,17 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoShowEditReminderForm(string? id)
     {
-        if (id is null || _reminderService is null) return;
+        if (id is null || _reminderService is null)
+        {
+            return;
+        }
+
         var entry = _reminderService.GetAll().FirstOrDefault(r => r.Id == id);
-        if (entry is null) return;
+        if (entry is null)
+        {
+            return;
+        }
+
         DoCancelReminderForm();
         _editingReminderId = id;
         _reminderFormDate = entry.BsDate;
@@ -1051,10 +1272,10 @@ public sealed class MoreViewModel : ViewModelBase
     {
         if (!TimeSpan.TryParse(hhmm, out var ts)) { _reminderFormTime = "9:00"; _reminderFormIsAm = true; OnPropertyChanged(nameof(ReminderFormTime)); OnPropertyChanged(nameof(ReminderFormIsAm)); OnPropertyChanged(nameof(ReminderFormIsPm)); OnPropertyChanged(nameof(ReminderAmPmLabel)); return; }
         int h = ts.Hours, m = ts.Minutes;
-        if (h == 0)       { _reminderFormIsAm = true;  _reminderFormTime = $"12:{m:D2}"; }
-        else if (h < 12)  { _reminderFormIsAm = true;  _reminderFormTime = $"{h}:{m:D2}"; }
+        if (h == 0) { _reminderFormIsAm = true; _reminderFormTime = $"12:{m:D2}"; }
+        else if (h < 12) { _reminderFormIsAm = true; _reminderFormTime = $"{h}:{m:D2}"; }
         else if (h == 12) { _reminderFormIsAm = false; _reminderFormTime = $"12:{m:D2}"; }
-        else              { _reminderFormIsAm = false; _reminderFormTime = $"{h - 12}:{m:D2}"; }
+        else { _reminderFormIsAm = false; _reminderFormTime = $"{h - 12}:{m:D2}"; }
         OnPropertyChanged(nameof(ReminderFormTime));
         OnPropertyChanged(nameof(ReminderFormIsAm));
         OnPropertyChanged(nameof(ReminderFormIsPm));
@@ -1064,12 +1285,24 @@ public sealed class MoreViewModel : ViewModelBase
     private static bool TryParseTime12(string input, bool isAm, out string time24)
     {
         time24 = string.Empty;
-        if (string.IsNullOrWhiteSpace(input)) return false;
+        if (string.IsNullOrWhiteSpace(input))
+        {
+            return false;
+        }
+
         var match = _timePattern.Match(input.Trim());
-        if (!match.Success) return false;
+        if (!match.Success)
+        {
+            return false;
+        }
+
         int h = int.Parse(match.Groups[1].Value);
         int m = int.Parse(match.Groups[2].Value);
-        if (h < 1 || h > 12 || m < 0 || m > 59) return false;
+        if (h < 1 || h > 12 || m < 0 || m > 59)
+        {
+            return false;
+        }
+
         int h24 = isAm ? (h == 12 ? 0 : h) : (h == 12 ? 12 : h + 12);
         time24 = $"{h24:D2}:{m:D2}";
         return true;
@@ -1077,7 +1310,10 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoSaveReminderForm()
     {
-        if (_reminderService is null) return;
+        if (_reminderService is null)
+        {
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(ReminderFormTitle))
         {
@@ -1121,7 +1357,7 @@ public sealed class MoreViewModel : ViewModelBase
                 return;
             }
             var startAd = _adapter.BsToAd(bsY, bsM, bsD);
-            var endAd   = _adapter.BsToAd(endY, endM, endD);
+            var endAd = _adapter.BsToAd(endY, endM, endD);
             if (startAd is not null && endAd is not null && endAd.Value.Date < startAd.Value.Date)
             {
                 ReminderEndDateError = ReminderEndDateBeforeStartLabel;
@@ -1139,13 +1375,13 @@ public sealed class MoreViewModel : ViewModelBase
         {
             var entry = new ReminderEntry
             {
-                Title      = ReminderFormTitle.Trim(),
-                Notes      = ReminderFormNotes,
-                BsDate     = ReminderEntry.FormatDate(bsY, bsM, bsD),
+                Title = ReminderFormTitle.Trim(),
+                Notes = ReminderFormNotes,
+                BsDate = ReminderEntry.FormatDate(bsY, bsM, bsD),
                 OriginalBsDate = ReminderEntry.FormatDate(bsY, bsM, bsD),
-                Time       = time24,
+                Time = time24,
                 Recurrence = recurrence,
-                EndDate    = endDate,
+                EndDate = endDate,
                 CreatedUtc = DateTime.UtcNow,
             };
             _reminderService.Add(entry);
@@ -1156,12 +1392,12 @@ public sealed class MoreViewModel : ViewModelBase
             var existing = _reminderService.GetAll().FirstOrDefault(r => r.Id == _editingReminderId);
             if (existing is not null)
             {
-                existing.Title      = ReminderFormTitle.Trim();
-                existing.Notes      = ReminderFormNotes;
-                existing.BsDate     = ReminderEntry.FormatDate(bsY, bsM, bsD);
-                existing.Time       = time24;
+                existing.Title = ReminderFormTitle.Trim();
+                existing.Notes = ReminderFormNotes;
+                existing.BsDate = ReminderEntry.FormatDate(bsY, bsM, bsD);
+                existing.Time = time24;
                 existing.Recurrence = recurrence;
-                existing.EndDate    = endDate;
+                existing.EndDate = endDate;
                 _reminderService.Update(existing);
                 Log.Action($"reminder updated: {existing.Title}");
             }
@@ -1172,16 +1408,23 @@ public sealed class MoreViewModel : ViewModelBase
         RefreshReminders();
     }
 
-    public bool HasNotes     => Notes.Count > 0;
+    public bool HasNotes => Notes.Count > 0;
     public bool HasReminders => Reminders.Count > 0;
     public bool HasDocuments => Documents.Count > 0;
 
     public void RefreshDocuments()
     {
         Documents.Clear();
-        if (_documentService is null) return;
+        if (_documentService is null)
+        {
+            return;
+        }
+
         foreach (var d in _documentService.GetAll().OrderBy(d => d.Title, StringComparer.CurrentCulture))
+        {
             Documents.Add(new DocItemViewModel(d));
+        }
+
         OnPropertyChanged(nameof(HasDocuments));
         UpdateFilteredDocuments();
     }
@@ -1197,7 +1440,10 @@ public sealed class MoreViewModel : ViewModelBase
 
     private IReadOnlyList<DocItemViewModel> ComputeFilteredDocuments()
     {
-        if (!IsDocSearchActive) return Documents.ToList();
+        if (!IsDocSearchActive)
+        {
+            return Documents.ToList();
+        }
 
         var text = DocSearchText.Trim();
 
@@ -1213,7 +1459,7 @@ public sealed class MoreViewModel : ViewModelBase
         var titleMatches = Documents.Where(d => d.Title.Contains(q, StringComparison.OrdinalIgnoreCase));
         var notesMatches = Documents.Where(d => !d.Title.Contains(q, StringComparison.OrdinalIgnoreCase)
                                              && d.Notes.Contains(q, StringComparison.OrdinalIgnoreCase));
-        var tagMatches   = Documents.Where(d => !d.Title.Contains(q, StringComparison.OrdinalIgnoreCase)
+        var tagMatches = Documents.Where(d => !d.Title.Contains(q, StringComparison.OrdinalIgnoreCase)
                                              && !d.Notes.Contains(q, StringComparison.OrdinalIgnoreCase)
                                              && d.Tags.Any(t => t.Contains(q, StringComparison.OrdinalIgnoreCase)));
         return titleMatches.Concat(notesMatches).Concat(tagMatches).ToList();
@@ -1240,7 +1486,11 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoSelectDocSuggestion(string? term)
     {
-        if (term is null) return;
+        if (term is null)
+        {
+            return;
+        }
+
         DocSearchText = term;
         IsDocSuggestionsOpen = false;
     }
@@ -1260,17 +1510,28 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoDeleteNote(string? dateKey)
     {
-        if (dateKey is null || _notesService is null) return;
+        if (dateKey is null || _notesService is null)
+        {
+            return;
+        }
+
         _notesService.DeleteNote(dateKey);
         RefreshNotes();
     }
 
     private void DoStartEditNote(string? dateKey)
     {
-        if (dateKey is null) return;
+        if (dateKey is null)
+        {
+            return;
+        }
+
         DoCancelNoteEdit();
         var item = Notes.FirstOrDefault(n => n.DateKey == dateKey);
-        if (item is null) return;
+        if (item is null)
+        {
+            return;
+        }
         // Open the inline form pre-filled
         DoCancelNoteForm();
         _editingNoteKey = dateKey;
@@ -1285,7 +1546,11 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoSaveNote()
     {
-        if (_inlineEditingNoteKey is null || _notesService is null) return;
+        if (_inlineEditingNoteKey is null || _notesService is null)
+        {
+            return;
+        }
+
         _notesService.SetNote(_inlineEditingNoteKey, NoteEditBuffer);
         _inlineEditingNoteKey = null;
         NoteEditBuffer = string.Empty;
@@ -1294,9 +1559,14 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoCancelNoteEdit()
     {
-        if (_inlineEditingNoteKey is null) return;
+        if (_inlineEditingNoteKey is null)
+        {
+            return;
+        }
+
         var item = Notes.FirstOrDefault(n => n.DateKey == _inlineEditingNoteKey);
-        if (item is not null) item.IsEditing = false;
+        item?.IsEditing = false;
+
         _inlineEditingNoteKey = null;
         NoteEditBuffer = string.Empty;
     }
@@ -1305,7 +1575,11 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoDeleteReminder(string? id)
     {
-        if (id is null || _reminderService is null) return;
+        if (id is null || _reminderService is null)
+        {
+            return;
+        }
+
         _reminderService.Delete(id);
         RefreshReminders();
     }
@@ -1322,25 +1596,37 @@ public sealed class MoreViewModel : ViewModelBase
     {
         var dlg = new Microsoft.Win32.OpenFileDialog
         {
-            Title  = "Select Document",
+            Title = "Select Document",
             Filter = "All supported|*.pdf;*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff;*.doc;*.docx;*.xls;*.xlsx;*.txt" +
                      "|PDF Files|*.pdf|Images|*.jpg;*.jpeg;*.png;*.bmp;*.tif;*.tiff" +
                      "|Word Documents|*.doc;*.docx|Excel Files|*.xls;*.xlsx|All Files|*.*",
         };
         if (dlg.ShowDialog() == true)
+        {
             DocEditFilePath = dlg.FileName;
+        }
     }
 
     private void DoAddDocTagPreset(string? tag)
     {
-        if (tag is null) return;
+        if (tag is null)
+        {
+            return;
+        }
+
         if (!DocEditTags.Any(t => string.Equals(t, tag, StringComparison.OrdinalIgnoreCase)))
+        {
             DocEditTags.Add(tag);
+        }
     }
 
     private void DoAddDocTagFromInput()
     {
-        if (string.IsNullOrWhiteSpace(DocEditTagInput)) return;
+        if (string.IsNullOrWhiteSpace(DocEditTagInput))
+        {
+            return;
+        }
+
         foreach (var part in DocEditTagInput.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
         {
             if (!string.IsNullOrEmpty(part)
@@ -1354,9 +1640,16 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoRemoveDocTag(string? tag)
     {
-        if (tag is null) return;
+        if (tag is null)
+        {
+            return;
+        }
+
         var existing = DocEditTags.FirstOrDefault(t => string.Equals(t, tag, StringComparison.OrdinalIgnoreCase));
-        if (existing is not null) DocEditTags.Remove(existing);
+        if (existing is not null)
+        {
+            DocEditTags.Remove(existing);
+        }
     }
 
     private void DoSaveDocument()
@@ -1393,9 +1686,9 @@ public sealed class MoreViewModel : ViewModelBase
             {
                 var entry = new DocumentEntry
                 {
-                    Title  = titleTrimmed,
-                    Tags   = DocEditTags.ToList(),
-                    Notes  = DocEditNotes.Trim(),
+                    Title = titleTrimmed,
+                    Tags = DocEditTags.ToList(),
+                    Notes = DocEditNotes.Trim(),
                 };
                 entry.FilePath = EnsureManaged(titleTrimmed, DocEditFilePath, null);
                 _documentService?.Add(entry);
@@ -1407,9 +1700,9 @@ public sealed class MoreViewModel : ViewModelBase
                 if (existing is not null)
                 {
                     var oldManagedPath = IsManaged(existing.FilePath) ? existing.FilePath : null;
-                    existing.Title    = titleTrimmed;
-                    existing.Tags     = DocEditTags.ToList();
-                    existing.Notes    = DocEditNotes.Trim();
+                    existing.Title = titleTrimmed;
+                    existing.Tags = DocEditTags.ToList();
+                    existing.Notes = DocEditNotes.Trim();
                     existing.FilePath = EnsureManaged(titleTrimmed, DocEditFilePath, oldManagedPath);
                     _documentService?.Update(existing);
                     Log.Action($"document updated: {existing.Title}");
@@ -1429,46 +1722,74 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoCancelDocumentEdit()
     {
-        _editingDocId    = null;
-        IsDocFormOpen    = false;
-        IsEditingDoc     = false;
-        DocEditTitle     = string.Empty;
+        _editingDocId = null;
+        IsDocFormOpen = false;
+        IsEditingDoc = false;
+        DocEditTitle = string.Empty;
         DocEditTags.Clear();
-        DocEditTagInput  = string.Empty;
-        DocEditFilePath  = string.Empty;
-        DocEditNotes     = string.Empty;
-        DocEditError     = string.Empty;
+        DocEditTagInput = string.Empty;
+        DocEditFilePath = string.Empty;
+        DocEditNotes = string.Empty;
+        DocEditError = string.Empty;
     }
 
     private void DoDeleteDocument(string? id)
     {
-        if (id is null || _documentService is null) return;
+        if (id is null || _documentService is null)
+        {
+            return;
+        }
+
         var entry = _documentService.GetAll().FirstOrDefault(d => d.Id == id);
-        if (entry is not null) DeleteManaged(entry.FilePath);
+        if (entry is not null)
+        {
+            DeleteManaged(entry.FilePath);
+        }
+
         _documentService.Delete(id);
         RefreshDocuments();
     }
 
     private void DoEditDocument(string? id)
     {
-        if (id is null || _documentService is null) return;
+        if (id is null || _documentService is null)
+        {
+            return;
+        }
+
         var entry = _documentService.GetAll().FirstOrDefault(d => d.Id == id);
-        if (entry is null) return;
+        if (entry is null)
+        {
+            return;
+        }
+
         DoCancelDocumentEdit();
-        _editingDocId   = id;
-        IsEditingDoc    = true;
-        DocEditTitle    = entry.Title;
-        foreach (var tag in entry.Tags) DocEditTags.Add(tag);
+        _editingDocId = id;
+        IsEditingDoc = true;
+        DocEditTitle = entry.Title;
+        foreach (var tag in entry.Tags)
+        {
+            DocEditTags.Add(tag);
+        }
+
         DocEditFilePath = entry.FilePath;
-        DocEditNotes    = entry.Notes;
-        IsDocFormOpen   = true;
+        DocEditNotes = entry.Notes;
+        IsDocFormOpen = true;
     }
 
     private void DoOpenDocument(string? id)
     {
-        if (id is null || _documentService is null) return;
+        if (id is null || _documentService is null)
+        {
+            return;
+        }
+
         var entry = _documentService.GetAll().FirstOrDefault(d => d.Id == id);
-        if (entry is null || !File.Exists(entry.FilePath)) return;
+        if (entry is null || !File.Exists(entry.FilePath))
+        {
+            return;
+        }
+
         try
         {
             System.Diagnostics.Process.Start(
@@ -1482,11 +1803,23 @@ public sealed class MoreViewModel : ViewModelBase
 
     private void DoOpenDocumentFolder(string? id)
     {
-        if (id is null || _documentService is null) return;
+        if (id is null || _documentService is null)
+        {
+            return;
+        }
+
         var entry = _documentService.GetAll().FirstOrDefault(d => d.Id == id);
-        if (entry is null || string.IsNullOrWhiteSpace(entry.FilePath)) return;
+        if (entry is null || string.IsNullOrWhiteSpace(entry.FilePath))
+        {
+            return;
+        }
+
         var folder = Path.GetDirectoryName(entry.FilePath);
-        if (folder is null || !Directory.Exists(folder)) return;
+        if (folder is null || !Directory.Exists(folder))
+        {
+            return;
+        }
+
         try
         {
             System.Diagnostics.Process.Start(
@@ -1510,7 +1843,10 @@ public sealed class MoreViewModel : ViewModelBase
         var invalid = Path.GetInvalidFileNameChars();
         var sb = new System.Text.StringBuilder();
         foreach (var c in title.Trim())
+        {
             sb.Append(invalid.Contains(c) ? '_' : c);
+        }
+
         var result = sb.ToString().Trim(' ', '.');
         return string.IsNullOrEmpty(result) ? "document" : result;
     }
@@ -1518,20 +1854,25 @@ public sealed class MoreViewModel : ViewModelBase
     private static string EnsureManaged(string title, string sourcePath, string? currentManagedPath)
     {
         Directory.CreateDirectory(AppPaths.DocumentsFilesDirectory);
-        var ext  = Path.GetExtension(sourcePath);
+        var ext = Path.GetExtension(sourcePath);
         var dest = Path.Combine(AppPaths.DocumentsFilesDirectory, SanitizeTitle(title) + ext);
 
         if (IsManaged(sourcePath))
         {
             // File already in managed folder - rename/move if title changed
             if (!string.Equals(sourcePath, dest, StringComparison.OrdinalIgnoreCase))
+            {
                 File.Move(sourcePath, dest, overwrite: true);
+            }
         }
         else
         {
             // User picked a new file from outside managed folder
             if (currentManagedPath is not null && File.Exists(currentManagedPath))
+            {
                 File.Delete(currentManagedPath);
+            }
+
             File.Copy(sourcePath, dest, overwrite: true);
         }
 
@@ -1541,7 +1882,9 @@ public sealed class MoreViewModel : ViewModelBase
     private static void DeleteManaged(string? filePath)
     {
         if (!string.IsNullOrWhiteSpace(filePath) && IsManaged(filePath) && File.Exists(filePath))
+        {
             File.Delete(filePath);
+        }
     }
 }
 
@@ -1560,7 +1903,9 @@ public sealed class NoteItemViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _isEditing, value))
+            {
                 OnPropertyChanged(nameof(IsNotEditing));
+            }
         }
     }
     public bool IsNotEditing => !_isEditing;
@@ -1593,18 +1938,18 @@ public sealed class ReminderItemViewModel : ViewModelBase
 
     public ReminderItemViewModel(ReminderEntry entry)
     {
-        Id    = entry.Id;
+        Id = entry.Id;
         Title = entry.Title;
-        Date  = entry.BsDate;
-        Time  = entry.Time;
+        Date = entry.BsDate;
+        Time = entry.Time;
         Notes = entry.Notes;
         IsCompleted = entry.IsCompleted;
         RecurrenceText = entry.Recurrence switch
         {
-            ReminderRecurrence.Daily   => "Daily",
-            ReminderRecurrence.Weekly  => "Weekly",
+            ReminderRecurrence.Daily => "Daily",
+            ReminderRecurrence.Weekly => "Weekly",
             ReminderRecurrence.Monthly => "Monthly",
-            ReminderRecurrence.Yearly  => "Yearly",
+            ReminderRecurrence.Yearly => "Yearly",
             _ => string.Empty,
         };
     }
@@ -1612,27 +1957,27 @@ public sealed class ReminderItemViewModel : ViewModelBase
 
 public sealed class DocItemViewModel : ViewModelBase
 {
-    public string Id       { get; }
-    public string Title    { get; }
+    public string Id { get; }
+    public string Title { get; }
     public IReadOnlyList<string> Tags { get; }
     public string FilePath { get; }
-    public string Notes    { get; }
+    public string Notes { get; }
 
-    public bool HasTags     => Tags.Count > 0;
-    public bool HasNotes    => !string.IsNullOrWhiteSpace(Notes);
-    public bool HasFile     => !string.IsNullOrWhiteSpace(FilePath);
+    public bool HasTags => Tags.Count > 0;
+    public bool HasNotes => !string.IsNullOrWhiteSpace(Notes);
+    public bool HasFile => !string.IsNullOrWhiteSpace(FilePath);
     public bool HasFileOrTags => HasFile || HasTags;
-    public bool FileExists  => HasFile && File.Exists(FilePath);
+    public bool FileExists => HasFile && File.Exists(FilePath);
     public bool FileNotFound => HasFile && !File.Exists(FilePath);
-    public string FileName      => HasFile ? Path.GetFileName(FilePath) : string.Empty;
+    public string FileName => HasFile ? Path.GetFileName(FilePath) : string.Empty;
     public string FileExtension => HasFile ? Path.GetExtension(FilePath).TrimStart('.').ToUpperInvariant() : string.Empty;
 
     public DocItemViewModel(DocumentEntry entry)
     {
-        Id       = entry.Id;
-        Title    = entry.Title;
-        Tags     = entry.Tags.AsReadOnly();
+        Id = entry.Id;
+        Title = entry.Title;
+        Tags = entry.Tags.AsReadOnly();
         FilePath = entry.FilePath;
-        Notes    = entry.Notes;
+        Notes = entry.Notes;
     }
 }

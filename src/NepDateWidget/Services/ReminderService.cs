@@ -3,7 +3,6 @@ using NepDateWidget.Models;
 using System.Globalization;
 using System.IO;
 using System.Text.Json;
-using System.Threading;
 
 namespace NepDateWidget.Services;
 
@@ -44,7 +43,11 @@ public sealed class ReminderService : IReminderService, IDisposable
     public bool HasRemindersForDate(int bsYear, int bsMonth, int bsDay)
         => _reminders.Any(r =>
         {
-            if (r.IsCompleted) return false;
+            if (r.IsCompleted)
+            {
+                return false;
+            }
+
             var d = ReminderEntry.ParseDate(r.BsDate);
             return d is not null && d.Value.Year == bsYear && d.Value.Month == bsMonth && d.Value.Day == bsDay;
         });
@@ -53,14 +56,28 @@ public sealed class ReminderService : IReminderService, IDisposable
     {
         // Direct match first (fast path), excluding completed
         if (HasRemindersForDate(bsYear, bsMonth, bsDay))
+        {
             return true;
+        }
 
         // Check recurring reminders that would land on this date
         foreach (var r in _reminders)
         {
-            if (r.IsCompleted) continue;
-            if (r.Recurrence == ReminderRecurrence.None) continue;
-            if (!WouldRecurOnDate(r, bsYear, bsMonth, bsDay)) continue;
+            if (r.IsCompleted)
+            {
+                continue;
+            }
+
+            if (r.Recurrence == ReminderRecurrence.None)
+            {
+                continue;
+            }
+
+            if (!WouldRecurOnDate(r, bsYear, bsMonth, bsDay))
+            {
+                continue;
+            }
+
             return true;
         }
         return false;
@@ -70,26 +87,44 @@ public sealed class ReminderService : IReminderService, IDisposable
     {
         var result = new HashSet<int>();
         int daysInMonth = _adapter.GetDaysInMonth(bsYear, bsMonth);
-        if (daysInMonth <= 0) return result;
+        if (daysInMonth <= 0)
+        {
+            return result;
+        }
 
         foreach (var r in _reminders)
         {
-            if (r.IsCompleted) continue;
+            if (r.IsCompleted)
+            {
+                continue;
+            }
+
             var d = ReminderEntry.ParseDate(r.BsDate);
             if (d is not null && d.Value.Year == bsYear && d.Value.Month == bsMonth)
             {
                 result.Add(d.Value.Day);
-                if (result.Count == daysInMonth) return result; // early exit: all days covered
+                if (result.Count == daysInMonth)
+                {
+                    return result; // early exit: all days covered
+                }
             }
 
-            if (r.Recurrence == ReminderRecurrence.None) continue;
+            if (r.Recurrence == ReminderRecurrence.None)
+            {
+                continue;
+            }
             // Check each day of the month against this recurring reminder.
             for (int day = 1; day <= daysInMonth; day++)
             {
                 if (!result.Contains(day) && WouldRecurOnDate(r, bsYear, bsMonth, day))
+                {
                     result.Add(day);
+                }
             }
-            if (result.Count == daysInMonth) return result;
+            if (result.Count == daysInMonth)
+            {
+                return result;
+            }
         }
         return result;
     }
@@ -99,23 +134,46 @@ public sealed class ReminderService : IReminderService, IDisposable
         var results = new List<ReminderEntry>();
         foreach (var r in _reminders)
         {
-            if (r.IsCompleted) continue;
-            if (r.Recurrence == ReminderRecurrence.None) continue;
+            if (r.IsCompleted)
+            {
+                continue;
+            }
+
+            if (r.Recurrence == ReminderRecurrence.None)
+            {
+                continue;
+            }
             // Skip if already an exact match (those are returned by GetForDate)
             var d = ReminderEntry.ParseDate(r.BsDate);
-            if (d is not null && d.Value.Year == bsYear && d.Value.Month == bsMonth && d.Value.Day == bsDay) continue;
+            if (d is not null && d.Value.Year == bsYear && d.Value.Month == bsMonth && d.Value.Day == bsDay)
+            {
+                continue;
+            }
+
             if (WouldRecurOnDate(r, bsYear, bsMonth, bsDay))
+            {
                 results.Add(r);
+            }
         }
         return results;
     }
 
     public void Add(ReminderEntry entry)
     {
-        if (entry is null) return;
-        if (string.IsNullOrWhiteSpace(entry.Title)) return;
+        if (entry is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(entry.Title))
+        {
+            return;
+        }
+
         if (entry.Notes?.Length > 500)
+        {
             entry.Notes = entry.Notes[..500];
+        }
         // Preserve original date at creation for accurate recurrence computation
         entry.OriginalBsDate = entry.BsDate;
         _reminders.Add(entry);
@@ -125,16 +183,29 @@ public sealed class ReminderService : IReminderService, IDisposable
 
     public void Update(ReminderEntry entry)
     {
-        if (entry is null) return;
+        if (entry is null)
+        {
+            return;
+        }
+
         var idx = _reminders.FindIndex(r => r.Id == entry.Id);
-        if (idx < 0) return;
+        if (idx < 0)
+        {
+            return;
+        }
+
         if (entry.Notes?.Length > 500)
+        {
             entry.Notes = entry.Notes[..500];
+        }
         // If the user changed the date via edit, update the original date too
         // so recurrence calculations stay anchored to the new base date
         var old = _reminders[idx];
         if (old.BsDate != entry.BsDate)
+        {
             entry.OriginalBsDate = entry.BsDate;
+        }
+
         _reminders[idx] = entry;
         Save();
         RemindersChanged?.Invoke(this, EventArgs.Empty);
@@ -164,12 +235,20 @@ public sealed class ReminderService : IReminderService, IDisposable
         _reloader ??= new DebouncedFileReloader(_filePath, debounceMs: 500, onReload: () =>
         {
             var elapsed = TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastSelfWriteTicks));
-            if (elapsed.TotalSeconds < 1.0) return;
+            if (elapsed.TotalSeconds < 1.0)
+            {
+                return;
+            }
+
             LoadFromDisk();
             if (_syncContext is not null)
+            {
                 _syncContext.Post(_ => RemindersChanged?.Invoke(this, EventArgs.Empty), null);
+            }
             else
+            {
                 RemindersChanged?.Invoke(this, EventArgs.Empty);
+            }
         });
     }
 
@@ -203,7 +282,10 @@ public sealed class ReminderService : IReminderService, IDisposable
                     migrated = true;
                 }
             }
-            if (migrated) Save();
+            if (migrated)
+            {
+                Save();
+            }
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
         {
@@ -222,7 +304,9 @@ public sealed class ReminderService : IReminderService, IDisposable
             // contract as settings.json and notes.json. AtomicFile is best-effort:
             // a returned false is logged but never thrown so the app stays alive.
             if (!AtomicFile.WriteAllText(_filePath, json))
+            {
                 Log.Warn("Failed to save reminders: AtomicFile.WriteAllText returned false");
+            }
         }
         catch (JsonException ex)
         {
@@ -244,7 +328,10 @@ public sealed class ReminderService : IReminderService, IDisposable
 
         foreach (var r in _reminders)
         {
-            if (r.IsCompleted) continue;
+            if (r.IsCompleted)
+            {
+                continue;
+            }
 
             // Check if end date has passed for recurring reminders
             if (r.Recurrence != ReminderRecurrence.None && !string.IsNullOrEmpty(r.EndDate))
@@ -257,8 +344,15 @@ public sealed class ReminderService : IReminderService, IDisposable
             }
 
             var nextFireUtc = GetNextFireTimeUtc(r);
-            if (nextFireUtc is null) continue;
-            if (nextFireUtc.Value > nowUtc) continue; // not yet due
+            if (nextFireUtc is null)
+            {
+                continue;
+            }
+
+            if (nextFireUtc.Value > nowUtc)
+            {
+                continue; // not yet due
+            }
 
             // A reminder is stale if its fire time is more than the grace period ago.
             // This covers both past dates AND past times on today's date.
@@ -267,7 +361,10 @@ public sealed class ReminderService : IReminderService, IDisposable
             if (r.Recurrence == ReminderRecurrence.None)
             {
                 if (!isStale)
+                {
                     fired.Add(r);
+                }
+
                 r.LastFiredUtc = nowUtc;
                 r.IsCompleted = true;
                 changed = true;
@@ -294,7 +391,9 @@ public sealed class ReminderService : IReminderService, IDisposable
         }
 
         if (toRemove.Count > 0)
+        {
             _reminders.RemoveAll(r => toRemove.Contains(r.Id));
+        }
 
         if (fired.Count > 0 || toRemove.Count > 0 || changed)
         {
@@ -314,7 +413,10 @@ public sealed class ReminderService : IReminderService, IDisposable
         for (int i = 0; i < 1000; i++)
         {
             var next = GetNextFireTimeUtc(r);
-            if (next is null || next.Value > nowUtc) break;
+            if (next is null || next.Value > nowUtc)
+            {
+                break;
+            }
 
             if (!string.IsNullOrEmpty(r.EndDate) && IsEndDatePassed(r.EndDate))
             {
@@ -337,11 +439,21 @@ public sealed class ReminderService : IReminderService, IDisposable
 
         foreach (var r in _reminders)
         {
-            if (r.IsCompleted) continue;
+            if (r.IsCompleted)
+            {
+                continue;
+            }
+
             var nextFire = GetNextFireTimeUtc(r);
-            if (nextFire is null) continue;
+            if (nextFire is null)
+            {
+                continue;
+            }
+
             if (nextFire.Value <= nowUtc)
+            {
                 missed.Add(r);
+            }
         }
 
         return missed;
@@ -350,13 +462,21 @@ public sealed class ReminderService : IReminderService, IDisposable
     private DateTime? GetNextFireTimeUtc(ReminderEntry r)
     {
         if (!TimeSpan.TryParse(r.Time, CultureInfo.InvariantCulture, out var timeOfDay))
+        {
             return null;
+        }
 
         var bsParts = ReminderEntry.ParseDate(r.BsDate);
-        if (bsParts is null) return null;
+        if (bsParts is null)
+        {
+            return null;
+        }
 
         var adDate = _adapter.BsToAd(bsParts.Value.Year, bsParts.Value.Month, bsParts.Value.Day);
-        if (adDate is null) return null;
+        if (adDate is null)
+        {
+            return null;
+        }
 
         // Explicitly mark as local so ToUniversalTime converts correctly
         // regardless of what DateTimeKind the adapter returns.
@@ -367,50 +487,70 @@ public sealed class ReminderService : IReminderService, IDisposable
     private bool AdvanceToNextOccurrence(ReminderEntry r)
     {
         var bsParts = ReminderEntry.ParseDate(r.BsDate);
-        if (bsParts is null) return false;
+        if (bsParts is null)
+        {
+            return false;
+        }
+
         int y = bsParts.Value.Year, m = bsParts.Value.Month, d = bsParts.Value.Day;
 
         switch (r.Recurrence)
         {
             case ReminderRecurrence.Daily:
-            {
-                var next = _adapter.AddDays(y, m, d, 1);
-                if (next is null) return false;
-                r.BsDate = ReminderEntry.FormatDate(next.Value.Year, next.Value.Month, next.Value.Day);
-                return true;
-            }
+                {
+                    var next = _adapter.AddDays(y, m, d, 1);
+                    if (next is null)
+                    {
+                        return false;
+                    }
+
+                    r.BsDate = ReminderEntry.FormatDate(next.Value.Year, next.Value.Month, next.Value.Day);
+                    return true;
+                }
             case ReminderRecurrence.Weekly:
-            {
-                var next = _adapter.AddDays(y, m, d, 7);
-                if (next is null) return false;
-                r.BsDate = ReminderEntry.FormatDate(next.Value.Year, next.Value.Month, next.Value.Day);
-                return true;
-            }
+                {
+                    var next = _adapter.AddDays(y, m, d, 7);
+                    if (next is null)
+                    {
+                        return false;
+                    }
+
+                    r.BsDate = ReminderEntry.FormatDate(next.Value.Year, next.Value.Month, next.Value.Day);
+                    return true;
+                }
             case ReminderRecurrence.Monthly:
-            {
-                // Preserve the original intended day so months with fewer days don't
-                // permanently drift to a lower day (e.g. a 32nd-day reminder stays at
-                // 32 intent, clamped per month, not locked to the first clamped value).
-                var origParts = ReminderEntry.ParseDate(r.OriginalBsDate);
-                int origDay = origParts?.Day ?? d;
-                int newM = m + 1, newY = y;
-                if (newM > 12) { newM = 1; newY++; }
-                int maxDay = _adapter.GetDaysInMonth(newY, newM);
-                if (maxDay <= 0) return false;
-                r.BsDate = ReminderEntry.FormatDate(newY, newM, Math.Min(origDay, maxDay));
-                return true;
-            }
+                {
+                    // Preserve the original intended day so months with fewer days don't
+                    // permanently drift to a lower day (e.g. a 32nd-day reminder stays at
+                    // 32 intent, clamped per month, not locked to the first clamped value).
+                    var origParts = ReminderEntry.ParseDate(r.OriginalBsDate);
+                    int origDay = origParts?.Day ?? d;
+                    int newM = m + 1, newY = y;
+                    if (newM > 12) { newM = 1; newY++; }
+                    int maxDay = _adapter.GetDaysInMonth(newY, newM);
+                    if (maxDay <= 0)
+                    {
+                        return false;
+                    }
+
+                    r.BsDate = ReminderEntry.FormatDate(newY, newM, Math.Min(origDay, maxDay));
+                    return true;
+                }
             case ReminderRecurrence.Yearly:
-            {
-                var origParts = ReminderEntry.ParseDate(r.OriginalBsDate);
-                int origMonth = origParts?.Month ?? m;
-                int origDay   = origParts?.Day   ?? d;
-                int newY = y + 1;
-                int maxDay = _adapter.GetDaysInMonth(newY, origMonth);
-                if (maxDay <= 0) return false;
-                r.BsDate = ReminderEntry.FormatDate(newY, origMonth, Math.Min(origDay, maxDay));
-                return true;
-            }
+                {
+                    var origParts = ReminderEntry.ParseDate(r.OriginalBsDate);
+                    int origMonth = origParts?.Month ?? m;
+                    int origDay = origParts?.Day ?? d;
+                    int newY = y + 1;
+                    int maxDay = _adapter.GetDaysInMonth(newY, origMonth);
+                    if (maxDay <= 0)
+                    {
+                        return false;
+                    }
+
+                    r.BsDate = ReminderEntry.FormatDate(newY, origMonth, Math.Min(origDay, maxDay));
+                    return true;
+                }
             default:
                 return false;
         }
@@ -419,10 +559,17 @@ public sealed class ReminderService : IReminderService, IDisposable
     private bool IsEndDatePassed(string endDateStr)
     {
         var parts = ReminderEntry.ParseDate(endDateStr);
-        if (parts is null) return false;
+        if (parts is null)
+        {
+            return false;
+        }
 
         var endAd = _adapter.BsToAd(parts.Value.Year, parts.Value.Month, parts.Value.Day);
-        if (endAd is null) return true; // invalid end date = treat as passed
+        if (endAd is null)
+        {
+            return true; // invalid end date = treat as passed
+        }
+
         return DateTime.Now.Date > endAd.Value.Date;
     }
 
@@ -432,21 +579,34 @@ public sealed class ReminderService : IReminderService, IDisposable
     /// </summary>
     private bool WouldRecurOnDate(ReminderEntry r, int targetY, int targetM, int targetD)
     {
-        if (r.IsCompleted) return false;
+        if (r.IsCompleted)
+        {
+            return false;
+        }
 
         // Use original date for recurrence base (avoids drift from AdvanceToNextOccurrence)
         var origParts = ReminderEntry.ParseDate(r.OriginalBsDate);
         if (origParts is null)
         {
             origParts = ReminderEntry.ParseDate(r.BsDate);
-            if (origParts is null) return false;
+            if (origParts is null)
+            {
+                return false;
+            }
         }
         int origY = origParts.Value.Year, origM = origParts.Value.Month, origD = origParts.Value.Day;
 
         var targetAd = _adapter.BsToAd(targetY, targetM, targetD);
         var sourceAd = _adapter.BsToAd(origY, origM, origD);
-        if (targetAd is null || sourceAd is null) return false;
-        if (targetAd.Value.Date < sourceAd.Value.Date) return false;
+        if (targetAd is null || sourceAd is null)
+        {
+            return false;
+        }
+
+        if (targetAd.Value.Date < sourceAd.Value.Date)
+        {
+            return false;
+        }
 
         // Check end date: if target is past the end date, no recurrence
         if (!string.IsNullOrEmpty(r.EndDate))
@@ -456,7 +616,9 @@ public sealed class ReminderService : IReminderService, IDisposable
             {
                 var endAd = _adapter.BsToAd(endParts.Value.Year, endParts.Value.Month, endParts.Value.Day);
                 if (endAd is not null && targetAd.Value.Date > endAd.Value.Date)
+                {
                     return false;
+                }
             }
         }
 
@@ -475,17 +637,37 @@ public sealed class ReminderService : IReminderService, IDisposable
             case ReminderRecurrence.Monthly:
                 // O(1): the expected BS day in any future month is min(origDay, daysInMonth(targetY, targetM)).
                 // This mirrors AdvanceToNextOccurrence which already uses this same formula.
-                if (targetY < origY || (targetY == origY && targetM <= origM)) return false;
+                if (targetY < origY || (targetY == origY && targetM <= origM))
+                {
+                    return false;
+                }
+
                 int maxDayM = _adapter.GetDaysInMonth(targetY, targetM);
-                if (maxDayM <= 0) return false;
+                if (maxDayM <= 0)
+                {
+                    return false;
+                }
+
                 return targetD == Math.Min(origD, maxDayM);
 
             case ReminderRecurrence.Yearly:
                 // Same month every year, day clamped to what that month supports.
-                if (targetM != origM) return false;
-                if (targetY <= origY) return false;
+                if (targetM != origM)
+                {
+                    return false;
+                }
+
+                if (targetY <= origY)
+                {
+                    return false;
+                }
+
                 int maxDayY = _adapter.GetDaysInMonth(targetY, origM);
-                if (maxDayY <= 0) return false;
+                if (maxDayY <= 0)
+                {
+                    return false;
+                }
+
                 return targetD == Math.Min(origD, maxDayY);
 
             default:

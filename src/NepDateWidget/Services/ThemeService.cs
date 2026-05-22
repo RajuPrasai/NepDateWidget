@@ -1,4 +1,4 @@
-﻿using System.Windows;
+using System.Windows;
 using System.Windows.Media;
 
 namespace NepDateWidget.Services;
@@ -115,7 +115,7 @@ public sealed class ThemeService : IThemeService
         // Derived colours computed algorithmically
         Color border = Blend(bg, fg, 0.20f);
         Color hover = Blend(bg, fg, 0.10f);
-        Color headerHover = hover;
+        Color accentLight = Blend(bg, acc, 0.15f);
         Color input = Blend(bg, fg, 0.08f);
         Color inputBdr = Blend(bg, fg, 0.25f);
         Color divider = Blend(bg, fg, 0.18f);
@@ -144,9 +144,10 @@ public sealed class ThemeService : IThemeService
             ["WidgetForegroundBrush"]       = new SolidColorBrush(fg),
             ["WidgetBorderBrush"]           = new SolidColorBrush(border),
             ["WidgetAccentBrush"]           = new SolidColorBrush(acc),
+            ["WidgetAccentBrushLight"]       = new SolidColorBrush(accentLight),
             ["WidgetHolidayBrush"]          = new SolidColorBrush(holiday),
             ["WidgetHoverBrush"]            = new SolidColorBrush(hover),
-            ["WidgetCalHeaderHoverBrush"]   = new SolidColorBrush(headerHover),
+            ["WidgetCalHeaderHoverBrush"]   = new SolidColorBrush(hover),
             ["WidgetDayTodayBrush"]         = new SolidColorBrush(acc),
             ["WidgetDayTodayTextBrush"]     = new SolidColorBrush(todayText),
             ["WidgetDaySaturdayBrush"]      = new SolidColorBrush(holiday),

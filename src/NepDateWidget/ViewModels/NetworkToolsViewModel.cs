@@ -56,12 +56,12 @@ public sealed class NetworkToolsViewModel : ViewModelBase
         }
     }
 
-    public bool IsModeMyIp   { get => _activeMode == 0; set { if (value) ActiveMode = 0; } }
-    public bool IsModePing   { get => _activeMode == 1; set { if (value) ActiveMode = 1; } }
-    public bool IsModeScan   { get => _activeMode == 2; set { if (value) ActiveMode = 2; } }
-    public bool IsModeTrace  { get => _activeMode == 3; set { if (value) ActiveMode = 3; } }
-    public bool IsModeWhois  { get => _activeMode == 4; set { if (value) ActiveMode = 4; } }
-    public bool IsModeDns    { get => _activeMode == 5; set { if (value) ActiveMode = 5; } }
+    public bool IsModeMyIp { get => _activeMode == 0; set { if (value) { ActiveMode = 0; } } }
+    public bool IsModePing { get => _activeMode == 1; set { if (value) { ActiveMode = 1; } } }
+    public bool IsModeScan { get => _activeMode == 2; set { if (value) { ActiveMode = 2; } } }
+    public bool IsModeTrace { get => _activeMode == 3; set { if (value) { ActiveMode = 3; } } }
+    public bool IsModeWhois { get => _activeMode == 4; set { if (value) { ActiveMode = 4; } } }
+    public bool IsModeDns { get => _activeMode == 5; set { if (value) { ActiveMode = 5; } } }
 
     // ═════════════════════════════════════════════════════════════════════════
     // SHARED BUSY / CANCELLATION
@@ -74,7 +74,9 @@ public sealed class NetworkToolsViewModel : ViewModelBase
         private set
         {
             if (SetProperty(ref _isBusy, value))
+            {
                 OnPropertyChanged(nameof(IsNotBusy));
+            }
         }
     }
     public bool IsNotBusy => !_isBusy;
@@ -113,12 +115,16 @@ public sealed class NetworkToolsViewModel : ViewModelBase
     private static bool IsValidHostOrIp(string input)
     {
         if (string.IsNullOrWhiteSpace(input) || input.Length > 253)
+        {
             return false;
+        }
         // Allow only alphanumeric, dots, hyphens, colons (IPv6), and square brackets
         foreach (var c in input)
         {
             if (!char.IsLetterOrDigit(c) && c != '.' && c != '-' && c != ':' && c != '[' && c != ']')
+            {
                 return false;
+            }
         }
         return true;
     }
@@ -135,12 +141,12 @@ public sealed class NetworkToolsViewModel : ViewModelBase
     }
 
     // ── Mode-switch commands ───────────────────────────────────────────────────
-    public ICommand SetModeMyIpCommand  { get; }
-    public ICommand SetModePingCommand  { get; }
-    public ICommand SetModeScanCommand  { get; }
+    public ICommand SetModeMyIpCommand { get; }
+    public ICommand SetModePingCommand { get; }
+    public ICommand SetModeScanCommand { get; }
     public ICommand SetModeTraceCommand { get; }
     public ICommand SetModeWhoisCommand { get; }
-    public ICommand SetModeDnsCommand   { get; }
+    public ICommand SetModeDnsCommand { get; }
 
     public ICommand FetchMyIpCommand { get; }
     public ICommand CopyMyIpCommand { get; }
@@ -158,7 +164,9 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             {
                 var ipv4 = await _http.GetStringAsync("https://api.ipify.org", ct).ConfigureAwait(false);
                 if (!string.IsNullOrWhiteSpace(ipv4))
+                {
                     lines.Add($"IPv4 (Public):  {ipv4.Trim()}");
+                }
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or OperationCanceledException)
             {
@@ -170,7 +178,9 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             {
                 var ipv6 = await _http.GetStringAsync("https://api64.ipify.org", ct).ConfigureAwait(false);
                 if (!string.IsNullOrWhiteSpace(ipv6) && ipv6.Trim().Contains(':'))
+                {
                     lines.Add($"IPv6 (Public):  {ipv6.Trim()}");
+                }
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or OperationCanceledException)
             {
@@ -180,20 +190,35 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             // Local IPs from network interfaces (always available offline)
             foreach (var iface in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (iface.OperationalStatus != OperationalStatus.Up) continue;
-                if (iface.NetworkInterfaceType is NetworkInterfaceType.Loopback) continue;
+                if (iface.OperationalStatus != OperationalStatus.Up)
+                {
+                    continue;
+                }
+
+                if (iface.NetworkInterfaceType is NetworkInterfaceType.Loopback)
+                {
+                    continue;
+                }
+
                 foreach (var addr in iface.GetIPProperties().UnicastAddresses)
                 {
                     var s = addr.Address.ToString();
                     if (addr.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
                         lines.Add($"Local IPv4:     {s}  ({iface.Name})");
+                    }
                     else if (addr.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6
                              && !addr.Address.IsIPv6LinkLocal)
+                    {
                         lines.Add($"Local IPv6:     {s}  ({iface.Name})");
+                    }
                 }
             }
 
-            if (ct.IsCancellationRequested) return;
+            if (ct.IsCancellationRequested)
+            {
+                return;
+            }
 
             Dispatch(() =>
             {
@@ -244,7 +269,11 @@ public sealed class NetworkToolsViewModel : ViewModelBase
     private async Task RunPingAsync()
     {
         var host = _pingHost.Trim();
-        if (string.IsNullOrEmpty(host)) return;
+        if (string.IsNullOrEmpty(host))
+        {
+            return;
+        }
+
         if (!IsValidHostOrIp(host)) { PingResult = _loc.Get("net.error"); return; }
 
         var ct = BeginOperation();
@@ -258,7 +287,11 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             using var ping = new Ping();
             for (int i = 0; i < _pingCount; i++)
             {
-                if (ct.IsCancellationRequested) break;
+                if (ct.IsCancellationRequested)
+                {
+                    break;
+                }
+
                 sent++;
                 try
                 {
@@ -283,7 +316,10 @@ public sealed class NetworkToolsViewModel : ViewModelBase
                 await Task.Delay(200, ct).ConfigureAwait(false);
             }
 
-            if (ct.IsCancellationRequested) return;
+            if (ct.IsCancellationRequested)
+            {
+                return;
+            }
 
             double loss = sent == 0 ? 0 : (sent - received) * 100.0 / sent;
             results.Add(string.Empty);
@@ -351,9 +387,20 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             // Count host addresses - limit to /24 max to avoid 65535-host scans on larger subnets
             uint maskBits = 0;
             foreach (var b in maskBytes)
+            {
                 for (int i = 7; i >= 0; i--)
-                    if ((b >> i & 1) == 1) maskBits++;
-            if (maskBits < 24) maskBits = 24;   // treat /24 as minimum grain
+                {
+                    if ((b >> i & 1) == 1)
+                    {
+                        maskBits++;
+                    }
+                }
+            }
+
+            if (maskBits < 24)
+            {
+                maskBits = 24;   // treat /24 as minimum grain
+            }
 
             int hostCount = (int)Math.Pow(2, 32 - maskBits) - 2;   // exclude net + broadcast
 
@@ -396,12 +443,16 @@ public sealed class NetworkToolsViewModel : ViewModelBase
                             {
                                 var nbName = GetNetBiosName(ip);
                                 if (!string.IsNullOrEmpty(nbName))
+                                {
                                     hostName = nbName;
+                                }
                             }
 
                             // For local device, use machine name if DNS was unhelpful
                             if (isLocal && (string.IsNullOrEmpty(hostName) || hostName == ip))
+                            {
                                 hostName = Environment.MachineName;
+                            }
 
                             var deviceType = isGateway
                                 ? "Router"
@@ -448,7 +499,9 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             await Task.WhenAll(tasks).ConfigureAwait(false);
 
             if (!ct.IsCancellationRequested)
+            {
                 Dispatch(() => ScanStatus = string.Format(_loc.Get("net.scan_done"), ScanResults.Count, hostCount));
+            }
         }
         catch (OperationCanceledException) { /* user cancelled */ }
         catch (Exception ex)
@@ -484,14 +537,20 @@ public sealed class NetworkToolsViewModel : ViewModelBase
 
             foreach (var line in output.Split('\n'))
             {
-                if (!line.Contains(ip)) continue;
+                if (!line.Contains(ip))
+                {
+                    continue;
+                }
+
                 var parts = line.Trim().Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
                 // arp output: <ip>  <mac>  <type>
                 if (parts.Length >= 2)
                 {
                     var candidate = parts[1];
                     if (candidate.Contains('-') || candidate.Contains(':'))
+                    {
                         return candidate.Replace('-', ':').ToUpperInvariant();
+                    }
                 }
             }
         }
@@ -535,14 +594,27 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             foreach (var line in output.Split('\n'))
             {
                 var trimmed = line.Trim();
-                if (trimmed.Length == 0) continue;
-                if (!trimmed.Contains("<00>", StringComparison.OrdinalIgnoreCase)) continue;
-                if (!trimmed.Contains("UNIQUE", StringComparison.OrdinalIgnoreCase)) continue;
+                if (trimmed.Length == 0)
+                {
+                    continue;
+                }
+
+                if (!trimmed.Contains("<00>", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                if (!trimmed.Contains("UNIQUE", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
                 // Extract the name before <00>
                 var idx = trimmed.IndexOf("<00>", StringComparison.OrdinalIgnoreCase);
                 var name = trimmed[..idx].Trim();
                 if (name.Length > 0 && !name.StartsWith("---") && !name.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
                     return name;
+                }
             }
         }
         catch (Exception ex)
@@ -573,12 +645,24 @@ public sealed class NetworkToolsViewModel : ViewModelBase
 
         foreach (var iface in NetworkInterface.GetAllNetworkInterfaces())
         {
-            if (iface.OperationalStatus != OperationalStatus.Up) continue;
-            if (iface.NetworkInterfaceType is NetworkInterfaceType.Loopback) continue;
+            if (iface.OperationalStatus != OperationalStatus.Up)
+            {
+                continue;
+            }
+
+            if (iface.NetworkInterfaceType is NetworkInterfaceType.Loopback)
+            {
+                continue;
+            }
+
             var props = iface.GetIPProperties();
             foreach (var addr in props.UnicastAddresses)
             {
-                if (addr.Address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork) continue;
+                if (addr.Address.AddressFamily != System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    continue;
+                }
+
                 var ip = addr.Address;
                 var mask = addr.IPv4Mask ?? IPAddress.Parse("255.255.255.0");
                 // Prefer an interface that has a default gateway
@@ -601,7 +685,10 @@ public sealed class NetworkToolsViewModel : ViewModelBase
         var b = (byte[])netBytes.Clone();
         b[3] = (byte)(hostIndex & 0xFF);
         if (netBytes.Length == 4)
+        {
             b[2] = (byte)(netBytes[2] | (hostIndex >> 8 & 0xFF));
+        }
+
         return new IPAddress(b).ToString();
     }
 
@@ -629,7 +716,11 @@ public sealed class NetworkToolsViewModel : ViewModelBase
     private async Task RunTraceAsync()
     {
         var host = _traceHost.Trim();
-        if (string.IsNullOrEmpty(host)) return;
+        if (string.IsNullOrEmpty(host))
+        {
+            return;
+        }
+
         if (!IsValidHostOrIp(host)) { TraceResult = _loc.Get("net.error"); return; }
 
         var ct = BeginOperation();
@@ -653,7 +744,11 @@ public sealed class NetworkToolsViewModel : ViewModelBase
                 return text;
             }, ct).ConfigureAwait(false);
 
-            if (ct.IsCancellationRequested) return;
+            if (ct.IsCancellationRequested)
+            {
+                return;
+            }
+
             Dispatch(() => TraceResult = string.IsNullOrWhiteSpace(output) ? _loc.Get("net.no_result") : output.Trim());
         }
         catch (OperationCanceledException) { /* user cancelled */ }
@@ -692,13 +787,28 @@ public sealed class NetworkToolsViewModel : ViewModelBase
     private async Task RunWhoisAsync()
     {
         var domain = _whoisDomain.Trim().ToLowerInvariant();
-        if (string.IsNullOrEmpty(domain)) return;
+        if (string.IsNullOrEmpty(domain))
+        {
+            return;
+        }
 
         // Strip protocol and path prefixes
-        if (domain.StartsWith("http://", StringComparison.Ordinal)) domain = domain[7..];
-        if (domain.StartsWith("https://", StringComparison.Ordinal)) domain = domain[8..];
+        if (domain.StartsWith("http://", StringComparison.Ordinal))
+        {
+            domain = domain[7..];
+        }
+
+        if (domain.StartsWith("https://", StringComparison.Ordinal))
+        {
+            domain = domain[8..];
+        }
+
         var slashPos = domain.IndexOf('/');
-        if (slashPos > 0) domain = domain[..slashPos];
+        if (slashPos > 0)
+        {
+            domain = domain[..slashPos];
+        }
+
         if (!IsValidHostOrIp(domain)) { WhoisResult = _loc.Get("net.error"); return; }
 
         var ct = BeginOperation();
@@ -706,7 +816,10 @@ public sealed class NetworkToolsViewModel : ViewModelBase
         try
         {
             var raw = await QueryWhoisAsync(domain, ct).ConfigureAwait(false);
-            if (ct.IsCancellationRequested) return;
+            if (ct.IsCancellationRequested)
+            {
+                return;
+            }
 
             Dispatch(() => WhoisResult = string.IsNullOrWhiteSpace(raw)
                 ? _loc.Get("net.no_result")
@@ -751,7 +864,7 @@ public sealed class NetworkToolsViewModel : ViewModelBase
             }
         }
 
-        if (!string.IsNullOrEmpty(referServer) && referServer != ianaServer)
+        if (!string.IsNullOrEmpty(referServer) && referServer != ianaServer && IsValidHostOrIp(referServer))
         {
             try
             {
@@ -807,7 +920,11 @@ public sealed class NetworkToolsViewModel : ViewModelBase
     private async Task RunDnsAsync()
     {
         var host = _dnsHost.Trim();
-        if (string.IsNullOrEmpty(host)) return;
+        if (string.IsNullOrEmpty(host))
+        {
+            return;
+        }
+
         if (!IsValidHostOrIp(host)) { DnsResult = _loc.Get("net.error"); return; }
 
         var ct = BeginOperation();
@@ -815,7 +932,10 @@ public sealed class NetworkToolsViewModel : ViewModelBase
         try
         {
             var entry = await Task.Run(() => Dns.GetHostEntry(host), ct).ConfigureAwait(false);
-            if (ct.IsCancellationRequested) return;
+            if (ct.IsCancellationRequested)
+            {
+                return;
+            }
 
             var lines = new List<string>
             {
@@ -824,14 +944,18 @@ public sealed class NetworkToolsViewModel : ViewModelBase
                 "Addresses:"
             };
             foreach (var addr in entry.AddressList)
+            {
                 lines.Add($"  {(addr.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork ? "A    " : "AAAA ")}  {addr}");
+            }
 
             if (entry.Aliases.Length > 0)
             {
                 lines.Add(string.Empty);
                 lines.Add("Aliases:");
                 foreach (var alias in entry.Aliases)
+                {
                     lines.Add($"  {alias}");
+                }
             }
 
             Dispatch(() => DnsResult = string.Join(Environment.NewLine, lines));
@@ -944,12 +1068,12 @@ public sealed class NetworkToolsViewModel : ViewModelBase
     {
         _loc = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
 
-        SetModeMyIpCommand  = new RelayCommand(() => ActiveMode = 0);
-        SetModePingCommand  = new RelayCommand(() => ActiveMode = 1);
-        SetModeScanCommand  = new RelayCommand(() => ActiveMode = 2);
+        SetModeMyIpCommand = new RelayCommand(() => ActiveMode = 0);
+        SetModePingCommand = new RelayCommand(() => ActiveMode = 1);
+        SetModeScanCommand = new RelayCommand(() => ActiveMode = 2);
         SetModeTraceCommand = new RelayCommand(() => ActiveMode = 3);
         SetModeWhoisCommand = new RelayCommand(() => ActiveMode = 4);
-        SetModeDnsCommand   = new RelayCommand(() => ActiveMode = 5);
+        SetModeDnsCommand = new RelayCommand(() => ActiveMode = 5);
 
         FetchMyIpCommand = new RelayCommand(() => _ = FetchMyIpAsync(), () => IsNotBusy);
         CopyMyIpCommand = new RelayCommand(
@@ -1005,9 +1129,13 @@ public sealed class NetworkToolsViewModel : ViewModelBase
     {
         var app = System.Windows.Application.Current;
         if (app?.Dispatcher is { } dispatcher && !dispatcher.CheckAccess())
+        {
             dispatcher.Invoke(action);
+        }
         else
+        {
             action();
+        }
     }
 
     private static void TryCopyToClipboard(string text)

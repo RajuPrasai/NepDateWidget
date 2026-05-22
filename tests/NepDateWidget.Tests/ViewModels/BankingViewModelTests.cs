@@ -322,4 +322,155 @@ public class BankingViewModelTests
         Assert.True(vm.InterestRows.Count > 0);
         Assert.NotEmpty(vm.InterestRows[0].FromDate);
     }
+
+    // ── EMI date mode toggle ──────────────────────────────────────────────────
+
+    [Fact]
+    public void EmiUseBs_DefaultTrue()
+    {
+        var vm = Create();
+        Assert.True(vm.EmiUseBs);
+    }
+
+    [Fact]
+    public void SetEmiAdCommand_SetsEmiUseBs_False()
+    {
+        var vm = Create();
+        vm.SetEmiAdCommand.Execute(null);
+        Assert.False(vm.EmiUseBs);
+    }
+
+    [Fact]
+    public void SetEmiBsCommand_RestoresEmiUseBs_True()
+    {
+        var vm = Create();
+        vm.SetEmiAdCommand.Execute(null);
+        vm.SetEmiBsCommand.Execute(null);
+        Assert.True(vm.EmiUseBs);
+    }
+
+    [Fact]
+    public void EmiDatePlaceholder_BsMode_HasSlashSeparator()
+    {
+        // BS date format uses slash: "2082/01/01"
+        var vm = Create();
+        vm.SetEmiBsCommand.Execute(null);
+        Assert.Contains("/", vm.EmiDatePlaceholder);
+    }
+
+    [Fact]
+    public void EmiDatePlaceholder_AdMode_HasDashSeparator()
+    {
+        // AD date format uses dash: "2026-04-01"
+        var vm = Create();
+        vm.SetEmiAdCommand.Execute(null);
+        Assert.Contains("-", vm.EmiDatePlaceholder);
+    }
+
+    [Fact]
+    public void EmiStartDateLabel_ChangesBetweenModes()
+    {
+        var vm = Create();
+        var bsLabel = vm.EmiStartDateLabel;
+        vm.SetEmiAdCommand.Execute(null);
+        var adLabel = vm.EmiStartDateLabel;
+        Assert.NotEqual(bsLabel, adLabel);
+    }
+
+    // ── Interest date mode toggle ─────────────────────────────────────────────
+
+    [Fact]
+    public void InterestUseBs_DefaultTrue()
+    {
+        var vm = Create();
+        Assert.True(vm.InterestUseBs);
+    }
+
+    [Fact]
+    public void SetInterestAdCommand_SetsInterestUseBs_False()
+    {
+        var vm = Create();
+        vm.SetInterestAdCommand.Execute(null);
+        Assert.False(vm.InterestUseBs);
+    }
+
+    [Fact]
+    public void SetInterestBsCommand_RestoresInterestUseBs_True()
+    {
+        var vm = Create();
+        vm.SetInterestAdCommand.Execute(null);
+        vm.SetInterestBsCommand.Execute(null);
+        Assert.True(vm.InterestUseBs);
+    }
+
+    [Fact]
+    public void InterestDatePlaceholder_BsMode_HasSlashSeparator()
+    {
+        var vm = Create();
+        vm.SetInterestBsCommand.Execute(null);
+        Assert.Contains("/", vm.InterestDatePlaceholder);
+    }
+
+    [Fact]
+    public void InterestDatePlaceholder_AdMode_HasDashSeparator()
+    {
+        var vm = Create();
+        vm.SetInterestAdCommand.Execute(null);
+        Assert.Contains("-", vm.InterestDatePlaceholder);
+    }
+
+    // ── EMI schedule row count ────────────────────────────────────────────────
+
+    [Fact]
+    public void Emi_Schedule_HasAtLeastOneYearRow_After12Months()
+    {
+        // A 12-month loan spans at least one calendar year → at least one year-header row
+        var vm = Create();
+        vm.EmiLoanAmount = "1200000";
+        vm.EmiAnnualRate = "10";
+        vm.EmiMonths     = "12";
+        vm.EmiStartDate  = "";  // uses today from FakeAdapter
+
+        vm.CalculateEmiCommand.Execute(null);
+
+        Assert.True(vm.EmiHasResult);
+        Assert.NotEmpty(vm.EmiScheduleRows);
+        // EmiScheduleRows contains year-header rows; at least one must exist
+        Assert.Contains(vm.EmiScheduleRows, r => r.IsYearRow);
+    }
+
+    [Fact]
+    public void Emi_Schedule_TotalPayment_GreaterThanPrincipal_ForNonZeroRate()
+    {
+        // With non-zero interest, total payment must exceed the principal
+        var vm = Create();
+        const double principal = 1_000_000;
+        vm.EmiLoanAmount = principal.ToString();
+        vm.EmiAnnualRate = "10";
+        vm.EmiMonths     = "24";
+
+        vm.CalculateEmiCommand.Execute(null);
+
+        Assert.True(vm.EmiHasResult);
+        Assert.Contains("NPR", vm.EmiTotalPaymentText);
+        // Total interest text must not be "NPR 0" or empty
+        Assert.NotEmpty(vm.EmiTotalInterestText);
+        Assert.DoesNotContain("NPR 0.00", vm.EmiTotalInterestText);
+    }
+
+    [Fact]
+    public void Emi_Schedule_ZeroRate_TotalPaymentEqualsLoan()
+    {
+        // Zero interest: total payment = principal, total interest = 0
+        var vm = Create();
+        vm.EmiLoanAmount = "120000";
+        vm.EmiAnnualRate = "0";
+        vm.EmiMonths     = "12";
+
+        vm.CalculateEmiCommand.Execute(null);
+
+        Assert.True(vm.EmiHasResult);
+        Assert.Contains("NPR", vm.EmiTotalPaymentText);
+        Assert.Contains("0", vm.EmiTotalInterestText);
+    }
 }

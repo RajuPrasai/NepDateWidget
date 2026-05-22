@@ -1,6 +1,5 @@
 using NepDateWidget.Helpers;
 using NepDateWidget.Services;
-using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace NepDateWidget.ViewModels;
@@ -88,9 +87,9 @@ public sealed class UnitViewModel : ViewModelBase
         }
     }
 
-    public bool IsModeArea { get => _activeMode == 0; set { if (value) ActiveMode = 0; } }
-    public bool IsModeScript { get => _activeMode == 1; set { if (value) ActiveMode = 1; } }
-    public bool IsModeWeight { get => _activeMode == 2; set { if (value) ActiveMode = 2; } }
+    public bool IsModeArea { get => _activeMode == 0; set { if (value) { ActiveMode = 0; } } }
+    public bool IsModeScript { get => _activeMode == 1; set { if (value) { ActiveMode = 1; } } }
+    public bool IsModeWeight { get => _activeMode == 2; set { if (value) { ActiveMode = 2; } } }
 
     // ═════════════════════════════════════════════════════════════════════════
     // MODE: LAND AREA
@@ -102,21 +101,39 @@ public sealed class UnitViewModel : ViewModelBase
     public string AreaFromValue
     {
         get => _areaFromValue;
-        set { if (SetProperty(ref _areaFromValue, value)) RecomputeArea(); }
+        set
+        {
+            if (SetProperty(ref _areaFromValue, value))
+            {
+                RecomputeArea();
+            }
+        }
     }
 
     private int _areaFromUnit;
     public int AreaFromUnit
     {
         get => _areaFromUnit;
-        set { if (SetProperty(ref _areaFromUnit, value)) RecomputeArea(); }
+        set
+        {
+            if (SetProperty(ref _areaFromUnit, value))
+            {
+                RecomputeArea();
+            }
+        }
     }
 
     private int _areaToUnit = 9; // Sq. Metres
     public int AreaToUnit
     {
         get => _areaToUnit;
-        set { if (SetProperty(ref _areaToUnit, value)) RecomputeArea(); }
+        set
+        {
+            if (SetProperty(ref _areaToUnit, value))
+            {
+                RecomputeArea();
+            }
+        }
     }
 
     private string _areaResult = string.Empty;
@@ -142,7 +159,9 @@ public sealed class UnitViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _scriptRomanInput, value))
+            {
                 ScriptDevaOutput = NepaliScriptConverter.RomanToDevanagari(value);
+            }
         }
     }
 
@@ -160,7 +179,9 @@ public sealed class UnitViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _scriptDevaInput, value))
+            {
                 ScriptRomanOutput = NepaliScriptConverter.DevanagariToRoman(value);
+            }
         }
     }
 
@@ -185,21 +206,39 @@ public sealed class UnitViewModel : ViewModelBase
     public string WeightFromValue
     {
         get => _weightFromValue;
-        set { if (SetProperty(ref _weightFromValue, value)) RecomputeWeight(); }
+        set
+        {
+            if (SetProperty(ref _weightFromValue, value))
+            {
+                RecomputeWeight();
+            }
+        }
     }
 
     private int _weightFromUnit; // Dharni
     public int WeightFromUnit
     {
         get => _weightFromUnit;
-        set { if (SetProperty(ref _weightFromUnit, value)) RecomputeWeight(); }
+        set
+        {
+            if (SetProperty(ref _weightFromUnit, value))
+            {
+                RecomputeWeight();
+            }
+        }
     }
 
     private int _weightToUnit = 5; // kg
     public int WeightToUnit
     {
         get => _weightToUnit;
-        set { if (SetProperty(ref _weightToUnit, value)) RecomputeWeight(); }
+        set
+        {
+            if (SetProperty(ref _weightToUnit, value))
+            {
+                RecomputeWeight();
+            }
+        }
     }
 
     private string _weightResult = string.Empty;
@@ -213,7 +252,7 @@ public sealed class UnitViewModel : ViewModelBase
 
     public ICommand SetModeWeightCommand { get; }
     public ICommand WeightCopyCommand { get; }
-    public ICommand OpenHelpCommand  { get; }
+    public ICommand OpenHelpCommand { get; }
 
     // ═════════════════════════════════════════════════════════════════════════
     // LABELS
@@ -312,7 +351,10 @@ public sealed class UnitViewModel : ViewModelBase
         AreaError = string.Empty;
         AreaResult = string.Empty;
 
-        if (string.IsNullOrWhiteSpace(_areaFromValue)) return;
+        if (string.IsNullOrWhiteSpace(_areaFromValue))
+        {
+            return;
+        }
 
         if (!double.TryParse(
                 _areaFromValue.Trim(),
@@ -339,7 +381,10 @@ public sealed class UnitViewModel : ViewModelBase
         double result = sqMetres / AreaToSqM[to];
 
         AreaResult = FormatResult(result);
-        if (!_initializing) Log.Action($"calc area | {input} {AreaUnitNames[from]} → {AreaResult} {AreaUnitNames[to]}");
+        if (!_initializing)
+        {
+            Log.Action($"calc area | {input} {AreaUnitNames[from]} → {AreaResult} {AreaUnitNames[to]}");
+        }
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -352,7 +397,10 @@ public sealed class UnitViewModel : ViewModelBase
         WeightError = string.Empty;
         WeightResult = string.Empty;
 
-        if (string.IsNullOrWhiteSpace(_weightFromValue)) return;
+        if (string.IsNullOrWhiteSpace(_weightFromValue))
+        {
+            return;
+        }
 
         if (!double.TryParse(
                 _weightFromValue.Trim(),
@@ -379,7 +427,10 @@ public sealed class UnitViewModel : ViewModelBase
         double result = kg / WeightToKg[to];
 
         WeightResult = FormatResult(result);
-        if (!_initializing) Log.Action($"calc weight | {input} {WeightUnitNames[from]} → {WeightResult} {WeightUnitNames[to]}");
+        if (!_initializing)
+        {
+            Log.Action($"calc weight | {input} {WeightUnitNames[from]} → {WeightResult} {WeightUnitNames[to]}");
+        }
     }
 
     // ═════════════════════════════════════════════════════════════════════════
@@ -436,7 +487,10 @@ public sealed class UnitViewModel : ViewModelBase
     {
         string s = value.ToString("F4", System.Globalization.CultureInfo.InvariantCulture);
         if (s.Contains('.'))
+        {
             s = s.TrimEnd('0').TrimEnd('.');
+        }
+
         return s;
     }
 

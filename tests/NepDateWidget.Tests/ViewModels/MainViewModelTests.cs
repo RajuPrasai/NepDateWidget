@@ -23,7 +23,6 @@ public class MainViewModelTests
         public void Load()  { LoadCount++;  }
         public void Save()  { SaveCount++;  Current = Current; /* no-op write */ }
         public void ResetToDefaults() { Current = new WidgetSettings(); Save(); }
-        public event EventHandler? SettingsChanged;
     }
     private sealed class FakeThemeService : IThemeService
     {
@@ -587,7 +586,10 @@ public class MainViewModelTests
     {
         var (vm, _, _) = Create();
         for (int i = 0; i < 10; i++)
+        {
             vm.ToggleExpandedCommand.Execute(null);
+        }
+
         Assert.False(vm.IsExpanded);
     }
 
@@ -596,7 +598,10 @@ public class MainViewModelTests
     {
         var (vm, _, _) = Create();
         for (int i = 0; i < 11; i++)
+        {
             vm.ToggleExpandedCommand.Execute(null);
+        }
+
         Assert.True(vm.IsExpanded);
     }
 
@@ -638,7 +643,7 @@ public class MainViewModelTests
     {
         var (vm, _, _) = Create();
         var raised = false;
-        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.IsExpanded)) raised = true; };
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.IsExpanded)) { raised = true; } };
         vm.ToggleExpandedCommand.Execute(null);
         Assert.True(raised);
     }
@@ -765,5 +770,181 @@ public class MainViewModelTests
         vm.ToggleExpandedCommand.Execute(null); // collapse
         vm.ToggleExpandedCommand.Execute(null); // re-expand
         Assert.Equal(1, vm.SelectedTabIndex);
+    }
+
+    // ── OpenNetworkXxxCommand → tab index 5 + correct Network.ActiveMode ─────
+
+    [Fact]
+    public void OpenNetworkMyIpCommand_SetsTabIndex5_AndMode0()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenNetworkMyIpCommand.Execute(null);
+
+        Assert.Equal(5, vm.SelectedTabIndex);
+        Assert.Equal(0, vm.Network.ActiveMode);
+    }
+
+    [Fact]
+    public void OpenNetworkPingCommand_SetsTabIndex5_AndMode1()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenNetworkPingCommand.Execute(null);
+
+        Assert.Equal(5, vm.SelectedTabIndex);
+        Assert.Equal(1, vm.Network.ActiveMode);
+    }
+
+    [Fact]
+    public void OpenNetworkScanCommand_SetsTabIndex5_AndMode2()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenNetworkScanCommand.Execute(null);
+
+        Assert.Equal(5, vm.SelectedTabIndex);
+        Assert.Equal(2, vm.Network.ActiveMode);
+    }
+
+    [Fact]
+    public void OpenNetworkTraceCommand_SetsTabIndex5_AndMode3()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenNetworkTraceCommand.Execute(null);
+
+        Assert.Equal(5, vm.SelectedTabIndex);
+        Assert.Equal(3, vm.Network.ActiveMode);
+    }
+
+    [Fact]
+    public void OpenNetworkWhoisCommand_SetsTabIndex5_AndMode4()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenNetworkWhoisCommand.Execute(null);
+
+        Assert.Equal(5, vm.SelectedTabIndex);
+        Assert.Equal(4, vm.Network.ActiveMode);
+    }
+
+    [Fact]
+    public void OpenNetworkDnsCommand_SetsTabIndex5_AndMode5()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenNetworkDnsCommand.Execute(null);
+
+        Assert.Equal(5, vm.SelectedTabIndex);
+        Assert.Equal(5, vm.Network.ActiveMode);
+    }
+
+    // ── OpenBankingXxxCommand → tab index 4 + correct Banking.ActiveMode ─────
+
+    [Fact]
+    public void OpenBankingInterestCommand_SetsTabIndex4_AndMode0()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenBankingInterestCommand.Execute(null);
+
+        Assert.Equal(4, vm.SelectedTabIndex);
+        Assert.Equal(0, vm.Banking.ActiveMode);
+    }
+
+    [Fact]
+    public void OpenBankingEmiCommand_SetsTabIndex4_AndMode1()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenBankingEmiCommand.Execute(null);
+
+        Assert.Equal(4, vm.SelectedTabIndex);
+        Assert.Equal(1, vm.Banking.ActiveMode);
+    }
+
+    // ── OpenTextXxxCommand → tab index 3 + correct TextTools.ActiveMode ──────
+
+    [Fact]
+    public void OpenTextPasswordCommand_SetsTabIndex3_AndMode0()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenTextPasswordCommand.Execute(null);
+
+        Assert.Equal(3, vm.SelectedTabIndex);
+        Assert.Equal(0, vm.TextTools.ActiveMode);
+    }
+
+    [Fact]
+    public void OpenTextWordCommand_SetsTabIndex3_AndMode1()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenTextWordCommand.Execute(null);
+
+        Assert.Equal(3, vm.SelectedTabIndex);
+        Assert.Equal(1, vm.TextTools.ActiveMode);
+    }
+
+    [Fact]
+    public void OpenTextUnicodeCommand_SetsTabIndex3_AndMode2()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenTextUnicodeCommand.Execute(null);
+
+        Assert.Equal(3, vm.SelectedTabIndex);
+        Assert.Equal(2, vm.TextTools.ActiveMode);
+    }
+
+    [Fact]
+    public void OpenTextScriptCommand_SetsTabIndex3_AndMode3()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedCommand.Execute(null);
+
+        vm.OpenTextScriptCommand.Execute(null);
+
+        Assert.Equal(3, vm.SelectedTabIndex);
+        Assert.Equal(3, vm.TextTools.ActiveMode);
+    }
+
+    // ── ExpandedPinned / ToggleExpandedPinCommand ─────────────────────────────
+
+    [Fact]
+    public void ExpandedPinned_DefaultFalse()
+    {
+        var (vm, _, _) = Create();
+        Assert.False(vm.ExpandedPinned);
+    }
+
+    [Fact]
+    public void ToggleExpandedPinCommand_FlipsPinned_ToTrue()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedPinCommand.Execute(null);
+        Assert.True(vm.ExpandedPinned);
+    }
+
+    [Fact]
+    public void ToggleExpandedPinCommand_Twice_ReturnsFalse()
+    {
+        var (vm, _, _) = Create();
+        vm.ToggleExpandedPinCommand.Execute(null);
+        vm.ToggleExpandedPinCommand.Execute(null);
+        Assert.False(vm.ExpandedPinned);
     }
 }

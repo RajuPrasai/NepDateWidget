@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Helpers;
+using NepDateWidget.Helpers;
 using NepDateWidget.Models;
 using NepDateWidget.Services;
 
@@ -63,11 +63,29 @@ public sealed class CalendarDayViewModel : ViewModelBase
 
     /// <summary>Whether to apply Saturday/holiday highlighting for this cell.</summary>
     private bool _showSaturdayHighlight;
-    public bool ShowSaturdayHighlight { get => _showSaturdayHighlight; private set => SetProperty(ref _showSaturdayHighlight, value); }
+    public bool ShowSaturdayHighlight
+    {
+        get => _showSaturdayHighlight;
+        private set
+        {
+            bool oldTint = ShowWeekendTint;
+            if (SetProperty(ref _showSaturdayHighlight, value) && oldTint != ShowWeekendTint)
+                OnPropertyChanged(nameof(ShowWeekendTint));
+        }
+    }
 
     /// <summary>Whether to apply Sunday highlighting for this cell.</summary>
     private bool _showSundayHighlight;
-    public bool ShowSundayHighlight { get => _showSundayHighlight; private set => SetProperty(ref _showSundayHighlight, value); }
+    public bool ShowSundayHighlight
+    {
+        get => _showSundayHighlight;
+        private set
+        {
+            bool oldTint = ShowWeekendTint;
+            if (SetProperty(ref _showSundayHighlight, value) && oldTint != ShowWeekendTint)
+                OnPropertyChanged(nameof(ShowWeekendTint));
+        }
+    }
 
     /// <summary>Lunar day (Tithi) text in the current widget language. Empty for padding cells.</summary>
     private string _tithiText = string.Empty;
@@ -97,9 +115,59 @@ public sealed class CalendarDayViewModel : ViewModelBase
     /// <summary>True when there are more events than currently shown. Triggers "..." indicator.</summary>
     public bool HasHiddenEvents { get => _hasHiddenEvents; private set => SetProperty(ref _hasHiddenEvents, value); }
 
+    /// <summary>First visible event text slot. Empty when no events are shown.</summary>
+    private string _eventText0 = string.Empty;
+    public string EventText0 { get => _eventText0; private set => SetProperty(ref _eventText0, value); }
+
+    /// <summary>Second visible event text slot. Empty when fewer than two events are shown.</summary>
+    private string _eventText1 = string.Empty;
+    public string EventText1
+    {
+        get => _eventText1;
+        private set
+        {
+            if (SetProperty(ref _eventText1, value))
+                OnPropertyChanged(nameof(HasEventText1));
+        }
+    }
+
+    /// <summary>True when EventText1 has content. Used by XAML to show/hide the second event TextBlock.</summary>
+    public bool HasEventText1 => !string.IsNullOrEmpty(_eventText1);
+
+    /// <summary>Third visible event text slot. Empty when fewer than three events are shown.</summary>
+    private string _eventText2 = string.Empty;
+    public string EventText2
+    {
+        get => _eventText2;
+        private set
+        {
+            if (SetProperty(ref _eventText2, value))
+                OnPropertyChanged(nameof(HasEventText2));
+        }
+    }
+
+    /// <summary>True when EventText2 has content. Used by XAML to show/hide the third event TextBlock.</summary>
+    public bool HasEventText2 => !string.IsNullOrEmpty(_eventText2);
+
     /// <summary>True when this day is a public holiday and HighlightPublicHolidays is on.</summary>
     private bool _showHolidayHighlight;
-    public bool ShowHolidayHighlight { get => _showHolidayHighlight; private set => SetProperty(ref _showHolidayHighlight, value); }
+    public bool ShowHolidayHighlight
+    {
+        get => _showHolidayHighlight;
+        private set
+        {
+            bool oldTint = ShowWeekendTint;
+            if (SetProperty(ref _showHolidayHighlight, value) && oldTint != ShowWeekendTint)
+                OnPropertyChanged(nameof(ShowWeekendTint));
+        }
+    }
+
+    /// <summary>
+    /// True when any of ShowSaturdayHighlight, ShowSundayHighlight, or ShowHolidayHighlight is set.
+    /// Single binding target replacing the three separate weekend/holiday XAML DataTriggers,
+    /// reducing per-cell trigger evaluations from 9 to 3.
+    /// </summary>
+    public bool ShowWeekendTint => _showSaturdayHighlight || _showSundayHighlight || _showHolidayHighlight;
 
     /// <summary>
     /// Pre-built rows for the right-click "copy date" context menu.
@@ -116,6 +184,16 @@ public sealed class CalendarDayViewModel : ViewModelBase
     /// <summary>Localized "Copy" label shown as a non-clickable header at the top of the right-click menu.</summary>
     private string _copyMenuTitle = string.Empty;
     public string CopyMenuTitle { get => _copyMenuTitle; private set => SetProperty(ref _copyMenuTitle, value); }
+
+    // ── Lazy copy-menu build state ────────────────────────────────────────────
+    // DateFormatter.Build() is deferred until first right-click (ContextMenuOpening).
+    // _placeholderOptions is a static sentinel so HasCopyOptions stays true for
+    // current-month cells before the real options are built, keeping the ContextMenu
+    // accessible without suppressing it via the DataTrigger.
+    private static readonly IReadOnlyList<DateFormatOption> _placeholderOptions =
+        new[] { new DateFormatOption("_", "_", "_") };
+    private bool _lazyBuildPending;
+    private (bool isNepali, INepaliDateAdapter? adapter, ILocalizationService? localization) _lazyBuildArgs;
 
     // ── Multi-event state ────────────────────────────────────────────────────
     private string[] _allEvents;
@@ -152,7 +230,7 @@ public sealed class CalendarDayViewModel : ViewModelBase
         TithiText = day.IsCurrentMonth ? rawTithi : string.Empty;
         ShowTithiText = day.IsCurrentMonth && showTithi && !string.IsNullOrEmpty(rawTithi);
         IsPurnima = day.IsCurrentMonth && day.TithiEn.StartsWith("Purnima", StringComparison.Ordinal);
-        IsAunsi   = day.IsCurrentMonth && day.TithiEn == "Aunsi";
+        IsAunsi = day.IsCurrentMonth && day.TithiEn == "Aunsi";
 
         // Multi-event: store all events and initialise with 1 visible row
         string[] events = isNepali ? day.EventsNp : day.EventsEn;
@@ -166,6 +244,8 @@ public sealed class CalendarDayViewModel : ViewModelBase
             _visibleEventsArray = new[] { firstText };
             _hasVisibleEvents = true;
             _hasHiddenEvents = _allEvents.Length > 1;
+            _eventText0 = firstText;
+            // _eventText1 and _eventText2 stay empty - constructor always initialises with a single visible row
         }
 
         // Public holiday: same highlight color as Saturday/Sunday
@@ -186,7 +266,9 @@ public sealed class CalendarDayViewModel : ViewModelBase
                 CopyFormatOptions = DateFormatter.Build(day.Year, day.Month, day.Day, adapter, localization, isNepali);
             }
             if (CopyFormatOptions.Count > 0)
+            {
                 CopyMenuTitle = localization.Get("calendar.copy.title");
+            }
         }
     }
 
@@ -206,21 +288,36 @@ public sealed class CalendarDayViewModel : ViewModelBase
         bool highlightPublicHolidays,
         INepaliDateAdapter? adapter,
         ILocalizationService? localization,
-        int visibleEventCount = 1)
+        int visibleEventCount = 1,
+        string copyMenuTitle = "")
     {
+        // Capture all _day-delegating property values BEFORE replacing _day so we can
+        // compare and only raise PropertyChanged for values that actually changed.
+        // 42 cells × up to 9 events = up to 378 notifications per navigation; in practice
+        // IsSaturday/IsSunday never change (column position is fixed), IsToday rarely changes,
+        // and padding status only flips on slow-path navigations - so most properties are
+        // silent on most navigations.
+        int oldBsYear        = _day.Year;
+        int oldBsMonth       = _day.Month;
+        int oldDay           = _day.Day;
+        bool oldIsCurrentMonth = _day.IsCurrentMonth;
+        bool oldIsPadding    = _day.IsPadding;
+        bool oldIsToday      = _day.IsToday;
+        bool oldIsSaturday   = _day.IsSaturday;
+        bool oldIsSunday     = _day.IsSunday;
+        bool oldIsHighlighted = _day.IsHighlighted;
+
         _day = day ?? throw new ArgumentNullException(nameof(day));
 
-        // Raise PropertyChanged for all _day-delegating properties unconditionally.
-        // These are cheap identity reads - WPF will diff and skip re-render if unchanged.
-        OnPropertyChanged(nameof(BsYear));
-        OnPropertyChanged(nameof(BsMonth));
-        OnPropertyChanged(nameof(Day));
-        OnPropertyChanged(nameof(IsCurrentMonth));
-        OnPropertyChanged(nameof(IsPadding));
-        OnPropertyChanged(nameof(IsToday));
-        OnPropertyChanged(nameof(IsSaturday));
-        OnPropertyChanged(nameof(IsSunday));
-        OnPropertyChanged(nameof(IsHighlighted));
+        if (oldBsYear           != _day.Year)           OnPropertyChanged(nameof(BsYear));
+        if (oldBsMonth          != _day.Month)          OnPropertyChanged(nameof(BsMonth));
+        if (oldDay              != _day.Day)            OnPropertyChanged(nameof(Day));
+        if (oldIsCurrentMonth   != _day.IsCurrentMonth) OnPropertyChanged(nameof(IsCurrentMonth));
+        if (oldIsPadding        != _day.IsPadding)      OnPropertyChanged(nameof(IsPadding));
+        if (oldIsToday          != _day.IsToday)        OnPropertyChanged(nameof(IsToday));
+        if (oldIsSaturday       != _day.IsSaturday)     OnPropertyChanged(nameof(IsSaturday));
+        if (oldIsSunday         != _day.IsSunday)       OnPropertyChanged(nameof(IsSunday));
+        if (oldIsHighlighted    != _day.IsHighlighted)  OnPropertyChanged(nameof(IsHighlighted));
 
         DayText = day.IsCurrentMonth
             ? (isNepali ? ToNepaliDigits(day.Day) : day.Day.ToString())
@@ -230,36 +327,77 @@ public sealed class CalendarDayViewModel : ViewModelBase
             ? day.AdDay.ToString()
             : string.Empty;
 
-        ShowEnglishBadge      = day.IsCurrentMonth && day.AdDay > 0 && showEnglishDayNumbers;
+        ShowEnglishBadge = day.IsCurrentMonth && day.AdDay > 0 && showEnglishDayNumbers;
         ShowSaturdayHighlight = day.IsSaturday && highlightSaturdays;
-        ShowSundayHighlight   = day.IsSunday && highlightSundays;
+        ShowSundayHighlight = day.IsSunday && highlightSundays;
 
         string rawTithi = isNepali ? day.TithiNp : day.TithiEn;
-        TithiText     = day.IsCurrentMonth ? rawTithi : string.Empty;
+        TithiText = day.IsCurrentMonth ? rawTithi : string.Empty;
         ShowTithiText = day.IsCurrentMonth && showTithi && !string.IsNullOrEmpty(rawTithi);
-        IsPurnima     = day.IsCurrentMonth && day.TithiEn.StartsWith("Purnima", StringComparison.Ordinal);
-        IsAunsi       = day.IsCurrentMonth && day.TithiEn == "Aunsi";
+        IsPurnima = day.IsCurrentMonth && day.TithiEn.StartsWith("Purnima", StringComparison.Ordinal);
+        IsAunsi = day.IsCurrentMonth && day.TithiEn == "Aunsi";
 
         string[] events = isNepali ? day.EventsNp : day.EventsEn;
-        _allEvents    = (day.IsCurrentMonth && showEvents) ? events : Array.Empty<string>();
+        _allEvents = (day.IsCurrentMonth && showEvents) ? events : Array.Empty<string>();
         _canShowEvents = day.IsCurrentMonth && showEvents;
         UpdateVisibleEventCount(visibleEventCount);
 
         ShowHolidayHighlight = day.IsCurrentMonth && day.IsPublicHoliday && highlightPublicHolidays;
 
-        IReadOnlyList<DateFormatOption> newOpts = Array.Empty<DateFormatOption>();
+        bool oldHasCopy = _copyFormatOptions.Count > 0;
         if (day.IsCurrentMonth && localization is not null)
         {
-            if (day.AdDate.HasValue && !string.IsNullOrEmpty(day.BsShortEn))
-                newOpts = DateFormatter.Build(day, localization, isNepali);
-            else if (adapter is not null)
-                newOpts = DateFormatter.Build(day.Year, day.Month, day.Day, adapter, localization, isNepali);
+            // Defer DateFormatter.Build() until the user actually opens the context menu.
+            // EnsureCopyOptionsBuilt() will be called from CalendarView.ContextMenuOpening.
+            _lazyBuildPending = true;
+            _lazyBuildArgs = (isNepali, adapter, localization);
+            // If no options yet (e.g. padding→current transition), set sentinel so
+            // HasCopyOptions returns true and the ContextMenu is not suppressed by the DataTrigger.
+            // If a previous lazy build produced real items, keep them - they're stale but
+            // HasCopyOptions stays true; EnsureCopyOptionsBuilt() refreshes them on first open.
+            if (_copyFormatOptions.Count == 0)
+                _copyFormatOptions = _placeholderOptions;
         }
-        CopyFormatOptions = newOpts;
-        OnPropertyChanged(nameof(HasCopyOptions));
-        CopyMenuTitle = (localization is not null && newOpts.Count > 0)
-            ? localization.Get("calendar.copy.title")
+        else
+        {
+            _lazyBuildPending = false;
+            _copyFormatOptions = Array.Empty<DateFormatOption>();
+        }
+        if (oldHasCopy != (_copyFormatOptions.Count > 0))
+            OnPropertyChanged(nameof(HasCopyOptions));
+        CopyMenuTitle = (day.IsCurrentMonth && localization is not null && !string.IsNullOrEmpty(copyMenuTitle))
+            ? copyMenuTitle
             : string.Empty;
+    }
+
+    /// <summary>
+    /// Builds the real date-format options for this cell, called from
+    /// <see cref="CalendarView"/> ContextMenuOpening before the menu is shown.
+    /// No-op when the lazy build has already been completed for this navigation cycle.
+    /// </summary>
+    internal void EnsureCopyOptionsBuilt()
+    {
+        if (!_lazyBuildPending) return;
+        _lazyBuildPending = false;
+
+        var (isNepali, adapter, localization) = _lazyBuildArgs;
+        // _lazyBuildPending is only set to true when localization is not null (see Update()),
+        // so this guard is unreachable in practice but required to narrow the nullable type.
+        if (localization is null) return;
+
+        IReadOnlyList<DateFormatOption> built = Array.Empty<DateFormatOption>();
+        if (_day.AdDate.HasValue && !string.IsNullOrEmpty(_day.BsShortEn))
+            built = DateFormatter.Build(_day, localization, isNepali);
+        else if (adapter is not null)
+            built = DateFormatter.Build(_day.Year, _day.Month, _day.Day, adapter, localization, isNepali);
+
+        // Replaces the sentinel (or stale items) with real format options and
+        // fires PropertyChanged so the open ContextMenu's bindings update.
+        // Also fires HasCopyOptions if the count transitions (e.g. build returned empty).
+        bool hadCopy = _copyFormatOptions.Count > 0;
+        CopyFormatOptions = built;
+        if (hadCopy != (_copyFormatOptions.Count > 0))
+            OnPropertyChanged(nameof(HasCopyOptions));
     }
 
     /// <summary>
@@ -278,7 +416,10 @@ public sealed class CalendarDayViewModel : ViewModelBase
                 OnPropertyChanged(nameof(VisibleEvents));
             }
             HasVisibleEvents = false;
-            HasHiddenEvents  = false;
+            HasHiddenEvents = false;
+            EventText0 = string.Empty;
+            EventText1 = string.Empty;
+            EventText2 = string.Empty;
             return;
         }
 
@@ -290,33 +431,54 @@ public sealed class CalendarDayViewModel : ViewModelBase
             newVisible = Array.Empty<string>();
             newHasHidden = false;
         }
-        else if (count >= _allEvents.Length)
-        {
-            newVisible = _allEvents;
-            newHasHidden = false;
-        }
         else
         {
-            // Show 'count' real events; append " +N" to the last one so the
-            // overflow indicator sits on the same line (trimmed by TextTrimming).
-            int hiddenCount = _allEvents.Length - count;
-            newVisible = new string[count];
-            for (int i = 0; i < count; i++)
-                newVisible[i] = _allEvents[i];
-            newVisible[count - 1] = _allEvents[count - 1] + " +" + hiddenCount;
-            newHasHidden = true;
+            // Cap at the number of fixed XAML event slots. Without this, a count > 3
+            // (possible when the widget is very tall) would produce a newVisible array
+            // larger than 3. EventText0/1/2 only consume indices 0–2, so events beyond
+            // index 2 would be silently dropped and the overflow indicator suppressed.
+            int displayCount = Math.Min(count, 3);
+            if (displayCount >= _allEvents.Length)
+            {
+                newVisible = _allEvents;
+                newHasHidden = false;
+            }
+            else
+            {
+                // Show 'displayCount' events; append " +N" to the last one so the
+                // overflow indicator sits on the same line (trimmed by TextTrimming).
+                int hiddenCount = _allEvents.Length - displayCount;
+                newVisible = new string[displayCount];
+                for (int i = 0; i < displayCount; i++)
+                {
+                    newVisible[i] = _allEvents[i];
+                }
+                newVisible[displayCount - 1] = _allEvents[displayCount - 1] + " +" + hiddenCount;
+                newHasHidden = true;
+            }
         }
 
         // Length alone doesn’t detect “+N” text changes when count stays equal.
         bool contentSame = newVisible.Length == _visibleEventsArray.Length;
         if (contentSame)
+        {
             for (int i = 0; i < newVisible.Length; i++)
+            {
                 if (newVisible[i] != _visibleEventsArray[i]) { contentSame = false; break; }
-        if (contentSame && newHasHidden == _hasHiddenEvents) return;
+            }
+        }
+
+        if (contentSame && newHasHidden == _hasHiddenEvents)
+        {
+            return;
+        }
 
         _visibleEventsArray = newVisible;
         OnPropertyChanged(nameof(VisibleEvents));
         HasHiddenEvents = newHasHidden;
         HasVisibleEvents = newVisible.Length > 0;
+        EventText0 = newVisible.Length > 0 ? newVisible[0] : string.Empty;
+        EventText1 = newVisible.Length > 1 ? newVisible[1] : string.Empty;
+        EventText2 = newVisible.Length > 2 ? newVisible[2] : string.Empty;
     }
 }

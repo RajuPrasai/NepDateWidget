@@ -21,8 +21,8 @@ namespace NepDateWidget.Models;
 /// </summary>
 public sealed class UserShortcut
 {
-    public string Key      { get; set; } = string.Empty;
-    public string? Url     { get; set; }
-    public string? Name    { get; set; }
-    public bool Disabled   { get; set; }
+    public string Key { get; set; } = string.Empty;
+    public string? Url { get; set; }
+    public string? Name { get; set; }
+    public bool Disabled { get; set; }
 }

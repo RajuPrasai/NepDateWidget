@@ -18,10 +18,10 @@ public sealed class EmiScheduleRow
     /// </summary>
     public string Period { get; init; } = string.Empty;
 
-    public string Principal    { get; init; } = string.Empty;
-    public string Interest     { get; init; } = string.Empty;
+    public string Principal { get; init; } = string.Empty;
+    public string Interest { get; init; } = string.Empty;
     public string TotalPayment { get; init; } = string.Empty;
-    public string Balance      { get; init; } = string.Empty;
+    public string Balance { get; init; } = string.Empty;
 
     /// <summary>BS date string for the payment month (month rows only).</summary>
     public string BsDate { get; init; } = string.Empty;

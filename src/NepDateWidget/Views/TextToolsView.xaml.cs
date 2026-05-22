@@ -15,14 +15,19 @@ public partial class TextToolsView : UserControl
         IsVisibleChanged += (_, e) =>
         {
             if ((bool)e.NewValue && DataContext is TextToolsViewModel vm)
+            {
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Input,
                     new Action(() => FocusModeInput(vm.ActiveMode)));
+            }
         };
 
         DataContextChanged += (_, e) =>
         {
             if (e.OldValue is TextToolsViewModel oldVm)
+            {
                 oldVm.PropertyChanged -= OnVmPropertyChanged;
+            }
+
             if (e.NewValue is TextToolsViewModel vm)
             {
                 vm.PropertyChanged += OnVmPropertyChanged;
@@ -34,14 +39,18 @@ public partial class TextToolsView : UserControl
         Unloaded += (_, _) =>
         {
             if (DataContext is TextToolsViewModel vm)
+            {
                 vm.PropertyChanged -= OnVmPropertyChanged;
+            }
         };
     }
 
     private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(TextToolsViewModel.ActiveMode) && sender is TextToolsViewModel vm)
+        {
             Dispatcher.BeginInvoke(() => FocusModeInput(vm.ActiveMode));
+        }
     }
 
     private void FocusModeInput(int mode)
@@ -58,7 +67,10 @@ public partial class TextToolsView : UserControl
 
     private void OutputBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
     {
-        if (sender is TextBox tb) tb.SelectAll();
+        if (sender is TextBox tb)
+        {
+            tb.SelectAll();
+        }
     }
 
     private void OutputBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -85,29 +97,35 @@ public partial class TextToolsView : UserControl
     private void ScriptInput_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (e.Key == Key.Enter && Keyboard.Modifiers == ModifierKeys.None)
+        {
             e.Handled = true;
+        }
     }
 
     private void BrowseUnicodeFile_Click(object sender, RoutedEventArgs e)
     {
         var dlg = new Microsoft.Win32.OpenFileDialog
         {
-            Title  = "Select a file to convert",
+            Title = "Select a file to convert",
             Filter = "Supported files|*.txt;*.docx|Text files (*.txt)|*.txt|Word documents (*.docx)|*.docx"
         };
         if (dlg.ShowDialog(Window.GetWindow(this)) == true && DataContext is TextToolsViewModel vm)
+        {
             vm.SetUnicodeFilePath(dlg.FileName);
+        }
     }
 
     private void BrowseScriptFile_Click(object sender, RoutedEventArgs e)
     {
         var dlg = new Microsoft.Win32.OpenFileDialog
         {
-            Title  = "Select a file to convert",
+            Title = "Select a file to convert",
             Filter = "Supported files|*.txt;*.docx|Text files (*.txt)|*.txt|Word documents (*.docx)|*.docx"
         };
         if (dlg.ShowDialog(Window.GetWindow(this)) == true && DataContext is TextToolsViewModel vm)
+        {
             vm.SetScriptFilePath(dlg.FileName);
+        }
     }
 
     private string? ShowSaveFileDialog(string defaultPath)
@@ -116,16 +134,16 @@ public partial class TextToolsView : UserControl
         var filter = ext?.ToLowerInvariant() switch
         {
             ".docx" => "Word documents (*.docx)|*.docx|All files (*.*)|*.*",
-            ".txt"  => "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-            _       => "All files (*.*)|*.*",
+            ".txt" => "Text files (*.txt)|*.txt|All files (*.*)|*.*",
+            _ => "All files (*.*)|*.*",
         };
         var dlg = new Microsoft.Win32.SaveFileDialog
         {
-            Title            = "Save converted file",
-            Filter           = filter,
-            FileName         = System.IO.Path.GetFileName(defaultPath),
+            Title = "Save converted file",
+            Filter = filter,
+            FileName = System.IO.Path.GetFileName(defaultPath),
             InitialDirectory = System.IO.Path.GetDirectoryName(defaultPath) ?? string.Empty,
-            OverwritePrompt  = true,
+            OverwritePrompt = true,
         };
         return dlg.ShowDialog(Window.GetWindow(this)) == true ? dlg.FileName : null;
     }

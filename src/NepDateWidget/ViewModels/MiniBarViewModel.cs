@@ -1,4 +1,4 @@
-﻿using NepDateWidget.Models;
+using NepDateWidget.Models;
 using NepDateWidget.Services;
 using System.Windows.Threading;
 
@@ -49,42 +49,78 @@ public sealed class MiniBarViewModel : ViewModelBase, IDisposable
     public bool ShowTimezone
     {
         get => _showTimezone;
-        set { if (SetProperty(ref _showTimezone, value)) Refresh(); }
+        set
+        {
+            if (SetProperty(ref _showTimezone, value))
+            {
+                Refresh();
+            }
+        }
     }
 
     private bool _showOffset;
     public bool ShowOffset
     {
         get => _showOffset;
-        set { if (SetProperty(ref _showOffset, value)) Refresh(); }
+        set
+        {
+            if (SetProperty(ref _showOffset, value))
+            {
+                Refresh();
+            }
+        }
     }
 
     private bool _showDayOfWeek;
     public bool ShowDayOfWeek
     {
         get => _showDayOfWeek;
-        set { if (SetProperty(ref _showDayOfWeek, value)) Refresh(); }
+        set
+        {
+            if (SetProperty(ref _showDayOfWeek, value))
+            {
+                Refresh();
+            }
+        }
     }
 
     private bool _showEnglishDate;
     public bool ShowEnglishDate
     {
         get => _showEnglishDate;
-        set { if (SetProperty(ref _showEnglishDate, value)) Refresh(); }
+        set
+        {
+            if (SetProperty(ref _showEnglishDate, value))
+            {
+                Refresh();
+            }
+        }
     }
 
     private string _selectedTimezoneId = string.Empty;
     public string SelectedTimezoneId
     {
         get => _selectedTimezoneId;
-        set { if (SetProperty(ref _selectedTimezoneId, value)) Refresh(); }
+        set
+        {
+            if (SetProperty(ref _selectedTimezoneId, value))
+            {
+                Refresh();
+            }
+        }
     }
 
     private string _clockFormat = "12h";
     public string ClockFormat
     {
         get => _clockFormat;
-        set { if (SetProperty(ref _clockFormat, value)) Refresh(); }
+        set
+        {
+            if (SetProperty(ref _clockFormat, value))
+            {
+                Refresh();
+            }
+        }
     }
 
     private bool _showSeconds;
@@ -162,15 +198,26 @@ public sealed class MiniBarViewModel : ViewModelBase, IDisposable
         if (_showSeconds)
         {
             if (_clockTimer.Interval != TimeSpan.FromSeconds(1))
+            {
                 _clockTimer.Interval = TimeSpan.FromSeconds(1);
+            }
+
             return;
         }
 
         var now = DateTime.Now;
         var msToNextMinute = 60_000 - (now.Second * 1000 + now.Millisecond) + 50;
         // Clamp to a sane range; avoid 0 (would re-fire instantly) and >60s.
-        if (msToNextMinute < 200) msToNextMinute = 200;
-        if (msToNextMinute > 60_050) msToNextMinute = 60_050;
+        if (msToNextMinute < 200)
+        {
+            msToNextMinute = 200;
+        }
+
+        if (msToNextMinute > 60_050)
+        {
+            msToNextMinute = 60_050;
+        }
+
         _clockTimer.Interval = TimeSpan.FromMilliseconds(msToNextMinute);
     }
 
@@ -216,7 +263,9 @@ public sealed class MiniBarViewModel : ViewModelBase, IDisposable
     {
         // Detect midnight rollover
         if (DateTime.Now.Date != _lastRefreshedDate)
+        {
             _lastRefreshedDate = DateTime.Now.Date;
+        }
 
         var tz = GetSelectedTimezone();
         var nowUtc = DateTimeOffset.UtcNow;
@@ -266,25 +315,35 @@ public sealed class MiniBarViewModel : ViewModelBase, IDisposable
         {
             // When EngDate is OFF and DOW is ON, move DOW to Line 2 with NepaliDate.
             // Otherwise DOW stays on Line 1 with timezone info.
-            bool allOn     = _showDayOfWeek && _showEnglishDate;
+            bool allOn = _showDayOfWeek && _showEnglishDate;
             bool dowOnLine2 = _showDayOfWeek && !_showEnglishDate;
             bool engOnLine2 = _showEnglishDate && !_showDayOfWeek;
 
             if (_showDayOfWeek && !dowOnLine2)
+            {
                 parts1.Insert(0, GetDayOfWeekText(nowInTz));
+            }
 
             if (_showEnglishDate && !engOnLine2 && !allOn)
+            {
                 parts1.Add(info.AdShort);
+            }
 
             Line1Text = string.Join(" | ", parts1);
             HasLine1 = !string.IsNullOrEmpty(Line1Text);
 
             var parts2 = new List<string>();
             if (dowOnLine2)
+            {
                 parts2.Add(GetDayOfWeekText(nowInTz));
+            }
+
             parts2.Add(nepaliDate);
             if (engOnLine2 || allOn)
+            {
                 parts2.Add(info.AdShort);
+            }
+
             Line2Text = string.Join(" | ", parts2);
         }
         else
@@ -294,9 +353,14 @@ public sealed class MiniBarViewModel : ViewModelBase, IDisposable
             // Single line (NepaliDate only) when both DayOfWeek and EnglishDate are OFF.
             var top = new List<string>();
             if (_showDayOfWeek)
+            {
                 top.Add(GetDayOfWeekText(nowInTz));
+            }
+
             if (_showEnglishDate)
+            {
                 top.Add(info.AdShort);
+            }
 
             if (top.Count > 0)
             {
@@ -325,7 +389,10 @@ public sealed class MiniBarViewModel : ViewModelBase, IDisposable
             // If there's a comma, take the last part for brevity
             int lastComma = afterParen.LastIndexOf(',');
             if (lastComma >= 0)
+            {
                 return afterParen[(lastComma + 1)..].Trim();
+            }
+
             return afterParen;
         }
         return tz.StandardName;

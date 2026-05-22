@@ -88,31 +88,73 @@ public static class NepaliScriptConverter
 
     private static readonly Dictionary<char, string> ConsonantMap = new()
     {
-        ['क'] = "k",  ['ख'] = "kh", ['ग'] = "g",  ['घ'] = "gh", ['ङ'] = "ng",
-        ['च'] = "ch", ['छ'] = "chh",['ज'] = "j",  ['झ'] = "jh", ['ञ'] = "ny",
-        ['ट'] = "t",  ['ठ'] = "th", ['ड'] = "d",  ['ढ'] = "dh", ['ण'] = "n",
-        ['त'] = "t",  ['थ'] = "th", ['द'] = "d",  ['ध'] = "dh", ['न'] = "n",
-        ['प'] = "p",  ['फ'] = "ph", ['ब'] = "b",  ['भ'] = "bh", ['म'] = "m",
-        ['य'] = "y",  ['र'] = "r",  ['ल'] = "l",  ['व'] = "v",
-        ['श'] = "sh", ['ष'] = "sh", ['स'] = "s",  ['ह'] = "h",
+        ['क'] = "k",
+        ['ख'] = "kh",
+        ['ग'] = "g",
+        ['घ'] = "gh",
+        ['ङ'] = "ng",
+        ['च'] = "ch",
+        ['छ'] = "chh",
+        ['ज'] = "j",
+        ['झ'] = "jh",
+        ['ञ'] = "ny",
+        ['ट'] = "t",
+        ['ठ'] = "th",
+        ['ड'] = "d",
+        ['ढ'] = "dh",
+        ['ण'] = "n",
+        ['त'] = "t",
+        ['थ'] = "th",
+        ['द'] = "d",
+        ['ध'] = "dh",
+        ['न'] = "n",
+        ['प'] = "p",
+        ['फ'] = "ph",
+        ['ब'] = "b",
+        ['भ'] = "bh",
+        ['म'] = "m",
+        ['य'] = "y",
+        ['र'] = "r",
+        ['ल'] = "l",
+        ['व'] = "v",
+        ['श'] = "sh",
+        ['ष'] = "sh",
+        ['स'] = "s",
+        ['ह'] = "h",
         ['ळ'] = "l",
     };
 
     private static readonly Dictionary<char, string> MatraMap = new()
     {
-        ['ा'] = "aa", ['ि'] = "i",  ['ी'] = "ii", ['ु'] = "u",  ['ू'] = "uu",
-        ['े'] = "e",  ['ै'] = "ai", ['ो'] = "o",  ['ौ'] = "au", ['ृ'] = "ri",
+        ['ा'] = "aa",
+        ['ि'] = "i",
+        ['ी'] = "ii",
+        ['ु'] = "u",
+        ['ू'] = "uu",
+        ['े'] = "e",
+        ['ै'] = "ai",
+        ['ो'] = "o",
+        ['ौ'] = "au",
+        ['ृ'] = "ri",
     };
 
     private static readonly Dictionary<char, string> StandaloneVowelMap = new()
     {
-        ['अ'] = "a",  ['आ'] = "aa", ['इ'] = "i",  ['ई'] = "ii",
-        ['उ'] = "u",  ['ऊ'] = "uu", ['ए'] = "e",  ['ऐ'] = "ai",
-        ['ओ'] = "o",  ['औ'] = "au", ['ऋ'] = "ri",
+        ['अ'] = "a",
+        ['आ'] = "aa",
+        ['इ'] = "i",
+        ['ई'] = "ii",
+        ['उ'] = "u",
+        ['ऊ'] = "uu",
+        ['ए'] = "e",
+        ['ऐ'] = "ai",
+        ['ओ'] = "o",
+        ['औ'] = "au",
+        ['ऋ'] = "ri",
     };
 
-    private const char Halant    = '\u094D'; // ्
-    private const char Anusvara  = '\u0902'; // ं
+    private const char Halant = '\u094D'; // ्
+    private const char Anusvara = '\u0902'; // ं
     private const char Chandrabindu = '\u0901'; // ँ
 
     // ── Public API ────────────────────────────────────────────────────────────
@@ -126,7 +168,10 @@ public static class NepaliScriptConverter
         var s = number.ToString();
         var chars = new char[s.Length];
         for (int i = 0; i < s.Length; i++)
+        {
             chars[i] = char.IsDigit(s[i]) ? NepaliDigits[s[i] - '0'] : s[i];
+        }
+
         return new string(chars);
     }
 
@@ -137,7 +182,10 @@ public static class NepaliScriptConverter
     /// </summary>
     public static string RomanToDevanagari(string roman)
     {
-        if (string.IsNullOrEmpty(roman)) return string.Empty;
+        if (string.IsNullOrEmpty(roman))
+        {
+            return string.Empty;
+        }
 
         var result = new System.Text.StringBuilder(roman.Length * 2);
         int i = 0;
@@ -156,7 +204,9 @@ public static class NepaliScriptConverter
             while (i < roman.Length &&
                    !char.IsWhiteSpace(roman[i]) && !char.IsDigit(roman[i]) &&
                    roman[i] != '/' && !char.IsPunctuation(roman[i]) && !char.IsSymbol(roman[i]))
+            {
                 i++;
+            }
 
             result.Append(ConvertWord(roman[wordStart..i]));
         }
@@ -168,7 +218,10 @@ public static class NepaliScriptConverter
     /// </summary>
     public static string DevanagariToRoman(string deva)
     {
-        if (string.IsNullOrEmpty(deva)) return string.Empty;
+        if (string.IsNullOrEmpty(deva))
+        {
+            return string.Empty;
+        }
 
         var result = new System.Text.StringBuilder(deva.Length * 2);
         int i = 0;
@@ -236,7 +289,10 @@ public static class NepaliScriptConverter
 
     private static string ConvertWord(string word)
     {
-        if (string.IsNullOrEmpty(word)) return word;
+        if (string.IsNullOrEmpty(word))
+        {
+            return word;
+        }
 
         var sb = new System.Text.StringBuilder(word.Length * 3);
         int i = 0;
@@ -249,12 +305,18 @@ public static class NepaliScriptConverter
             foreach (var p in Patterns)
             {
                 if (!word.AsSpan(i).StartsWith(p.Roman, System.StringComparison.OrdinalIgnoreCase))
+                {
                     continue;
+                }
 
                 if (p.Consonant is not null)
                 {
                     // Consonant or pre-built conjunct
-                    if (afterConsonant) sb.Append(Halant);
+                    if (afterConsonant)
+                    {
+                        sb.Append(Halant);
+                    }
+
                     sb.Append(p.Consonant);
                     afterConsonant = true;
                 }
@@ -281,7 +343,11 @@ public static class NepaliScriptConverter
             if (!matched)
             {
                 // Unknown character - emit as-is and reset state
-                if (afterConsonant) afterConsonant = false;
+                if (afterConsonant)
+                {
+                    afterConsonant = false;
+                }
+
                 sb.Append(word[i]);
                 i++;
             }

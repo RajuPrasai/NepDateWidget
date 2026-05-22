@@ -22,7 +22,7 @@ namespace NepDateWidget.Views;
 /// </summary>
 public partial class ExpandedShellWindow : Window
 {
-    private const double MinExpandedWidthDip  = 538;
+    private const double MinExpandedWidthDip = 538;
     private const double MinExpandedHeightDip = 497;
     private const int SaveDebounceMs = 800;
 
@@ -58,7 +58,16 @@ public partial class ExpandedShellWindow : Window
             ViewModel.SaveSettings();
         };
 
-        IsVisibleChanged += (_, e) => { if (e.NewValue is true) PlayOpenAnimation(); };
+        IsVisibleChanged += (_, e) =>
+        {
+            if (e.NewValue is true)
+            {
+                // Re-apply after WPF WindowChrome has finished its own DWM setup,
+                // which can reset the corner preference set in OnSourceInitialized.
+                ApplyCornerPreference();
+                PlayOpenAnimation();
+            }
+        };
 
         // React to the user toggling Rounded / Sharp at runtime.
         viewModel.PropertyChanged += (_, e) =>
@@ -84,21 +93,21 @@ public partial class ExpandedShellWindow : Window
         var s = _settingsService.Current;
         var workArea = SystemParameters.WorkArea;
 
-        double width  = Math.Max(MinExpandedWidthDip,  s.ExpandedWidth  > 0 ? s.ExpandedWidth  : ViewModel.WindowWidth);
+        double width = Math.Max(MinExpandedWidthDip, s.ExpandedWidth > 0 ? s.ExpandedWidth : ViewModel.WindowWidth);
         double height = Math.Max(MinExpandedHeightDip, s.ExpandedHeight > 0 ? s.ExpandedHeight : ViewModel.WindowHeight);
-        Width  = width;
+        Width = width;
         Height = height;
 
         if (s.ExpandedWindowLeft.HasValue && s.ExpandedWindowTop.HasValue)
         {
-            Left = Math.Max(workArea.Left, Math.Min(workArea.Right  - Width,  s.ExpandedWindowLeft.Value));
-            Top  = Math.Max(workArea.Top,  Math.Min(workArea.Bottom - Height, s.ExpandedWindowTop.Value));
+            Left = Math.Max(workArea.Left, Math.Min(workArea.Right - Width, s.ExpandedWindowLeft.Value));
+            Top = Math.Max(workArea.Top, Math.Min(workArea.Bottom - Height, s.ExpandedWindowTop.Value));
         }
         else
         {
             // No saved position: center on the primary work area.
-            Left = workArea.Left + (workArea.Width  - Width)  / 2;
-            Top  = workArea.Top  + (workArea.Height - Height) / 2;
+            Left = workArea.Left + (workArea.Width - Width) / 2;
+            Top = workArea.Top + (workArea.Height - Height) / 2;
         }
 
         HwndSource.FromHwnd(_hwnd)!.AddHook(WndProcHook);
@@ -111,11 +120,16 @@ public partial class ExpandedShellWindow : Window
     /// </summary>
     private void ApplyMicaAndDarkTitleBar()
     {
-        if (_hwnd == IntPtr.Zero) return;
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
 
         // Mica is supported from Windows 11 (build 22000) onwards.
         if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000))
+        {
             return;
+        }
 
         try
         {
@@ -137,8 +151,15 @@ public partial class ExpandedShellWindow : Window
     /// </summary>
     private void ApplyCornerPreference()
     {
-        if (_hwnd == IntPtr.Zero) return;
-        if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000)) return;
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        if (!OperatingSystem.IsWindowsVersionAtLeast(10, 0, 22000))
+        {
+            return;
+        }
 
         int preference = ViewModel.CornerRadiusValue > 0
             ? Win32Interop.DWMWCP_ROUND
@@ -161,8 +182,16 @@ public partial class ExpandedShellWindow : Window
             var info = Marshal.PtrToStructure<Win32Interop.MINMAXINFO>(lParam);
             int minW = (int)Math.Ceiling(MinExpandedWidthDip * dpi.DpiScaleX);
             int minH = (int)Math.Ceiling(MinExpandedHeightDip * dpi.DpiScaleY);
-            if (info.ptMinTrackSize.x < minW) info.ptMinTrackSize.x = minW;
-            if (info.ptMinTrackSize.y < minH) info.ptMinTrackSize.y = minH;
+            if (info.ptMinTrackSize.x < minW)
+            {
+                info.ptMinTrackSize.x = minW;
+            }
+
+            if (info.ptMinTrackSize.y < minH)
+            {
+                info.ptMinTrackSize.y = minH;
+            }
+
             Marshal.StructureToPtr(info, lParam, true);
         }
         return IntPtr.Zero;
@@ -185,7 +214,9 @@ public partial class ExpandedShellWindow : Window
 
         e.Cancel = true;
         if (ViewModel?.IsExpanded == true)
+        {
             ViewModel.ToggleExpandedCommand.Execute(null);
+        }
     }
 
     /// <summary>
@@ -200,7 +231,11 @@ public partial class ExpandedShellWindow : Window
     protected override void OnLocationChanged(EventArgs e)
     {
         base.OnLocationChanged(e);
-        if (!_initialized) return;
+        if (!_initialized)
+        {
+            return;
+        }
+
         PersistSizeAndPosition();
         RestartSaveTimer();
     }
@@ -208,7 +243,11 @@ public partial class ExpandedShellWindow : Window
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
     {
         base.OnRenderSizeChanged(sizeInfo);
-        if (!_initialized) return;
+        if (!_initialized)
+        {
+            return;
+        }
+
         PersistSizeAndPosition();
         RestartSaveTimer();
     }
@@ -217,11 +256,19 @@ public partial class ExpandedShellWindow : Window
     {
         var s = _settingsService.Current;
         s.ExpandedWindowLeft = Left;
-        s.ExpandedWindowTop  = Top;
-        double persistWidth  = ActualWidth;
+        s.ExpandedWindowTop = Top;
+        double persistWidth = ActualWidth;
         double persistHeight = ActualHeight;
-        if (persistWidth  > 0) s.ExpandedWidth  = persistWidth;
-        if (persistHeight > 0) s.ExpandedHeight = persistHeight;
+        if (persistWidth > 0)
+        {
+            s.ExpandedWidth = persistWidth;
+        }
+
+        if (persistHeight > 0)
+        {
+            s.ExpandedHeight = persistHeight;
+        }
+
         ViewModel.UpdateSize(persistWidth, persistHeight);
     }
 
@@ -250,14 +297,18 @@ public partial class ExpandedShellWindow : Window
     {
         // Reserved for future use; the current titlebar exposes only Close.
         if (ViewModel.IsExpanded)
+        {
             ViewModel.ToggleExpandedCommand.Execute(null);
+        }
     }
 
     private void CloseButton_Click(object sender, RoutedEventArgs e)
     {
         // Collapse to pill rather than terminating the app.
         if (ViewModel.IsExpanded)
+        {
             ViewModel.ToggleExpandedCommand.Execute(null);
+        }
     }
 
     // ── Run box ──────────────────────────────────────────────────────────────
@@ -291,12 +342,18 @@ public partial class ExpandedShellWindow : Window
     private static bool IsAnyComboBoxDropDownOpen()
     {
         if (Mouse.DirectlyOver is not DependencyObject hit)
+        {
             return false;
+        }
+
         var current = hit;
         while (current != null)
         {
             if (current is System.Windows.Controls.Primitives.Popup { IsOpen: true })
+            {
                 return true;
+            }
+
             current = VisualTreeHelper.GetParent(current)
                       ?? (current is FrameworkElement fe ? fe.Parent : null);
         }
@@ -321,7 +378,10 @@ public partial class ExpandedShellWindow : Window
     {
         base.OnPreviewKeyDown(e);
 
-        if (e.Key != Key.Escape) return;
+        if (e.Key != Key.Escape)
+        {
+            return;
+        }
 
         var focused = Keyboard.FocusedElement;
         if (focused is TextBox or PasswordBox or System.Windows.Controls.Primitives.TextBoxBase)
@@ -344,7 +404,10 @@ public partial class ExpandedShellWindow : Window
 
     private void PlayOpenAnimation()
     {
-        if (!ViewModel.AnimationEnabled) return;
+        if (!ViewModel.AnimationEnabled)
+        {
+            return;
+        }
 
         var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
 
@@ -357,6 +420,60 @@ public partial class ExpandedShellWindow : Window
         ShellRoot.RenderTransform = translate;
         var slideDown = new DoubleAnimation(-8, 0, TimeSpan.FromMilliseconds(250)) { EasingFunction = ease };
         translate.BeginAnimation(TranslateTransform.YProperty, slideDown);
+    }
+
+    /// <summary>
+    /// Flushes any pending debounced save synchronously. Must be called before
+    /// hiding the window so the last position/size is persisted even if the
+    /// 800 ms debounce has not fired yet.
+    /// </summary>
+    public void PrepareToHide()
+    {
+        _saveTimer.Stop();
+        PersistSizeAndPosition();
+        ViewModel.SaveSettings();
+    }
+
+    /// <summary>
+    /// Shows the window, correctly handling the mid-hide case where
+    /// <see cref="AnimateAndHide"/> has started a fade-out that has not yet
+    /// completed (window is still visible but Opacity is animating toward 0).
+    /// <para>
+    /// When hidden: <c>Show()</c> fires <c>IsVisibleChanged</c> which plays the
+    /// open animation through the existing handler in the constructor.
+    /// </para>
+    /// <para>
+    /// When visible but mid-hide: cancels the running animation, restores the
+    /// visual state, and replays the open animation directly.
+    /// </para>
+    /// </summary>
+    public void ShowOrReveal()
+    {
+        // Always cancel any in-flight hide animation and restore visual state.
+        // BeginAnimation(prop, null) removes the animation clock and reverts the
+        // property to its locally-set base value. Explicit resets are belt-and-
+        // suspenders for the FillBehavior.HoldEnd case on the Y transform.
+        ShellRoot.BeginAnimation(OpacityProperty, null);
+        ShellRoot.Opacity = 1;
+        var t = ShellRoot.RenderTransform as TranslateTransform;
+        if (t is not null)
+        {
+            t.BeginAnimation(TranslateTransform.YProperty, null);
+            t.Y = 0;
+        }
+
+        if (!IsVisible)
+        {
+            // Normal path: window was hidden. Show() fires IsVisibleChanged
+            // which calls ApplyCornerPreference() + PlayOpenAnimation().
+            Show();
+            return;
+        }
+
+        // Window was still visible (mid-hide race). IsVisibleChanged will not
+        // fire so drive the open animation and corner preference directly.
+        ApplyCornerPreference();
+        PlayOpenAnimation();
     }
 
     /// <summary>
@@ -379,7 +496,7 @@ public partial class ExpandedShellWindow : Window
             // Reset for next show
             ShellRoot.Opacity = 1;
             var t = ShellRoot.RenderTransform as TranslateTransform;
-            if (t is not null) t.Y = 0;
+            t?.Y = 0;
         };
         ShellRoot.BeginAnimation(OpacityProperty, fadeOut);
 

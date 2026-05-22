@@ -11,7 +11,11 @@ public sealed class ClipboardService : IClipboardService
 {
     public bool SetText(string? text)
     {
-        if (string.IsNullOrEmpty(text)) return false;
+        if (string.IsNullOrEmpty(text))
+        {
+            return false;
+        }
+
         try
         {
             System.Windows.Clipboard.SetText(text);

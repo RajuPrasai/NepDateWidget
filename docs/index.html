@@ -1,14 +1,14 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 
 <head>
   <meta charset="utf-8" />
-  <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system')}()</script>
+  <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system');document.documentElement.style.backgroundColor=t==='dark'?'#0a0e1a':'#fff';document.documentElement.classList.add('no-transition');requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('no-transition')})})}()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
-  <title>NepDate Widget - Free Nepali Date Converter & Calendar for Windows</title>
+  <title>Nepali Date Converter &amp; Nepali Calendar for Windows - NepDate Widget</title>
   <meta name="description"
-    content="Free Nepali date converter for Windows. Convert BS to AD and AD to BS instantly, view the Bikram Sambat calendar, calculate loan EMIs, and 25+ more tools. All offline, zero telemetry." />
+    content="Free Nepali date converter for Windows. Convert BS to AD and AD to BS instantly. Bikram Sambat calendar, EMI calculator, Preeti to Unicode, and 25+ offline tools." />
   <link rel="canonical" href="https://nepdatewidget.rajuprasai.com.np/" />
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon.png" />
@@ -21,18 +21,22 @@
 
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Raju Prasai" />
+  <meta name="application-name" content="NepDate Widget" />
+  <meta name="geo.region" content="NP" />
+  <meta name="geo.placename" content="Nepal" />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="NepDate Widget" />
   <meta property="og:locale" content="en_US" />
-  <meta property="og:title" content="NepDate Widget - Free Nepali Date Converter & Calendar for Windows" />
+  <meta property="og:locale:alternate" content="ne_NP" />
+  <meta property="og:title" content="Free Nepali Date Converter &amp; Calendar for Windows - NepDate Widget" />
   <meta property="og:description" content="The best free Nepali date converter for Windows. BS↔AD conversion, Bikram Sambat calendar, Preeti↔Unicode, EMI calculator, network toolkit, and RunBox launcher - one offline widget on your taskbar." />
   <meta property="og:image" content="https://nepdatewidget.rajuprasai.com.np/assets/screenshots/website-hero.webp" />
   <meta property="og:image:width" content="3810" />
   <meta property="og:image:height" content="2160" />
   <meta property="og:url" content="https://nepdatewidget.rajuprasai.com.np/" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="NepDate Widget - Free Nepali Date Converter & Calendar for Windows" />
+  <meta name="twitter:title" content="Free Nepali Date Converter &amp; Calendar for Windows - NepDate Widget" />
   <meta name="twitter:description" content="Free Nepali date converter: convert BS to AD and AD to BS instantly. Plus Bikram Sambat calendar, Preeti↔Unicode, EMI calculator, network tools - one offline Windows widget." />
   <meta name="twitter:image" content="https://nepdatewidget.rajuprasai.com.np/assets/screenshots/website-hero.webp" />
   <meta property="og:image:alt" content="NepDate Widget on Windows taskbar with Bikram Sambat calendar open" />
@@ -41,20 +45,21 @@
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
+    "@id": "https://nepdatewidget.rajuprasai.com.np/#software",
     "name": "NepDate Widget",
-    "alternateName": "Nepali Date Converter for Windows",
-    "description": "The best free Nepali date converter and desktop companion for Windows. Converts BS to AD and AD to BS instantly, shows Bikram Sambat calendar, Preeti↔Unicode text conversion, loan EMI calculator, network toolkit, traditional unit converter, RunBox global launcher, notes, and reminders. All offline, all free.",
+    "alternateName": ["Nepali Date Converter for Windows", "Nepali Patro", "Nepali Calendar for Windows"],
+    "description": "The best free Nepali date converter and desktop companion for Windows. Converts BS to AD and AD to BS instantly, shows Bikram Sambat calendar, Preeti↔Unicode text conversion, loan EMI calculator, network toolkit, traditional unit converter, RunBox global launcher, notes, reminders, ID photo tool, and batch image processing. All offline, all free.",
     "operatingSystem": "Windows 10 1809+, Windows 11",
     "applicationCategory": "UtilitiesApplication",
     "applicationSubCategory": "Calendar",
-    "softwareVersion": "1.0.0",
+    "softwareVersion": "1.0.2",
     "datePublished": "2026-01-01",
     "inLanguage": ["en", "ne"],
     "isAccessibleForFree": true,
     "isFamilyFriendly": true,
     "mainEntityOfPage": "https://nepdatewidget.rajuprasai.com.np/",
-    "keywords": "nepali date converter, nepali date converter for windows, nepali date converter desktop app, nepali date converter offline, BS to AD converter, AD to BS converter, BS to AD converter windows, convert nepali date to english, convert english date to nepali, bikram sambat to gregorian converter, bikram sambat calendar windows app, nepali calendar for pc, nepali calendar windows 10, nepali calendar windows 11, nepali taskbar calendar, free nepali desktop calendar, preeti to unicode converter, nepali EMI calculator",
-    "featureList": "Nepali date converter, BS to AD date conversion, AD to BS date conversion, Bikram Sambat calendar, Preeti to Unicode converter, Unicode to Preeti converter, loan EMI calculator with amortization schedule, multi-period interest calculator, Nepali land and weight unit converter, network toolkit with ping/traceroute/IP scan/Whois/DNS, RunBox global command launcher, notes pinned to BS dates, recurring reminders, document manager",
+    "keywords": "nepali date converter, nepali date converter for windows, nepali date converter desktop app, nepali date converter offline, nepali patro, patro, nepali calendar app, BS to AD converter, AD to BS converter, BS to AD converter windows, bs to ad, ad to bs, convert nepali date to english, convert english date to nepali, bikram sambat to gregorian converter, bikram sambat calendar windows app, nepali calendar for pc, nepali calendar windows 10, nepali calendar windows 11, nepali taskbar calendar, free nepali desktop calendar, preeti to unicode converter, nepali EMI calculator",
+    "featureList": "Nepali date converter, BS to AD date conversion, AD to BS date conversion, Bikram Sambat calendar, Preeti to Unicode converter, Unicode to Preeti converter, loan EMI calculator with amortization schedule, multi-period interest calculator, Nepali land and weight unit converter, network toolkit with ping/traceroute/IP scan/Whois/DNS, RunBox global command launcher, notes pinned to BS dates, recurring reminders, document manager, ID photo cropping and print sheet tiling, batch image compression and conversion",
     "screenshot": [
       {
         "@type": "ImageObject",
@@ -96,7 +101,7 @@
     "image": "https://nepdatewidget.rajuprasai.com.np/assets/logo.png",
     "downloadUrl": "https://nepdatewidget.rajuprasai.com.np/download.html",
     "installUrl": "https://apps.microsoft.com/detail/9PG97WBJX1NQ",
-    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/InStock" },
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD", "availability": "https://schema.org/OnlineOnly" },
     "author": { "@type": "Person", "name": "Raju Prasai", "url": "https://github.com/RajuPrasai" },
     "url": "https://nepdatewidget.rajuprasai.com.np/",
     "license": "https://polyformproject.org/licenses/strict/1.0.0/"
@@ -106,6 +111,7 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
+    "@id": "https://nepdatewidget.rajuprasai.com.np/#faq",
     "mainEntity": [
       {
         "@type": "Question",
@@ -201,6 +207,16 @@
         "@type": "Question",
         "name": "How much can I customize NepDate Widget's appearance?",
         "acceptedAnswer": { "@type": "Answer", "text": "Quite a bit. 20 color presets (10 light, 10 dark), 20 font choices, rounded or sharp corners, optional transparency when collapsed, and per-element calendar toggles including tithi, holidays, English day numbers, and Saturday/Sunday highlights." }
+      },
+      {
+        "@type": "Question",
+        "name": "Does NepDate Widget show the Nepali Calendar for 2083, 2084, and future years?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Bikram Sambat calendar covers BS years 1970 through 2100 (AD 1913 to 2043). You can navigate freely to any month in that range - past years like 2078, 2079, 2080, 2081, 2082, current year 2083, and future years like 2084, 2085, all the way to 2100 - with tithi, public holidays, and festivals displayed for every month." }
+      },
+      {
+        "@type": "Question",
+        "name": "What is a BS to AD converter and why do I need one?",
+        "acceptedAnswer": { "@type": "Answer", "text": "A BS to AD converter translates dates between Bikram Sambat (the Nepali calendar) and the Gregorian calendar (AD). If you deal with Nepali government documents, bank statements, academic certificates, or any official paperwork, you regularly encounter BS dates that need converting to AD for international forms, travel bookings, or communication with people outside Nepal. NepDate Widget does this conversion instantly and offline from your Windows taskbar." }
       }
     ]
   }
@@ -209,8 +225,9 @@
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": "https://nepdatewidget.rajuprasai.com.np/#website",
     "name": "NepDate Widget",
-    "alternateName": "NepDate",
+    "alternateName": ["NepDate", "Nepali Patro", "Nepali Calendar"],
     "url": "https://nepdatewidget.rajuprasai.com.np/"
   }
   </script>
@@ -218,8 +235,9 @@
   {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": "https://nepdatewidget.rajuprasai.com.np/#organization",
     "name": "NepDate Widget",
-    "alternateName": "NepDate",
+    "alternateName": ["NepDate", "Nepali Patro"],
     "url": "https://nepdatewidget.rajuprasai.com.np/",
     "logo": {
       "@type": "ImageObject",
@@ -240,13 +258,14 @@
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
+    "@id": "https://nepdatewidget.rajuprasai.com.np/#webpage",
     "name": "NepDate Widget - Free Nepali Date Converter & Calendar for Windows",
     "description": "The best free Nepali date converter for Windows. Convert BS to AD and AD to BS instantly, view the Bikram Sambat calendar, calculate loan EMIs, and 25+ more tools - all offline.",
     "url": "https://nepdatewidget.rajuprasai.com.np/",
-    "dateModified": "2026-05-14",
+    "dateModified": "2026-05-22",
     "inLanguage": "en-US",
     "author": {"@type": "Person", "name": "Raju Prasai", "url": "https://github.com/RajuPrasai"},
-    "isPartOf": {"@type": "WebSite", "name": "NepDate Widget", "url": "https://nepdatewidget.rajuprasai.com.np/"},
+    "isPartOf": {"@id": "https://nepdatewidget.rajuprasai.com.np/#website"},
     "breadcrumb": {
       "@type": "BreadcrumbList",
       "itemListElement": [
@@ -259,24 +278,38 @@
   {
     "@context": "https://schema.org",
     "@type": "VideoObject",
+    "@id": "https://nepdatewidget.rajuprasai.com.np/#video-overview",
     "name": "NepDate Widget Overview - Nepali Date Converter Desktop App",
     "description": "Demo of NepDate Widget expanding from the Windows taskbar into a full Nepali date converter, Bikram Sambat calendar, EMI calculator, and 25+ productivity tools.",
     "thumbnailUrl": "https://nepdatewidget.rajuprasai.com.np/assets/screenshots/tab-calander.webp",
-    "uploadDate": "2026-01-01",
+    "uploadDate": "2026-01-01T00:00:00+05:45",
     "contentUrl": "https://nepdatewidget.rajuprasai.com.np/assets/gif/widget-overview.mp4",
-    "duration": "PT22S"
+    "duration": "PT22S",
+    "publisher": {
+      "@type": "Organization",
+      "name": "NepDate Widget",
+      "url": "https://nepdatewidget.rajuprasai.com.np/",
+      "logo": { "@type": "ImageObject", "url": "https://nepdatewidget.rajuprasai.com.np/assets/logo.png", "width": 447, "height": 447 }
+    }
   }
   </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "VideoObject",
+    "@id": "https://nepdatewidget.rajuprasai.com.np/#video-runbox",
     "name": "RunBox Global Launcher Demo - NepDate Widget",
     "description": "RunBox command launcher in NepDate Widget: press Ctrl+Shift+Space to search the web, calculate, launch apps, and run custom scripts from anywhere in Windows.",
     "thumbnailUrl": "https://nepdatewidget.rajuprasai.com.np/assets/screenshots/runbox-run.webp",
-    "uploadDate": "2026-01-01",
+    "uploadDate": "2026-01-01T00:00:00+05:45",
     "contentUrl": "https://nepdatewidget.rajuprasai.com.np/assets/gif/runbox.mp4",
-    "duration": "PT26S"
+    "duration": "PT26S",
+    "publisher": {
+      "@type": "Organization",
+      "name": "NepDate Widget",
+      "url": "https://nepdatewidget.rajuprasai.com.np/",
+      "logo": { "@type": "ImageObject", "url": "https://nepdatewidget.rajuprasai.com.np/assets/logo.png", "width": 447, "height": 447 }
+    }
   }
   </script>
   <link rel="stylesheet" href="css/style.min.css" />
@@ -395,14 +428,8 @@
                 Zero telemetry
               </span>
             </div>
-            <h1>
-              The <span class="ne-h1">नेपाली</span> desktop companion that <span class="grad">speaks quality.</span>
-            </h1>
-            <p class="lede">
-              The most complete <strong>Nepali Calendar</strong> and productivity widget for Windows. Expands into a full Bikram Sambat calendar, financial
-              calculator, network toolkit, text converter, unit converter, and command
-              launcher. All in one widget, all offline, all in English or नेपाली.
-            </p>
+            <h1>Premium <span class="grad">Nepali Calendar</span>, Date Converter, and <span class="grad">Productivity Widget</span> for PC.</h1>
+            <h2 class="hero-tagline">A deceptively powerful nepali companion living quietly on your taskbar.</h2>
             <div class="hero-cta">
               <a class="btn btn-primary" href="download.html">Download for Windows
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -410,7 +437,7 @@
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
                 </svg>
               </a>
-              <a class="btn btn-secondary" href="features.html">Tour the features</a>
+              <a class="btn btn-secondary" href="features.html">Explore all Nepali tools</a>
               <a class="btn btn-momo" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener noreferrer">
                 <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16"
                     viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -536,9 +563,9 @@
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">Always on screen</div>
-          <h2 class="section-title">A bar that fits where the clock would.</h2>
+          <h2 class="section-title">Nepali Calendar bar - fits where the clock would.</h2>
           <p class="section-sub">
-            Two compact lines pinned to your taskbar. Each element toggles independently from settings,
+            Two compact lines pinned to your taskbar showing today's Bikram Sambat date (currently Nepali Calendar 2083). Each element toggles independently from settings,
             so you keep only what matters. Click the bar to expand into the full app.
           </p>
         </div>
@@ -553,8 +580,8 @@
           <div class="wt-text">
             <div class="wt-line wt-line-top">Wednesday <span class="wt-sep">|</span> Kathmandu <span
                 class="wt-time">1:42 PM</span></div>
-            <div class="wt-line wt-line-bot"><strong>Baishakh 09, 2083</strong> <span class="wt-sep">|</span>
-              <strong>Apr 22, 2026</strong></div>
+            <div class="wt-line wt-line-bot"><strong>Jestha 09, 2083</strong> <span class="wt-sep">|</span>
+              <strong>May 23, 2026</strong></div>
           </div>
         </div>
         <div class="win-taskbar-icons" aria-hidden="true">
@@ -590,7 +617,7 @@
         </div>
         <div class="win-taskbar-clock" aria-hidden="true">
           <div>1:42 PM</div>
-          <div>4/22/2026</div>
+          <div>5/23/2026</div>
         </div>
       </div>
     </section>
@@ -635,10 +662,10 @@
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">What it actually does</div>
-          <h2 class="section-title">One widget. A lot of ground covered.</h2>
-          <p class="section-sub" data-snippet="NepDate Widget features: Nepali date converter (BS to AD and AD to BS), Bikram Sambat calendar with tithi and holidays, loan EMI calculator with amortization schedule, Preeti to Unicode converter, network toolkit (ping, traceroute, IP scan, Whois, DNS), RunBox global launcher, Nepali land and weight unit converter, notes pinned to BS dates, recurring reminders, and document manager.">
-            Built around the Nepali calendar, but it keeps going - document conversion,
-            finance, networking, text tools, traditional units, and a global command launcher.
+          <h2 class="section-title">One Nepali Date Converter widget. A lot of ground covered.</h2>
+          <p class="section-sub" data-snippet="NepDate Widget features: Nepali date converter (BS to AD and AD to BS), Bikram Sambat calendar with tithi and holidays, loan EMI calculator with amortization schedule, Preeti to Unicode converter, network toolkit (ping, traceroute, IP scan, Whois, DNS), RunBox global launcher, Nepali land and weight unit converter (bigha to ropani, tola to gram), notes pinned to BS dates, recurring reminders, document manager, ID photo cropping and print sheet tiling, and batch image compression and conversion.">
+            Built around the Nepali date converter and Bikram Sambat calendar, but it keeps going - Preeti to Unicode, EMI calculator,
+            networking, text tools, bigha-ropani-tola unit conversion, image tools, and a global command launcher.
           </p>
         </div>
 
@@ -919,8 +946,7 @@
         <div class="section-head">
           <div class="section-eyebrow">What's inside</div>
           <h2 class="section-title">The rest of what's in there.</h2>
-          <p class="section-sub">Calendar, date conversion, reminders, notes, documents, timezone converter, holiday
-            countdown, and deep customization - all covered.</p>
+          <p class="section-sub">Calendar, date conversion, reminders, notes, documents, ID photo, image tools, timezone converter, holiday countdown, and deep customization - all covered.</p>
         </div>
 
         <div class="features">
@@ -934,7 +960,7 @@
               </svg></div>
             <h3>BS Calendar &amp; Holidays</h3>
             <p>Full Bikram Sambat month grid with tithi, festivals, public holidays, fiscal year, and a live countdown
-              to the next holiday.</p>
+              to the next holiday. Supports Nepali Calendar 2083 and all years from 1970 to 2100 BS.</p>
           </div>
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -942,7 +968,7 @@
                 <path d="M17 2l4 4-4 4M3 11v-1a4 4 0 014-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 01-4 4H3" />
               </svg></div>
             <h3>Nepali Date Converter (BS ↔ AD)</h3>
-            <p>Instant bidirectional date conversion. Accepts Nepali digits, month names, and flexible separators.
+            <p>Instant bidirectional Nepali date converter. Convert Nepali date to English date or English date to Nepali date. Accepts Nepali digits, month names, and flexible separators.
               Add/subtract days, find differences.</p>
           </div>
           <div class="feature">
@@ -980,6 +1006,26 @@
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="20" height="14" rx="2" />
+                <circle cx="12" cy="10" r="3" />
+                <path d="M6 10h.01M18 10h.01" />
+              </svg></div>
+            <h3>ID &amp; Passport Photo</h3>
+            <p>Crop any photo to exact print dimensions - Passport/MRP, Stamp, Auto, US/DV, or fully custom. Tile copies onto an A4, 4R, or any sheet size, print-ready.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <path d="M3 9h18M9 3v18" />
+                <path d="M15 15l-3-3-3 3" />
+              </svg></div>
+            <h3>Image Compress, Resize &amp; Convert</h3>
+            <p>Batch-process JPEG, PNG, WebP, AVIF, RAW, PDF, and more. Compress with a quality slider, resize to exact pixels, and convert format - any combination in one pass.</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="3" />
                 <path
                   d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
@@ -1000,7 +1046,7 @@
         </div>
 
         <div style="text-align:center; margin-top:36px;">
-          <a class="btn btn-secondary" href="features.html">See every feature in detail
+          <a class="btn btn-secondary" href="features.html">Explore every Nepali tool in detail
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
               stroke-linecap="round" stroke-linejoin="round">
               <path d="M5 12h14M13 5l7 7-7 7" />
@@ -1312,6 +1358,26 @@
                   <div class="faq-a-inner">
                     <p><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank"
                         rel="noopener noreferrer">GitHub Issues</a>. Pull requests are welcome too.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="faq-group">
+              <div class="faq-group-label">Calendar</div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">Does NepDate Widget cover older calendar years like 2079, 2080, and 2082?</button>
+                <div class="faq-a">
+                  <div class="faq-a-inner">
+                    <p>Yes. The Bikram Sambat calendar covers all years from BS 1970 to BS 2100 (AD 1913 to 2043). Navigate to any past year - 2078, 2079, 2080, 2081, 2082 - or any future year up to 2100, with tithi, public holidays, and festivals shown for each month.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="faq-item">
+                <button class="faq-q" type="button">What is a BS to AD converter and when would I need one?</button>
+                <div class="faq-a">
+                  <div class="faq-a-inner">
+                    <p>A BS to AD converter translates Bikram Sambat dates to Gregorian (English) dates. If you deal with Nepali government documents, bank statements, academic certificates, or any official paperwork, you regularly encounter BS dates that need converting to AD for international forms, travel bookings, or communication with people outside Nepal. NepDate Widget does this conversion instantly and offline from your Windows taskbar.</p>
                   </div>
                 </div>
               </div>

@@ -269,8 +269,10 @@ public class NetworkToolsViewModelTests
             vm.ColTypeLabel, vm.ColStatusLabel, vm.ColRttLabel
         };
         foreach (var label in labels)
+        {
             Assert.False(label.StartsWith('[') && label.EndsWith(']'),
                 $"Label '{label}' looks like a missing localization key");
+        }
     }
 
     [Fact]
