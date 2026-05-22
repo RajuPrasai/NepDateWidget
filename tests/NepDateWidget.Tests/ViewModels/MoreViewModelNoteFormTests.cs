@@ -96,7 +96,7 @@ public class MoreViewModelNoteFormTests
     {
         var (vm, _) = CreateNotes();
         vm.NoteSearchText = "anything";
-        // No notes exist — the condition requires HasNotes = true
+        // No notes exist - the condition requires HasNotes = true
         Assert.False(vm.ShowNoteNoResults);
     }
 

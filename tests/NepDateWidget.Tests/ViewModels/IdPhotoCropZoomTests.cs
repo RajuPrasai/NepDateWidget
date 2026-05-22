@@ -34,7 +34,7 @@ public class IdPhotoCropZoomTests
         // Crop 200×20 (aspect=10), image 200×200.
         // First-pass cap: newW capped to 200, newH = 200/10 = 20.
         // minShort = Max(20, 200*0.2) = 40. shortSide=20 < 40.
-        // scale = 40/20 = 2 → newW = 400 > imgW=200 — old code crashes here.
+        // scale = 40/20 = 2 → newW = 400 > imgW=200 - old code crashes here.
         var (newW, newH) = IdPhotoView.ComputeZoomedCropSize(200, 20, 200, 200, delta: +120);
         AssertWithinBounds(newW, newH, 200, 200, "wide aspect zoom-in");
     }
@@ -46,7 +46,7 @@ public class IdPhotoCropZoomTests
     {
         // Crop 20×200 (aspect=0.1), image 200×200.
         // After zooming out to ~18×180, minShort=18 < 40, scale=40/18≈2.2.
-        // newH ≈ 400 > imgH=200 — old code crashes here.
+        // newH ≈ 400 > imgH=200 - old code crashes here.
         // Start at a size where the next zoom-out triggers the min-short path.
         var (newW, newH) = IdPhotoView.ComputeZoomedCropSize(22, 220, 200, 200, delta: -120);
         AssertWithinBounds(newW, newH, 200, 200, "tall aspect zoom-out");
@@ -58,7 +58,7 @@ public class IdPhotoCropZoomTests
     public void ZoomIn_WideCropOnTallImage_DoesNotExceedImageBounds()
     {
         // Image 100×800 (portrait), crop aspect ≈ 1.3 (landscape).
-        // After first-pass caps: newW capped to 100, newH = 100/1.3 ≈ 77 — fine.
+        // After first-pass caps: newW capped to 100, newH = 100/1.3 ≈ 77 - fine.
         // But if minShort triggers: scale-up could push newW > 100.
         // Crop near minimum size to force min-short path.
         var (newW, newH) = IdPhotoView.ComputeZoomedCropSize(18, 14, 100, 800, delta: -120);

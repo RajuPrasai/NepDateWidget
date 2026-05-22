@@ -357,6 +357,48 @@ public class SettingsViewModelTests
         Assert.Equal("en", vm.Language);
     }
 
+    [Fact]
+    public void ResetToDefaultsCommand_AutoStart_ReadsFromSettingsNotOsState()
+    {
+        // Regression: _autoStart was read from _autoStartService.IsEnabled (OS state)
+        // rather than from the default settings value. If the OS has AutoStart disabled,
+        // reset should still restore the default (true), not preserve the disabled state.
+        var svc = new FakeSettingsService();
+        var loc = new LocalizationService(TestPaths.DefaultLocalizationPath);
+        var auto = new FakeAutoStartService(initialState: false); // OS has it disabled
+        var vm = new SettingsViewModel(svc, loc, new FakeThemeService(), auto);
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        // After reset the VM should reflect the default (true), not the OS state (false).
+        Assert.True(vm.AutoStart);
+        // And the autostart service should have been re-enabled.
+        Assert.True(auto.IsEnabled);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_NotifiesCalendarDisplayProperties()
+    {
+        // Regression: ShowTithi, ShowEvents, HighlightPublicHolidays were reset in
+        // the backing fields but OnPropertyChanged was never called for them.
+        var (vm, _, _, _) = Create();
+        vm.ShowTithi = false;
+        vm.ShowEvents = false;
+        vm.HighlightPublicHolidays = false;
+
+        var notified = new HashSet<string>();
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName is not null) notified.Add(e.PropertyName); };
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.Contains(nameof(vm.ShowTithi), notified);
+        Assert.Contains(nameof(vm.ShowEvents), notified);
+        Assert.Contains(nameof(vm.HighlightPublicHolidays), notified);
+        Assert.True(vm.ShowTithi);
+        Assert.True(vm.ShowEvents);
+        Assert.True(vm.HighlightPublicHolidays);
+    }
+
     // ── Labels ───────────────────────────────────────────────────────────────
 
     [Fact]
@@ -879,5 +921,418 @@ public class SettingsViewModelTests
         vm.SetHighlightColorDefaultCommand.Execute(null);
         Assert.True(vm.IsHighlightColorDefault);
         Assert.Equal(string.Empty, vm.HighlightColor);
+    }
+
+    // ── Labels completeness (extended) ────────────────────────────────────────
+
+    [Fact]
+    public void Labels_AllNonEmpty_Extended()
+    {
+        // Covers the label properties that Labels_AllNonEmpty_InEnglish omits.
+        var (vm, _, _, _) = Create();
+        Assert.NotEmpty(vm.ShowSecondsLabel);
+        Assert.NotEmpty(vm.ShowFiscalYearLabel);
+        Assert.NotEmpty(vm.ShowHelpBadgesLabel);
+        Assert.NotEmpty(vm.DataFilesSectionLabel);
+        Assert.NotEmpty(vm.NotificationSoundLabel);
+        Assert.NotEmpty(vm.NotificationSectionLabel);
+        Assert.NotEmpty(vm.TestNotificationLabel);
+        Assert.NotEmpty(vm.HotkeyLabel);
+        Assert.NotEmpty(vm.HotkeyClearLabel);
+        Assert.NotEmpty(vm.ShowHolidayCountdownLabel);
+        Assert.NotEmpty(vm.ShowDailyEventsNotificationLabel);
+        Assert.NotEmpty(vm.ThemeDarkLabel);
+        Assert.NotEmpty(vm.ThemeLightLabel);
+        Assert.NotEmpty(vm.CornerRoundedLabel);
+        Assert.NotEmpty(vm.CornerSharpLabel);
+        Assert.NotEmpty(vm.PresetDefaultLabel);
+        Assert.NotEmpty(vm.PresetOceanLabel);
+        Assert.NotEmpty(vm.PresetForestLabel);
+        Assert.NotEmpty(vm.PresetSunsetLabel);
+        Assert.NotEmpty(vm.PresetMonoLabel);
+        Assert.NotEmpty(vm.PresetAuroraLabel);
+        Assert.NotEmpty(vm.PresetCherryLabel);
+        Assert.NotEmpty(vm.PresetMidnightLabel);
+        Assert.NotEmpty(vm.PresetSlateLabel);
+        Assert.NotEmpty(vm.PresetEmberLabel);
+    }
+
+    // ── ResetToDefaults - new/specific properties ────────────────────────────
+
+    [Fact]
+    public void ResetToDefaultsCommand_RestoresHighlightColorToOrange()
+    {
+        // The factory default is #F4511E (orange), not empty string.
+        // IsHighlightColorOrange must be true and IsHighlightColorDefault false.
+        var (vm, _, _, _) = Create();
+        vm.HighlightColor = "#E53935";  // change to red
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.Equal("#F4511E", vm.HighlightColor);
+        Assert.True(vm.IsHighlightColorOrange);
+        Assert.False(vm.IsHighlightColorDefault);
+        Assert.False(vm.IsHighlightColorRed);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_RestoresClockFormatAndDerivedBooleans()
+    {
+        var (vm, _, _, _) = Create();
+        vm.ClockFormat = "24h";
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.Equal("12h", vm.ClockFormat);
+        Assert.True(vm.IsClockFormat12h);
+        Assert.False(vm.IsClockFormat24h);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_RestoresShowSecondsShowFiscalYearShowHelpBadges()
+    {
+        var (vm, _, _, _) = Create();
+        vm.ShowSecondsInClock = true;
+        vm.ShowFiscalYear     = false;
+        vm.ShowHelpBadges     = false;
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.False(vm.ShowSecondsInClock);
+        Assert.True(vm.ShowFiscalYear);
+        Assert.True(vm.ShowHelpBadges);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_RestoresNotificationSettings()
+    {
+        var (vm, _, _, _) = Create();
+        vm.NotificationDurationSeconds = 60;
+        vm.NotificationSound           = false;
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.Equal(10,  vm.NotificationDurationSeconds);
+        Assert.Equal("10s", vm.NotificationDurationDisplay);
+        Assert.True(vm.NotificationSound);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_RestoresLogMaxSize()
+    {
+        var (vm, _, _, _) = Create();
+        vm.LogMaxSizeMb = 100;
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.Equal(10,     vm.LogMaxSizeMb);
+        Assert.Equal("10 MB", vm.LogMaxSizeMbDisplay);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_NotifiesShowSecondsShowFiscalYearShowHelpBadges()
+    {
+        var (vm, _, _, _) = Create();
+        vm.ShowSecondsInClock = true;
+        vm.ShowFiscalYear     = false;
+        vm.ShowHelpBadges     = false;
+
+        var notified = new HashSet<string>();
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName is not null) notified.Add(e.PropertyName); };
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.Contains(nameof(vm.ShowSecondsInClock), notified);
+        Assert.Contains(nameof(vm.ShowFiscalYear),     notified);
+        Assert.Contains(nameof(vm.ShowHelpBadges),     notified);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_NotifiesDisplayProperties()
+    {
+        // LogMaxSizeMbDisplay and NotificationDurationDisplay are derived strings.
+        // They must be explicitly notified because their backing fields are set
+        // directly (no through the public property setter which would call OnPropertyChanged).
+        var (vm, _, _, _) = Create();
+        vm.LogMaxSizeMb            = 50;
+        vm.NotificationDurationSeconds = 30;
+
+        var notified = new HashSet<string>();
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName is not null) notified.Add(e.PropertyName); };
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.Contains(nameof(vm.LogMaxSizeMbDisplay),         notified);
+        Assert.Contains(nameof(vm.NotificationDurationDisplay), notified);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_FiresSettingsApplied()
+    {
+        var (vm, _, _, _) = Create();
+        bool raised = false;
+        vm.SettingsApplied += (_, _) => raised = true;
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.True(raised);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_NotifiesHighlightColorAndAllDerivatives()
+    {
+        var (vm, _, _, _) = Create();
+        vm.HighlightColor = "#E53935";
+
+        var notified = new HashSet<string>();
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName is not null) notified.Add(e.PropertyName); };
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.Contains(nameof(vm.HighlightColor),          notified);
+        Assert.Contains(nameof(vm.IsHighlightColorDefault), notified);
+        Assert.Contains(nameof(vm.IsHighlightColorRed),     notified);
+        Assert.Contains(nameof(vm.IsHighlightColorOrange),  notified);
+    }
+
+    [Fact]
+    public void ResetToDefaultsCommand_NotifiesAllPresetDerivatives()
+    {
+        var (vm, _, _, _) = Create();
+        vm.BackgroundPreset = "Ocean";
+
+        var notified = new HashSet<string>();
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName is not null) notified.Add(e.PropertyName); };
+
+        vm.ResetToDefaultsCommand.Execute(null);
+
+        Assert.Contains(nameof(vm.IsPresetDefault),    notified);
+        Assert.Contains(nameof(vm.IsPresetOcean),      notified);
+        Assert.Contains(nameof(vm.IsPresetForest),     notified);
+        Assert.Contains(nameof(vm.IsPresetSunset),     notified);
+        Assert.Contains(nameof(vm.IsPresetMonochrome), notified);
+        Assert.Contains(nameof(vm.IsPresetAurora),     notified);
+        Assert.Contains(nameof(vm.IsPresetCherry),     notified);
+        Assert.Contains(nameof(vm.IsPresetMidnight),   notified);
+        Assert.Contains(nameof(vm.IsPresetSlate),      notified);
+        Assert.Contains(nameof(vm.IsPresetEmber),      notified);
+    }
+
+    // ── Highlight color - full command + exclusivity coverage ────────────────
+
+    [Theory]
+    [InlineData("",        true,  false, false, false, false, false, false, false, false, false, false, false, false)]
+    [InlineData("#E53935", false, true,  false, false, false, false, false, false, false, false, false, false, false)]
+    [InlineData("#F4511E", false, false, true,  false, false, false, false, false, false, false, false, false, false)]
+    [InlineData("#EC407A", false, false, false, true,  false, false, false, false, false, false, false, false, false)]
+    [InlineData("#AB47BC", false, false, false, false, true,  false, false, false, false, false, false, false, false)]
+    [InlineData("#1E88E5", false, false, false, false, false, true,  false, false, false, false, false, false, false)]
+    [InlineData("#26A69A", false, false, false, false, false, false, true,  false, false, false, false, false, false)]
+    [InlineData("#43A047", false, false, false, false, false, false, false, true,  false, false, false, false, false)]
+    [InlineData("#FDD835", false, false, false, false, false, false, false, false, true,  false, false, false, false)]
+    [InlineData("#FFB300", false, false, false, false, false, false, false, false, false, true,  false, false, false)]
+    [InlineData("#00ACC1", false, false, false, false, false, false, false, false, false, false, true,  false, false)]
+    [InlineData("#3949AB", false, false, false, false, false, false, false, false, false, false, false, true,  false)]
+    [InlineData("#6D4C41", false, false, false, false, false, false, false, false, false, false, false, false, true )]
+    public void HighlightColor_AllColors_AreExclusive(
+        string hex,
+        bool isDefault, bool isRed,   bool isOrange, bool isPink,   bool isPurple,
+        bool isBlue,    bool isTeal,  bool isGreen,  bool isYellow, bool isAmber,
+        bool isCyan,    bool isIndigo, bool isBrown)
+    {
+        var (vm, _, _, _) = Create();
+        vm.HighlightColor = hex;
+
+        Assert.Equal(isDefault, vm.IsHighlightColorDefault);
+        Assert.Equal(isRed,     vm.IsHighlightColorRed);
+        Assert.Equal(isOrange,  vm.IsHighlightColorOrange);
+        Assert.Equal(isPink,    vm.IsHighlightColorPink);
+        Assert.Equal(isPurple,  vm.IsHighlightColorPurple);
+        Assert.Equal(isBlue,    vm.IsHighlightColorBlue);
+        Assert.Equal(isTeal,    vm.IsHighlightColorTeal);
+        Assert.Equal(isGreen,   vm.IsHighlightColorGreen);
+        Assert.Equal(isYellow,  vm.IsHighlightColorYellow);
+        Assert.Equal(isAmber,   vm.IsHighlightColorAmber);
+        Assert.Equal(isCyan,    vm.IsHighlightColorCyan);
+        Assert.Equal(isIndigo,  vm.IsHighlightColorIndigo);
+        Assert.Equal(isBrown,   vm.IsHighlightColorBrown);
+    }
+
+    [Fact]
+    public void HighlightColor_Change_NotifiesAllThirteenDerivatives()
+    {
+        var (vm, _, _, _) = Create();
+        var notified = new HashSet<string>();
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName is not null) notified.Add(e.PropertyName); };
+
+        vm.HighlightColor = "#E53935";
+
+        Assert.Contains(nameof(vm.IsHighlightColorDefault), notified);
+        Assert.Contains(nameof(vm.IsHighlightColorRed),     notified);
+        Assert.Contains(nameof(vm.IsHighlightColorOrange),  notified);
+        Assert.Contains(nameof(vm.IsHighlightColorPink),    notified);
+        Assert.Contains(nameof(vm.IsHighlightColorPurple),  notified);
+        Assert.Contains(nameof(vm.IsHighlightColorBlue),    notified);
+        Assert.Contains(nameof(vm.IsHighlightColorTeal),    notified);
+        Assert.Contains(nameof(vm.IsHighlightColorGreen),   notified);
+        Assert.Contains(nameof(vm.IsHighlightColorYellow),  notified);
+        Assert.Contains(nameof(vm.IsHighlightColorAmber),   notified);
+        Assert.Contains(nameof(vm.IsHighlightColorCyan),    notified);
+        Assert.Contains(nameof(vm.IsHighlightColorIndigo),  notified);
+        Assert.Contains(nameof(vm.IsHighlightColorBrown),   notified);
+    }
+
+    [Fact]
+    public void HighlightColor_SameValue_DoesNotRaisePropertyChanged()
+    {
+        // SetProperty equality guard must prevent spurious notifications and Apply() calls.
+        var (vm, svc, _, _) = Create();
+        vm.HighlightColor = "#E53935";
+
+        int saveBefore = svc.SaveCount;
+        var notified   = new List<string>();
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName is not null) notified.Add(e.PropertyName); };
+
+        vm.HighlightColor = "#E53935";  // same value
+
+        Assert.DoesNotContain(nameof(vm.HighlightColor), notified);
+        Assert.Equal(saveBefore, svc.SaveCount);
+    }
+
+    [Theory]
+    [InlineData("SetHighlightColorDefaultCommand", "")]
+    [InlineData("SetHighlightColorRedCommand",     "#E53935")]
+    [InlineData("SetHighlightColorOrangeCommand",  "#F4511E")]
+    [InlineData("SetHighlightColorPinkCommand",    "#EC407A")]
+    [InlineData("SetHighlightColorPurpleCommand",  "#AB47BC")]
+    [InlineData("SetHighlightColorBlueCommand",    "#1E88E5")]
+    [InlineData("SetHighlightColorTealCommand",    "#26A69A")]
+    [InlineData("SetHighlightColorGreenCommand",   "#43A047")]
+    [InlineData("SetHighlightColorYellowCommand",  "#FDD835")]
+    [InlineData("SetHighlightColorAmberCommand",   "#FFB300")]
+    [InlineData("SetHighlightColorCyanCommand",    "#00ACC1")]
+    [InlineData("SetHighlightColorIndigoCommand",  "#3949AB")]
+    [InlineData("SetHighlightColorBrownCommand",   "#6D4C41")]
+    public void HighlightColor_AllColorCommands_PersistCorrectHex(string commandName, string expectedHex)
+    {
+        var (vm, svc, _, _) = Create();
+        var cmd = (System.Windows.Input.ICommand)typeof(SettingsViewModel)
+            .GetProperty(commandName, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance)!
+            .GetValue(vm)!;
+
+        cmd.Execute(null);
+
+        Assert.Equal(expectedHex, vm.HighlightColor);
+        Assert.Equal(expectedHex, svc.Current.HighlightColor);
+    }
+
+    // ── BackgroundPreset notifications ────────────────────────────────────────
+
+    [Fact]
+    public void BackgroundPreset_Change_NotifiesAllTenPresetDerivatives()
+    {
+        var (vm, _, _, _) = Create();
+        var notified = new HashSet<string>();
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName is not null) notified.Add(e.PropertyName); };
+
+        vm.BackgroundPreset = "Ocean";
+
+        Assert.Contains(nameof(vm.IsPresetDefault),    notified);
+        Assert.Contains(nameof(vm.IsPresetOcean),      notified);
+        Assert.Contains(nameof(vm.IsPresetForest),     notified);
+        Assert.Contains(nameof(vm.IsPresetSunset),     notified);
+        Assert.Contains(nameof(vm.IsPresetMonochrome), notified);
+        Assert.Contains(nameof(vm.IsPresetAurora),     notified);
+        Assert.Contains(nameof(vm.IsPresetCherry),     notified);
+        Assert.Contains(nameof(vm.IsPresetMidnight),   notified);
+        Assert.Contains(nameof(vm.IsPresetSlate),      notified);
+        Assert.Contains(nameof(vm.IsPresetEmber),      notified);
+    }
+
+    [Fact]
+    public void BackgroundPreset_SameValue_DoesNotRaisePropertyChanged()
+    {
+        var (vm, svc, _, _) = Create();
+        vm.BackgroundPreset = "Ocean";
+
+        int saveBefore = svc.SaveCount;
+        var notified   = new List<string>();
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName is not null) notified.Add(e.PropertyName); };
+
+        vm.BackgroundPreset = "Ocean";  // same value
+
+        Assert.DoesNotContain(nameof(vm.BackgroundPreset), notified);
+        Assert.Equal(saveBefore, svc.SaveCount);
+    }
+
+    // ── AnimationEnabled toggle ───────────────────────────────────────────────
+
+    [Fact]
+    public void AnimationEnabled_ToggleFalseThenTrue_BothPersistAndFireSettingsApplied()
+    {
+        var (vm, svc, _, _) = Create();
+        var events = new List<bool>();
+        vm.SettingsApplied += (_, _) => events.Add(vm.AnimationEnabled);
+
+        vm.AnimationEnabled = false;
+        vm.AnimationEnabled = true;
+
+        Assert.True(svc.Current.AnimationEnabled);
+        Assert.Equal(2, events.Count);
+        Assert.False(events[0]);
+        Assert.True(events[1]);
+    }
+
+    // ── Display string edge values ────────────────────────────────────────────
+
+    [Theory]
+    [InlineData(5,  "5s")]
+    [InlineData(10, "10s")]
+    [InlineData(60, "60s")]
+    public void NotificationDurationDisplay_AtAllBoundaries(int seconds, string expected)
+    {
+        var (vm, _, _, _) = Create();
+        vm.NotificationDurationSeconds = seconds;
+        Assert.Equal(expected, vm.NotificationDurationDisplay);
+    }
+
+    [Theory]
+    [InlineData(5,   "5 MB")]
+    [InlineData(10,  "10 MB")]
+    [InlineData(100, "100 MB")]
+    public void LogMaxSizeMbDisplay_AtAllBoundaries(int mb, string expected)
+    {
+        var (vm, _, _, _) = Create();
+        vm.LogMaxSizeMb = mb;
+        Assert.Equal(expected, vm.LogMaxSizeMbDisplay);
+    }
+
+    // ── IsRecordingHotkey side-effects ────────────────────────────────────────
+
+    [Fact]
+    public void IsRecordingHotkey_SetTrue_ClearsHotkeyErrorText()
+    {
+        // HotkeyErrorText must be cleared whenever recording starts so stale
+        // error messages from a previous failed attempt do not remain visible.
+        var (vm, _, _, _) = Create();
+        vm.TrySetHotkey(System.Windows.Input.ModifierKeys.None, System.Windows.Input.Key.Space);
+        // drive an error: try to clear then set (no modifiers → should produce an error or at minimum test state)
+        vm.IsRecordingHotkey = true;
+        Assert.Equal(string.Empty, vm.HotkeyErrorText);
+        Assert.False(vm.HasHotkeyError);
+    }
+
+    [Fact]
+    public void IsRecordingHotkey_SetFalse_RestoresDisplayText()
+    {
+        var (vm, _, _, _) = Create();
+        string textBeforeRecording = vm.HotkeyDisplayText;
+        vm.IsRecordingHotkey = true;
+        // While recording, display text should change to the "press keys" prompt.
+        Assert.NotEqual(textBeforeRecording, vm.HotkeyDisplayText);
+
+        vm.IsRecordingHotkey = false;
+        // After cancelling, display should revert to the current hotkey.
+        Assert.Equal(textBeforeRecording, vm.HotkeyDisplayText);
     }
 }

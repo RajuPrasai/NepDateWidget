@@ -20,7 +20,7 @@ internal static class PdfFixtures
     /// </summary>
     public static string WriteUncompressedPdf(string path, int contentLines = 4000)
     {
-        // "q Q\n" × N — valid, balanced graphics-state operators, highly repetitive ASCII.
+        // "q Q\n" × N - valid, balanced graphics-state operators, highly repetitive ASCII.
         var contentBytes = Latin1.GetBytes(string.Concat(Enumerable.Repeat("q Q\n", contentLines)));
         File.WriteAllBytes(path, BuildRawPdf(contentBytes));
         return path;
@@ -55,14 +55,14 @@ internal static class PdfFixtures
     /// A PDF encrypted with an owner password and an empty user password.
     /// QPDF treats an empty user password as open access and can process the file (Success=true).
     /// PDFsharp may or may not open the file depending on its encrypted-PDF handling; either way
-    /// the overall result is Success=true — the test asserts the service handles it gracefully.
+    /// the overall result is Success=true - the test asserts the service handles it gracefully.
     /// </summary>
     public static string WriteEncryptedPdf(string path)
     {
         using var doc = new PdfDocument();
         doc.AddPage();
         // Setting OwnerPassword automatically enables 128-bit RC4 encryption.
-        // UserPassword defaults to "" — QPDF opens empty-user-password PDFs without a key.
+        // UserPassword defaults to "" - QPDF opens empty-user-password PDFs without a key.
         doc.SecuritySettings.OwnerPassword = "test-owner";
         doc.Save(path);
         return path;
@@ -99,7 +99,7 @@ internal static class PdfFixtures
         void WriteStr(string s) => ms.Write(Latin1.GetBytes(s));
         void WriteRaw(byte[] b) => ms.Write(b);
 
-        // Binary-content marker — signals to tools that this is not pure ASCII.
+        // Binary-content marker - signals to tools that this is not pure ASCII.
         WriteStr("%PDF-1.4\n");
         WriteStr("%\x80\x81\x82\x83\n");
 

@@ -35,7 +35,7 @@ public partial class IdPhotoView : UserControl
     private double _cropXAtDragStart;
     private double _cropYAtDragStart;
 
-    // Normalized crop values — local copy so we can restore display coords after container resize
+    // Normalized crop values - local copy so we can restore display coords after container resize
     // without touching the VM (which holds the same values for the export path).
     private double _normX;
     private double _normY;
@@ -94,7 +94,7 @@ public partial class IdPhotoView : UserControl
     {
         if (e.PropertyName == nameof(IdPhotoViewModel.CropShape))
         {
-            // Refresh overlay immediately when shape toggles — no full reset needed.
+            // Refresh overlay immediately when shape toggles - no full reset needed.
             Dispatcher.BeginInvoke(UpdateCropOverlay);
         }
     }
@@ -307,7 +307,7 @@ public partial class IdPhotoView : UserControl
     }
 
     // Recomputes display crop coordinates from the stored normalized values after a container
-    // resize. Does not re-center — preserves the user's crop position.
+    // resize. Does not re-center - preserves the user's crop position.
     private void RestoreCropFromNorm()
     {
         ComputeRenderedBounds();
@@ -324,7 +324,7 @@ public partial class IdPhotoView : UserControl
         _cropY = _imgOffsetY + _normY * _imgRenderedH;
 
         UpdateCropOverlay();
-        // Norm values did not change — no PushNormalizedCrop needed.
+        // Norm values did not change - no PushNormalizedCrop needed.
     }
 
     private void UpdateCropOverlay()
@@ -370,7 +370,7 @@ public partial class IdPhotoView : UserControl
             return;
         }
 
-        // Square mode — restore elements and run the original four-rectangle logic.
+        // Square mode - restore elements and run the original four-rectangle logic.
         OvTop.Visibility    = Visibility.Visible;
         OvBottom.Visibility = Visibility.Visible;
         OvLeft.Visibility   = Visibility.Visible;

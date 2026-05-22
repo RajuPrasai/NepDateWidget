@@ -7,7 +7,7 @@ namespace NepDateWidget.Helpers;
 /// When a canExecute delegate is provided, CanExecuteChanged is wired to
 /// CommandManager.RequerySuggested so WPF re-evaluates automatically.
 /// When no canExecute is provided, CanExecute always returns true and
-/// RequerySuggested is not hooked — avoiding needless CanExecute calls on
+/// RequerySuggested is not hooked - avoiding needless CanExecute calls on
 /// every mouse move across all 9 cached tab visual trees.
 /// </summary>
 public sealed class RelayCommand : ICommand

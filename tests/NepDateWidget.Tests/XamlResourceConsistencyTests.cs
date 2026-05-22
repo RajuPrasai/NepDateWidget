@@ -411,4 +411,84 @@ public sealed class XamlResourceConsistencyTests
 
         Assert.DoesNotContain("StartNewJobCommand", xaml, StringComparison.Ordinal);
     }
+
+    // ── SettingsView structural integrity ─────────────────────────────────────
+
+    [Fact]
+    public void SettingsView_ResetButton_UsesAccentButtonStyle_NotOptionButtonWithLocalOverrides()
+    {
+        // The Reset-to-defaults button must use AccentButton, not OptionButton with
+        // locally-set Background/Foreground/BorderBrush.
+        //
+        // Root cause that this guards against: OptionButton's Style.Triggers hover
+        // setter CANNOT override a locally-set DependencyProperty value.
+        // WPF precedence: local value > style trigger. The button would have zero
+        // hover feedback if OptionButton + local Background are combined.
+        //
+        // AccentButton uses ControlTemplate.Triggers (opacity on a named element
+        // inside the template), which is immune to this precedence issue.
+        var path = Path.Combine(SourceRoot, "Views", "SettingsView.xaml");
+        Assert.True(File.Exists(path));
+        var xaml = File.ReadAllText(path);
+
+        // The reset button region must use AccentButton.
+        Assert.Contains("Style=\"{StaticResource AccentButton}\"", xaml, StringComparison.Ordinal);
+
+        // The broken pattern (OptionButton + inline Background override on the reset
+        // button) must not be present. The specific combination is the tell-tale sign.
+        // We check that no Button inside the Reset card has both OptionButton style
+        // AND an inline Background=WidgetAccentBrush that would defeat its hover trigger.
+        // A simple string search suffices: the broken combo would require all three on
+        // the same Button element.
+        Assert.DoesNotContain(
+            "Style=\"{StaticResource OptionButton}\"\r\n                        HorizontalAlignment=\"Stretch\"\r\n                        Background=\"{DynamicResource WidgetAccentBrush}\"",
+            xaml, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void SettingsView_CheckboxTrigger_HasNoBeginStoryboard()
+    {
+        // The SettingsCheckBox ControlTemplate must NOT contain a Storyboard in its
+        // IsChecked trigger. The animation was moved to code-behind so it can be
+        // gated on AnimationEnabled.  A Storyboard in the XAML trigger fires
+        // unconditionally and would violate the AnimationEnabled contract.
+        var path = Path.Combine(SourceRoot, "Views", "SettingsView.xaml");
+        Assert.True(File.Exists(path));
+        var xaml = File.ReadAllText(path);
+
+        Assert.DoesNotContain("<BeginStoryboard>", xaml, StringComparison.Ordinal);
+        Assert.DoesNotContain("<Storyboard>",      xaml, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void SettingsView_CheckboxTrigger_PreservesTrackAndThumbColorSetters()
+    {
+        // Removing the Storyboard must not have removed the IsChecked=True Setters
+        // that change Track and Thumb colors.  Those are visual-only (no animation)
+        // and must remain so the toggle looks correct when checked.
+        var path = Path.Combine(SourceRoot, "Views", "SettingsView.xaml");
+        Assert.True(File.Exists(path));
+        var xaml = File.ReadAllText(path);
+
+        // Track background turns accent when checked.
+        Assert.Contains("TargetName=\"Track\"", xaml, StringComparison.Ordinal);
+        // Thumb turns WidgetDayTodayTextBrush when checked.
+        Assert.Contains("TargetName=\"Thumb\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("WidgetDayTodayTextBrush", xaml, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void SettingsView_HasCodeBehindAnimationEventHandlers()
+    {
+        // The UserControl must declare CheckBox.Checked and CheckBox.Unchecked handlers
+        // so the code-behind can gate the toggle animation on AnimationEnabled.
+        // Without these attributes the code-behind methods exist but are never called.
+        var path = Path.Combine(SourceRoot, "Views", "SettingsView.xaml");
+        Assert.True(File.Exists(path));
+        var xaml = File.ReadAllText(path);
+
+        Assert.Contains("CheckBox.Checked=\"OnSettingsCheckChanged\"",   xaml, StringComparison.Ordinal);
+        Assert.Contains("CheckBox.Unchecked=\"OnSettingsCheckChanged\"", xaml, StringComparison.Ordinal);
+        Assert.Contains("Loaded=\"OnSettingsViewLoaded\"",               xaml, StringComparison.Ordinal);
+    }
 }

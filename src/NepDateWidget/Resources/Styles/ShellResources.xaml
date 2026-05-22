@@ -449,7 +449,7 @@
   </Style>
 
   <!-- ══════════════════════════════════════════════════════════════════
-         Accent (primary action) button — used by tool views.
+         Accent (primary action) button - used by tool views.
          AboutView and ConverterView define their own local variants.
          ════════════════════════════════════════════════════════════════ -->
   <Style x:Key="AccentButton" TargetType="Button">

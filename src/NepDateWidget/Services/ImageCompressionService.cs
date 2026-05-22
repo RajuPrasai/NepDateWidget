@@ -30,7 +30,7 @@ public sealed class ImageCompressionService : IImageCompressionService
             long compressedSize = new FileInfo(outputPath).Length;
 
             // Keep-smaller guard: if re-encoding produced a larger file, use the original.
-            // Skip when the user explicitly requested resize — the size increase is intentional.
+            // Skip when the user explicitly requested resize - the size increase is intentional.
             bool hasExplicitResize = (settings.ResizeWidth.HasValue && settings.ResizeWidth.Value > 0)
                                   || (settings.ResizeHeight.HasValue && settings.ResizeHeight.Value > 0);
             if (!hasExplicitResize && compressedSize >= originalSize)
@@ -241,7 +241,7 @@ public sealed class ImageCompressionService : IImageCompressionService
         using var collection = new MagickImageCollection(inputPath);
 
         // Compute target once using the first frame (all frames share the canvas size post-coalesce).
-        // Coalescing decodes delta frames into full-canvas frames — expensive; only do it when needed.
+        // Coalescing decodes delta frames into full-canvas frames - expensive; only do it when needed.
         uint gifTarget = 0;
         bool autoResizeNeeded = false;
         if (!hasExplicitResize && !settings.NoAutoResize && collection.Count > 0)
@@ -255,7 +255,7 @@ public sealed class ImageCompressionService : IImageCompressionService
         }
 
         // Coalesce converts delta frames to full frames. Required before resize or quantization
-        // on animated GIFs — delta frames contain only pixel changes and operating on them
+        // on animated GIFs - delta frames contain only pixel changes and operating on them
         // directly would corrupt transparency and produce severe artifacts.
         bool needsCoalesce = hasExplicitResize || autoResizeNeeded
                           || (needsQuantize && collection.Count > 1);
@@ -284,7 +284,7 @@ public sealed class ImageCompressionService : IImageCompressionService
             }
 
             // Color quantization: reduce palette to improve LZW compression.
-            // Level 4 = 256 colors (full GIF palette) — no reduction applied.
+            // Level 4 = 256 colors (full GIF palette) - no reduction applied.
             if (needsQuantize)
             {
                 frame.Quantize(new QuantizeSettings

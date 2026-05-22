@@ -1,3 +1,5 @@
+using NepDateWidget.Services;
+
 namespace NepDateWidget.Models;
 
 /// <summary>
@@ -27,4 +29,10 @@ public sealed class ConversionJobDescriptor
     /// InputPath is set to the first entry for display/progress purposes.
     /// </summary>
     public IReadOnlyList<string>? CombinedInputPaths { get; init; }
+
+    /// <summary>
+    /// Set by the orchestrator after the job completes.
+    /// Used by the ViewModel to determine success and actual output file paths.
+    /// </summary>
+    public ImageConversionResult? Result { get; set; }
 }

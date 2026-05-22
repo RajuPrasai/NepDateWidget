@@ -245,7 +245,7 @@ public sealed class CalendarDayViewModel : ViewModelBase
             _hasVisibleEvents = true;
             _hasHiddenEvents = _allEvents.Length > 1;
             _eventText0 = firstText;
-            // _eventText1 and _eventText2 stay empty — constructor always initialises with a single visible row
+            // _eventText1 and _eventText2 stay empty - constructor always initialises with a single visible row
         }
 
         // Public holiday: same highlight color as Saturday/Sunday
@@ -295,7 +295,7 @@ public sealed class CalendarDayViewModel : ViewModelBase
         // compare and only raise PropertyChanged for values that actually changed.
         // 42 cells × up to 9 events = up to 378 notifications per navigation; in practice
         // IsSaturday/IsSunday never change (column position is fixed), IsToday rarely changes,
-        // and padding status only flips on slow-path navigations — so most properties are
+        // and padding status only flips on slow-path navigations - so most properties are
         // silent on most navigations.
         int oldBsYear        = _day.Year;
         int oldBsMonth       = _day.Month;
@@ -353,7 +353,7 @@ public sealed class CalendarDayViewModel : ViewModelBase
             _lazyBuildArgs = (isNepali, adapter, localization);
             // If no options yet (e.g. padding→current transition), set sentinel so
             // HasCopyOptions returns true and the ContextMenu is not suppressed by the DataTrigger.
-            // If a previous lazy build produced real items, keep them — they're stale but
+            // If a previous lazy build produced real items, keep them - they're stale but
             // HasCopyOptions stays true; EnsureCopyOptionsBuilt() refreshes them on first open.
             if (_copyFormatOptions.Count == 0)
                 _copyFormatOptions = _placeholderOptions;

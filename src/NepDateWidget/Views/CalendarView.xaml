@@ -226,7 +226,7 @@
             <ContextMenu.Resources>
                 <!--
                     Non-interactive header row: quiet section label above the date options.
-                    No divider line — lower opacity and tighter typography set it apart.
+                    No divider line - lower opacity and tighter typography set it apart.
                 -->
                 <Style x:Key="CopyHeaderItem" TargetType="MenuItem">
                     <Setter Property="OverridesDefaultStyle" Value="True" />

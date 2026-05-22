@@ -147,7 +147,7 @@ public sealed class JobOrchestrationService : IJobOrchestrationService
 
                     await Task.Run(() =>
                     {
-                        _ = job.Kind switch
+                        job.Result = job.Kind switch
                         {
                             ConversionKind.PdfToImage => _pdfTranscode.PdfToImage(
                                 job.InputPath,

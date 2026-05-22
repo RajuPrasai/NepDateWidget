@@ -151,7 +151,7 @@
                        Foreground="{DynamicResource WidgetAccentBrush}"
                        FontSize="11" VerticalAlignment="Center" Margin="6,0,6,0"
                        Visibility="{Binding IsDone, Converter={StaticResource BoolToVis}}" />
-            <!-- Remove button — hidden while job running -->
+            <!-- Remove button - hidden while job running -->
             <Button Grid.Column="3"
                     Command="{Binding DataContext.RemoveFileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     CommandParameter="{Binding FilePath}"
@@ -189,7 +189,7 @@
       </ItemsControl.ItemTemplate>
     </ItemsControl>
 
-    <!-- Add more files bar — compact button shown when file list is visible -->
+    <!-- Add more files bar - compact button shown when file list is visible -->
     <Button Style="{StaticResource SecondaryButton}"
             Command="{Binding LoadFilesCommand}"
             Height="26" Margin="0,0,0,12"
@@ -208,7 +208,7 @@
     <!-- Mode toggles row -->
     <StackPanel Orientation="Horizontal" Margin="0,0,0,10"
                 Visibility="{Binding HasFiles, Converter={StaticResource BoolToVis}}">
-      <!-- Compress toggle — disabled for RAW files -->
+      <!-- Compress toggle - disabled for RAW files -->
       <CheckBox Content="{Binding CompressToggleLabel}"
                 IsChecked="{Binding IsCompressEnabled}"
                 IsEnabled="{Binding CanToggleCompress}"
@@ -224,7 +224,7 @@
           </Style>
         </CheckBox.Style>
       </CheckBox>
-      <!-- Resize toggle — disabled for PDF -->
+      <!-- Resize toggle - disabled for PDF -->
       <CheckBox Content="{Binding ResizeToggleLabel}"
                 IsChecked="{Binding IsResizeEnabled}"
                 IsEnabled="{Binding CanToggleResize}"
@@ -240,7 +240,7 @@
           </Style>
         </CheckBox.Style>
       </CheckBox>
-      <!-- Convert toggle — disabled for PDF -->
+      <!-- Convert toggle - disabled for PDF -->
       <CheckBox Content="{Binding ConvertToggleLabel}"
                 IsChecked="{Binding IsConvertEnabled}"
                 IsEnabled="{Binding CanToggleConvert}">
@@ -265,7 +265,7 @@
                    Foreground="{DynamicResource WidgetForegroundBrush}"
                    FontSize="12" FontWeight="SemiBold" Margin="0,0,0,12" />
 
-        <!-- Quality slider — hidden for lossless formats when Convert is ON -->
+        <!-- Quality slider - hidden for lossless formats when Convert is ON -->
         <StackPanel Visibility="{Binding ShowQualitySlider, Converter={StaticResource BoolToVis}}">
           <Slider Minimum="0" Maximum="4"
                   Value="{Binding QualityLevel}"
@@ -288,7 +288,7 @@
           </Grid>
         </StackPanel>
 
-        <!-- Strip metadata — inside compress card, hidden for PDF -->
+        <!-- Strip metadata - inside compress card, hidden for PDF -->
         <CheckBox Content="{Binding StripMetaLabel}"
                   IsChecked="{Binding StripMetadata}"
                   Style="{StaticResource WidgetCheckBox}"
@@ -428,7 +428,7 @@
                    Foreground="{DynamicResource WidgetForegroundBrush}"
                    FontSize="12" FontWeight="SemiBold" Margin="0,0,0,12" />
 
-        <!-- Primary format chips — 4 common formats -->
+        <!-- Primary format chips - 4 common formats -->
         <WrapPanel>
           <!-- JPEG -->
           <Button Command="{Binding SelectFormatCommand}" CommandParameter="jpg">
@@ -490,7 +490,7 @@
             AVIF
           </Button>
 
-          <!-- PDF — hidden when input files are already PDFs (PDF→PDF is invalid) -->
+          <!-- PDF - hidden when input files are already PDFs (PDF→PDF is invalid) -->
           <Button Command="{Binding SelectFormatCommand}" CommandParameter="pdf"
                   Visibility="{Binding IsFormatPdfChipVisible, Converter={StaticResource BoolToVis}}">
             <Button.Style>
@@ -533,7 +533,7 @@
           </Button>
         </WrapPanel>
 
-        <!-- Secondary format chips — hidden by default -->
+        <!-- Secondary format chips - hidden by default -->
         <WrapPanel Margin="0,4,0,0"
                    Visibility="{Binding ShowMoreFormats, Converter={StaticResource BoolToVis}}">
           <!-- GIF -->
@@ -612,7 +612,7 @@
           </Button>
         </WrapPanel>
 
-        <!-- PDF→image page mode options — visible when all input is PDF and target is an image format -->
+        <!-- PDF→image page mode options - visible when all input is PDF and target is an image format -->
         <WrapPanel Margin="0,8,0,0"
                    Visibility="{Binding ShowPdfConvertOptions, Converter={StaticResource BoolToVis}}">
           <!-- First page -->
@@ -659,7 +659,7 @@
           </Button>
         </WrapPanel>
 
-        <!-- Image→PDF combine mode — visible when images loaded, PDF target, multiple files -->
+        <!-- Image→PDF combine mode - visible when images loaded, PDF target, multiple files -->
         <WrapPanel Margin="0,8,0,0"
                    Visibility="{Binding ShowImageToPdfOptions, Converter={StaticResource BoolToVis}}">
           <!-- One PDF per image -->
@@ -712,7 +712,7 @@
 
     <!-- ── Action button row ─────────────────────────────────────────────── -->
 
-    <!-- Mode 1: Summary active — full-width Reset button -->
+    <!-- Mode 1: Summary active - full-width Reset button -->
     <Button Margin="0,0,0,4"
             Style="{StaticResource SecondaryButton}"
             Command="{Binding DismissSummaryCommand}"
@@ -730,7 +730,7 @@
       </StackPanel>
     </Button>
 
-    <!-- Mode 2: Normal / running — Reset (when idle) + Process/Cancel -->
+    <!-- Mode 2: Normal / running - Reset (when idle) + Process/Cancel -->
     <Grid Margin="0,0,0,4"
           Visibility="{Binding ShowSummary, Converter={StaticResource InverseBoolToVis}}">
       <Grid.ColumnDefinitions>
@@ -790,7 +790,7 @@
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!-- Summary content — wraps gracefully with FlowDirection trick -->
+        <!-- Summary content - wraps gracefully with FlowDirection trick -->
         <StackPanel Grid.Column="0" VerticalAlignment="Center">
           <!-- Check icon + file count -->
           <StackPanel Orientation="Horizontal">
@@ -803,7 +803,7 @@
                        FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
           </StackPanel>
 
-          <!-- Size comparison row — shown only when Compress or Resize was active -->
+          <!-- Size comparison row - shown only when Compress or Resize was active -->
           <StackPanel Orientation="Horizontal" Margin="0,4,0,0"
                       Visibility="{Binding SummaryShowSizeComparison, Converter={StaticResource BoolToVis}}">
             <TextBlock Text="{Binding SummaryOrigSizeSegment}"
@@ -823,7 +823,7 @@
                        FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
           </StackPanel>
 
-          <!-- Output-size row — shown only for convert-only jobs -->
+          <!-- Output-size row - shown only for convert-only jobs -->
           <TextBlock Margin="0,4,0,0"
                      Text="{Binding SummaryOutputSegment}"
                      Foreground="{DynamicResource WidgetForegroundBrush}"

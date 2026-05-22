@@ -669,58 +669,38 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     private void OpenSettings()
     {
         if (!_isExpanded)
-        {
             ToggleExpanded();
-        }
-        else
-        {
-            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
-        }
-
         SelectedTabIndex = 8;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void OpenAbout()
     {
         if (!_isExpanded)
-        {
             ToggleExpanded();
-        }
-        else
-        {
-            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
-        }
-
         SelectedTabIndex = 7;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void OpenMore()
     {
         if (!_isExpanded)
-        {
             ToggleExpanded();
-        }
-        else
-        {
-            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
-        }
-
         SelectedTabIndex = 6;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     private void OpenToolsMode(int mode)
     {
         if (!_isExpanded)
-        {
             ToggleExpanded();
-        }
-        else
-        {
-            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
-        }
-
         SelectedTabIndex = 1;
         Calendar.Converter.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -730,16 +710,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     private void OpenBankingMode(int mode)
     {
         if (!_isExpanded)
-        {
             ToggleExpanded();
-        }
-        else
-        {
-            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
-        }
-
         SelectedTabIndex = 4;
         Banking.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -749,16 +724,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     private void OpenUnitMode(int mode)
     {
         if (!_isExpanded)
-        {
             ToggleExpanded();
-        }
-        else
-        {
-            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
-        }
-
         SelectedTabIndex = 2;
         Unit.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -770,16 +740,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     private void OpenTextMode(int mode)
     {
         if (!_isExpanded)
-        {
             ToggleExpanded();
-        }
-        else
-        {
-            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
-        }
-
         SelectedTabIndex = 3;
         TextTools.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -789,16 +754,11 @@ public sealed class MainViewModel : ViewModelBase, IDisposable
     private void OpenNetworkMode(int mode)
     {
         if (!_isExpanded)
-        {
             ToggleExpanded();
-        }
-        else
-        {
-            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
-        }
-
         SelectedTabIndex = 5;
         Network.ActiveMode = mode;
+        if (_isExpanded)
+            ShellBringToFrontRequested?.Invoke(this, EventArgs.Empty);
     }
 
     // ── Public helpers used by the View ──────────────────────────────────────

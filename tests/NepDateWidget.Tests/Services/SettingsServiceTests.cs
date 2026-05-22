@@ -211,6 +211,125 @@ public class SettingsServiceTests : IDisposable
     // ── ResetToDefaults ───────────────────────────────────────────────────────
 
     [Fact]
+    public void ResetToDefaults_PreservesAllLayoutFields()
+    {
+        // All 8 positional / window-state fields must be preserved verbatim.
+        // Only user-visible preferences should revert to defaults.
+        var path = TempPath();
+        var svc  = ServiceAt(path);
+        svc.Load();
+
+        svc.Current.WindowLeft         = 450;
+        svc.Current.WindowTop          = 310;
+        svc.Current.ExpandedWindowLeft = 120.5;
+        svc.Current.ExpandedWindowTop  = 230.0;
+        svc.Current.ExpandedWidth      = 960;
+        svc.Current.ExpandedHeight     = 820;
+        svc.Current.IsExpanded         = true;
+        svc.Current.LastExpandedTab    = 3;
+
+        svc.ResetToDefaults();
+
+        Assert.Equal(450,   svc.Current.WindowLeft);
+        Assert.Equal(310,   svc.Current.WindowTop);
+        Assert.Equal(120.5, svc.Current.ExpandedWindowLeft);
+        Assert.Equal(230.0, svc.Current.ExpandedWindowTop);
+        Assert.Equal(960,   svc.Current.ExpandedWidth);
+        Assert.Equal(820,   svc.Current.ExpandedHeight);
+        Assert.True(svc.Current.IsExpanded);
+        Assert.Equal(3,     svc.Current.LastExpandedTab);
+    }
+
+    [Fact]
+    public void ResetToDefaults_ExpandedWindowPosition_NullPreservedWhenNeverSet()
+    {
+        // ExpandedWindowLeft/Top start null (window never moved). Reset must keep null,
+        // not replace with 0 or a default double value.
+        var path = TempPath();
+        var svc  = ServiceAt(path);
+        svc.Load();
+
+        Assert.Null(svc.Current.ExpandedWindowLeft);
+        Assert.Null(svc.Current.ExpandedWindowTop);
+
+        svc.Current.Language = "ne";  // mutate something else
+        svc.ResetToDefaults();
+
+        Assert.Null(svc.Current.ExpandedWindowLeft);
+        Assert.Null(svc.Current.ExpandedWindowTop);
+    }
+
+    [Fact]
+    public void ResetToDefaults_ResetsAllUserPreferences()
+    {
+        // Mutate every user-visible preference away from its default,
+        // then reset and assert each field returns to the factory default.
+        var path = TempPath();
+        var svc  = ServiceAt(path);
+        svc.Load();
+
+        svc.Current.Language                    = "ne";
+        svc.Current.Theme                       = "Dark";
+        svc.Current.BackgroundPreset            = "Ocean";
+        svc.Current.CornerStyle                 = "Sharp";
+        svc.Current.FontFamily                  = "Cascadia Code";
+        svc.Current.AutoStart                   = false;
+        svc.Current.AnimationEnabled            = false;
+        svc.Current.TransparentWhenCollapsed    = false;
+        svc.Current.ShowEnglishDayNumbers       = false;
+        svc.Current.HighlightSaturdays          = false;
+        svc.Current.HighlightSundays            = false;
+        svc.Current.HighlightColor              = "#E53935";
+        svc.Current.ShowTithi                   = false;
+        svc.Current.ShowEvents                  = false;
+        svc.Current.HighlightPublicHolidays     = false;
+        svc.Current.ShowTimezone                = false;
+        svc.Current.ClockFormat                 = "24h";
+        svc.Current.ShowOffset                  = true;
+        svc.Current.ShowDayOfWeek               = false;
+        svc.Current.ShowEnglishDate             = false;
+        svc.Current.ShowHolidayCountdown        = false;
+        svc.Current.ShowDailyEventsNotification = false;
+        svc.Current.LogMaxSizeMb                = 5;
+        svc.Current.NotificationDurationSeconds = 60;
+        svc.Current.NotificationSound           = false;
+        svc.Current.ShowSecondsInClock          = true;
+        svc.Current.ShowFiscalYear              = false;
+        svc.Current.ShowHelpBadges              = false;
+
+        svc.ResetToDefaults();
+
+        Assert.Equal("en",        svc.Current.Language);
+        Assert.Equal("Light",     svc.Current.Theme);
+        Assert.Equal("Default",   svc.Current.BackgroundPreset);
+        Assert.Equal("Rounded",   svc.Current.CornerStyle);
+        Assert.Equal("Open Sans", svc.Current.FontFamily);
+        Assert.True(svc.Current.AutoStart);
+        Assert.True(svc.Current.AnimationEnabled);
+        Assert.True(svc.Current.TransparentWhenCollapsed);
+        Assert.True(svc.Current.ShowEnglishDayNumbers);
+        Assert.True(svc.Current.HighlightSaturdays);
+        Assert.True(svc.Current.HighlightSundays);
+        Assert.Equal("#F4511E",   svc.Current.HighlightColor);
+        Assert.True(svc.Current.ShowTithi);
+        Assert.True(svc.Current.ShowEvents);
+        Assert.True(svc.Current.HighlightPublicHolidays);
+        Assert.True(svc.Current.ShowTimezone);
+        Assert.Equal("12h",       svc.Current.ClockFormat);
+        Assert.False(svc.Current.ShowOffset);
+        Assert.True(svc.Current.ShowDayOfWeek);
+        Assert.True(svc.Current.ShowEnglishDate);
+        Assert.True(svc.Current.ShowHolidayCountdown);
+        Assert.True(svc.Current.ShowDailyEventsNotification);
+        Assert.Equal(10,          svc.Current.LogMaxSizeMb);
+        Assert.Equal(10,          svc.Current.NotificationDurationSeconds);
+        Assert.True(svc.Current.NotificationSound);
+        Assert.False(svc.Current.ShowSecondsInClock);
+        Assert.True(svc.Current.ShowFiscalYear);
+        Assert.True(svc.Current.ShowHelpBadges);
+    }
+
+    [Fact]
     public void ResetToDefaults_ResetsInMemoryAndSaves()
     {
         var path = TempPath();
@@ -225,6 +344,44 @@ public class SettingsServiceTests : IDisposable
         Assert.Equal("en",    svc.Current.Language);
         Assert.Equal("Light", svc.Current.Theme);
         Assert.True(File.Exists(path));
+    }
+
+    [Fact]
+    public void ResetToDefaults_PreservesWindowPosition()
+    {
+        var path = TempPath();
+        var svc  = ServiceAt(path);
+        svc.Load();
+
+        svc.Current.WindowLeft = 400;
+        svc.Current.WindowTop  = 300;
+
+        svc.ResetToDefaults();
+
+        Assert.Equal(400, svc.Current.WindowLeft);
+        Assert.Equal(300, svc.Current.WindowTop);
+    }
+
+    [Fact]
+    public void ResetToDefaults_SecondReset_StillRestoresDefaults()
+    {
+        // Regression: the first reset must not alias _cachedDefaults. If it does,
+        // subsequent Apply()-style mutations to _current also corrupt _cachedDefaults,
+        // and the second reset restores those corrupted values instead of the real defaults.
+        var path = TempPath();
+        var svc  = ServiceAt(path);
+        svc.Load();
+
+        svc.ResetToDefaults();
+
+        // Simulate what Apply() does after a reset: writes VM state back to _current.
+        svc.Current.Theme    = "Dark";
+        svc.Current.Language = "ne";
+
+        svc.ResetToDefaults();
+
+        Assert.Equal("en",    svc.Current.Language);
+        Assert.Equal("Light", svc.Current.Theme);
     }
 
     // ── SchemaVersion default (#25) ───────────────────────────────────────────

@@ -340,7 +340,23 @@ public sealed class SettingsService : ISettingsService, IDisposable
     /// </summary>
     public void ResetToDefaults()
     {
-        _current = _cachedDefaults ?? new WidgetSettings();
+        // Re-read from the default file to get a fresh object rather than aliasing _cachedDefaults.
+        // If _current were set to _cachedDefaults directly, any subsequent Apply() call (which writes
+        // to _current) would silently mutate _cachedDefaults, so the next reset would restore
+        // whatever the user had applied - not the actual factory defaults.
+        var defaults = LoadDefaultSettings() ?? new WidgetSettings();
+
+        // Preserve positional/session state - these are not user preferences.
+        defaults.WindowLeft = _current.WindowLeft;
+        defaults.WindowTop = _current.WindowTop;
+        defaults.ExpandedWindowLeft = _current.ExpandedWindowLeft;
+        defaults.ExpandedWindowTop = _current.ExpandedWindowTop;
+        defaults.ExpandedWidth = _current.ExpandedWidth;
+        defaults.ExpandedHeight = _current.ExpandedHeight;
+        defaults.IsExpanded = _current.IsExpanded;
+        defaults.LastExpandedTab = _current.LastExpandedTab;
+
+        _current = defaults;
         Save();
     }
 

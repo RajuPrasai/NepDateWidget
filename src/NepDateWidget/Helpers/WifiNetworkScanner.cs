@@ -8,7 +8,7 @@ namespace NepDateWidget.Helpers;
 /// Returns each profile's SSID and the QR-standard authentication type string.
 /// Password retrieval is deliberately omitted: WlanGetProfile with
 /// WLAN_PROFILE_GET_PLAINTEXT_KEY requires elevation on profiles not owned by
-/// the current session — there is no safe way to auto-fill the password.
+/// the current session - there is no safe way to auto-fill the password.
 /// </summary>
 internal static class WifiNetworkScanner
 {
@@ -53,15 +53,15 @@ internal static class WifiNetworkScanner
     private const uint WLAN_INTF_OPCODE_CURRENT_CONNECTION = 7;
 
     // WLAN_INTERFACE_INFO layout:
-    //   GUID  InterfaceGuid       — 16 bytes
-    //   WCHAR[256] Description    — 512 bytes
-    //   DWORD isState             — 4 bytes
+    //   GUID  InterfaceGuid       - 16 bytes
+    //   WCHAR[256] Description    - 512 bytes
+    //   DWORD isState             - 4 bytes
     //   Total = 532 bytes
     private const int WLAN_INTERFACE_INFO_SIZE = 532;
 
     // WLAN_PROFILE_INFO layout:
-    //   WCHAR[256] strProfileName — 512 bytes
-    //   DWORD dwFlags             — 4 bytes
+    //   WCHAR[256] strProfileName - 512 bytes
+    //   DWORD dwFlags             - 4 bytes
     //   Total = 516 bytes
     private const int WLAN_PROFILE_INFO_SIZE = 516;
 
@@ -69,10 +69,16 @@ internal static class WifiNetworkScanner
     private const int LIST_HEADER_SIZE = 8;
 
     // WLAN_CONNECTION_ATTRIBUTES layout (offsets relevant here):
-    //   DWORD isState             — offset 0
-    //   DWORD wlanConnectionMode  — offset 4
-    //   WCHAR[256] strProfileName — offset 8
+    //   DWORD isState             - offset 0
+    //   DWORD wlanConnectionMode  - offset 4
+    //   WCHAR[256] strProfileName - offset 8
     private const int CONN_ATTRS_PROFILE_NAME_OFFSET = 8;
+
+    // Instructs WlanGetProfile to return the plaintext key in keyMaterial.
+    // Succeeds without elevation for profiles created by the current user on
+    // Windows 8+. For all-user / admin-managed profiles the flag is accepted
+    // but the returned keyMaterial is empty - graceful fallback.
+    private const uint WLAN_PROFILE_GET_PLAINTEXT_KEY = 0x00000004;
 
     // ── Public API ────────────────────────────────────────────────────────────
 
@@ -150,8 +156,8 @@ internal static class WifiNetworkScanner
                 if (string.IsNullOrEmpty(profileName))
                     continue;
 
-                (string ssid, string qrAuthType) = GetProfileInfo(hClient, interfaceGuid, profileName);
-                profiles.Add(new WifiProfile(ssid, qrAuthType));
+                (string ssid, string qrAuthType, string password) = GetProfileInfo(hClient, interfaceGuid, profileName);
+                profiles.Add(new WifiProfile(ssid, qrAuthType, password));
             }
 
             return profiles;
@@ -183,20 +189,24 @@ internal static class WifiNetworkScanner
         }
     }
 
-    private static (string Ssid, string QrAuthType) GetProfileInfo(IntPtr hClient, Guid interfaceGuid, string profileName)
+    private static (string Ssid, string QrAuthType, string Password) GetProfileInfo(IntPtr hClient, Guid interfaceGuid, string profileName)
     {
-        uint flags = 0;
+        // Pass WLAN_PROFILE_GET_PLAINTEXT_KEY so Windows returns the plaintext key
+        // in keyMaterial when the caller has the required permission.  For profiles
+        // the current user does not own the element will simply be empty - no error.
+        uint flags = WLAN_PROFILE_GET_PLAINTEXT_KEY;
         if (WlanGetProfile(hClient, ref interfaceGuid, profileName,
                 IntPtr.Zero, out IntPtr xmlPtr, ref flags, out _) != ERROR_SUCCESS
             || xmlPtr == IntPtr.Zero)
-            return (profileName, "WPA");
+            return (profileName, "WPA", string.Empty);
 
         try
         {
             string xml = Marshal.PtrToStringUni(xmlPtr) ?? string.Empty;
-            string ssid = ParseSsid(xml) ?? profileName;
+            string ssid     = ParseSsid(xml) ?? profileName;
             string authType = ParseQrAuthType(xml);
-            return (ssid, authType);
+            string password = ParsePassword(xml);
+            return (ssid, authType, password);
         }
         finally
         {
@@ -241,9 +251,34 @@ internal static class WifiNetworkScanner
             return "WPA";
         }
     }
+
+    // Returns the plaintext password from keyMaterial only when the element is
+    // marked protected=false (meaning WLAN_PROFILE_GET_PLAINTEXT_KEY worked).
+    // Returns empty string for open networks and when the flag had no effect.
+    private static string ParsePassword(string profileXml)
+    {
+        try
+        {
+            var doc = XDocument.Parse(profileXml);
+            XNamespace ns = doc.Root?.Name.Namespace ?? XNamespace.None;
+            var sharedKey = doc.Descendants(ns + "sharedKey").FirstOrDefault();
+            if (sharedKey is null) return string.Empty;
+
+            string? prot = sharedKey.Element(ns + "protected")?.Value?.Trim();
+            if (!string.Equals(prot, "false", StringComparison.OrdinalIgnoreCase))
+                return string.Empty;
+
+            return sharedKey.Element(ns + "keyMaterial")?.Value ?? string.Empty;
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
 }
 
-/// <summary>SSID and QR auth type for a saved WiFi profile.</summary>
+/// <summary>SSID, QR auth type, and optional plaintext password for a saved WiFi profile.</summary>
 /// <param name="Ssid">The network name as it appears in the QR WIFI string S: field.</param>
 /// <param name="QrAuthType">One of "WPA", "WEP", or "nopass" per the WiFi QR spec.</param>
-public sealed record WifiProfile(string Ssid, string QrAuthType);
+/// <param name="Password">Plaintext key if retrievable without elevation; empty otherwise.</param>
+public sealed record WifiProfile(string Ssid, string QrAuthType, string Password);

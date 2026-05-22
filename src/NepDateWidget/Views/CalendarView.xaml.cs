@@ -128,7 +128,7 @@ public partial class CalendarView : UserControl
         }
 
         // Cancel in-flight animations on both properties. After BeginAnimation(prop, null):
-        // opacity reverts to 1.0 (default), X reverts to 0 (default — no local value is ever
+        // opacity reverts to 1.0 (default), X reverts to 0 (default - no local value is ever
         // set on TranslateTransform.X). The new animations start from these resting values
         // without a visible stutter.
         DaysGrid.BeginAnimation(OpacityProperty, null);
@@ -138,7 +138,7 @@ public partial class CalendarView : UserControl
         double outX = direction == 0 ? 0 : (direction > 0 ? -SlidePixels : SlidePixels);
         double inX  = direction == 0 ? 0 : (direction > 0 ?  SlidePixels : -SlidePixels);
 
-        // No From specified — both animations start from the current (post-cancel) value:
+        // No From specified - both animations start from the current (post-cancel) value:
         // opacity 1.0, X 0. This avoids a stutter jump when a previous translate held a
         // non-zero position via HoldEnd which was cleared by the null cancel above.
         var opacityOut  = new DoubleAnimation(0, SlideOut) { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn } };

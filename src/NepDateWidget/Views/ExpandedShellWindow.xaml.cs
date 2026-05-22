@@ -423,6 +423,60 @@ public partial class ExpandedShellWindow : Window
     }
 
     /// <summary>
+    /// Flushes any pending debounced save synchronously. Must be called before
+    /// hiding the window so the last position/size is persisted even if the
+    /// 800 ms debounce has not fired yet.
+    /// </summary>
+    public void PrepareToHide()
+    {
+        _saveTimer.Stop();
+        PersistSizeAndPosition();
+        ViewModel.SaveSettings();
+    }
+
+    /// <summary>
+    /// Shows the window, correctly handling the mid-hide case where
+    /// <see cref="AnimateAndHide"/> has started a fade-out that has not yet
+    /// completed (window is still visible but Opacity is animating toward 0).
+    /// <para>
+    /// When hidden: <c>Show()</c> fires <c>IsVisibleChanged</c> which plays the
+    /// open animation through the existing handler in the constructor.
+    /// </para>
+    /// <para>
+    /// When visible but mid-hide: cancels the running animation, restores the
+    /// visual state, and replays the open animation directly.
+    /// </para>
+    /// </summary>
+    public void ShowOrReveal()
+    {
+        // Always cancel any in-flight hide animation and restore visual state.
+        // BeginAnimation(prop, null) removes the animation clock and reverts the
+        // property to its locally-set base value. Explicit resets are belt-and-
+        // suspenders for the FillBehavior.HoldEnd case on the Y transform.
+        ShellRoot.BeginAnimation(OpacityProperty, null);
+        ShellRoot.Opacity = 1;
+        var t = ShellRoot.RenderTransform as TranslateTransform;
+        if (t is not null)
+        {
+            t.BeginAnimation(TranslateTransform.YProperty, null);
+            t.Y = 0;
+        }
+
+        if (!IsVisible)
+        {
+            // Normal path: window was hidden. Show() fires IsVisibleChanged
+            // which calls ApplyCornerPreference() + PlayOpenAnimation().
+            Show();
+            return;
+        }
+
+        // Window was still visible (mid-hide race). IsVisibleChanged will not
+        // fire so drive the open animation and corner preference directly.
+        ApplyCornerPreference();
+        PlayOpenAnimation();
+    }
+
+    /// <summary>
     /// Plays a close animation then hides the window. If animations are disabled, hides immediately.
     /// </summary>
     public void AnimateAndHide()

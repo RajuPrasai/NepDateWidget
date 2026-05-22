@@ -1069,7 +1069,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         _fontFamily = s.FontFamily;
         _cornerStyle = s.CornerStyle;
         _animationEnabled = s.AnimationEnabled;
-        _autoStart = _autoStartService.IsEnabled;
+        _autoStart = s.AutoStart;
         _transparentWhenCollapsed = s.TransparentWhenCollapsed;
         _showEnglishDayNumbers = s.ShowEnglishDayNumbers;
         _highlightSaturdays = s.HighlightSaturdays;
@@ -1107,7 +1107,7 @@ public sealed class SettingsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(AnimationEnabled)); OnPropertyChanged(nameof(AutoStart));
         OnPropertyChanged(nameof(TransparentWhenCollapsed));
         OnPropertyChanged(nameof(ShowEnglishDayNumbers)); OnPropertyChanged(nameof(HighlightSaturdays));
-        OnPropertyChanged(nameof(HighlightSundays));
+        OnPropertyChanged(nameof(HighlightSundays)); OnPropertyChanged(nameof(ShowTithi)); OnPropertyChanged(nameof(ShowEvents)); OnPropertyChanged(nameof(HighlightPublicHolidays));
         OnPropertyChanged(nameof(HighlightColor));
         NotifyHighlightColorSelection();
         OnPropertyChanged(nameof(ShowTimezone)); OnPropertyChanged(nameof(ClockFormat)); OnPropertyChanged(nameof(IsClockFormat12h)); OnPropertyChanged(nameof(IsClockFormat24h));

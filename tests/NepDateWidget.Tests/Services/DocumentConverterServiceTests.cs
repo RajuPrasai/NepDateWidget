@@ -151,7 +151,7 @@ public sealed class DocumentConverterServiceTests : IDisposable
         DocumentConverterService.Convert(input, output, (t, _) => t);
 
         var bytes = File.ReadAllBytes(output);
-        // UTF-8 BOM is EF BB BF — output must NOT start with it
+        // UTF-8 BOM is EF BB BF - output must NOT start with it
         Assert.False(bytes.Length >= 3 && bytes[0] == 0xEF && bytes[1] == 0xBB && bytes[2] == 0xBF,
             "Output should not contain a UTF-8 BOM");
     }
@@ -184,7 +184,7 @@ public sealed class DocumentConverterServiceTests : IDisposable
     [Fact]
     public void Convert_Txt_TransformReceivesNullFontName()
     {
-        // .txt conversion: font is always null — caller should convert unconditionally
+        // .txt conversion: font is always null - caller should convert unconditionally
         var input = Temp("in.txt");
         var output = Temp("out.txt");
         File.WriteAllText(input, "abc");

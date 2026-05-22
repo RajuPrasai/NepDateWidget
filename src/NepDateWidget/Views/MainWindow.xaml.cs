@@ -31,6 +31,7 @@ public partial class MainWindow : Window
     // ── Lifetime ─────────────────────────────────────────────────────────────
     private bool _allowClose;
     private bool _initialized;
+    private bool _allowPositionChange;
     private readonly DispatcherTimer _saveTimer;
 
     // ── Fullscreen + topmost recovery ────────────────────────────────────────
@@ -155,8 +156,10 @@ public partial class MainWindow : Window
             style & ~(Win32Interop.WS_MAXIMIZEBOX | Win32Interop.WS_MINIMIZEBOX));
 
         var (left, top) = ViewModel.GetInitialPosition();
+        _allowPositionChange = true;
         Left = left;
         Top = top;
+        _allowPositionChange = false;
 
         Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
             Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
@@ -271,7 +274,9 @@ public partial class MainWindow : Window
         if (ViewModel.IsExpanded)
         {
             _shell ??= CreateShell();
-            _shell.Show();
+            // ShowOrReveal handles both the normal hidden→visible case and the
+            // mid-hide race where AnimateAndHide started but has not finished yet.
+            _shell.ShowOrReveal();
             _shell.Activate();
 
             if (ViewModel.AnimationEnabled)
@@ -283,21 +288,12 @@ public partial class MainWindow : Window
         {
             if (_shell is not null)
             {
-                // Detach and destroy the shell once the hide animation finishes.
-                // Nulling _shell immediately so the expand path can recreate it fresh
-                // without waiting for the animation. ForceClose() inside the handler
-                // triggers OnClosing (which persists size/position and saves settings)
-                // and then tears down the window for real.
-                var dying = _shell;
-                _shell = null;
-                dying.IsVisibleChanged += (_, e) =>
-                {
-                    if ((bool)e.NewValue == false)
-                    {
-                        dying.ForceClose();
-                    }
-                };
-                dying.AnimateAndHide();
+                // Hide the shell without destroying it. PrepareToHide flushes the
+                // debounced position/size save synchronously so no state is lost.
+                // The shell instance is reused on the next expand, eliminating
+                // the full visual-tree rebuild cost on every open.
+                _shell.PrepareToHide();
+                _shell.AnimateAndHide();
             }
 
             if (ViewModel.AnimationEnabled)
@@ -486,16 +482,65 @@ public partial class MainWindow : Window
 
     private IntPtr WndProcHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        // Prevent Win+D and other system-initiated hides from removing the pill.
+        // Prevent Win+D and other system-initiated hides from removing the pill,
+        // and block unsolicited system-initiated position changes (display reconfiguration,
+        // owner Z-order cascades, etc.) that would corrupt the persisted anchor position.
         // WPF-initiated hides (fullscreen detection) are allowed via _intentionalHide.
         if (msg == Win32Interop.WM_WINDOWPOSCHANGING && !_intentionalHide)
         {
             var wp = Marshal.PtrToStructure<Win32Interop.WINDOWPOS>(lParam);
+            bool changed = false;
+
             if ((wp.flags & Win32Interop.SWP_HIDEWINDOW) != 0)
             {
+                // Strip the hide request and lock position/size so the message
+                // cannot also reposition the pill as a side-effect.
                 wp.flags &= ~Win32Interop.SWP_HIDEWINDOW;
+                wp.flags |= Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE;
+                changed = true;
+            }
+            else if ((wp.flags & Win32Interop.SWP_NOMOVE) == 0 && !_hasDragged && !_allowPositionChange)
+            {
+                // Block any position change we did not initiate. This covers monitor
+                // disconnect (Windows moves off-screen windows to the primary origin),
+                // owner Z-order cascades, and similar OS-initiated repositioning that
+                // would otherwise corrupt the saved anchor position.
+                wp.flags |= Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE;
+                changed = true;
+            }
+
+            if (changed)
+            {
                 Marshal.StructureToPtr(wp, lParam, true);
             }
+            return IntPtr.Zero;
+        }
+
+        if (msg == Win32Interop.WM_DISPLAYCHANGE)
+        {
+            // Display configuration changed (monitor added/removed, resolution changed).
+            // The position guard above blocked any Windows-initiated move, but if the
+            // monitor the pill was on is gone the current position may now be off-screen.
+            // Re-validate and recover if needed.
+            Dispatcher.BeginInvoke(DispatcherPriority.Normal, () =>
+            {
+                if (!_initialized) return;
+                double w = ActualWidth > 0 ? ActualWidth : 280;
+                double h = ActualHeight > 0 ? ActualHeight : 44;
+                var (safeLeft, safeTop) = ScreenBoundsHelper.GetStartupPosition(Left, Top, w, h);
+                if (Math.Abs(safeLeft - Left) > 1 || Math.Abs(safeTop - Top) > 1)
+                {
+                    _allowPositionChange = true;
+                    Left = safeLeft;
+                    Top = safeTop;
+                    _allowPositionChange = false;
+                    // OnLocationChanged already called UpdatePosition; stop the
+                    // debounce timer and persist immediately so the recovery
+                    // survives a close before the 800ms window elapses.
+                    _saveTimer.Stop();
+                    ViewModel.SaveSettings();
+                }
+            });
             return IntPtr.Zero;
         }
 

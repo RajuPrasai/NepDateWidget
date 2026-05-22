@@ -119,7 +119,7 @@ internal static class UIAnimations
     // ── Icon detection ───────────────────────────────────────────────────────
 
     // Returns the first Path or Image found in the visual tree, depth-limited to 8.
-    // Text-only elements (no Path anywhere) naturally return null — no animation.
+    // Text-only elements (no Path anywhere) naturally return null - no animation.
     private static FrameworkElement? FindIcon(FrameworkElement host) =>
         ScanForIcon(host, 0);
 

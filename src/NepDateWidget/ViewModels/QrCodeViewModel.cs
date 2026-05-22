@@ -58,14 +58,28 @@ public sealed class QrCodeViewModel : ViewModelBase
     public WifiProfile? SelectedWifiNetwork
     {
         get => _selectedWifiNetwork;
-        set => SetProperty(ref _selectedWifiNetwork, value);
+        set
+        {
+            if (SetProperty(ref _selectedWifiNetwork, value))
+            {
+                // Always reset to the network's stored password (empty if not
+                // retrievable). Keeps old password from persisting when switching
+                // to a network whose key couldn't be read without elevation.
+                WifiPassword = value?.Password ?? string.Empty;
+                WifiPasswordVisible = false;
+            }
+        }
     }
 
     private string _wifiPassword = string.Empty;
     public string WifiPassword
     {
         get => _wifiPassword;
-        set => SetProperty(ref _wifiPassword, value);
+        set
+        {
+            if (SetProperty(ref _wifiPassword, value))
+                OnPropertyChanged(nameof(WifiPasswordMasked));
+        }
     }
 
     private bool _wifiIsHidden;
@@ -74,6 +88,16 @@ public sealed class QrCodeViewModel : ViewModelBase
         get => _wifiIsHidden;
         set => SetProperty(ref _wifiIsHidden, value);
     }
+
+    private bool _wifiPasswordVisible;
+    public bool WifiPasswordVisible
+    {
+        get => _wifiPasswordVisible;
+        set => SetProperty(ref _wifiPasswordVisible, value);
+    }
+
+    // Bullet-masked version of the password for the hidden state.
+    public string WifiPasswordMasked => new string('\u2022', _wifiPassword.Length);
 
     private bool _isLoadingWifi;
     public bool IsLoadingWifi
@@ -116,14 +140,6 @@ public sealed class QrCodeViewModel : ViewModelBase
 
     // ── Output ────────────────────────────────────────────────────────────────
 
-    // 0=tiny, 1=small, 2=medium (default), 3=large, 4=huge
-    private int _qrSizeIndex = 2;
-    public int QrSizeIndex
-    {
-        get => _qrSizeIndex;
-        set => SetProperty(ref _qrSizeIndex, Math.Clamp(value, 0, 4));
-    }
-
     private BitmapSource? _generatedQrBitmap;
     public BitmapSource? GeneratedQrBitmap
     {
@@ -150,17 +166,52 @@ public sealed class QrCodeViewModel : ViewModelBase
 
     public bool HasStatusMessage => !string.IsNullOrEmpty(_statusMessage);
 
+    // ── Decode mode ───────────────────────────────────────────────────────────
+
+    private bool _isModeDecode;
+    public bool IsModeDecode
+    {
+        get => _isModeDecode;
+        set
+        {
+            if (SetProperty(ref _isModeDecode, value))
+                OnPropertyChanged(nameof(IsModeGenerate));
+        }
+    }
+
+    public bool IsModeGenerate
+    {
+        get => !_isModeDecode;
+        set { if (value) IsModeDecode = false; }
+    }
+
+    private string _decodeResult = string.Empty;
+    public string DecodeResult
+    {
+        get => _decodeResult;
+        private set
+        {
+            if (SetProperty(ref _decodeResult, value))
+                OnPropertyChanged(nameof(HasDecodeResult));
+        }
+    }
+
+    public bool HasDecodeResult => !string.IsNullOrEmpty(_decodeResult);
+
     // ── Localization labels ───────────────────────────────────────────────────
 
     public string TypeTextUrlLabel     { get; private set; } = string.Empty;
     public string TypeWifiLabel        { get; private set; } = string.Empty;
     public string TypeVCardLabel       { get; private set; } = string.Empty;
+    public string ModeGenerateLabel    { get; private set; } = string.Empty;
+    public string ModeDecodeLabel      { get; private set; } = string.Empty;
     public string InputLabel           { get; private set; } = string.Empty;
     public string InputHint            { get; private set; } = string.Empty;
     public string WifiNetworkLabel     { get; private set; } = string.Empty;
     public string WifiPasswordLabel    { get; private set; } = string.Empty;
     public string WifiPasswordHint     { get; private set; } = string.Empty;
     public string WifiPasswordTooltip  { get; private set; } = string.Empty;
+    public string WifiPasswordCopiedLabel { get; private set; } = string.Empty;
     public string WifiRefreshLabel     { get; private set; } = string.Empty;
     public string WifiNoNetworksLabel  { get; private set; } = string.Empty;
     public string WifiHiddenLabel      { get; private set; } = string.Empty;
@@ -168,20 +219,28 @@ public sealed class QrCodeViewModel : ViewModelBase
     public string VCardLastLabel       { get; private set; } = string.Empty;
     public string VCardPhoneLabel      { get; private set; } = string.Empty;
     public string VCardEmailLabel      { get; private set; } = string.Empty;
-    public string SizeLabel            { get; private set; } = string.Empty;
     public string GenerateLabel        { get; private set; } = string.Empty;
     public string SaveLabel            { get; private set; } = string.Empty;
     public string CopyLabel            { get; private set; } = string.Empty;
     public string NoContentLabel       { get; private set; } = string.Empty;
     public string CopiedLabel          { get; private set; } = string.Empty;
     public string SaveTitleLabel       { get; private set; } = string.Empty;
+    public string DecodeBrowseLabel    { get; private set; } = string.Empty;
+    public string DecodeHintLabel      { get; private set; } = string.Empty;
+    public string DecodeResultLabel    { get; private set; } = string.Empty;
+    public string DecodeNoQrLabel      { get; private set; } = string.Empty;
+    public string DecodeCopyLabel      { get; private set; } = string.Empty;
 
     // ── Commands ──────────────────────────────────────────────────────────────
 
-    public ICommand GenerateCommand          { get; }
-    public ICommand SaveCommand              { get; }
-    public ICommand CopyToClipboardCommand   { get; }
-    public ICommand LoadWifiNetworksCommand  { get; }
+    public ICommand GenerateCommand              { get; }
+    public ICommand SaveCommand                  { get; }
+    public ICommand CopyToClipboardCommand       { get; }
+    public ICommand LoadWifiNetworksCommand      { get; }
+    public ICommand TogglePasswordVisibilityCommand { get; }
+    public ICommand CopyWifiPasswordCommand      { get; }
+    public ICommand BrowseDecodeImageCommand     { get; }
+    public ICommand CopyDecodeResultCommand      { get; }
 
     // ── Construction ─────────────────────────────────────────────────────────
 
@@ -195,6 +254,10 @@ public sealed class QrCodeViewModel : ViewModelBase
         SaveCommand             = new RelayCommand(DoSave);
         CopyToClipboardCommand  = new RelayCommand(DoCopy);
         LoadWifiNetworksCommand = new RelayCommand(DoLoadWifiNetworks);
+        TogglePasswordVisibilityCommand = new RelayCommand(() => WifiPasswordVisible = !_wifiPasswordVisible);
+        CopyWifiPasswordCommand  = new RelayCommand(DoCopyWifiPassword);
+        BrowseDecodeImageCommand = new RelayCommand(DoBrowseDecodeImage);
+        CopyDecodeResultCommand  = new RelayCommand(DoCopyDecodeResult);
 
         RefreshLabels();
         DoLoadWifiNetworks();
@@ -223,7 +286,7 @@ public sealed class QrCodeViewModel : ViewModelBase
         string auth = _selectedWifiNetwork.QrAuthType;
         string hidden = _wifiIsHidden ? "true" : "false";
 
-        // Standard WIFI QR URI scheme — recognized by iOS Camera and Android.
+        // Standard WIFI QR URI scheme - recognized by iOS Camera and Android.
         // Auth values: WPA (covers WPA/WPA2/WPA3), WEP, nopass.
         return $"WIFI:T:{auth};S:{ssid};P:{pass};H:{hidden};;";
     }
@@ -255,8 +318,8 @@ public sealed class QrCodeViewModel : ViewModelBase
 
     // ── Generate ──────────────────────────────────────────────────────────────
 
-    // pixels-per-module mapped to size index 0–4
-    private static readonly int[] _ppm = [4, 7, 12, 20, 32];
+    // pixels-per-module fixed at 20 - renders at the 240 px preview cap with good clarity
+    private const int Ppm = 20;
 
     private void DoGenerate()
     {
@@ -269,14 +332,12 @@ public sealed class QrCodeViewModel : ViewModelBase
 
         try
         {
-            int ppm = _ppm[Math.Clamp(_qrSizeIndex, 0, 4)];
-
             var gen     = new QRCodeGenerator();
             var data    = gen.CreateQrCode(content, QRCodeGenerator.ECCLevel.M);
             var bmpCode = new BitmapByteQRCode(data);
 
             // Always black-on-white regardless of app theme: scanners require this.
-            byte[] bmpBytes = bmpCode.GetGraphic(ppm, "#000000", "#ffffff");
+            byte[] bmpBytes = bmpCode.GetGraphic(Ppm, "#000000", "#ffffff");
 
             using var ms = new MemoryStream(bmpBytes);
             var img = new BitmapImage();
@@ -322,7 +383,7 @@ public sealed class QrCodeViewModel : ViewModelBase
         }
     }
 
-    // ── Copy ─────────────────────────────────────────────────────────────────
+    // ── Copy QR image ─────────────────────────────────────────────────────────
 
     private DispatcherTimer? _copyResetTimer;
 
@@ -332,6 +393,136 @@ public sealed class QrCodeViewModel : ViewModelBase
         try
         {
             System.Windows.Clipboard.SetImage(_generatedQrBitmap);
+            StatusMessage = CopiedLabel;
+
+            _copyResetTimer?.Stop();
+            _copyResetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+            _copyResetTimer.Tick += (_, _) =>
+            {
+                _copyResetTimer!.Stop();
+                StatusMessage = string.Empty;
+            };
+            _copyResetTimer.Start();
+        }
+        catch { }
+    }
+
+    // ── Copy WiFi password ────────────────────────────────────────────────────
+
+    private DispatcherTimer? _pwCopyResetTimer;
+
+    private void DoCopyWifiPassword()
+    {
+        if (string.IsNullOrEmpty(_wifiPassword)) return;
+        try
+        {
+            System.Windows.Clipboard.SetText(_wifiPassword);
+            StatusMessage = WifiPasswordCopiedLabel;
+
+            _pwCopyResetTimer?.Stop();
+            _pwCopyResetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(2) };
+            _pwCopyResetTimer.Tick += (_, _) =>
+            {
+                _pwCopyResetTimer!.Stop();
+                StatusMessage = string.Empty;
+            };
+            _pwCopyResetTimer.Start();
+        }
+        catch { }
+    }
+
+    // ── Decode ────────────────────────────────────────────────────────────────
+
+    private string _decodeFilePath = string.Empty;
+
+    // Called from code-behind when a file is dropped onto the decode panel.
+    public void DecodeQrFromPath(string filePath)
+    {
+        _decodeFilePath = filePath;
+        DecodeResult = string.Empty;
+        DoDecodeQr();
+    }
+
+    private void DoBrowseDecodeImage()
+    {
+        var dlg = new Microsoft.Win32.OpenFileDialog
+        {
+            Title  = DecodeBrowseLabel,
+            Filter = "Image files|*.png;*.jpg;*.jpeg;*.bmp;*.gif;*.tiff|All files|*.*"
+        };
+        if (dlg.ShowDialog() != true) return;
+        DecodeQrFromPath(dlg.FileName);
+    }
+
+    private void DoDecodeQr()
+    {
+        if (string.IsNullOrEmpty(_decodeFilePath)) return;
+        try
+        {
+            // Load via WPF - handles PNG, JPG, BMP, GIF, TIFF without System.Drawing.
+            var fileDecoder = System.Windows.Media.Imaging.BitmapDecoder.Create(
+                new Uri(_decodeFilePath, UriKind.Absolute),
+                System.Windows.Media.Imaging.BitmapCreateOptions.None,
+                System.Windows.Media.Imaging.BitmapCacheOption.OnLoad);
+            var frame = fileDecoder.Frames[0];
+
+            // Convert to BGRA32 so ZXing's RGBLuminanceSource gets a known pixel layout.
+            var converted = new System.Windows.Media.Imaging.FormatConvertedBitmap(
+                frame, System.Windows.Media.PixelFormats.Bgra32, null, 0);
+
+            int    width  = converted.PixelWidth;
+            int    height = converted.PixelHeight;
+            int    stride = width * 4;
+            byte[] pixels = new byte[height * stride];
+            converted.CopyPixels(pixels, stride, 0);
+
+            var luminance    = new ZXing.RGBLuminanceSource(
+                pixels, width, height, ZXing.RGBLuminanceSource.BitmapFormat.BGRA32);
+            var binaryBitmap = new ZXing.BinaryBitmap(
+                new ZXing.Common.HybridBinarizer(luminance));
+
+            ZXing.Result? result;
+            try
+            {
+                result = new ZXing.QrCode.QRCodeReader().decode(
+                    binaryBitmap,
+                    new Dictionary<ZXing.DecodeHintType, object>
+                    {
+                        [ZXing.DecodeHintType.TRY_HARDER] = true
+                    });
+            }
+            catch
+            {
+                result = null;
+            }
+
+            if (result is not null && !string.IsNullOrEmpty(result.Text))
+            {
+                DecodeResult = result.Text;
+                StatusMessage = string.Empty;
+            }
+            else
+            {
+                DecodeResult = string.Empty;
+                StatusMessage = DecodeNoQrLabel;
+                _copyResetTimer?.Stop();
+                _copyResetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(4) };
+                _copyResetTimer.Tick += (_, _) => { _copyResetTimer!.Stop(); StatusMessage = string.Empty; };
+                _copyResetTimer.Start();
+            }
+        }
+        catch (Exception ex)
+        {
+            DecodeResult = ex.Message;
+        }
+    }
+
+    private void DoCopyDecodeResult()
+    {
+        if (string.IsNullOrEmpty(_decodeResult)) return;
+        try
+        {
+            System.Windows.Clipboard.SetText(_decodeResult);
             StatusMessage = CopiedLabel;
 
             _copyResetTimer?.Stop();
@@ -383,12 +574,15 @@ public sealed class QrCodeViewModel : ViewModelBase
         TypeTextUrlLabel    = _loc.Get("qr.type_text");
         TypeWifiLabel       = _loc.Get("qr.type_wifi");
         TypeVCardLabel      = _loc.Get("qr.type_vcard");
+        ModeGenerateLabel   = _loc.Get("qr.mode_generate");
+        ModeDecodeLabel     = _loc.Get("qr.mode_decode");
         InputLabel          = _loc.Get("qr.input_label");
         InputHint           = _loc.Get("qr.input_hint");
         WifiNetworkLabel    = _loc.Get("qr.wifi_network");
         WifiPasswordLabel   = _loc.Get("qr.wifi_password");
         WifiPasswordHint    = _loc.Get("qr.wifi_password_hint");
         WifiPasswordTooltip = _loc.Get("qr.wifi_password_tooltip");
+        WifiPasswordCopiedLabel = _loc.Get("qr.wifi_password_copied");
         WifiRefreshLabel    = _loc.Get("qr.wifi_refresh");
         WifiNoNetworksLabel = _loc.Get("qr.wifi_no_networks");
         WifiHiddenLabel     = _loc.Get("qr.wifi_hidden");
@@ -396,23 +590,30 @@ public sealed class QrCodeViewModel : ViewModelBase
         VCardLastLabel      = _loc.Get("qr.vcard_last");
         VCardPhoneLabel     = _loc.Get("qr.vcard_phone");
         VCardEmailLabel     = _loc.Get("qr.vcard_email");
-        SizeLabel           = _loc.Get("qr.size_label");
         GenerateLabel       = _loc.Get("qr.generate");
         SaveLabel           = _loc.Get("qr.save");
         CopyLabel           = _loc.Get("qr.copy");
         NoContentLabel      = _loc.Get("qr.no_content");
         CopiedLabel         = _loc.Get("qr.copied");
         SaveTitleLabel      = _loc.Get("qr.save_title");
+        DecodeBrowseLabel   = _loc.Get("qr.decode_browse");
+        DecodeHintLabel     = _loc.Get("qr.decode_hint");
+        DecodeResultLabel   = _loc.Get("qr.decode_result_label");
+        DecodeNoQrLabel     = _loc.Get("qr.decode_no_qr");
+        DecodeCopyLabel     = _loc.Get("qr.decode_copy");
 
         OnPropertyChanged(nameof(TypeTextUrlLabel));
         OnPropertyChanged(nameof(TypeWifiLabel));
         OnPropertyChanged(nameof(TypeVCardLabel));
+        OnPropertyChanged(nameof(ModeGenerateLabel));
+        OnPropertyChanged(nameof(ModeDecodeLabel));
         OnPropertyChanged(nameof(InputLabel));
         OnPropertyChanged(nameof(InputHint));
         OnPropertyChanged(nameof(WifiNetworkLabel));
         OnPropertyChanged(nameof(WifiPasswordLabel));
         OnPropertyChanged(nameof(WifiPasswordHint));
         OnPropertyChanged(nameof(WifiPasswordTooltip));
+        OnPropertyChanged(nameof(WifiPasswordCopiedLabel));
         OnPropertyChanged(nameof(WifiRefreshLabel));
         OnPropertyChanged(nameof(WifiNoNetworksLabel));
         OnPropertyChanged(nameof(WifiHiddenLabel));
@@ -420,12 +621,16 @@ public sealed class QrCodeViewModel : ViewModelBase
         OnPropertyChanged(nameof(VCardLastLabel));
         OnPropertyChanged(nameof(VCardPhoneLabel));
         OnPropertyChanged(nameof(VCardEmailLabel));
-        OnPropertyChanged(nameof(SizeLabel));
         OnPropertyChanged(nameof(GenerateLabel));
         OnPropertyChanged(nameof(SaveLabel));
         OnPropertyChanged(nameof(CopyLabel));
         OnPropertyChanged(nameof(NoContentLabel));
         OnPropertyChanged(nameof(CopiedLabel));
         OnPropertyChanged(nameof(SaveTitleLabel));
+        OnPropertyChanged(nameof(DecodeBrowseLabel));
+        OnPropertyChanged(nameof(DecodeHintLabel));
+        OnPropertyChanged(nameof(DecodeResultLabel));
+        OnPropertyChanged(nameof(DecodeNoQrLabel));
+        OnPropertyChanged(nameof(DecodeCopyLabel));
     }
 }

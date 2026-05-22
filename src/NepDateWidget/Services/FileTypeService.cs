@@ -42,7 +42,7 @@ public sealed class FileTypeService : IFileTypeService
         "image/tiff", "image/bmp", "image/heif", "image/avif",
     };
 
-    // RAW MIME types are intentionally NOT in _imageMimes — they route through
+    // RAW MIME types are intentionally NOT in _imageMimes - they route through
     // FileCategory.Raw so ImageToolsViewModel can apply the correct smart defaults.
     private static readonly HashSet<string> _rawMimes = new(StringComparer.OrdinalIgnoreCase)
     {

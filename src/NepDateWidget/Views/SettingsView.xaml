@@ -9,7 +9,10 @@
              TextOptions.TextFormattingMode="Display"
              TextOptions.TextRenderingMode="ClearType"
              d:DataContext="{d:DesignInstance vm:SettingsViewModel}"
-             d:Width="380">
+             d:Width="380"
+             Loaded="OnSettingsViewLoaded"
+             CheckBox.Checked="OnSettingsCheckChanged"
+             CheckBox.Unchecked="OnSettingsCheckChanged">
 
     <UserControl.Resources>
         <!-- Toggle style for option buttons (radio-like) -->
@@ -101,26 +104,6 @@
                                 <Setter TargetName="Track" Property="Background"  Value="{DynamicResource WidgetAccentBrush}" />
                                 <Setter TargetName="Track" Property="BorderBrush" Value="{DynamicResource WidgetAccentBrush}" />
                                 <Setter TargetName="Thumb" Property="Background"  Value="{DynamicResource WidgetDayTodayTextBrush}" />
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ThumbTranslate"
-                                                             Storyboard.TargetProperty="X"
-                                                             To="18" Duration="0:0:0.18"
-                                                             EasingFunction="{StaticResource SmoothEase}" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="ThumbTranslate"
-                                                             Storyboard.TargetProperty="X"
-                                                             To="0" Duration="0:0:0.18"
-                                                             EasingFunction="{StaticResource SmoothEase}" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -1510,7 +1493,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Path Grid.Column="0"
-                              Data="{StaticResource IconText}"
+                              Data="{StaticResource IconLanguage}"
                               Stroke="{DynamicResource WidgetForegroundBrush}"
                               StrokeThickness="1.2"
                               StrokeStartLineCap="Round"
@@ -1633,11 +1616,8 @@
             <Border Style="{StaticResource CardPanel}">
                 <Button Content="{Binding ResetToDefaultsLabel}"
                         Command="{Binding ResetToDefaultsCommand}"
-                        Style="{StaticResource OptionButton}"
-                        HorizontalAlignment="Stretch"
-                        Background="{DynamicResource WidgetAccentBrush}"
-                        Foreground="{DynamicResource WidgetDayTodayTextBrush}"
-                        BorderBrush="{DynamicResource WidgetAccentBrush}">
+                        Style="{StaticResource AccentButton}"
+                        HorizontalAlignment="Stretch">
                     <Button.ContentTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">

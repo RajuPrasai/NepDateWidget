@@ -6,7 +6,7 @@ using NepDateWidget.ViewModels;
 namespace NepDateWidget.Tests.ViewModels;
 
 /// <summary>
-/// Tests for DayInfoViewModel — the day-detail popup.
+/// Tests for DayInfoViewModel - the day-detail popup.
 /// Covers: date header, note display, reminder display, commands, navigation events.
 /// </summary>
 public sealed class DayInfoViewModelTests
@@ -381,7 +381,7 @@ public sealed class DayInfoViewModelTests
     [Fact]
     public void DeleteNoteCommand_NullNotesService_DoesNotThrow()
     {
-        // No notesService passed — should be a no-op
+        // No notesService passed - should be a no-op
         var vm = MakeVm();
         var ex = Record.Exception(() => vm.DeleteNoteCommand.Execute(null));
         Assert.Null(ex);

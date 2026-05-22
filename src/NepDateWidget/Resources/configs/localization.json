@@ -2552,8 +2552,8 @@
     "ne": "TIFF कम्प्रेसन"
   },
   "compress.adv_pdf": {
-    "en": "PDF — slider controls compression level and image quality",
-    "ne": "PDF — स्लाइडरले कम्प्रेसन स्तर र छवि गुणस्तर नियन्त्रण गर्छ"
+    "en": "PDF - slider controls compression level and image quality",
+    "ne": "PDF - स्लाइडरले कम्प्रेसन स्तर र छवि गुणस्तर नियन्त्रण गर्छ"
   },
   "compress.adv_linearize": {
     "en": "Linearize (optimize for web / fast open)",
@@ -2856,8 +2856,8 @@
     "ne": "कुनै फोटो लोड भएको छैन"
   },
   "idphoto.invalid_hex": {
-    "en": "Invalid color — use #RRGGBB",
-    "ne": "अमान्य रङ — #RRGGBB प्रयोग गर्नुहोस्"
+    "en": "Invalid color - use #RRGGBB",
+    "ne": "अमान्य रङ - #RRGGBB प्रयोग गर्नुहोस्"
   },
   "idphoto.invalid_dims": {
     "en": "Width and height must be positive numbers",
@@ -2889,7 +2889,7 @@
   },
   "help.idphoto.why2": {
     "en": "Output is always 300 DPI JPEG for print-ready quality.",
-    "ne": "आउटपुट सधैं 300 DPI JPEG हुन्छ — प्रिन्टका लागि तयार।"
+    "ne": "आउटपुट सधैं 300 DPI JPEG हुन्छ - प्रिन्टका लागि तयार।"
   },
   "more.imgconv_label": { "en": "Convert", "ne": "रूपान्तरण" },
   "imgconv.drop": { "en": "Drop images or folders here", "ne": "यहाँ तस्बिर वा फोल्डरहरू छोड्नुहोस्" },
@@ -2908,9 +2908,9 @@
   "imgconv.converting": { "en": "Converting", "ne": "रूपान्तरण हुँदैछ" },
   "imgconv.progress_of": { "en": "of", "ne": "मध्ये" },
   "imgconv.remove_file": { "en": "Remove", "ne": "हटाउनुहोस्" },
-  "imgconv.summary_done_one": { "en": "1 file converted — new size is {0}", "ne": "१ फाइल रूपान्तरण भयो — नयाँ आकार {0}" },
-  "imgconv.summary_done_many": { "en": "{0} files converted — total size is {1}", "ne": "{0} फाइलहरू रूपान्तरण भए — कुल आकार {1}" },
-  "imgconv.summary_partial": { "en": "{0} done, {1} failed — total size is {2}", "ne": "{0} सफल, {1} असफल — कुल आकार {2}" },
+  "imgconv.summary_done_one": { "en": "1 file converted - new size is {0}", "ne": "१ फाइल रूपान्तरण भयो - नयाँ आकार {0}" },
+  "imgconv.summary_done_many": { "en": "{0} files converted - total size is {1}", "ne": "{0} फाइलहरू रूपान्तरण भए - कुल आकार {1}" },
+  "imgconv.summary_partial": { "en": "{0} done, {1} failed - total size is {2}", "ne": "{0} सफल, {1} असफल - कुल आकार {2}" },
   "imgconv.summary_seg_size": { "en": "total {0}", "ne": "कुल {0}" },
   "imgconv.summary_seg_files_one": { "en": "1 file done", "ne": "१ फाइल सकियो" },
   "imgconv.summary_seg_files_many": { "en": "{0} files done", "ne": "{0} फाइलहरू सकिए" },
@@ -2930,7 +2930,7 @@
   "qr.wifi_network": { "en": "Network", "ne": "नेटवर्क" },
   "qr.wifi_password":         { "en": "Password", "ne": "पासवर्ड" },
   "qr.wifi_password_hint":    { "en": "Enter WiFi password", "ne": "WiFi पासवर्ड राख्नुहोस्" },
-  "qr.wifi_password_tooltip": { "en": "Password cannot be read automatically — enter it manually", "ne": "पासवर्ड स्वचालित रूपमा पढ्न सकिँदैन" },
+  "qr.wifi_password_tooltip": { "en": "Auto-filled when available; you can edit it", "ne": "उपलब्ध भएमा स्वचालित भरिन्छ; सम्पादन गर्न सकिन्छ" },
   "qr.wifi_refresh":     { "en": "Refresh", "ne": "रिफ्रेस" },
   "qr.wifi_no_networks": { "en": "No saved networks found", "ne": "कुनै नेटवर्क भेटिएन" },
   "qr.wifi_hidden":      { "en": "Hidden network", "ne": "लुकेको नेटवर्क" },
@@ -2945,6 +2945,14 @@
   "qr.no_content":  { "en": "Enter content above and tap Generate", "ne": "माथि सामग्री राख्नुहोस् र Generate थिच्नुहोस्" },
   "qr.save_title":  { "en": "Save QR Code as PNG", "ne": "QR कोड PNG मा सेभ" },
   "qr.copied":      { "en": "Copied to clipboard", "ne": "क्लिपबोर्डमा कपी भयो" },
+  "qr.wifi_password_copied": { "en": "Password copied", "ne": "पासवर्ड कपी भयो" },
+  "qr.mode_generate": { "en": "Generate", "ne": "बनाउनुहोस्" },
+  "qr.mode_decode":   { "en": "Read QR",  "ne": "QR पढ्नुहोस्" },
+  "qr.decode_browse":       { "en": "Browse Image",             "ne": "तस्बिर छान्नुहोस्" },
+  "qr.decode_hint":         { "en": "Drop a PNG / JPG / BMP here, or browse", "ne": "PNG / JPG / BMP छान्नुहोस्" },
+  "qr.decode_result_label": { "en": "Decoded content",          "ne": "परिणाम" },
+  "qr.decode_no_qr":        { "en": "No QR code found in image","ne": "तस्बिरमा QR कोड भेटिएन" },
+  "qr.decode_copy":         { "en": "Copy Result",              "ne": "परिणाम कपी" },
   "help.qrcode":    { "en": "", "ne": "" },
 
   "more.imgtools_label":         { "en": "Image Tools", "ne": "तस्बिर उपकरण" },
@@ -2960,7 +2968,7 @@
   "imgtools.section_compress":   { "en": "Compression options", "ne": "कम्प्रेशन विकल्पहरू" },
   "imgtools.section_resize":     { "en": "Resize options", "ne": "साइज विकल्पहरू" },
   "imgtools.section_convert":    { "en": "Output format", "ne": "आउटपुट ढाँचा" },
-  "imgtools.mixed_type_warning": { "en": "Mixed file types — enable Convert to proceed", "ne": "मिश्रित फाइल प्रकार — जारी राख्न Convert सक्षम गर्नुहोस्" },
+  "imgtools.mixed_type_warning": { "en": "Mixed file types - enable Convert to proceed", "ne": "मिश्रित फाइल प्रकार - जारी राख्न Convert सक्षम गर्नुहोस्" },
   "imgtools.pdf_no_resize":      { "en": "Resize is not available for PDF files", "ne": "PDF का लागि साइज बदल्न मिल्दैन" },
   "imgtools.pdf_no_convert":     { "en": "Format conversion is not available for PDF files", "ne": "PDF का लागि ढाँचा रूपान्तरण मिल्दैन" },
   "imgtools.raw_no_compress":    { "en": "RAW files cannot be compressed directly. Convert to JPEG first.", "ne": "RAW फाइल सिधै कम्प्रेस गर्न सकिँदैन। पहिले JPEG मा रूपान्तरण गर्नुहोस्।" },
@@ -2975,7 +2983,7 @@
   "imgtools.pdf_page_combined":  { "en": "All pages (one image)", "ne": "सबै पृष्ठ (एउटै तस्बिर)" },
   "imgtools.img_to_pdf_one_per_file": { "en": "One PDF per image", "ne": "प्रत्येक तस्बिरका लागि छुट्टै PDF" },
   "imgtools.img_to_pdf_combined":     { "en": "Combined PDF",      "ne": "एकीकृत PDF" },
-  "imgtools.mixed_pdf_image_convert": { "en": "Cannot mix PDF and image files for conversion — use one type at a time", "ne": "रूपान्तरणका लागि PDF र तस्बिर सँगै राख्न मिल्दैन" },
+  "imgtools.mixed_pdf_image_convert": { "en": "Cannot mix PDF and image files for conversion - use one type at a time", "ne": "रूपान्तरणका लागि PDF र तस्बिर सँगै राख्न मिल्दैन" },
   "help.imgtools.title":   { "en": "Image Tools Help", "ne": "तस्बिर उपकरण सहायता" },
   "help.imgtools.desc":    { "en": "Compress, resize, or convert images and PDFs in one place. Drag files or use the toggles below.", "ne": "तस्बिर र PDF हरूलाई एउटै स्थानमा कम्प्रेस, साइज बदल्न वा रूपान्तरण गर्न सकिन्छ। फाइल तान्नुहोस् वा तलका टगलहरू प्रयोग गर्नुहोस्।" },
   "help.imgtools.how1":    { "en": "Drop images or PDFs into the box.", "ne": "तस्बिर वा PDF बाकसमा छोड्नुहोस्।" },

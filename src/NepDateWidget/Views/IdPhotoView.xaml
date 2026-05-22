@@ -100,7 +100,7 @@
                         MouseMove="CropCanvas_MouseMove"
                         MouseLeftButtonUp="CropCanvas_MouseUp"
                         MouseLeave="CropCanvas_MouseLeave">
-            <!-- Four dark overlay panels outside the crop frame — set by code-behind -->
+            <!-- Four dark overlay panels outside the crop frame - set by code-behind -->
             <Rectangle x:Name="OvTop"    Fill="#BB000000" IsHitTestVisible="False" />
             <Rectangle x:Name="OvBottom" Fill="#BB000000" IsHitTestVisible="False" />
             <Rectangle x:Name="OvLeft"   Fill="#BB000000" IsHitTestVisible="False" />
@@ -444,7 +444,7 @@
                                      Style="{StaticResource OptionPillStyle}" />
           </WrapPanel>
         </Grid>
-        <!-- Columns and Rows — empty = auto-calculated -->
+        <!-- Columns and Rows - empty = auto-calculated -->
         <Grid Margin="0,0,0,12">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

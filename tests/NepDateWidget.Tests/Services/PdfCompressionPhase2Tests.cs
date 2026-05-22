@@ -8,7 +8,7 @@ namespace NepDateWidget.Tests.Services;
 /// <summary>
 /// Integration tests for Phase 2 PDF compression (Phase 2A + Phase 2B pipeline).
 /// All assertions are on observable outcomes: file sizes, success flags, output existence.
-/// No mocking — the tests run the real service against real PDF files on disk.
+/// No mocking - the tests run the real service against real PDF files on disk.
 /// </summary>
 public sealed class PdfCompressionPhase2Tests
 {

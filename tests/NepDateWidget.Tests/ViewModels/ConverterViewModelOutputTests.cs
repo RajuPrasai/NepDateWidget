@@ -32,7 +32,7 @@ public class ConverterViewModelDaysOutputTests
     public void DaysDiff_KnownDates_BreakdownFormat_IsYearsMonthsDays()
     {
         // DiffBreakdown(2082, 1, 1, 2082, 4, 15):
-        //   years=0, months=3, days=14  (no carry needed — all positive)
+        //   years=0, months=3, days=14  (no carry needed - all positive)
         // DiffTotalDays: 0*365 + 3*30 + 14 = 104
         var vm = Create();
         vm.ActiveMode = 1; // Days mode
@@ -253,7 +253,7 @@ public class ConverterViewModelDaysOutputTests
         vm.DaysInput2 = "2082/04/15";
         Assert.NotEmpty(vm.DaysOutputBreakdown); // precondition
 
-        // Set to invalid — output should clear and error should set
+        // Set to invalid - output should clear and error should set
         vm.DaysInput1 = "9999/99/99";
 
         Assert.Equal(string.Empty, vm.DaysOutputBreakdown);
@@ -292,7 +292,7 @@ public class ConverterViewModelTimeOutputTests
         var vm = Create();
         vm.ActiveMode = 2;
 
-        // Use explicit "AM" so hadExplicitAmPm=true — result is deterministic regardless of
+        // Use explicit "AM" so hadExplicitAmPm=true - result is deterministic regardless of
         // when the test runs (no dependency on _timeIsAm button state initialised from DateTime.Now).
         vm.TimeInput = "6:00 AM";
 
@@ -380,7 +380,7 @@ public class ConverterViewModelTimeOutputTests
         vm.ActiveMode = 2;
         vm.TimeSwapCommand.Execute(null); // Now From=UTC, To=Nepal
 
-        // Explicit "AM" makes hadExplicitAmPm=true — deterministic regardless of time of day.
+        // Explicit "AM" makes hadExplicitAmPm=true - deterministic regardless of time of day.
         vm.TimeInput = "6:00 AM";
 
         Assert.False(vm.TimeHasError);

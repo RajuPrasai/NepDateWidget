@@ -11,7 +11,7 @@ namespace NepDateWidget.Tests.ViewModels;
 /// ActionButtonLabel, and OnLanguageChanged.
 ///
 /// Uses real FileTypeService and LocalizationService. File paths use fake
-/// extensions — FileTypeService only inspects the extension.
+/// extensions - FileTypeService only inspects the extension.
 /// </summary>
 public class ImageToolsViewModelTests
 {
@@ -248,7 +248,7 @@ public class ImageToolsViewModelTests
     public void SmartDefaults_StandardJpeg_AnyQuality_CompressResizeConvert()
     {
         var vm = Create();
-        vm.QualityLevel = 3; // high quality — still enables all three; level controls degree, not what's active
+        vm.QualityLevel = 3; // high quality - still enables all three; level controls degree, not what's active
         vm.AddFiles(new[] { @"C:\test\photo.jpg" });
 
         Assert.True(vm.IsCompressEnabled);
@@ -261,7 +261,7 @@ public class ImageToolsViewModelTests
     public void SmartDefaults_StandardPng_AllQualityLevels_CompressResizeConvert()
     {
         var vm = Create();
-        vm.QualityLevel = 0; // quality level irrelevant — all three always enabled for standard images
+        vm.QualityLevel = 0; // quality level irrelevant - all three always enabled for standard images
         vm.AddFiles(new[] { @"C:\test\image.png" });
 
         Assert.True(vm.IsCompressEnabled);
@@ -278,7 +278,7 @@ public class ImageToolsViewModelTests
         var vm = Create();
         // User manually turns ON convert (sets the flag).
         vm.IsConvertEnabled = true;
-        // Now add a PDF — smart defaults would set CompressOnly but should not fire.
+        // Now add a PDF - smart defaults would set CompressOnly but should not fire.
         vm.AddFiles(new[] { @"C:\test\doc.pdf" });
 
         // Convert was set manually; smart defaults should NOT reset it.
@@ -292,7 +292,7 @@ public class ImageToolsViewModelTests
     {
         var vm = Create();
         vm.AddFiles(new[] { @"C:\test\photo.jpg" }); // applies defaults
-        vm.IsResizeEnabled = false; // manual toggle — sets flag
+        vm.IsResizeEnabled = false; // manual toggle - sets flag
         vm.AddFiles(new[] { @"C:\test\photo2.png" }); // second add must NOT re-apply
 
         Assert.False(vm.IsResizeEnabled);
@@ -779,7 +779,7 @@ public class ImageToolsViewModelTests
 
         var label = vm.ActionButtonLabel;
         Assert.NotEmpty(label);
-        // Multi-toggle label is the "imgtools.run_btn" key — just verify it does not
+        // Multi-toggle label is the "imgtools.run_btn" key - just verify it does not
         // match a single-toggle label (all three singles are distinct and non-empty).
     }
 
@@ -839,7 +839,7 @@ public class ImageToolsViewModelTests
         // Set width/height manually to represent level 1 (80%) projected values.
         vm.WidthText  = "800";
         vm.HeightText = "400";
-        // _userHasManuallyChangedDimensions is now true — level change won't override.
+        // _userHasManuallyChangedDimensions is now true - level change won't override.
         // This test verifies the guard works: change level, dimensions stay.
         int prevLevel = vm.QualityLevel;
         vm.QualityLevel = (prevLevel == 0) ? 1 : 0;
@@ -921,7 +921,7 @@ public class ImageToolsViewModelTests
         vm.IsCompressEnabled = true;
         // Now switch to another format (webp supports compression).
         vm.SelectFormatCommand.Execute("webp");
-        // Compress should stay as-is (true) — no auto-restore needed, it was manual.
+        // Compress should stay as-is (true) - no auto-restore needed, it was manual.
         Assert.True(vm.IsCompressEnabled);
         // Switching to bmp should disable again (new format constraint).
         vm.SelectFormatCommand.Execute("bmp");

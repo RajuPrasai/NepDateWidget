@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-  <!-- Tabler Icons (MIT) — tabler.io/icons — 24x24 viewBox, stroke-based. -->
+  <!-- Tabler Icons (MIT) - tabler.io/icons - 24x24 viewBox, stroke-based. -->
   <!-- Calendar month (home tab) -->
   <StreamGeometry x:Key="IconCalendar">M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12 M16 3v4 M8 3v4 M4 11h16 M8 14v4 M12 14v4 M16 14v4</StreamGeometry>
   <!-- Calendar clock (date/converter tab) -->
@@ -94,4 +94,12 @@
   <StreamGeometry x:Key="IconEdit">M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4 M13.5 6.5l4 4</StreamGeometry>
   <!-- Trash / delete -->
   <StreamGeometry x:Key="IconTrash">M4 7l16 0 M10 11l0 6 M14 11l0 6 M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12 M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3</StreamGeometry>
+  <!-- Eye - password visible state -->
+  <StreamGeometry x:Key="IconEye">M10 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0 M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6</StreamGeometry>
+  <!-- Eye off - password hidden state -->
+  <StreamGeometry x:Key="IconEyeOff">M10.585 10.587a2 2 0 0 0 2.829 2.828 M16.681 16.673a8.717 8.717 0 0 1 -4.681 1.327c-3.6 0 -6.6 -2 -9 -6c1.272 -2.12 2.712 -3.678 4.32 -4.674 M6.357 6.349a10 10 0 0 1 5.643 -1.349c3.6 0 6.6 2 9 6c-.888 1.48 -1.952 2.759 -3.188 3.837 M3 3l18 18</StreamGeometry>
+  <!-- Tools section header - iPad/device with cog -->
+  <StreamGeometry x:Key="IconDeviceIpadCog">M12 21h-6a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v6.5 M9 18h3 M17.001 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0 M19.001 15.5v1.5 M19.001 21v1.5 M22.032 17.25l-1.299 .75 M17.27 20l-1.3 .75 M15.97 17.25l1.3 .75 M20.733 20l1.3 .75</StreamGeometry>
+  <!-- Language / localization -->
+  <StreamGeometry x:Key="IconLanguage">M9 6.371c0 4.418 -2.239 6.629 -5 6.629 M4 6.371h7 M5 9c0 2.144 2.252 3.908 6 4 M12 20l4 -9l4 9 M19.1 18h-6.2 M6.694 3l.793 .582</StreamGeometry>
 </ResourceDictionary>

@@ -32,6 +32,7 @@ internal static class Win32Interop
     internal const int WM_HOTKEY = 0x0312;
     internal const int WM_NCHITTEST = 0x0084;
     internal const int WM_WINDOWPOSCHANGING = 0x0046;
+    internal const int WM_DISPLAYCHANGE = 0x007E;
 
     // ── Hit-test result codes ──────────────────────────────────────────────
     internal const int HTCLIENT = 1;

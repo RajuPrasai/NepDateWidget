@@ -38,7 +38,7 @@ public sealed class PdfCompressionService : IPdfCompressionService
 
             if (!phase2aOk)
             {
-                // Fallback: minimal pipeline — copy + optional linearize only.
+                // Fallback: minimal pipeline - copy + optional linearize only.
                 RunPhase1(qpdfInputPath, qpdfTmpPath, adv);
             }
 
@@ -178,7 +178,7 @@ public sealed class PdfCompressionService : IPdfCompressionService
         }
         catch (PdfReaderException)
         {
-            // Encrypted PDF — skip Phase 2B, run Phase 2A from original input.
+            // Encrypted PDF - skip Phase 2B, run Phase 2A from original input.
             return false;
         }
         catch

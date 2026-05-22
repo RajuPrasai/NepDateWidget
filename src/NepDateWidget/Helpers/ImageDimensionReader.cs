@@ -4,7 +4,7 @@ namespace NepDateWidget.Helpers;
 
 /// <summary>
 /// Reads pixel dimensions from an image file using a header-only Ping operation.
-/// Ping reads only the image header — no pixel decoding — so it is fast even for large RAW files.
+/// Ping reads only the image header - no pixel decoding - so it is fast even for large RAW files.
 /// Returns null for PDFs (no pixel dimensions) and on any read failure.
 /// </summary>
 internal static class ImageDimensionReader

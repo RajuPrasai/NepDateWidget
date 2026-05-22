@@ -607,11 +607,11 @@ public sealed class CalendarViewModel : ViewModelBase
         // than calling HasRemindersForDateExpanded per cell (O(cells × reminders)).
         var reminderDays = _reminderService?.GetHasRemindersForMonth(_displayYear, _displayMonth);
 
-        // Batch note-dot query: same pattern as reminder dots — one dictionary pass for
+        // Batch note-dot query: same pattern as reminder dots - one dictionary pass for
         // the month rather than a per-cell GetNote call with per-cell key allocations.
         var noteDays = _notesService?.GetHasNotesForMonth(_displayYear, _displayMonth);
 
-        // Compute the copy-menu title once per refresh — it does not vary per cell.
+        // Compute the copy-menu title once per refresh - it does not vary per cell.
         string copyMenuTitle = _loc.Get("calendar.copy.title");
 
         if (Days.Count == month.Days.Count)

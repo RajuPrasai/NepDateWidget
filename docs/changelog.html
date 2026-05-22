@@ -17,7 +17,7 @@
   <meta name="application-name" content="NepDate Widget" />
   <meta name="geo.region" content="NP" />
   <meta name="geo.placename" content="Nepal" />
-  <meta property="og:type" content="website" />
+  <meta property="og:type" content="article" />
   <meta property="og:site_name" content="NepDate Widget" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="ne_NP" />
@@ -39,10 +39,10 @@
     "name": "NepDate Widget Changelog",
     "description": "Full release history and version notes for NepDate Widget. Track new features, improvements, and bug fixes across all versions.",
     "url": "https://nepdatewidget.rajuprasai.com.np/changelog.html",
-    "dateModified": "2026-05-17",
+    "dateModified": "2026-05-22",
     "inLanguage": "en-US",
     "author": {"@type": "Person", "name": "Raju Prasai", "url": "https://github.com/RajuPrasai"},
-    "isPartOf": { "@type": "WebSite", "name": "NepDate Widget", "url": "https://nepdatewidget.rajuprasai.com.np/" },
+    "isPartOf": {"@id": "https://nepdatewidget.rajuprasai.com.np/#website"},
     "breadcrumb": {
       "@type": "BreadcrumbList",
       "itemListElement": [
@@ -111,15 +111,61 @@
         <div class="changelog-wrap">
           <div style="margin-bottom: 32px;">
             <div class="section-eyebrow">Release History</div>
-            <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 12px;">Changelog</h1>
+            <h1 style="font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: 12px;">NepDate Widget Changelog</h1>
             <p class="sub" style="color: var(--text-muted); font-size: 1.05rem;">
               All notable changes to NepDate Widget are documented here. Versions follow
               <a href="https://semver.org" target="_blank" rel="noopener noreferrer">semantic versioning</a>.
             </p>
           </div>
 
-          <!-- v1.0.0 -->
+          <!-- v1.0.2 -->
           <article class="release latest">
+            <header class="release-head">
+              <h2>v1.0.2</h2>
+              <span class="tag">Latest</span>
+              <span class="date">May 2026</span>
+            </header>
+
+            <div class="release-body">
+              <h3>New features</h3>
+              <ul>
+                <li><strong>Image Tools:</strong> batch compress, resize, and convert images in a single pass. Supports 30+ input formats including RAW camera files and PDF. Five-level quality slider, metadata stripping, and format-specific options</li>
+                <li><strong>ID Photo:</strong> crop photos to exact passport and ID dimensions (Passport/MRP, Auto, Stamp, US/DV, or custom). Tile multiple copies onto a print sheet (A4, 4R, 5R, or custom size) for home or studio printing</li>
+                <li><strong>QR Code generator:</strong> create QR codes from text, URLs, or contact info and save as PNG</li>
+                <li><strong>WiFi scanner:</strong> discover nearby wireless networks with signal strength, channel, and security details</li>
+              </ul>
+              <h3>Improvements</h3>
+              <ul>
+                <li>Faster widget expand and smoother animations throughout the app</li>
+                <li>Reduced memory usage and CPU overhead when the widget is idle</li>
+                <li>Improved calendar grid rendering performance during month navigation</li>
+                <li>Visual polish and consistency updates across all tabs</li>
+                <li>RunBox now opens faster with improved search and history ranking</li>
+                <li>Better keyboard navigation in the date converter and banking tools</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- v1.0.1 -->
+          <article class="release">
+            <header class="release-head">
+              <h2>v1.0.1</h2>
+              <span class="tag">Patch</span>
+              <span class="date">2026</span>
+            </header>
+
+            <div class="release-body">
+              <h3>Bug fixes &amp; enhancements</h3>
+              <ul>
+                <li>Fixed calendar not refreshing correctly after returning from sleep or hibernate</li>
+                <li>Improved mini bar positioning on multi-monitor setups when display scaling differs between screens</li>
+                <li>Minor visual adjustments to theme colors and font rendering in dark mode</li>
+              </ul>
+            </div>
+          </article>
+
+          <!-- v1.0.0 -->
+          <article class="release">
             <header class="release-head">
               <h2>v1.0.0</h2>
               <span class="tag">Stable</span>

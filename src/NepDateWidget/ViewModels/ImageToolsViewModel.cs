@@ -5,13 +5,12 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using static NepDateWidget.Helpers.FileFormatHelper;
 
 namespace NepDateWidget.ViewModels;
 
 /// <summary>
-/// Unified image tools view — manages Compress, Resize, and Convert operations as
+/// Unified image tools view - manages Compress, Resize, and Convert operations as
 /// independently stackable toggles. Singleton; survives shell expand/collapse cycles.
 /// </summary>
 public sealed class ImageToolsViewModel : ViewModelBase
@@ -20,8 +19,6 @@ public sealed class ImageToolsViewModel : ViewModelBase
     private readonly IJobOrchestrationService _orchestrator;
     private readonly IImageConversionService _conversionService;
     private readonly ILocalizationService _loc;
-
-    private DispatcherTimer? _resetTimer;
 
     // ── Supported extensions for file filter and path gating ─────────────────
 
@@ -84,6 +81,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             if (SetProperty(ref _isResizeEnabled, value))
             {
                 _userHasManuallyChangedToggles = true;
+                _resizeDisabledByFormat = false;
                 OnPropertyChanged(nameof(ShowResizeSection));
                 OnPropertyChanged(nameof(CanRun));
                 OnPropertyChanged(nameof(ActionButtonLabel));
@@ -103,9 +101,12 @@ public sealed class ImageToolsViewModel : ViewModelBase
                 _userHasManuallyChangedToggles = true;
                 OnPropertyChanged(nameof(ShowConvertSection));
                 OnPropertyChanged(nameof(ShowQualitySlider));
+                OnPropertyChanged(nameof(ShowPdfConvertOptions));
+                OnPropertyChanged(nameof(ShowImageToPdfOptions));
                 OnPropertyChanged(nameof(CanRun));
                 OnPropertyChanged(nameof(ActionButtonLabel));
                 OnPropertyChanged(nameof(IsRunButtonEnabled));
+                OnPropertyChanged(nameof(CanToggleResize));
                 ReEvaluateMixedTypeWarning();
                 EnforceFormatConstraints();
             }
@@ -115,7 +116,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
     // ── Toggle enabled (CanToggleXxx) ─────────────────────────────────────────
 
     public bool CanToggleCompress => !_isJobRunning && _detectedCategory != FileCategory.Raw;
-    public bool CanToggleResize   => !_isJobRunning && !_hasAnyPdfFile;
+    public bool CanToggleResize   => !_isJobRunning && !_hasAnyPdfFile && !(_isConvertEnabled && _selectedFormatExt == "pdf");
     // PDF input is allowed for convert (PDF→image). Only job running blocks the toggle.
     public bool CanToggleConvert  => !_isJobRunning;
 
@@ -131,7 +132,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
 
     /// <summary>
     /// Hidden when Compress is OFF. Hidden when Convert is ON targeting a lossless format.
-    /// "Lossy" formats: jpg, webp, avif — matches existing ImageConverterViewModel.ShowQuality.
+    /// "Lossy" formats: jpg, webp, avif - matches existing ImageConverterViewModel.ShowQuality.
     /// Hidden for PDF output (no quality concept for image embedding).
     /// </summary>
     public bool ShowQualitySlider =>
@@ -216,6 +217,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
         new(StringComparer.OrdinalIgnoreCase) { "gif", "bmp", "ico", "tga", "pdf" };
 
     private bool _compressDisabledByFormat;
+    private bool _resizeDisabledByFormat;
     private bool _isSummaryVisible;
 
     private void SetFormat(string ext)
@@ -235,6 +237,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsFormatPdf));
             OnPropertyChanged(nameof(ShowQualitySlider));
             OnPropertyChanged(nameof(ShowResizeSection));
+            OnPropertyChanged(nameof(CanToggleResize));
             OnPropertyChanged(nameof(ShowPdfConvertOptions));
             OnPropertyChanged(nameof(ShowImageToPdfOptions));
             OnPropertyChanged(nameof(CanRun));
@@ -245,8 +248,10 @@ public sealed class ImageToolsViewModel : ViewModelBase
 
     /// <summary>
     /// Auto-disables compression when the selected output format has no meaningful
-    /// quality-based compression (gif, bmp, ico, tga). Restores compression when
+    /// quality-based compression (gif, bmp, ico, tga, pdf). Restores compression when
     /// switching to a format that supports it, if it was only disabled by this rule.
+    /// Also auto-disables resize when the output format is PDF (resize is meaningless
+    /// for image-to-PDF conversion) and restores it when the format changes away.
     /// </summary>
     private void EnforceFormatConstraints()
     {
@@ -279,6 +284,31 @@ public sealed class ImageToolsViewModel : ViewModelBase
             OnPropertyChanged(nameof(ShowPdfOptions));
             OnPropertyChanged(nameof(ShowAdvancedToggle));
             OnPropertyChanged(nameof(ShowQualitySlider));
+            OnPropertyChanged(nameof(CanRun));
+            OnPropertyChanged(nameof(IsRunButtonEnabled));
+            OnPropertyChanged(nameof(ActionButtonLabel));
+        }
+
+        bool formatBlocksResize = _isConvertEnabled && _selectedFormatExt == "pdf";
+
+        if (formatBlocksResize && _isResizeEnabled)
+        {
+            _isResizeEnabled = false;
+            _resizeDisabledByFormat = true;
+            OnPropertyChanged(nameof(IsResizeEnabled));
+            OnPropertyChanged(nameof(ShowResizeSection));
+            OnPropertyChanged(nameof(CanToggleResize));
+            OnPropertyChanged(nameof(CanRun));
+            OnPropertyChanged(nameof(IsRunButtonEnabled));
+            OnPropertyChanged(nameof(ActionButtonLabel));
+        }
+        else if (!formatBlocksResize && !_isResizeEnabled && _resizeDisabledByFormat)
+        {
+            _isResizeEnabled = true;
+            _resizeDisabledByFormat = false;
+            OnPropertyChanged(nameof(IsResizeEnabled));
+            OnPropertyChanged(nameof(ShowResizeSection));
+            OnPropertyChanged(nameof(CanToggleResize));
             OnPropertyChanged(nameof(CanRun));
             OnPropertyChanged(nameof(IsRunButtonEnabled));
             OnPropertyChanged(nameof(ActionButtonLabel));
@@ -494,7 +524,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             // Mixed PDF + images with convert ON: two different pipelines, cannot batch together.
             if (_isConvertEnabled && _hasAnyPdfFile && !_allFilesArePdf)
                 return false;
-            // PDF→PDF (all PDF input, PDF target): nonsensical — block.
+            // PDF→PDF (all PDF input, PDF target): nonsensical - block.
             if (_isConvertEnabled && _allFilesArePdf && _selectedFormatExt == "pdf")
                 return false;
             // If Resize is ON and not blocked by PDF input or PDF output, at least one dimension must be entered.
@@ -670,7 +700,6 @@ public sealed class ImageToolsViewModel : ViewModelBase
 
     public void AddFiles(IReadOnlyList<string> paths)
     {
-        CancelPendingAutoReset();
         if (_isJobRunning)
             return;
         if (paths.Count == 0)
@@ -707,7 +736,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             newItems.Add(item);
         }
 
-        // Read dimensions asynchronously — Ping reads only the image header.
+        // Read dimensions asynchronously - Ping reads only the image header.
         foreach (var item in newItems)
         {
             var capturedItem = item;
@@ -747,6 +776,13 @@ public sealed class ImageToolsViewModel : ViewModelBase
         if (item is null) return;
 
         Files.Remove(item);
+
+        if (Files.Count == 0)
+        {
+            InternalReset();
+            return;
+        }
+
         RefreshDetectedType();
         ReEvaluateMixedTypeWarning();
         TryAutoPopulateDimensions();
@@ -886,7 +922,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             newFormat   = "jpg";
         }
 
-        // Apply changes without triggering _userHasManuallyChangedToggles — suppress the
+        // Apply changes without triggering _userHasManuallyChangedToggles - suppress the
         // normal setter path by updating backing fields and firing manually.
         if (_isCompressEnabled != newCompress) { _isCompressEnabled = newCompress; changed = true; }
         if (_isResizeEnabled   != newResize)   { _isResizeEnabled   = newResize;   changed = true; }
@@ -905,6 +941,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             OnPropertyChanged(nameof(IsFormatTiff));
             OnPropertyChanged(nameof(IsFormatIco));
             OnPropertyChanged(nameof(IsFormatTga));
+            OnPropertyChanged(nameof(IsFormatPdf));
         }
 
         if (changed)
@@ -967,6 +1004,18 @@ public sealed class ImageToolsViewModel : ViewModelBase
             }
         }
 
+        // Invariant: PDF→PDF output is invalid. If PDF input is now present and the target
+        // format is still PDF, fall back to JPEG so a visible chip remains selected.
+        if (_hasAnyPdfFile && _selectedFormatExt == "pdf")
+        {
+            _selectedFormatExt = "jpg";
+            OnPropertyChanged(nameof(SelectedFormatExt));
+            OnPropertyChanged(nameof(IsFormatJpeg));
+            OnPropertyChanged(nameof(IsFormatPdf));
+            OnPropertyChanged(nameof(ShowQualitySlider));
+            OnPropertyChanged(nameof(ShowResizeSection));
+        }
+
         OnPropertyChanged(nameof(HasAnyPdfFile));
         OnPropertyChanged(nameof(IsRawOnlyFiles));
         OnPropertyChanged(nameof(CanToggleCompress));
@@ -992,7 +1041,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
     {
         if (_isConvertEnabled && _hasAnyPdfFile && !_allFilesArePdf)
         {
-            // Can't convert a batch that mixes PDF and image files — different pipelines.
+            // Can't convert a batch that mixes PDF and image files - different pipelines.
             MixedTypeWarning = _loc.Get("imgtools.mixed_pdf_image_convert");
         }
         else if (!_hasMultipleMimeTypes || _isConvertEnabled)
@@ -1053,13 +1102,18 @@ public sealed class ImageToolsViewModel : ViewModelBase
             IsJobComplete = true;
 
             ApplyConversionJobResults(convJobs);
-            BuildSummary(convJobs.Select(j => (j.InputPath, j.OutputPath)).ToList());
+            // Compute actual output size from service results - for AllPagesPerFile the
+            // base OutputPath is never written; the real files are in Result.OutputPaths.
+            long convActualOutSize = convJobs.Sum(j =>
+                j.Result?.OutputPaths is { Count: > 0 }
+                    ? j.Result.OutputPaths.Sum(GetFileSizeBytes)
+                    : GetFileSizeBytes(j.OutputPath));
+            BuildSummary(convJobs.Select(j => (j.InputPath, j.OutputPath)).ToList(), convActualOutSize);
             bool hasErrors = Files.Any(f => f.IsError);
             InternalReset();
             _isSummaryVisible = true;
             OnPropertyChanged(nameof(ShowSummary));
             OnPropertyChanged(nameof(ShowFileList));
-            ScheduleAutoReset(hasErrors);
         }
         else
         {
@@ -1087,7 +1141,6 @@ public sealed class ImageToolsViewModel : ViewModelBase
             _isSummaryVisible = true;
             OnPropertyChanged(nameof(ShowSummary));
             OnPropertyChanged(nameof(ShowFileList));
-            ScheduleAutoReset(hasErrors);
         }
     }
 
@@ -1330,7 +1383,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             var f = Files[i];
             var ext = Path.GetExtension(f.FilePath);
 
-            // Skip PDF files in image-to-image pipeline — marked Error by BuildConversionJobs caller.
+            // Skip PDF files in image-to-image pipeline - marked Error by BuildConversionJobs caller.
             if (string.Equals(ext, ".pdf", StringComparison.OrdinalIgnoreCase))
             {
                 f.Status = CompressionFileStatus.Error;
@@ -1418,7 +1471,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
             if (job.Kind == ConversionKind.ImagesToPdf)
             {
                 // Combined job: one output file represents all input images.
-                bool outputExists = File.Exists(job.OutputPath);
+                bool outputExists = job.Result?.Success ?? File.Exists(job.OutputPath);
                 long outSize = outputExists ? GetFileSizeBytes(job.OutputPath) : 0;
                 var inputs = job.CombinedInputPaths ?? new[] { job.InputPath };
                 foreach (var inputPath in inputs)
@@ -1434,13 +1487,24 @@ public sealed class ImageToolsViewModel : ViewModelBase
             {
                 var item = Files.FirstOrDefault(f => f.FilePath == job.InputPath);
                 if (item is null) continue;
-                // For PdfToImage all-pages modes, the primary OutputPath may be the base path;
-                // check if at least one output file was produced.
-                bool hasPrimaryOutput = File.Exists(job.OutputPath);
-                item.Status = hasPrimaryOutput
-                    ? CompressionFileStatus.Done
-                    : CompressionFileStatus.Error;
-                item.OutputSizeBytes = item.IsDone ? GetFileSizeBytes(job.OutputPath) : 0;
+
+                bool success = job.Result?.Success ?? File.Exists(job.OutputPath);
+                item.Status = success ? CompressionFileStatus.Done : CompressionFileStatus.Error;
+
+                if (item.IsDone)
+                {
+                    // For AllPagesPerFile the primary OutputPath is a base path that was never
+                    // written - sum the actual per-page files from the service result instead.
+                    var actualPaths = job.Result?.OutputPaths;
+                    item.OutputSizeBytes = (actualPaths is { Count: > 0 })
+                        ? actualPaths.Sum(GetFileSizeBytes)
+                        : GetFileSizeBytes(job.OutputPath);
+                }
+                else
+                {
+                    item.OutputSizeBytes = 0;
+                }
+
                 item.NotifyStatus();
             }
         }
@@ -1462,7 +1526,9 @@ public sealed class ImageToolsViewModel : ViewModelBase
 
     // ── Summary building ──────────────────────────────────────────────────────
 
-    private void BuildSummary(IReadOnlyList<(string input, string output)> paths)
+    // precomputedTotalOut: when provided, used instead of summing paths (needed for
+    // AllPagesPerFile PDF→image where OutputPath is a base path that was never written).
+    private void BuildSummary(IReadOnlyList<(string input, string output)> paths, long? precomputedTotalOut = null)
     {
         int doneCount   = Files.Count(f => f.IsDone);
         int failedCount = Files.Count(f => f.IsError);
@@ -1476,7 +1542,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
         if (_jobIncludedSizeComparison)
         {
             long totalIn  = paths.Sum(p => GetFileSizeBytes(p.input));
-            long totalOut = paths.Sum(p => GetFileSizeBytes(p.output));
+            long totalOut = precomputedTotalOut ?? paths.Sum(p => GetFileSizeBytes(p.output));
             long saved    = Math.Max(0, totalIn - totalOut);
 
             SummaryOrigSizeSegment = string.Format(_loc.Get("compress.summary_seg_orig_size"), FormatBytes(totalIn));
@@ -1487,7 +1553,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
         else
         {
             // Convert-only: no meaningful size comparison.
-            long totalOut = paths.Sum(p => GetFileSizeBytes(p.output));
+            long totalOut = precomputedTotalOut ?? paths.Sum(p => GetFileSizeBytes(p.output));
             SummaryOutputSegment   = string.Format(_loc.Get("imgtools.summary_output_size"), FormatBytes(totalOut));
             SummaryOrigSizeSegment = string.Empty;
             SummaryNewSizeSegment  = string.Empty;
@@ -1517,7 +1583,6 @@ public sealed class ImageToolsViewModel : ViewModelBase
 
     private void InternalReset()
     {
-        CancelPendingAutoReset();
         _isSummaryVisible = false;
         Files.Clear();
         _detectedMimeType = string.Empty;
@@ -1529,6 +1594,7 @@ public sealed class ImageToolsViewModel : ViewModelBase
         _isCompressEnabled = false;
         _isResizeEnabled   = false;
         _isConvertEnabled  = false;
+        _selectedFormatExt = "jpg";
         _jobIncludedSizeComparison = false;
         _pdfPageMode = PdfConvertPageMode.FirstPageOnly;
         _imageToPdfMode = ImageToPdfMode.OnePerFile;
@@ -1543,8 +1609,20 @@ public sealed class ImageToolsViewModel : ViewModelBase
         _originalHeight = null;
         _userHasManuallyChangedDimensions = false;
         _compressDisabledByFormat = false;
+        _resizeDisabledByFormat = false;
         OnPropertyChanged(nameof(WidthText));
         OnPropertyChanged(nameof(HeightText));
+        OnPropertyChanged(nameof(SelectedFormatExt));
+        OnPropertyChanged(nameof(IsFormatJpeg));
+        OnPropertyChanged(nameof(IsFormatPng));
+        OnPropertyChanged(nameof(IsFormatWebp));
+        OnPropertyChanged(nameof(IsFormatAvif));
+        OnPropertyChanged(nameof(IsFormatGif));
+        OnPropertyChanged(nameof(IsFormatBmp));
+        OnPropertyChanged(nameof(IsFormatTiff));
+        OnPropertyChanged(nameof(IsFormatIco));
+        OnPropertyChanged(nameof(IsFormatTga));
+        OnPropertyChanged(nameof(IsFormatPdf));
 
         OnPropertyChanged(nameof(HasFiles));
         OnPropertyChanged(nameof(ShowFileList));
@@ -1567,22 +1645,6 @@ public sealed class ImageToolsViewModel : ViewModelBase
         FireToggleAndSectionProps();
     }
 
-    // ── Auto-reset timer ─────────────────────────────────────────────────────
-
-    private void ScheduleAutoReset(bool hasErrors)
-    {
-        CancelPendingAutoReset();
-        _resetTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(hasErrors ? 8 : 3) };
-        _resetTimer.Tick += (_, _) => { CancelPendingAutoReset(); InternalReset(); };
-        _resetTimer.Start();
-    }
-
-    private void CancelPendingAutoReset()
-    {
-        _resetTimer?.Stop();
-        _resetTimer = null;
-    }
-
     // ── FireToggleAndSectionProps ─────────────────────────────────────────────
 
     /// <summary>
@@ -1602,6 +1664,8 @@ public sealed class ImageToolsViewModel : ViewModelBase
         OnPropertyChanged(nameof(ShowCompressSection));
         OnPropertyChanged(nameof(ShowResizeSection));
         OnPropertyChanged(nameof(ShowConvertSection));
+        OnPropertyChanged(nameof(ShowPdfConvertOptions));
+        OnPropertyChanged(nameof(ShowImageToPdfOptions));
         OnPropertyChanged(nameof(ShowGifOptions));
         OnPropertyChanged(nameof(ShowTiffOptions));
         OnPropertyChanged(nameof(ShowPdfOptions));

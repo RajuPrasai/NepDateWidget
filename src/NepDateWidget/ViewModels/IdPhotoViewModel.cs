@@ -12,7 +12,7 @@ namespace NepDateWidget.ViewModels;
 
 /// <summary>
 /// Manages the ID / Passport Photo sub-view state.
-/// Singleton — survives shell expand/collapse cycles.
+/// Singleton - survives shell expand/collapse cycles.
 /// All image processing is done inline via Magick.NET.
 /// </summary>
 public sealed class IdPhotoViewModel : ViewModelBase
@@ -88,7 +88,7 @@ public sealed class IdPhotoViewModel : ViewModelBase
         }
     }
 
-    /// <summary>Target width in mm — always derived from the editable text input.</summary>
+    /// <summary>Target width in mm - always derived from the editable text input.</summary>
     public double TargetWidthMm
     {
         get
@@ -99,7 +99,7 @@ public sealed class IdPhotoViewModel : ViewModelBase
         }
     }
 
-    /// <summary>Target height in mm — always derived from the editable text input.</summary>
+    /// <summary>Target height in mm - always derived from the editable text input.</summary>
     public double TargetHeightMm
     {
         get
@@ -239,7 +239,7 @@ public sealed class IdPhotoViewModel : ViewModelBase
 
     // ── Sheet size ────────────────────────────────────────────────────────────
     // SheetSizes are lookup-only: selecting a preset populates the editable mm inputs.
-    // 0=A4  1=4R  2=3R  3=5R  — mm values at 300 DPI
+    // 0=A4  1=4R  2=3R  3=5R  - mm values at 300 DPI
 
     private static readonly (double WMm, double HMm)[] SheetPresets =
     [
@@ -425,10 +425,10 @@ public sealed class IdPhotoViewModel : ViewModelBase
 
     // ── Validation limits and properties ─────────────────────────────────────
 
-    private const double PhotoDimMinMm = 10.0;   // 10 mm — smallest practical ID photo dimension
-    private const double PhotoDimMaxMm = 250.0;  // 250 mm — larger than A4 short edge
-    private const double SheetDimMinMm = 50.0;   // 50 mm — smallest practical paper dimension
-    private const double SheetDimMaxMm = 1200.0; // 1200 mm — covers A0 (841×1189 mm) with margin
+    private const double PhotoDimMinMm = 10.0;   // 10 mm - smallest practical ID photo dimension
+    private const double PhotoDimMaxMm = 250.0;  // 250 mm - larger than A4 short edge
+    private const double SheetDimMinMm = 50.0;   // 50 mm - smallest practical paper dimension
+    private const double SheetDimMaxMm = 1200.0; // 1200 mm - covers A0 (841×1189 mm) with margin
     private const int    ColsRowsMax   = 50;     // max columns or rows on a sheet
 
     public bool IsPhotoWidthValid  => TargetWidthMm  >= PhotoDimMinMm && TargetWidthMm  <= PhotoDimMaxMm;
@@ -731,7 +731,7 @@ public sealed class IdPhotoViewModel : ViewModelBase
 
         if (_cropShape == 1)
         {
-            // Apply circular mask — pixels outside the inscribed ellipse become transparent.
+            // Apply circular mask - pixels outside the inscribed ellipse become transparent.
             using var mask = new MagickImage(MagickColors.Transparent, (uint)targetW, (uint)targetH);
             mask.Alpha(AlphaOption.On);
             new Drawables()
@@ -803,7 +803,7 @@ public sealed class IdPhotoViewModel : ViewModelBase
         // Derive the exact gap that makes every horizontal space identical (left margin =
         // inter-photo gap = right margin) and every vertical space identical, using integer
         // division. The rounding remainder is at most (cols) or (rows) extra pixels on the
-        // far edge — imperceptible at 300 DPI.
+        // far edge - imperceptible at 300 DPI.
         int gx = (sheetW - cols * placedW) / (cols + 1);
         int gy = (sheetH - rows * placedH) / (rows + 1);
 

@@ -1,9 +1,9 @@
 using ImageMagick;
 using NepDateWidget.Models;
+using PdfSharp;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 using System.IO;
-using System.Windows.Media.Imaging;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using WinPdf = Windows.Data.Pdf;
@@ -16,7 +16,7 @@ public sealed class PdfTranscodeService : IPdfTranscodeService
     // Maps to roughly 72/100/144/216/288 DPI for a standard A4 page.
     private static readonly uint[] RenderWidths = [600u, 900u, 1200u, 1800u, 2400u];
 
-    // Output format quality per level — mirrors ImageConversionService tables.
+    // Output format quality per level - mirrors ImageConversionService tables.
     private static readonly int[] JpegQuality = [30, 50, 70, 85, 95];
     private static readonly int[] WebpQuality = [25, 45, 65, 80, 90];
     private static readonly uint[] PngCompression = [9u, 7u, 6u, 4u, 1u];
@@ -30,13 +30,13 @@ public sealed class PdfTranscodeService : IPdfTranscodeService
         int qualityLevel,
         PdfConvertPageMode pageMode)
     {
+        var outputPaths = new List<string>();
         try
         {
             int level = Math.Clamp(qualityLevel, 0, 4);
             uint renderWidth = RenderWidths[level];
             string ext = targetExt.TrimStart('.').ToLowerInvariant();
 
-            // Load PDF via Windows.Data.Pdf (built into Windows 10, no Ghostscript needed).
             var file = StorageFile.GetFileFromPathAsync(inputPath).AsTask().GetAwaiter().GetResult();
             var pdfDoc = WinPdf.PdfDocument.LoadFromFileAsync(file).AsTask().GetAwaiter().GetResult();
 
@@ -46,8 +46,6 @@ public sealed class PdfTranscodeService : IPdfTranscodeService
             uint pageCount = pdfDoc.PageCount;
             if (pageCount == 0)
                 return new ImageConversionResult(false, "PDF contains no pages.");
-
-            var outputPaths = new List<string>();
 
             switch (pageMode)
             {
@@ -77,15 +75,15 @@ public sealed class PdfTranscodeService : IPdfTranscodeService
 
                 case PdfConvertPageMode.AllPagesCombined:
                 {
-                    // Render every page into a MagickImage, then stack vertically.
                     using var collection = new MagickImageCollection();
                     for (uint p = 0; p < pageCount; p++)
                     {
                         var pageBytes = RenderPageToBytes(pdfDoc, p, renderWidth);
                         collection.Add(new MagickImage(pageBytes));
                     }
-                    using var combined = collection.AppendVertically();
-                    ApplyFormatSettings((IMagickImage<ushort>)combined, ext, level);
+                    // Q8 AppendVertically() returns IMagickImage<byte>; the concrete type is MagickImage.
+                    using var combined = (MagickImage)collection.AppendVertically();
+                    ApplyFormatSettings(combined, ext, level);
                     combined.Write(outputBasePath);
                     outputPaths.Add(outputBasePath);
                     break;
@@ -96,6 +94,9 @@ public sealed class PdfTranscodeService : IPdfTranscodeService
         }
         catch (Exception ex)
         {
+            // Clean up any partially written files so stale outputs are not left on disk.
+            foreach (var path in outputPaths)
+                TryDelete(path);
             return new ImageConversionResult(false, ex.Message);
         }
     }
@@ -139,43 +140,36 @@ public sealed class PdfTranscodeService : IPdfTranscodeService
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Adds one page to an open PdfDocument by decoding the source image via MagickImage
-    /// (supports all formats including HEIC, WebP, AVIF, RAW, etc.) and embedding it
-    /// as a lossless PNG stream so PDFsharp's XImage can consume it.
-    /// Page dimensions are derived from the image's native pixel size at 96 DPI.
-    /// </summary>
+    // Adds one page to an open PdfDocument. Page is always A4 portrait; the image
+    // is scaled to fit (preserving aspect ratio) and centered, leaving white margins.
     private static void AddImagePageToPdf(PdfDocument doc, string imagePath)
     {
-        // MagickImage handles any format Magick.NET supports — far broader than PDFsharp.
         using var magick = new MagickImage(imagePath);
 
-        // Animated formats: use first frame only.
         if (magick.BaseWidth == 0)
             throw new InvalidOperationException($"Could not read image dimensions from '{Path.GetFileName(imagePath)}'.");
 
         var pngBytes = magick.ToByteArray(MagickFormat.Png);
 
-        // Decode via WPF to get DPI-aware BitmapFrame.
-        BitmapFrame frame;
-        using (var ms = new MemoryStream(pngBytes))
-            frame = BitmapFrame.Create(ms, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
-
-        double dpiX = frame.DpiX > 0 ? frame.DpiX : 96.0;
-        double dpiY = frame.DpiY > 0 ? frame.DpiY : 96.0;
-
         var page = doc.AddPage();
-        // XUnit.FromPoint: 1 point = 1/72 inch.  pixels / dpi * 72 = points.
-        page.Width  = XUnit.FromPoint(frame.PixelWidth  * 72.0 / dpiX);
-        page.Height = XUnit.FromPoint(frame.PixelHeight * 72.0 / dpiY);
+        page.Size        = PageSize.A4;
+        page.Orientation = PageOrientation.Portrait;
 
+        double pageW = page.Width.Point;
+        double pageH = page.Height.Point;
+        double imgW  = (double)magick.Width;
+        double imgH  = (double)magick.Height;
+
+        double scale = Math.Min(pageW / imgW, pageH / imgH);
+        double drawW = imgW * scale;
+        double drawH = imgH * scale;
+        double drawX = (pageW - drawW) / 2.0;
+        double drawY = (pageH - drawH) / 2.0;
+
+        using var imgStream = new MemoryStream(pngBytes);
+        using var xImage = XImage.FromStream(imgStream);
         using var gfx = XGraphics.FromPdfPage(page);
-
-        // PDFsharp 6 XImage.FromStream takes Stream directly.
-        var captured = pngBytes;
-        using var imgStream = new MemoryStream(captured);
-        var xImage = XImage.FromStream(imgStream);
-        gfx.DrawImage(xImage, 0, 0, page.Width.Point, page.Height.Point);
+        gfx.DrawImage(xImage, drawX, drawY, drawW, drawH);
     }
 
     private static void RenderPageToFile(
@@ -215,7 +209,7 @@ public sealed class PdfTranscodeService : IPdfTranscodeService
                 image.Quality = (uint)WebpQuality[level];
                 break;
             case "avif":
-                image.Quality = (uint)WebpQuality[level]; // reuse webp table — same perceptual range
+                image.Quality = (uint)WebpQuality[level]; // reuse webp table - same perceptual range
                 break;
             case "png":
                 image.Quality = PngCompression[level];
