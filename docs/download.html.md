@@ -1,4 +1,4 @@
-# Download NepDate Widget — Free Nepali Calendar for Windows
+# Download NepDate Widget - Free Nepali Calendar for Windows
 
 NepDate Widget is free. Install it on Windows 10 or Windows 11 in under a minute with no admin rights.
 
@@ -12,9 +12,9 @@ App ID: 9PG97WBJX1NQ
 
 Benefits of the Store install:
 - No UAC (admin) prompt
-- Nothing written to system folders — per-user install
+- Nothing written to system folders - per-user install
 - Silent automatic updates in the background
-- Requires a Microsoft account for the Store installation step only — the app itself runs with no account
+- Requires a Microsoft account for the Store installation step only - the app itself runs with no account
 
 ---
 
@@ -32,17 +32,17 @@ Download the `.msix` installer, double-click to install. No Microsoft account ne
 |---|---|
 | OS | Windows 10 version 1809 (October 2018 Update) or later, Windows 11 |
 | Architecture | 64-bit (x64) only |
-| .NET | Included in the package — no separate install |
+| .NET | Included in the package - no separate install |
 | Disk space | Under 25 MB |
 | Admin rights | Not required |
 | Internet | Not required after install (network tools and web search need connection) |
-| Account | Not required — zero sign-in |
+| Account | Not required - zero sign-in |
 
 ---
 
 ## Current Version
 
-**1.0.2** — see the [Changelog](https://nepdatewidget.rajuprasai.com.np/changelog.html) for what changed.
+**1.0.2** - see the [Changelog](https://nepdatewidget.rajuprasai.com.np/changelog.html) for what changed.
 
 ---
 

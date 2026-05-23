@@ -231,7 +231,7 @@ Do not propose changes to `Package.appxmanifest` publisher identity, `store-iden
 
 The `docs/` folder is a static website served via GitHub Pages. The rules below apply whenever touching any file in `docs/`.
 
-**HTML correctness.** `<title>` text content must use `&amp;` not bare `&`. Attribute values containing `&` should also use `&amp;`. HTML entity references in visible text (`&harr;`, `&amp;`, etc.) are fine and render correctly.
+**HTML correctness.** `<title>` text content must use `-` not bare `&`. Attribute values containing `&` should also use `-`. HTML entity references in visible text (`&harr;`, `-`, etc.) are fine and render correctly.
 
 **Schema.org JSON-LD.** Every page has one or more `<script type="application/ld+json">` blocks. These must remain valid JSON after any edit - no duplicate keys, no trailing commas. Validate mentally after every change. `alternateName` should be an array when the entity has more than one known name or alias.
 
@@ -260,7 +260,7 @@ Before finalizing any response involving code changes:
 7. **Verify class/namespace structure after any removal.** When removing a test or code block, confirm the surrounding namespace declaration, class declaration, and all braces are intact. Read at least 10 lines before the removed region to validate.
 8. **Go deeper before concluding.** A surface reading is a starting point, not a conclusion. If something looks correct at a glance, verify it against the actual spec, file, or external documentation before asserting it is correct. This applies equally to C# behavior, Schema.org validity, Google Search Console rules, Store submission requirements, and HTML correctness.
 9. **For external systems, verify against the official specification.** Do not assume what is valid for SEO markup, structured data, store submissions, or APIs - fetch or read the authoritative source before proposing a fix.
-10. **After any batch edit, verify structural integrity.** For JSON-LD: no duplicate keys, valid syntax. For HTML: entity escaping in text content (`&amp;` not `&` in `<title>` and attribute values). For XML: well-formedness. For sitemap and schema dates: they must stay in sync.
+10. **After any batch edit, verify structural integrity.** For JSON-LD: no duplicate keys, valid syntax. For HTML: entity escaping in text content (`-` not `&` in `<title>` and attribute values). For XML: well-formedness. For sitemap and schema dates: they must stay in sync.
 
 When uncertain, read the file. Do not guess.
 
@@ -280,7 +280,7 @@ When uncertain, read the file. Do not guess.
 - Removing a method from a test file with imprecise context matching can silently delete the namespace declaration and class header, leaving orphaned method bodies that produce `CS0106`/`CS8803` build errors. Always read at least 5 lines before and after the target region before applying a removal.
 - Using a date-only string (`"2026-01-01"`) for `uploadDate` in a `VideoObject` schema. Google types this field as `DateTime`, not `Date` - a date-only value triggers a Search Console warning. Always use full ISO 8601 with timezone.
 - Modifying any page in `docs/` without updating both `WebPage.dateModified` in that page's JSON-LD and `<lastmod>` in `sitemap.xml`. The two must stay in sync or Google's freshness signals for the page are stale.
-- Bare `&` in `<title>` tag text content. Must be `&amp;`. HTML5 parsers are lenient but Search Console's HTML report flags it.
+- Bare `&` in `<title>` tag text content. Must be `-`. HTML5 parsers are lenient but Search Console's HTML report flags it.
 - Setting `alternateName` to a single string in Schema.org JSON-LD when the entity has multiple known names. Use an array: `"alternateName": ["Name One", "Name Two"]`.
 - Proposing an SEO fix based on a surface reading of the warning message without checking what the spec actually requires. Always verify the field type and required format against the official Google documentation or Schema.org spec before concluding what the correct value is.
 - Assuming `NepaliDate` allocation is a bottleneck - it is not. `readonly partial struct`, O(1) lookup, ~5 ns, zero heap allocations. The one-per-cell rule is about avoiding redundant calendar lookups, not GC pressure. Do not optimise away from it for the wrong reason.

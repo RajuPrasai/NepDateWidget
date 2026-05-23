@@ -1,4 +1,4 @@
-# NepDate Widget — Free Nepali Date Converter & Calendar for Windows
+# NepDate Widget - Free Nepali Date Converter & Calendar for Windows
 
 NepDate Widget is a free Windows 10/11 desktop widget that converts Bikram Sambat (BS) dates to Gregorian (AD) and AD to BS instantly, shows a full Bikram Sambat calendar (Nepali Patro), and bundles 25+ productivity tools in one offline app. It runs on the taskbar as a compact pill showing today's Nepali date and expands on click.
 
@@ -10,7 +10,7 @@ NepDate Widget is a free Windows 10/11 desktop widget that converts Bikram Samba
 
 ## Key Features
 
-### Nepali Date Converter — BS to AD and AD to BS
+### Nepali Date Converter - BS to AD and AD to BS
 
 Converts any Bikram Sambat date to Gregorian (AD) or Gregorian to BS instantly. Accepts Nepali digits (१२३), English digits, full or short Nepali month names, and any separator (/, -, .). Also calculates the difference between two BS dates in years, months, and days, and adds or subtracts a number of days from a BS date.
 
@@ -30,7 +30,7 @@ Converts Preeti-encoded Nepali text to Unicode Devanagari and back. Also support
 
 ### QR Code Generator and Decoder
 
-Generates QR codes for plain text, URLs, vCard contacts, and WiFi credentials. WiFi mode scans nearby networks — select yours, enter the password, generate a scannable code. Export as PNG or copy to clipboard. Decode mode reads any QR image.
+Generates QR codes for plain text, URLs, vCard contacts, and WiFi credentials. WiFi mode reads your saved Windows WiFi profiles - select a network, password auto-filled for user-owned profiles, generate a scannable code. Export as PNG or copy to clipboard. Decode mode reads any QR image.
 
 ### Password Generator
 
@@ -38,13 +38,13 @@ Configurable length and character sets (uppercase, lowercase, digits, symbols, N
 
 ### Network Toolkit
 
-Six built-in network tools: Ping (with live RTT graph), Traceroute, IP Scanner (subnet scan), Whois lookup, DNS lookup, My IP (public IPv4/IPv6 + local IPs + ISP info). Requires internet — all other tools work offline.
+Six built-in network tools: Ping (with live RTT graph), Traceroute, IP Scanner (subnet scan), Whois lookup, DNS lookup, My IP (public IPv4/IPv6 + local interface IPs). Requires internet - all other tools work offline.
 
 ### RunBox Global Launcher
 
 Hotkey (default: Ctrl+Shift+Space) summons a command launcher from anywhere in Windows. Supports web search prefixes, arithmetic, file/folder opening, and custom scripts (PowerShell, Python, batch, WSL). Fully configurable via JSON files.
 
-### Unit Converter — Traditional Nepali Units
+### Unit Converter - Traditional Nepali Units
 
 Land: Ropani, Aana, Paisa, Dam, Bigha, Katha, Dhur, Khetmuri to/from square metres, square feet, acres. Weight: Tola (1 tola = 11.6638 g per Nepal Weights and Measures Act), Chatak, Dharni, Mana, Pathi, Muri, and standard units.
 
@@ -58,7 +58,7 @@ Crop photos to print presets: Passport/MRP 35×45 mm, Auto/VISA Size 25×30 mm, 
 
 ### Image Tools
 
-Batch compress (5-level quality slider), resize (exact pixel dimensions), and convert format — all in one pass. 30+ input formats: JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO, TGA, HEIC, all major RAW formats (ARW, CR2, CR3, DNG, NEF, ORF, RAF, RW2, ERF, PEF, X3F), PDF.
+Batch compress (5-level quality slider), resize (exact pixel dimensions), and convert format - all in one pass. 30+ input formats: JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF, ICO, TGA, HEIC, all major RAW formats (ARW, CR2, CR3, DNG, NEF, ORF, RAF, RW2, ERF, PEF, X3F), PDF.
 
 ---
 
@@ -73,10 +73,10 @@ BS months: Baishakh, Jestha, Ashadh, Shrawan, Bhadra, Ashwin, Kartik, Mangsir, P
 ## Privacy and System Requirements
 
 - Zero telemetry, no analytics, no account required
-- All data stored as plain JSON in %LOCALAPPDATA% — fully portable, easily backed up
+- All data stored as plain JSON in %LOCALAPPDATA% - fully portable, easily backed up
 - Windows 10 version 1809 or later, Windows 11, 64-bit only
 - Install size: under 25 MB, negligible CPU when idle
-- No admin (UAC) prompt required — per-user Microsoft Store install
+- No admin (UAC) prompt required - per-user Microsoft Store install
 - Updates delivered automatically in the background
 
 ---
@@ -99,7 +99,7 @@ Almost entirely. Date converter, calendar, EMI, Preeti converter, QR, password, 
 Hamro Patro is a mobile/web Nepali calendar and news platform. NepDate Widget is a native Windows desktop productivity app focused on offline tools (date conversion, EMI, Preeti, network diagnostics, RunBox, image tools) that Hamro Patro does not provide.
 
 **What legacy Nepali fonts does the converter support?**
-Preeti, Kantipur, Himalaya, Sagarmatha, and four additional legacy Nepali typefaces — 8 fonts total.
+Preeti, Kantipur, Himalaya, Sagarmatha, and four additional legacy Nepali typefaces - 8 fonts total.
 
 **Can it show the Nepali calendar for 2083 and future years?**
 Yes. The calendar covers BS 1970 to 2100, including all future years with tithi and public holiday data.

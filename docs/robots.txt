@@ -64,7 +64,7 @@ Allow: /
 User-agent: Meta-ExternalFetcher
 Allow: /
 
-# Common Crawl — foundation dataset used by most LLM training pipelines
+# Common Crawl - foundation dataset used by most LLM training pipelines
 User-agent: CCBot
 Allow: /
 
@@ -80,7 +80,7 @@ Allow: /
 User-agent: AI2Bot
 Allow: /
 
-# Diffbot — knowledge graph used by several AI systems
+# Diffbot - knowledge graph used by several AI systems
 User-agent: Diffbot
 Allow: /
 

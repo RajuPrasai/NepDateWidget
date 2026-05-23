@@ -2,9 +2,9 @@
 
 <img alt="NepDate Widget" src="docs/assets/screenshots/website-hero.png" width="720" />
 
-**Premium Nepali Calendar, Date Converter, and Productivity Widget for PC.**
+**NepDate Widget - Free Nepali Date Converter, Bikram Sambat Calendar, and Productivity Widget for Windows.**
 
-The नेपाली desktop companion that speaks quality.
+NepDate Widget is a free WPF desktop application for Windows 10 and 11 that converts Bikram Sambat (BS) dates to Gregorian (AD) and back instantly, shows a full Nepali calendar (Nepali Patro) with tithi and public holidays, and bundles 25+ offline tools in a compact taskbar mini bar. Available on the Microsoft Store (App ID: 9PG97WBJX1NQ). Developer: Raju Prasai. Platform: Windows 10 version 1809 or later, Windows 11, 64-bit, WPF on .NET 10. Free for personal use, zero telemetry, no account required.
 
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%20%2F%2011-0078D4?style=flat-square&logo=windows)](https://nepdatewidget.rajuprasai.com.np/download.html)
 [![Version](https://img.shields.io/badge/version-1.0.2-brightgreen?style=flat-square)](https://nepdatewidget.rajuprasai.com.np/changelog.html)
@@ -19,7 +19,7 @@ The नेपाली desktop companion that speaks quality.
 
 ---
 
-NepDate Widget sits on your Windows taskbar as a compact two-line bar showing the current Bikram Sambat and Gregorian date and time. Click to expand into a full BS calendar with tithi, public holidays, and 25+ tools built for daily Nepali use - all offline, no account, no telemetry.
+NepDate Widget sits on your Windows taskbar as a compact mini bar showing the current Bikram Sambat and Gregorian date and time. Click to expand into a full Bikram Sambat calendar (Nepali Patro) with tithi, public holidays, and 25+ tools built for daily Nepali use - all offline, no account, no telemetry. The app serves anyone who works with both BS and AD dates daily: government paperwork, Nepal Rastra Bank statements, lalpurja land deeds, income tax filings, academic certificates, and payroll records all use Bikram Sambat. NepDate Widget converts any BS date to AD or AD to BS instantly from the taskbar, without opening a browser.
 
 **[See the full feature tour →](https://nepdatewidget.rajuprasai.com.np/features.html)**
 
