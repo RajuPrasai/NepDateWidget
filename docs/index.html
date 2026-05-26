@@ -6,7 +6,7 @@
   <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system');document.documentElement.style.backgroundColor=t==='dark'?'#0a0e1a':'#fff';document.documentElement.classList.add('no-transition');requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('no-transition')})})}()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
-  <title>Nepali Date Converter - Nepali Calendar for Windows - NepDate Widget</title>
+  <title>Nepali Calendar App & Tools For PC - NepDate Widget (Nepali Patro)</title>
   <meta name="description"
     content="Free Nepali date converter for Windows. Convert BS to AD and AD to BS instantly. Bikram Sambat calendar, EMI calculator, Preeti to Unicode, and 25+ offline tools." />
   <link rel="canonical" href="https://nepdatewidget.rajuprasai.com.np/" />
@@ -18,6 +18,12 @@
   <link rel="dns-prefetch" href="https://buymemomo.com" />
   <link rel="preload" as="image" href="assets/screenshots/tab-calander.webp" imagesrcset="assets/screenshots/tab-calander-480w.webp 480w, assets/screenshots/tab-calander.webp 948w" imagesizes="(max-width: 640px) 60vw, 460px" />
   <link rel="preload" as="font" href="assets/fonts/Inter-Variable.woff2" type="font/woff2" crossorigin />
+
+  <!-- RFC 8288 link relations for agent discovery -->
+  <link rel="api-catalog" href="/.well-known/api-catalog" type="application/linkset+json" />
+  <link rel="service-doc" href="/docs/api-reference" type="text/html" title="NepDate Widget API Reference" />
+  <link rel="describedby" href="/.well-known/agent-skills/index.json" type="application/json" title="Agent Skills Discovery Index" />
+  <link rel="alternate" type="text/markdown" href="/index.html.md" title="Markdown version" />
 
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Raju Prasai" />
@@ -298,7 +304,7 @@
     "name": "NepDate Widget - Free Nepali Date Converter & Calendar for Windows",
     "description": "The best free Nepali date converter for Windows. Convert BS to AD and AD to BS instantly, view the Bikram Sambat calendar, calculate loan EMIs, and 25+ more tools - all offline.",
     "url": "https://nepdatewidget.rajuprasai.com.np/",
-    "dateModified": "2026-05-23",
+    "dateModified": "2026-05-24",
     "inLanguage": "en-US",
     "author": {"@type": "Person", "name": "Raju Prasai", "url": "https://github.com/RajuPrasai"},
     "isPartOf": {"@id": "https://nepdatewidget.rajuprasai.com.np/#website"},

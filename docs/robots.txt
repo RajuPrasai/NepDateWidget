@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
+Content-Signal: ai-train=yes, search=yes, ai-input=yes
 
 # AI search crawlers - explicitly allowed for AI-grounded answers
 User-agent: GPTBot

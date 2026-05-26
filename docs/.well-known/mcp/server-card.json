@@ -1,0 +1,48 @@
+{
+  "serverInfo": {
+    "name": "NepDate Widget",
+    "version": "1.0.2"
+  },
+  "transport": {
+    "type": "static-site",
+    "endpoint": "https://nepdatewidget.rajuprasai.com.np/"
+  },
+  "capabilities": {
+    "resources": true,
+    "prompts": false,
+    "tools": false
+  },
+  "description": "Documentation site for NepDate Widget, a free Nepali Calendar App, Nepali date converter and Bikram Sambat calendar application for Windows. Resources include full API reference for the NepDate .NET library, integration guide, and calendar reference pages for BS 2082-2084.",
+  "resources": [
+    {
+      "uri": "https://nepdatewidget.rajuprasai.com.np/",
+      "name": "Homepage",
+      "description": "App overview, feature highlights, download links"
+    },
+    {
+      "uri": "https://nepdatewidget.rajuprasai.com.np/docs/api-reference",
+      "name": "API Reference",
+      "description": "Full NepDate .NET library API reference with constructors, properties, and usage examples"
+    },
+    {
+      "uri": "https://nepdatewidget.rajuprasai.com.np/docs/integration",
+      "name": "Integration Guide",
+      "description": "How to integrate the NepDate library into .NET projects"
+    },
+    {
+      "uri": "https://nepdatewidget.rajuprasai.com.np/docs/faq",
+      "name": "FAQ",
+      "description": "Frequently asked questions about the app and library"
+    },
+    {
+      "uri": "https://nepdatewidget.rajuprasai.com.np/bikram-sambat",
+      "name": "Bikram Sambat Calendar System",
+      "description": "Explanation of the Nepali Bikram Sambat (BS) calendar system"
+    },
+    {
+      "uri": "https://nepdatewidget.rajuprasai.com.np/.well-known/agent-skills/SKILL.md",
+      "name": "Agent Skill Document",
+      "description": "Structured skill document for AI agent navigation of this site"
+    }
+  ]
+}

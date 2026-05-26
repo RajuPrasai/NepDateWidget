@@ -810,3 +810,126 @@
     initHeroClock();
   }
 })();
+
+/* ==========================================================================
+   WebMCP - expose site tools to AI agents via navigator.modelContext
+   Spec: https://webmachinelearning.github.io/webmcp/
+   ========================================================================== */
+(function () {
+  'use strict';
+
+  if (!navigator.modelContext) return;
+
+  const ac = new AbortController();
+
+  function registerTools() {
+    navigator.modelContext.registerTool({
+      name: 'get-site-info',
+      title: 'Get NepDate Widget site info',
+      description: 'Returns structured information about the NepDate Widget site: what the app does, available pages, and key facts about Nepali date conversion.',
+      inputSchema: { type: 'object', properties: {} },
+      execute: async function () {
+        return {
+          app: 'NepDate Widget',
+          description: 'Free Nepali date converter and Bikram Sambat calendar widget for Windows (Windows 10 1803+).',
+          features: [
+            'BS to AD and AD to BS date conversion',
+            'Bikram Sambat calendar with tithi and public holidays',
+            'Preeti to Unicode and Unicode to Preeti text conversion',
+            'Loan EMI calculator with amortization schedule',
+            'Nepali land and weight unit converter',
+            'Network toolkit (ping, traceroute, IP scan, Whois, DNS)',
+            'RunBox global command launcher',
+            'Notes and reminders pinned to BS dates',
+            'Document manager, ID photo tool, batch image compression'
+          ],
+          pages: {
+            home: '/',
+            features: '/features',
+            bikramSambat: '/bikram-sambat',
+            download: '/download',
+            changelog: '/changelog',
+            apiReference: '/docs/api-reference',
+            integration: '/docs/integration',
+            faq: '/docs/faq'
+          },
+          download: 'https://nepdatewidget.rajuprasai.com.np/download',
+          nuget: 'https://www.nuget.org/packages/NepDate/',
+          bsDateRange: 'BS 1901/01/01 through 2199/12/last',
+          calendarMetadataRange: 'BS 2001-2089 (tithi and public holidays)',
+          languages: ['English', 'Nepali (Devanagari)']
+        };
+      },
+      annotations: { readOnlyHint: true }
+    }, { signal: ac.signal });
+
+    navigator.modelContext.registerTool({
+      name: 'navigate-to-page',
+      title: 'Navigate to a NepDate Widget page',
+      description: 'Navigates the browser to a specific page on this site. Use this to show the user the download page, API reference, calendar reference, or any other section.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          page: {
+            type: 'string',
+            enum: ['home', 'features', 'bikram-sambat', 'download', 'changelog', 'api-reference', 'integration', 'faq', 'calendar-2082', 'calendar-2083', 'calendar-2084'],
+            description: 'Which page to navigate to.'
+          }
+        },
+        required: ['page']
+      },
+      execute: async function (input) {
+        var routes = {
+          'home': '/',
+          'features': '/features',
+          'bikram-sambat': '/bikram-sambat',
+          'download': '/download',
+          'changelog': '/changelog',
+          'api-reference': '/docs/api-reference',
+          'integration': '/docs/integration',
+          'faq': '/docs/faq',
+          'calendar-2082': '/nepali-calendar-2082',
+          'calendar-2083': '/nepali-calendar-2083',
+          'calendar-2084': '/nepali-calendar-2084'
+        };
+        var path = routes[input.page];
+        if (!path) return { error: 'Unknown page: ' + input.page };
+        window.location.href = path;
+        return { navigated: path };
+      }
+    }, { signal: ac.signal });
+
+    navigator.modelContext.registerTool({
+      name: 'get-bs-calendar-info',
+      title: 'Get Bikram Sambat calendar information',
+      description: 'Returns factual information about the Bikram Sambat (BS) calendar system used in Nepal, including how it differs from the Gregorian calendar, the current BS year, and month names.',
+      inputSchema: { type: 'object', properties: {} },
+      execute: async function () {
+        var now = new Date();
+        return {
+          system: 'Bikram Sambat (BS), also called Bikram Sambat or BS/VS',
+          offsetFromGregorian: 'Approximately 56 years and 8 months ahead of Gregorian (AD)',
+          currentApproxBsYear: now.getFullYear() + 56,
+          monthNames: [
+            'Baisakh (1)', 'Jestha (2)', 'Ashadh (3)', 'Shrawan (4)',
+            'Bhadra (5)', 'Ashwin (6)', 'Kartik (7)', 'Mangsir (8)',
+            'Poush (9)', 'Magh (10)', 'Falgun (11)', 'Chaitra (12)'
+          ],
+          monthLengths: '29 to 32 days per month; varies each year',
+          weeklyHoliday: 'Saturday',
+          fiscalYearStart: '1 Shrawan (mid-July)',
+          usedIn: 'Nepal (official government calendar)'
+        };
+      },
+      annotations: { readOnlyHint: true }
+    }, { signal: ac.signal });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', registerTools);
+  } else {
+    registerTools();
+  }
+
+  window.addEventListener('unload', function () { ac.abort(); });
+})();

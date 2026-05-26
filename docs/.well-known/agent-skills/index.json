@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "nepdate-widget-site",
+      "type": "skill-md",
+      "description": "Teaches agents how to navigate and extract information from the NepDate Widget website, covering the Nepali date converter app, Bikram Sambat calendar, and the NepDate .NET library API.",
+      "url": "https://nepdatewidget.rajuprasai.com.np/.well-known/agent-skills/SKILL.md",
+      "digest": "sha256:bbda225597e54780a41d64e63d030acd884b55047af0f2144ac55c41e5605e1e"
+    }
+  ]
+}

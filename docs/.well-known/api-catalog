@@ -1,0 +1,21 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://nepdatewidget.rajuprasai.com.np/",
+      "service-doc": [
+        {
+          "href": "https://nepdatewidget.rajuprasai.com.np/docs/api-reference",
+          "type": "text/html",
+          "title": "NepDate Widget API Reference"
+        }
+      ],
+      "describedby": [
+        {
+          "href": "https://nepdatewidget.rajuprasai.com.np/.well-known/agent-skills/index.json",
+          "type": "application/json",
+          "title": "Agent Skills Discovery Index"
+        }
+      ]
+    }
+  ]
+}
