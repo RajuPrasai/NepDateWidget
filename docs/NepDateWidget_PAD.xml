@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XML_DIZ_INFO>
+  <MASTER_PAD_VERSION_INFO>
+    <MASTER_PAD_VERSION>3.01</MASTER_PAD_VERSION>
+    <MASTER_PAD_EDITOR>Manual</MASTER_PAD_EDITOR>
+    <MASTER_PAD_INFO>Portable Application Description, or PAD for short, is a data set that is used by software authors to disseminate product information to anyone interested in their software products. To find out more go to http://www.asp-shareware.org/pad</MASTER_PAD_INFO>
+  </MASTER_PAD_VERSION_INFO>
+  <Company_Info>
+    <Company_Name>RajuPrasai</Company_Name>
+    <Address_1>N/A</Address_1>
+    <Address_2/>
+    <City_Town>N/A</City_Town>
+    <State_Province>N/A</State_Province>
+    <Zip_Postal_Code>N/A</Zip_Postal_Code>
+    <Country>Nepal</Country>
+    <Company_WebSite_URL>https://nepdatewidget.rajuprasai.com.np/</Company_WebSite_URL>
+    <Contact_Info>
+      <Author_First_Name>Raju</Author_First_Name>
+      <Author_Last_Name>Prasai</Author_Last_Name>
+      <Author_Email>Raju.Pr77@gmail.com</Author_Email>
+      <Contact_First_Name>Raju</Contact_First_Name>
+      <Contact_Last_Name>Prasai</Contact_Last_Name>
+      <Contact_Email>Raju.Pr77@gmail.com</Contact_Email>
+    </Contact_Info>
+    <Support_Info>
+      <Sales_Email>Raju.Pr77@gmail.com</Sales_Email>
+      <Support_Email>Raju.Pr77@gmail.com</Support_Email>
+      <General_Email>Raju.Pr77@gmail.com</General_Email>
+    </Support_Info>
+  </Company_Info>
+  <Program_Info>
+    <Program_Name>Nepali Calendar App &amp; Productivity Tools For PC - NepDate Widget (Nepali Patro)</Program_Name>
+    <Program_Version>1.0.2</Program_Version>
+    <Program_Release_Month>05</Program_Release_Month>
+    <Program_Release_Day>01</Program_Release_Day>
+    <Program_Release_Year>2026</Program_Release_Year>
+    <Program_Cost>Freeware</Program_Cost>
+    <Program_Cost_Other>Free for personal use. Source-available under PolyForm Strict License 1.0.0. No account required, zero telemetry.</Program_Cost_Other>
+    <Program_Type>Desktop Application</Program_Type>
+    <Program_OS_Support>Win10,Win10 x64,Win11,Win11 x64</Program_OS_Support>
+    <Program_Language>English,Nepali</Program_Language>
+    <Program_Change_Info>v1.0.2: Image Tools for batch compression, resize, and format conversion (30+ formats). ID Photo passport-size crop with print sheet tiling. QR Code generator with WiFi network profile sharing. Faster widget expand and smoother animations. Reduced memory usage at idle. Improved calendar grid rendering performance.</Program_Change_Info>
+    <Program_Specific_Category>Bikram Sambat calendar and date converter widget for Windows. Nepali Patro with tithi, public holidays, and festivals. 25+ offline tools: EMI calculator, Preeti to Unicode, land area units, password generator, network tools (IP scanner, ping, traceroute, whois, DNS), RunBox launcher.</Program_Specific_Category>
+    <Program_Category_Class>Business::PIMS &amp; Calendars</Program_Category_Class>
+    <Program_System_Requirements>Windows 10 version 1809 (build 17763) or later, Windows 11, 64-bit. .NET 10 runtime is bundled - no separate install required. 100 MB disk space, 4 GB RAM recommended.</Program_System_Requirements>
+    <File_Info>
+      <File_Size_Bytes>93470186</File_Size_Bytes>
+      <File_Size_K>91279</File_Size_K>
+      <File_Size_MB>89.14</File_Size_MB>
+    </File_Info>
+    <Expire_Info>
+      <Has_Expire_Info>N</Has_Expire_Info>
+      <Expire_Count/>
+      <Expire_Based_On/>
+      <Expire_Other_Info/>
+      <Expire_Month/>
+      <Expire_Day/>
+      <Expire_Year/>
+    </Expire_Info>
+  </Program_Info>
+  <Program_Descriptions>
+    <English>
+      <Keywords>nepali date converter, nepali calendar, nepali patro, bs to ad, ad to bs, bikram sambat, nepali widget, windows calendar, nepali date, preeti to unicode, emi calculator, bigha ropani, nepali tools, taskbar calendar, nepali holidays, nepali festival, date conversion, nepali unit converter, password generator, network scanner, runbox, nepali desktop widget</Keywords>
+      <Char_Desc_45>Free Nepali date converter and calendar widget</Char_Desc_45>
+      <Char_Desc_80>Free Nepali date converter, Bikram Sambat calendar, and productivity widget for Windows 10/11. 25+ offline tools.</Char_Desc_80>
+      <Char_Desc_250>NepDate Widget is a free WPF desktop widget for Windows 10 and 11. Displays Bikram Sambat (BS) and Gregorian (AD) dates on your taskbar. Converts BS to AD and AD to BS instantly. Full Nepali calendar with tithi, public holidays, and festivals. Bundles 25+ offline tools.</Char_Desc_250>
+      <Char_Desc_450>NepDate Widget is a free WPF desktop application for Windows 10 and 11. It sits on your taskbar as a compact mini bar showing the current Bikram Sambat and Gregorian date and time. Click to expand into a full Bikram Sambat calendar (Nepali Patro) with tithi, public holidays, and 25+ tools built for daily Nepali use. Convert any BS date to AD or AD to BS instantly from the taskbar without opening a browser. All processing is local, zero telemetry, no account required.</Char_Desc_450>
+      <Char_Desc_2000>NepDate Widget is a free, offline WPF desktop widget for Windows 10 (1809+) and Windows 11. It displays Bikram Sambat (BS) and Gregorian (AD) dates in a compact mini bar on your taskbar. Click to expand into a full Bikram Sambat calendar with tithi, public holidays, and festival data sourced from authoritative BS calendars. The app serves anyone who works with both BS and AD dates daily: government paperwork, bank statements, land deeds, tax filings, academic certificates, and payroll records all use Bikram Sambat.
+
+Core features: Instant BS to AD and AD to BS date conversion with Nepali digit support. Full Bikram Sambat calendar (BS 1970-2100 / AD 1913-2043) with tithi, public holidays, festival data, and holiday countdown. Date days calculator with add, subtract, and difference between two BS dates. Timezone converter with labeled UTC offset dropdowns.
+
+Banking tools: Loan EMI calculator with year-by-year and month-by-month amortization schedule in BS dates. Multi-period simple interest calculator with rate changes over time.
+
+Unit converters: Nepali land area units (Bigha, Kattha, Dhur, Ropani, Aana, Paisa, Dam, Khetmuri) and weight units (Dharni, Pawa, Mana, Pathi, Muri, Tola) with metric and imperial equivalents.
+
+Text tools: Preeti to Unicode and Unicode to Preeti Nepali text converter supporting 9 legacy fonts. Devanagari to Romanized script converter. Password generator with adjustable length, character sets (including Nepali), and live entropy-based strength meter. Word, character, sentence, and line count tool.
+
+Network tools: My IP showing public and private addresses with ISP and geolocation. Ping tool with per-packet RTT and Min/Max/Avg summary. IP Scanner with parallel-ping subnet scan showing hostname, MAC address, and manufacturer. Traceroute hop-by-hop network path. Whois domain lookup. DNS record lookup.
+
+More tools: Document manager attaching files with title, tags, and notes. Quick local notes pinned to BS dates. Reminders with one-shot and recurring schedules pinned to BS dates. ID Photo passport-size crop with print sheet tiling. Image Tools for batch compression, resize, and format conversion (30+ input formats). QR Code Generator with WiFi network profile sharing.
+
+RunBox: Global hotkey (Ctrl+Shift+Space) summons a compact command launcher from anywhere in Windows. Runs commands like the Windows Run dialog, detects URLs, falls back to Google search. History of up to 500 entries with prefix-ranked filtering.
+
+The app supports English and Nepali languages. Light and dark themes are first-class. Available exclusively through the Microsoft Store as an MSIX package with auto-updates and per-user install (no admin prompt). Free for personal use. Zero telemetry. No account required.</Char_Desc_2000>
+    </English>
+  </Program_Descriptions>
+  <Web_Info>
+    <Application_URLs>
+      <Application_Info_URL>https://nepdatewidget.rajuprasai.com.np/</Application_Info_URL>
+      <Application_Order_URL>https://apps.microsoft.com/detail/9PG97WBJX1NQ</Application_Order_URL>
+      <Application_Screenshot_URL>https://nepdatewidget.rajuprasai.com.np/assets/screenshots/tab-calander.webp</Application_Screenshot_URL>
+      <Application_Icon_URL>https://nepdatewidget.rajuprasai.com.np/assets/logo.png</Application_Icon_URL>
+      <Application_XML_File_URL>https://nepdatewidget.rajuprasai.com.np/NepDateWidget_PAD.xml</Application_XML_File_URL>
+    </Application_URLs>
+    <Download_URLs>
+      <Primary_Download_URL>https://apps.microsoft.com/detail/9PG97WBJX1NQ</Primary_Download_URL>
+      <Secondary_Download_URL/>
+      <Additional_Download_URL_1/>
+      <Additional_Download_URL_2/>
+    </Download_URLs>
+  </Web_Info>
+  <Permissions>
+    <Distribution_Permissions>Free for personal use. Source-available under PolyForm Strict License 1.0.0. Redistribution, derivative works, and commercial use require a separate license.</Distribution_Permissions>
+    <EULA>PolyForm Strict License 1.0.0: https://github.com/RajuPrasai/NepDateWidget/blob/main/LICENSE</EULA>
+  </Permissions>
+</XML_DIZ_INFO>
