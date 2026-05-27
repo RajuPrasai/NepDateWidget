@@ -2,7 +2,7 @@
 
 <img alt="NepDate Widget" src="docs/assets/screenshots/website-hero.png" width="720" />
 
-**NepDate Widget - Free Nepali Date Converter, Bikram Sambat Calendar, and Productivity Widget for Windows.**
+**Nepali Calendar App & Productivity Tools For PC - NepDate Widget (Nepali Patro)**
 
 NepDate Widget is a free WPF desktop application for Windows 10 and 11 that converts Bikram Sambat (BS) dates to Gregorian (AD) and back instantly, shows a full Nepali calendar (Nepali Patro) with tithi and public holidays, and bundles 25+ offline tools in a compact taskbar mini bar. Available on the Microsoft Store (App ID: 9PG97WBJX1NQ). Developer: Raju Prasai. Platform: Windows 10 version 1809 or later, Windows 11, 64-bit, WPF on .NET 10. Free for personal use, zero telemetry, no account required.
 
