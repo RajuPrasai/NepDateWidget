@@ -1,0 +1,8 @@
+name = "markdown-for-agents"
+main = "src/worker.js"
+compatibility_date = "2025-10-01"
+workers_dev = false
+
+[[routes]]
+pattern = "nepdatewidget.rajuprasai.com.np/*"
+zone_name = "rajuprasai.com.np"

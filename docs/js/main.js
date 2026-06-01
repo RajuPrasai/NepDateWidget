@@ -812,18 +812,18 @@
 })();
 
 /* ==========================================================================
-   WebMCP - expose site tools to AI agents via navigator.modelContext
+   WebMCP - expose site tools to AI agents via document.modelContext
    Spec: https://webmachinelearning.github.io/webmcp/
    ========================================================================== */
 (function () {
   'use strict';
 
-  if (!navigator.modelContext) return;
+  if (!document.modelContext) return;
 
   const ac = new AbortController();
 
   function registerTools() {
-    navigator.modelContext.registerTool({
+    document.modelContext.registerTool({
       name: 'get-site-info',
       title: 'Get NepDate Widget site info',
       description: 'Returns structured information about the NepDate Widget site: what the app does, available pages, and key facts about Nepali date conversion.',
@@ -863,7 +863,7 @@
       annotations: { readOnlyHint: true }
     }, { signal: ac.signal });
 
-    navigator.modelContext.registerTool({
+    document.modelContext.registerTool({
       name: 'navigate-to-page',
       title: 'Navigate to a NepDate Widget page',
       description: 'Navigates the browser to a specific page on this site. Use this to show the user the download page, API reference, calendar reference, or any other section.',
@@ -899,7 +899,7 @@
       }
     }, { signal: ac.signal });
 
-    navigator.modelContext.registerTool({
+    document.modelContext.registerTool({
       name: 'get-bs-calendar-info',
       title: 'Get Bikram Sambat calendar information',
       description: 'Returns factual information about the Bikram Sambat (BS) calendar system used in Nepal, including how it differs from the Gregorian calendar, the current BS year, and month names.',

@@ -27,9 +27,9 @@ The site documents a Windows desktop application (MSIX, distributed via Microsof
 | /nepali-calendar-2082 | Full 2082 BS calendar reference |
 | /nepali-calendar-2083 | Full 2083 BS calendar reference |
 | /nepali-calendar-2084 | Full 2084 BS calendar reference |
-| /docs/api-reference | NepDate .NET library API reference |
-| /docs/integration | Integration guide for developers |
-| /docs/faq | Frequently asked questions |
+| /docs/api-reference.md | NepDate .NET library API reference |
+| /docs/integration.md | Integration guide for developers |
+| /docs/faq.md | Frequently asked questions |
 
 ## Key facts for agents
 
@@ -46,4 +46,4 @@ The /download page lists the Microsoft Store link and direct MSIX package links 
 
 ## NepDate .NET library
 
-The site also documents the NepDate open-source .NET library used by the app. Full API reference at /docs/api-reference. NuGet: https://www.nuget.org/packages/NepDate/
+The site also documents the NepDate open-source .NET library used by the app. Full API reference at /docs/api-reference.md. NuGet: https://www.nuget.org/packages/NepDate/

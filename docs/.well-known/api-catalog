@@ -2,10 +2,17 @@
   "linkset": [
     {
       "anchor": "https://nepdatewidget.rajuprasai.com.np/",
+      "service-desc": [
+        {
+          "href": "https://nepdatewidget.rajuprasai.com.np/.well-known/mcp/server-card.json",
+          "type": "application/json",
+          "title": "NepDate Widget Service Description"
+        }
+      ],
       "service-doc": [
         {
-          "href": "https://nepdatewidget.rajuprasai.com.np/docs/api-reference",
-          "type": "text/html",
+          "href": "https://nepdatewidget.rajuprasai.com.np/docs/api-reference.md",
+          "type": "text/markdown",
           "title": "NepDate Widget API Reference"
         }
       ],

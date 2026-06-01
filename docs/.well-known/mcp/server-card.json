@@ -20,17 +20,17 @@
       "description": "App overview, feature highlights, download links"
     },
     {
-      "uri": "https://nepdatewidget.rajuprasai.com.np/docs/api-reference",
+      "uri": "https://nepdatewidget.rajuprasai.com.np/docs/api-reference.md",
       "name": "API Reference",
       "description": "Full NepDate .NET library API reference with constructors, properties, and usage examples"
     },
     {
-      "uri": "https://nepdatewidget.rajuprasai.com.np/docs/integration",
+      "uri": "https://nepdatewidget.rajuprasai.com.np/docs/integration.md",
       "name": "Integration Guide",
       "description": "How to integrate the NepDate library into .NET projects"
     },
     {
-      "uri": "https://nepdatewidget.rajuprasai.com.np/docs/faq",
+      "uri": "https://nepdatewidget.rajuprasai.com.np/docs/faq.md",
       "name": "FAQ",
       "description": "Frequently asked questions about the app and library"
     },

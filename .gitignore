@@ -95,3 +95,11 @@ chocolatey/
 # ── Local working notes (AI scratchpad, prep checklists, etc.) ───────────────
 AI/
 *.lscache
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+# Prevent auto-generated root-level wrangler config from accidental wrangler deploy at repo root
+/wrangler.jsonc
+/wrangler.json

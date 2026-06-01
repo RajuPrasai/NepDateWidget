@@ -43,7 +43,7 @@ Optional overlays (individually toggleable):
 
 The taskbar mini bar shows a **live countdown** to the next public holiday in days.
 
-Current year: **BS 2083** (April 13, 2026 – April 13, 2027 AD).
+Current year: **BS 2083** (April 14, 2026 – April 13, 2027 AD).
 
 ---
 
