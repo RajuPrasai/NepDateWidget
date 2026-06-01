@@ -6,3 +6,11 @@ workers_dev = false
 [[routes]]
 pattern = "nepdatewidget.rajuprasai.com.np/*"
 zone_name = "rajuprasai.com.np"
+
+[[routes]]
+pattern = "nepdate.rajuprasai.com.np/*"
+zone_name = "rajuprasai.com.np"
+
+[[routes]]
+pattern = "rajuprasai.com.np/*"
+zone_name = "rajuprasai.com.np"

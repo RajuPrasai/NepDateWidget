@@ -162,7 +162,7 @@ Most Nepali date tools are either web pages (require a browser, cannot run offli
 ## Optional
 
 - [llms-full.txt](https://nepdatewidget.rajuprasai.com.np/llms-full.txt): Full ingestible context - product overview, integration guide, API reference, FAQ, Bikram Sambat reference, Nepali Calendar 2082, Nepali Calendar 2083, Nepali Calendar 2084, and changelog concatenated into one document for LLM pipelines
-- [Gallery](https://nepdatewidget.rajuprasai.com.np/gallery.html): Screenshots of every tab, the mini bar, dark and light themes, and feature examples
+- [Gallery](https://nepdatewidget.rajuprasai.com.np/gallery.html): Screenshots of every tab, the mini bar, dark and light themes, and feature examples ([Markdown](https://nepdatewidget.rajuprasai.com.np/gallery.html.md))
 - [Microsoft Store listing](https://apps.microsoft.com/detail/9PG97WBJX1NQ): Official install page with user ratings and reviews
 - [GitHub repository](https://github.com/RajuPrasai/NepDateWidget): Source code, issue tracker, and release download assets
 - [NepDate .NET library](https://nepdate.rajuprasai.com.np/): The open-source .NET library powering every BS date calculation in NepDate Widget - use it if you need Bikram Sambat date support in your own .NET application

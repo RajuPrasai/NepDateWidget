@@ -98,3 +98,8 @@ User-agent: FriendlyCrawler
 Allow: /
 
 Sitemap: https://nepdatewidget.rajuprasai.com.np/sitemap.xml
+
+# AI agent discovery
+# llms.txt: https://nepdatewidget.rajuprasai.com.np/llms.txt
+# llms-full.txt: https://nepdatewidget.rajuprasai.com.np/llms-full.txt
+# Agent skills: https://nepdatewidget.rajuprasai.com.np/.well-known/agent-skills/index.json

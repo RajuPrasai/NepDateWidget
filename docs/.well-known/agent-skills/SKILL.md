@@ -21,6 +21,7 @@ The site documents a Windows desktop application (MSIX, distributed via Microsof
 |---|---|
 | / | Homepage with hero, feature grid, code demo, download |
 | /features | Full feature list with screenshots |
+| /gallery | 30+ screenshots of every tab, tool, and theme |
 | /bikram-sambat | Explanation of the Bikram Sambat calendar system |
 | /download | Download and installation instructions |
 | /changelog | Version history |
@@ -47,3 +48,5 @@ The /download page lists the Microsoft Store link and direct MSIX package links 
 ## NepDate .NET library
 
 The site also documents the NepDate open-source .NET library used by the app. Full API reference at /docs/api-reference.md. NuGet: https://www.nuget.org/packages/NepDate/
+
+The NepDate library has its own dedicated documentation site at https://nepdate.rajuprasai.com.np/ with complete API reference, benchmarks, FAQ, and changelog. Agent skill document: https://nepdate.rajuprasai.com.np/.well-known/agent-skills/SKILL.md. Full plain-text docs for LLM ingestion: https://nepdate.rajuprasai.com.np/llms-full.txt.

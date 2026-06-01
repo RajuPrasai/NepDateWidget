@@ -35,9 +35,14 @@
       "description": "Frequently asked questions about the app and library"
     },
     {
-      "uri": "https://nepdatewidget.rajuprasai.com.np/bikram-sambat",
+      "uri": "https://nepdatewidget.rajuprasai.com.np/bikram-sambat.html",
       "name": "Bikram Sambat Calendar System",
       "description": "Explanation of the Nepali Bikram Sambat (BS) calendar system"
+    },
+    {
+      "uri": "https://nepdatewidget.rajuprasai.com.np/gallery.html",
+      "name": "Screenshot Gallery",
+      "description": "30+ screenshots of every tab, tool, and theme in NepDate Widget"
     },
     {
       "uri": "https://nepdatewidget.rajuprasai.com.np/.well-known/agent-skills/SKILL.md",

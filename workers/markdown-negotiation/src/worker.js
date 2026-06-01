@@ -7,10 +7,12 @@
  * HTML remains the default for all other requests.
  *
  * Covered pages (have .html.md companion):
- *   index, features, download, bikram-sambat, changelog,
- *   nepali-calendar-2082/2083/2084
+ *   nepdatewidget.rajuprasai.com.np — index, features, download, bikram-sambat,
+ *     changelog, nepali-calendar-2082/2083/2084
+ *   nepdate.rajuprasai.com.np — index, docs, changelog
+ *   rajuprasai.com.np — index
  *
- * Pages without a companion (gallery, privacy, 404) fall back to HTML.
+ * Pages without a companion fall back to HTML.
  *
  * Note: Regular fetch() from a Worker bypasses Worker route matching and goes
  * directly to origin. Service bindings are the only mechanism that routes a
@@ -21,6 +23,42 @@ export default {
   async fetch(request) {
     const url = new URL(request.url);
     let path = url.pathname;
+
+    // .well-known paths are API/discovery files — never HTML pages.
+    // Pass through directly; for api-catalog, also fix the Content-Type.
+    if (path.startsWith('/.well-known/')) {
+      const apiResponse = await fetch(request);
+      if (!path.endsWith('/api-catalog') || !apiResponse.ok) {
+        return apiResponse;
+      }
+      const fixedHeaders = new Headers(apiResponse.headers);
+      fixedHeaders.set('Content-Type', 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"');
+      return new Response(apiResponse.body, {
+        status: apiResponse.status,
+        statusText: apiResponse.statusText,
+        headers: fixedHeaders,
+      });
+    }
+
+    // RFC 8288 Link headers for service discovery, keyed by hostname.
+    const LINK_HEADERS = {
+      'nepdatewidget.rajuprasai.com.np':
+        '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"'
+        + ', </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"'
+        + ', </docs/api-reference.md>; rel="service-doc"; type="text/markdown"'
+        + ', </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
+      'nepdate.rajuprasai.com.np':
+        '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"'
+        + ', </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"'
+        + ', </docs.html.md>; rel="service-doc"; type="text/markdown"'
+        + ', </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
+      'rajuprasai.com.np':
+        '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"'
+        + ', </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"'
+        + ', </index.html.md>; rel="service-doc"; type="text/markdown"'
+        + ', </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
+    };
+    const linkHeader = LINK_HEADERS[url.hostname];
 
     // Normalize path to a concrete .html filename.
     if (path === '/' || path === '') {
@@ -64,16 +102,15 @@ export default {
         // Rough token estimate: ~4 characters per token (GPT-style tokeniser average).
         const tokenCount = Math.ceil(markdown.length / 4);
 
-        return new Response(markdown, {
-          status: 200,
-          headers: {
-            'Content-Type': 'text/markdown; charset=utf-8',
-            'Vary': 'Accept',
-            'x-markdown-tokens': String(tokenCount),
-            'Content-Signal': 'ai-train=yes, search=yes, ai-input=yes',
-            'Cache-Control': 'public, max-age=3600',
-          },
-        });
+        const mdHeaders = {
+          'Content-Type': 'text/markdown; charset=utf-8',
+          'Vary': 'Accept',
+          'x-markdown-tokens': String(tokenCount),
+          'Content-Signal': 'ai-train=yes, search=yes, ai-input=yes',
+          'Cache-Control': 'public, max-age=3600',
+        };
+        if (linkHeader) mdHeaders['Link'] = linkHeader;
+        return new Response(markdown, { status: 200, headers: mdHeaders });
       }
       // Companion not found or unreadable — fall through to HTML response below.
     }
@@ -83,6 +120,7 @@ export default {
     const htmlResponse = await fetch(request);
     const headers = new Headers(htmlResponse.headers);
     headers.set('Vary', 'Accept');
+    if (linkHeader) headers.set('Link', linkHeader);
     return new Response(htmlResponse.body, {
       status: htmlResponse.status,
       statusText: htmlResponse.statusText,

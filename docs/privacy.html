@@ -11,6 +11,11 @@
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
   <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon.png" />
   <link rel="apple-touch-icon" href="assets/favicon.png" />
+  <!-- RFC 8288 link relations for agent discovery -->
+  <link rel="api-catalog" href="/.well-known/api-catalog" type="application/linkset+json" />
+  <link rel="service-desc" href="/.well-known/mcp/server-card.json" type="application/json" title="NepDate Widget service description" />
+  <link rel="service-doc" href="/docs/api-reference.md" type="text/markdown" title="NepDate Widget API Reference" />
+  <link rel="describedby" href="/.well-known/agent-skills/index.json" type="application/json" title="Agent Skills Discovery Index" />
   <meta name="color-scheme" content="light dark" />
   <meta name="robots" content="index, follow" />
   <meta name="author" content="Raju Prasai" />
@@ -34,9 +39,9 @@
     "name": "Privacy Policy - NepDate Widget",
     "description": "NepDate Widget collects no personal data. No telemetry, no analytics, no accounts. Everything stays on your device.",
     "url": "https://nepdatewidget.rajuprasai.com.np/privacy.html",
-    "dateModified": "2026-05-27",
+    "dateModified": "2026-06-01",
     "inLanguage": "en-US",
-    "author": {"@type": "Person", "name": "Raju Prasai", "url": "https://github.com/RajuPrasai"},
+    "author": {"@type": "Person", "@id": "https://rajuprasai.com.np/#person", "name": "Raju Prasai", "url": "https://rajuprasai.com.np/"},
     "isPartOf": {"@id": "https://nepdatewidget.rajuprasai.com.np/#website"},
     "breadcrumb": {
       "@type": "BreadcrumbList",
