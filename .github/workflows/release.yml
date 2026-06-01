@@ -44,13 +44,13 @@ jobs:
       #  Checkout at the exact tag - not at whatever HEAD is on main right now.
       #  Critical for reproducibility and for the manual-trigger path.
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ steps.tag.outputs.value }}
 
       # ── 3. Setup .NET 10 ───────────────────────────────────────────────────
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
@@ -181,7 +181,7 @@ jobs:
       #  to inspect or upload manually - nothing is ever lost to a failed step.
       - name: Upload build artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist-${{ steps.tag.outputs.value }}
           path: dist/
@@ -191,7 +191,7 @@ jobs:
       #  Created as a draft so you can write release notes before going live.
       #  GITHUB_TOKEN is built into every repo - no secrets to configure.
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ steps.tag.outputs.value }}
           name: ${{ steps.tag.outputs.value }}
