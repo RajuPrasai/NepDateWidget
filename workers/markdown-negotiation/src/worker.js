@@ -7,10 +7,10 @@
  * HTML remains the default for all other requests.
  *
  * Covered pages (have .html.md companion):
- *   nepdatewidget.rajuprasai.com.np — index, features, download, bikram-sambat,
+ *   nepdatewidget.rajuprasai.com.np - index, features, download, bikram-sambat,
  *     changelog, nepali-calendar-2082/2083/2084
- *   nepdate.rajuprasai.com.np — index, docs, changelog
- *   rajuprasai.com.np — index
+ *   nepdate.rajuprasai.com.np - index, docs, changelog
+ *   rajuprasai.com.np - index
  *
  * Pages without a companion fall back to HTML.
  *
@@ -24,7 +24,7 @@ export default {
     const url = new URL(request.url);
     let path = url.pathname;
 
-    // .well-known paths are API/discovery files — never HTML pages.
+    // .well-known paths are API/discovery files - never HTML pages.
     // Pass through directly; for api-catalog, also fix the Content-Type.
     if (path.startsWith('/.well-known/')) {
       const apiResponse = await fetch(request);
@@ -68,19 +68,19 @@ export default {
     } else {
       const lastSegment = path.split('/').pop();
       if (!lastSegment.includes('.')) {
-        // Bare path with no extension — assume HTML page.
+        // Bare path with no extension - assume HTML page.
         path = path + '.html';
       } else if (!lastSegment.endsWith('.html')) {
-        // Static asset (CSS, JS, images, XML, etc.) — pass through unchanged.
+        // Static asset (CSS, JS, images, XML, etc.) - pass through unchanged.
         return fetch(request);
       }
-      // else: already ends in .html — use as-is.
+      // else: already ends in .html - use as-is.
     }
 
     const accept = (request.headers.get('Accept') || '').toLowerCase();
 
     if (accept.includes('text/markdown')) {
-      // Build a clean URL for the markdown companion — no query string needed
+      // Build a clean URL for the markdown companion - no query string needed
       // since GitHub Pages serves static files regardless of query parameters.
       const mdUrl = new URL(url.origin + path + '.md');
 
@@ -95,7 +95,7 @@ export default {
           markdown = await mdResponse.text();
         }
       } catch {
-        // Network error or body read failure — fall through to HTML.
+        // Network error or body read failure - fall through to HTML.
       }
 
       if (markdown !== null) {
@@ -112,7 +112,7 @@ export default {
         if (linkHeader) mdHeaders['Link'] = linkHeader;
         return new Response(markdown, { status: 200, headers: mdHeaders });
       }
-      // Companion not found or unreadable — fall through to HTML response below.
+      // Companion not found or unreadable - fall through to HTML response below.
     }
 
     // Default: serve HTML and add Vary: Accept so edge caches keep
