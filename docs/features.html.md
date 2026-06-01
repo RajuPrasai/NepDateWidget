@@ -1,4 +1,4 @@
-# NepDate Widget Features - Every Tab, Every Tool
+# NepDate Widget - Nepali Calendar for Windows - Features
 
 Full documentation for all tools in NepDate Widget, a free Windows 10/11 taskbar widget combining 25+ Nepali productivity tools.
 

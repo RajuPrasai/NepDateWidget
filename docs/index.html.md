@@ -1,4 +1,4 @@
-# NepDate Widget - Free Nepali Date Converter & Calendar for Windows
+# NepDate Widget - Free Nepali Calendar for Windows
 
 NepDate Widget is a free Windows 10/11 desktop widget that converts Bikram Sambat (BS) dates to Gregorian (AD) and AD to BS instantly, shows a full Bikram Sambat calendar (Nepali Patro), and bundles 25+ productivity tools in one offline app. It runs on the taskbar as a compact pill showing today's Nepali date and expands on click.
 
@@ -18,7 +18,7 @@ Converts any Bikram Sambat date to Gregorian (AD) or Gregorian to BS instantly. 
 
 Full monthly grid for any BS month from 1970 to 2100 (AD 1913–2043). Each cell shows the BS day and corresponding AD date. Optional overlays: tithi (lunar day), Nepal government public holidays, major festivals (Dashain, Tihar, Chhath, Holi, Teej, Janai Purnima, etc.), and fiscal year markers. The taskbar mini bar shows a live countdown to the next public holiday.
 
-Current BS year: **2083** (April 2026 – April 2027 AD). BS New Year 2083 began April 13, 2026.
+Current BS year: **2083** (April 2026 – April 2027 AD). BS New Year 2083 began April 14, 2026.
 
 ### Loan EMI Calculator
 
