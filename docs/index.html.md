@@ -1,6 +1,6 @@
 # NepDate Widget - Free Nepali Calendar for Windows
 
-NepDate Widget is a free Windows 10/11 desktop widget that converts Bikram Sambat (BS) dates to Gregorian (AD) and AD to BS instantly, shows a full Bikram Sambat calendar (Nepali Patro), and bundles 25+ productivity tools in one offline app. It runs on the taskbar as a compact pill showing today's Nepali date and expands on click.
+NepDate Widget is a free Windows 10/11 desktop widget that shows a full Bikram Sambat calendar (Nepali Patro) with tithi and holidays, converts Bikram Sambat (BS) dates to Gregorian (AD) and AD to BS instantly, and bundles 25+ productivity tools in one offline app. It runs on the taskbar as a compact pill showing today's Nepali date and expands on click.
 
 **Download:** [Microsoft Store](https://apps.microsoft.com/detail/9PG97WBJX1NQ) (free, no admin required) or [direct download](https://nepdatewidget.rajuprasai.com.np/download.html)
 
@@ -10,15 +10,15 @@ NepDate Widget is a free Windows 10/11 desktop widget that converts Bikram Samba
 
 ## Key Features
 
-### Nepali Date Converter - BS to AD and AD to BS
-
-Converts any Bikram Sambat date to Gregorian (AD) or Gregorian to BS instantly. Accepts Nepali digits (१२३), English digits, full or short Nepali month names, and any separator (/, -, .). Also calculates the difference between two BS dates in years, months, and days, and adds or subtracts a number of days from a BS date.
-
 ### Bikram Sambat Calendar (Nepali Patro)
 
 Full monthly grid for any BS month from 1970 to 2100 (AD 1913–2043). Each cell shows the BS day and corresponding AD date. Optional overlays: tithi (lunar day), Nepal government public holidays, major festivals (Dashain, Tihar, Chhath, Holi, Teej, Janai Purnima, etc.), and fiscal year markers. The taskbar mini bar shows a live countdown to the next public holiday.
 
 Current BS year: **2083** (April 2026 – April 2027 AD). BS New Year 2083 began April 14, 2026.
+
+### Nepali Date Converter - BS to AD and AD to BS
+
+Converts any Bikram Sambat date to Gregorian (AD) or Gregorian to BS instantly. Accepts Nepali digits (१२३), English digits, full or short Nepali month names, and any separator (/, -, .). Also calculates the difference between two BS dates in years, months, and days, and adds or subtracts a number of days from a BS date.
 
 ### Loan EMI Calculator
 
