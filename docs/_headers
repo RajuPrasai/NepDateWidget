@@ -1,5 +1,5 @@
 /*
-  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </docs/api-reference.md>; rel="service-doc"; type="text/markdown", </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"
+  Link: </.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json", </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json", </docs/api-reference.md>; rel="service-doc"; type="text/markdown", </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json", </sitemap.xml>; rel="sitemap"; type="application/xml"
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
@@ -10,9 +10,11 @@
 
 /*.html.md
   Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, noarchive
 
 /docs/*.md
   Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, noarchive
 
 /.well-known/agent-skills/*.md
   Content-Type: text/markdown; charset=utf-8

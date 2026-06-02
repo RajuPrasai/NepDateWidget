@@ -3,8 +3,12 @@
  *
  * When a request carries `Accept: text/markdown`, the Worker looks for a
  * pre-authored `.html.md` companion file at the same path. If found, it
- * returns the markdown with Content-Type: text/markdown and x-markdown-tokens.
- * HTML remains the default for all other requests.
+ * returns the markdown with Content-Type: text/markdown, x-markdown-tokens,
+ * and X-Robots-Tag: noindex to prevent duplicate content indexing.
+ * HTML remains the default for all other requests and carries Content-Signal
+ * and Vary: Accept for correct CDN caching.
+ * Direct requests for .html.md paths are also intercepted to add X-Robots-Tag.
+ * All responses include Link headers for sitemap and agent-discovery endpoints.
  *
  * Covered pages (have .html.md companion):
  *   nepdatewidget.rajuprasai.com.np - index, features, download, bikram-sambat,
@@ -46,17 +50,20 @@ export default {
         '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"'
         + ', </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"'
         + ', </docs/api-reference.md>; rel="service-doc"; type="text/markdown"'
-        + ', </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
+        + ', </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"'
+        + ', </sitemap.xml>; rel="sitemap"; type="application/xml"',
       'nepdate.rajuprasai.com.np':
         '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"'
         + ', </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"'
         + ', </docs.html.md>; rel="service-doc"; type="text/markdown"'
-        + ', </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
+        + ', </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"'
+        + ', </sitemap.xml>; rel="sitemap"; type="application/xml"',
       'rajuprasai.com.np':
         '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"'
         + ', </.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"'
         + ', </index.html.md>; rel="service-doc"; type="text/markdown"'
-        + ', </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"',
+        + ', </.well-known/agent-skills/index.json>; rel="describedby"; type="application/json"'
+        + ', </sitemap.xml>; rel="sitemap"; type="application/xml"',
     };
     const linkHeader = LINK_HEADERS[url.hostname];
 
@@ -71,7 +78,15 @@ export default {
         // Bare path with no extension - assume HTML page.
         path = path + '.html';
       } else if (!lastSegment.endsWith('.html')) {
-        // Static asset (CSS, JS, images, XML, etc.) - pass through unchanged.
+        // .html.md companion files: intercept to add noindex so Google doesn't index the duplicate.
+        if (lastSegment.endsWith('.html.md')) {
+          const assetResponse = await fetch(request);
+          if (!assetResponse.ok) return assetResponse;
+          const h = new Headers(assetResponse.headers);
+          h.set('X-Robots-Tag', 'noindex, noarchive');
+          return new Response(assetResponse.body, { status: assetResponse.status, statusText: assetResponse.statusText, headers: h });
+        }
+        // Other static assets (CSS, JS, images, XML, etc.) - pass through unchanged.
         return fetch(request);
       }
       // else: already ends in .html - use as-is.
@@ -105,6 +120,7 @@ export default {
         const mdHeaders = {
           'Content-Type': 'text/markdown; charset=utf-8',
           'Vary': 'Accept',
+          'X-Robots-Tag': 'noindex, noarchive',
           'x-markdown-tokens': String(tokenCount),
           'Content-Signal': 'ai-train=yes, search=yes, ai-input=yes',
           'Cache-Control': 'public, max-age=3600',
@@ -121,6 +137,7 @@ export default {
     const headers = new Headers(htmlResponse.headers);
     headers.set('Vary', 'Accept');
     if (linkHeader) headers.set('Link', linkHeader);
+    headers.set('Content-Signal', 'ai-train=yes, search=yes, ai-input=yes');
     return new Response(htmlResponse.body, {
       status: htmlResponse.status,
       statusText: htmlResponse.statusText,
