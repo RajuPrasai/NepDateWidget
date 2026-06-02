@@ -14,7 +14,7 @@ corresponding third-party components, not to the rest of NepDate Widget.
 
 ### NepDate
 
-- Source: <https://github.com/TheCrossLegCoder/NepDate>
+- Source: <https://github.com/RajuPrasai/NepDate>
 - License: MIT
 
 ### DocumentFormat.OpenXml

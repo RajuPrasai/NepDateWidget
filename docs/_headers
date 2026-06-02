@@ -7,4 +7,12 @@
 
 /.well-known/api-catalog
   Content-Type: application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"
-  
+
+/*.html.md
+  Content-Type: text/markdown; charset=utf-8
+
+/docs/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/.well-known/agent-skills/*.md
+  Content-Type: text/markdown; charset=utf-8
