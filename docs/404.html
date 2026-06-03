@@ -9,18 +9,19 @@
   <title>Page Not Found - NepDate Widget</title>
   <meta name="description" content="The page you were looking for doesn't exist. Return to the NepDate Widget home page." />
   <meta name="robots" content="noindex, follow" />
-  <link rel="icon" href="assets/favicon.ico" sizes="any" />
-  <link rel="icon" type="image/png" sizes="512x512" href="assets/favicon.png" />
-  <link rel="apple-touch-icon" href="assets/favicon.png" />
-  <link rel="preload" as="font" href="assets/fonts/Inter-Variable.woff2" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="css/style.min.css" />
+  <link rel="icon" href="/assets/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/assets/favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/favicon.png" />
+  <link rel="preload" as="font" href="/assets/fonts/Inter-Variable.woff2" type="font/woff2" crossorigin />
+  <link rel="preload" href="/css/style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="/css/style.min.css" /></noscript>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="inner">
       <a class="brand" href="index.html">
-        <img class="logo-img" src="assets/logo.webp?v=2" alt="NepDate Widget logo" width="30" height="30" />
+        <img class="logo-img" src="/assets/logo.webp?v=2" alt="NepDate Widget logo" width="30" height="30" />
         <span>NepDate Widget</span>
       </a>
       <nav class="nav-main" aria-label="Primary">
@@ -79,7 +80,7 @@
     </div>
   </footer>
 
-  <script src="js/main.min.js" defer></script>
+  <script src="/js/main.min.js" defer></script>
   <script>
     (function(){function l(){
       window.dataLayer=window.dataLayer||[];function g(){dataLayer.push(arguments)}
@@ -95,6 +96,6 @@
     if('requestIdleCallback' in window){requestIdleCallback(l)}
     else{setTimeout(l,3000)}})();
   </script>
-  <script src="js/share-widget.js" defer></script>
+  <script src="/js/share-widget.js" defer></script>
 </body>
 </html>

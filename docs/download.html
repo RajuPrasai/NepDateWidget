@@ -5,7 +5,7 @@
   <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system');document.documentElement.style.backgroundColor=t==='dark'?'#0a0e1a':'#fff';document.documentElement.classList.add('no-transition');requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('no-transition')})})}()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
-  <title>Download Nepali Calendar for PC | Free Nepali Patro</title>
+  <title>Download Nepali Calendar for Windows | Free Nepali Patro</title>
   <meta name="description" content="Download the free Nepali calendar (Patro) for Windows 10 and 11. BS to AD date converter, Bikram Sambat calendar 2083, EMI calculator, Preeti to Unicode." />
   <link rel="canonical" href="https://nepdatewidget.rajuprasai.com.np/download.html" />
   <link rel="icon" href="assets/favicon.ico" sizes="any" />
@@ -60,7 +60,8 @@
   }
   </script>
   <link rel="preload" as="font" href="assets/fonts/Inter-Variable.woff2" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="css/style.min.css" />
+  <link rel="preload" href="css/style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="css/style.min.css" /></noscript>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>

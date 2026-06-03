@@ -130,7 +130,7 @@
   ]);
 
   function escapeHtml(s) {
-    return s.replace(/&/g, '-').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
   function highlightCSharp(src) {
     // tokenize sequentially to avoid nested replacements

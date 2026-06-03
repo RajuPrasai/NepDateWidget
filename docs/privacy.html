@@ -54,7 +54,8 @@
   }
   </script>
   <link rel="preload" as="font" href="assets/fonts/Inter-Variable.woff2" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="css/style.min.css" />
+  <link rel="preload" href="css/style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="css/style.min.css" /></noscript>
   <style>
     .prose h2 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 10px; }
     .prose p  { line-height: 1.7; margin-bottom: 14px; color: var(--text); }

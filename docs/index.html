@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 
 <head>
@@ -6,7 +6,7 @@
   <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system');document.documentElement.style.backgroundColor=t==='dark'?'#0a0e1a':'#fff';document.documentElement.classList.add('no-transition');requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('no-transition')})})}()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
-  <title>Nepali Calendar App - Tools For PC - NepDate Widget</title>
+  <title>Nepali Calendar for PC - NepDate Widget</title>
   <meta name="description"
     content="Free Nepali calendar for Windows. Full Bikram Sambat Patro, BS to AD and AD to BS conversion, EMI calculator, Preeti to Unicode, 25+ offline tools." />
   <link rel="canonical" href="https://nepdatewidget.rajuprasai.com.np/" />
@@ -36,7 +36,7 @@
   <meta property="og:site_name" content="NepDate Widget" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="ne_NP" />
-  <meta property="og:title" content="Free Nepali Calendar for Windows - Date Converter - NepDate Widget" />
+  <meta property="og:title" content="Bikram Sambat Nepali Calendar for Windows - NepDate Widget" />
   <meta property="og:description" content="The best free Nepali calendar for Windows. Full Bikram Sambat Patro, BS↔AD date conversion, Preeti↔Unicode, EMI calculator, network toolkit, and RunBox launcher - one offline widget on your taskbar." />
   <meta property="og:image" content="https://nepdatewidget.rajuprasai.com.np/assets/screenshots/website-hero.webp" />
   <meta property="og:image:width" content="3810" />
@@ -44,7 +44,7 @@
   <meta property="og:url" content="https://nepdatewidget.rajuprasai.com.np/" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@CrossLegCoder" />
-  <meta name="twitter:title" content="Free Nepali Calendar for Windows - Date Converter - NepDate Widget" />
+  <meta name="twitter:title" content="Bikram Sambat Nepali Calendar for Windows - NepDate Widget" />
   <meta name="twitter:description" content="Free Nepali calendar for Windows. Bikram Sambat Patro, BS↔AD date conversion, Preeti↔Unicode, EMI calculator, network tools - one offline Windows widget." />
   <meta name="twitter:image" content="https://nepdatewidget.rajuprasai.com.np/assets/screenshots/website-hero.webp" />
   <meta name="twitter:image:alt" content="NepDate Widget on Windows taskbar with Bikram Sambat calendar open" />
@@ -116,165 +116,7 @@
     "license": "https://polyformproject.org/licenses/strict/1.0.0/"
   }
   </script>
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "@id": "https://nepdatewidget.rajuprasai.com.np/#faq",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "What does NepDate Widget cost?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Nothing. Free for personal use and source-available under PolyForm Strict 1.0.0. If it saves you time, the Buy me a momo button supports continued development." }
-      },
-      {
-        "@type": "Question",
-        "name": "What Windows versions does it support?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Windows 10 and Windows 11 (64-bit, version 1809 or later). The Store version requires a Microsoft account for installation only - the app itself runs with no account." }
-      },
-      {
-        "@type": "Question",
-        "name": "Does NepDate Widget work offline?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Almost entirely yes. The calendar, date tools, unit converter, text tools, EMI calculator, RunBox launcher, notes, reminders, and documents all work without internet. The only things that need a connection are My IP, web search prefixes in RunBox, and the Whois/DNS lookups." }
-      },
-      {
-        "@type": "Question",
-        "name": "What is a Bikram Sambat (BS) date?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Bikram Sambat is Nepal's official calendar system, currently running about 56-57 years ahead of the Gregorian (AD) calendar. Most Nepali government documents, bank statements, and official dates use BS. NepDate Widget shows both calendars side by side and converts between them instantly." }
-      },
-      {
-        "@type": "Question",
-        "name": "How does the Nepali date converter work?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Type any BS (Bikram Sambat) date and the Nepali date converter instantly shows the equivalent AD (Gregorian) date - or type the AD date to get the BS date. The converter accepts Nepali digits, full month names, and flexible separators. It also lets you add or subtract days from a BS date and calculate the gap between two BS dates in years, months, and days." }
-      },
-      {
-        "@type": "Question",
-        "name": "How do I convert a Nepali (BS) date to English (AD) date?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Open the Date tab, select the BS → AD direction, and type the Bikram Sambat year, month, and day. The Gregorian equivalent appears instantly. To go the other way, switch to AD → BS and type the English date." }
-      },
-      {
-        "@type": "Question",
-        "name": "How do I convert today's English date to Nepali (Bikram Sambat) date?",
-        "acceptedAnswer": { "@type": "Answer", "text": "NepDate Widget's mini bar always shows today's Bikram Sambat date on your taskbar. To convert any specific date, open the Date tab, select AD → BS, and type the Gregorian date - the BS equivalent appears immediately." }
-      },
-      {
-        "@type": "Question",
-        "name": "Will NepDate Widget slow down my PC?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No noticeable impact. It is a lightweight WPF app - the mini bar uses negligible CPU when idle. The only background work is checking for due reminders, which runs on a low-frequency timer." }
-      },
-      {
-        "@type": "Question",
-        "name": "Do I need admin rights to install NepDate Widget?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. It is a per-user install via the Microsoft Store - no UAC prompt, nothing written to system folders. Everything is handled silently." }
-      },
-      {
-        "@type": "Question",
-        "name": "How do I update NepDate Widget?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Updates are delivered automatically in the background by the Microsoft Store - you do not need to do anything." }
-      },
-      {
-        "@type": "Question",
-        "name": "How is NepDate Widget different from the NepDate library?",
-        "acceptedAnswer": { "@type": "Answer", "text": "NepDate is a .NET library developers embed in their own apps. NepDate Widget is the end-user desktop app - it uses NepDate internally for every BS date calculation." }
-      },
-      {
-        "@type": "Question",
-        "name": "Does NepDate Widget send any data anywhere?",
-        "acceptedAnswer": { "@type": "Answer", "text": "No. Zero telemetry, no analytics, no account. The only outbound calls happen when you explicitly use a network tool (My IP, ping, scan, whois, DNS) or open a RunBox web search. Everything else stays on your machine." }
-      },
-      {
-        "@type": "Question",
-        "name": "Where is my NepDate Widget data stored?",
-        "acceptedAnswer": { "@type": "Answer", "text": "All data lives in your user profile under %LOCALAPPDATA%. Settings, notes, reminders, documents, shortcuts, and run history are all plain JSON files there." }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I back up or migrate my NepDate Widget data?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes - just copy the AppData folder. Everything is plain JSON, so you can also edit individual files directly, merge data from another machine, or version-control your configuration." }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I use RunBox without opening the widget?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. The global hotkey (Ctrl+Shift+Space by default) summons RunBox from anywhere in Windows - even when the widget is collapsed or the window is not visible. You never need to click the mini bar first." }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I add my own shortcuts and scripts to RunBox?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Search prefixes live in shortcuts.json and custom scripts in scripts.json in your AppData folder. Add, edit, or delete entries - changes take effect immediately, no restart needed." }
-      },
-      {
-        "@type": "Question",
-        "name": "What types of scripts can RunBox run?",
-        "acceptedAnswer": { "@type": "Answer", "text": "PowerShell, batch files, cmd scripts, Python, and WSL - anything your machine can execute. Point the entry at the file path and assign a keyword." }
-      },
-      {
-        "@type": "Question",
-        "name": "Does NepDate Widget support the Nepali language?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Switch the entire UI between English and Nepali instantly from Settings - no restart. All labels, month names, day names, and strings update on the fly. The localization file is a plain JSON you can edit." }
-      },
-      {
-        "@type": "Question",
-        "name": "How much can I customize NepDate Widget's appearance?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Quite a bit. 20 color presets (10 light, 10 dark), 20 font choices, rounded or sharp corners, optional transparency when collapsed, and per-element calendar toggles including tithi, holidays, English day numbers, and Saturday/Sunday highlights." }
-      },
-      {
-        "@type": "Question",
-        "name": "Does NepDate Widget show the Nepali Calendar for 2083, 2084, and future years?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. The Bikram Sambat calendar covers BS years 1970 through 2100 (AD 1913 to 2043). You can navigate freely to any month in that range - past years like 2078, 2079, 2080, 2081, 2082, current year 2083, and future years like 2084, 2085, all the way to 2100 - with tithi, public holidays, and festivals displayed for every month." }
-      },
-      {
-        "@type": "Question",
-        "name": "What is a BS to AD converter and why do I need one?",
-        "acceptedAnswer": { "@type": "Answer", "text": "A BS to AD converter translates dates between Bikram Sambat (the Nepali calendar) and the Gregorian calendar (AD). If you deal with Nepali government documents, bank statements, academic certificates, or any official paperwork, you regularly encounter BS dates that need converting to AD for international forms, travel bookings, or communication with people outside Nepal. NepDate Widget does this conversion instantly and offline from your Windows taskbar." }
-      },
-      {
-        "@type": "Question",
-        "name": "What is Bikram Sambat?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Bikram Sambat (also Vikram Samvat; Nepali: बिक्रम सम्बत; abbreviated BS) is Nepal's official civil and administrative calendar. It runs approximately 56 years and 8 months ahead of the Gregorian (AD) calendar. As of May 2026 AD, the current Bikram Sambat year is 2083. All Nepali government documents, bank statements, land deeds, court records, tax filings, and academic certificates use BS dates." }
-      },
-      {
-        "@type": "Question",
-        "name": "What year is it in the Nepali calendar?",
-        "acceptedAnswer": { "@type": "Answer", "text": "As of May 2026 AD, the current Nepali (Bikram Sambat) year is 2083. BS 2083 started on April 14, 2026 (Baishakh 1, 2083) and ends on April 13, 2027 (the last day of Chaitra 2083). The next year, BS 2084, begins on April 14, 2027." }
-      },
-      {
-        "@type": "Question",
-        "name": "What are the 12 months of the Nepali calendar?",
-        "acceptedAnswer": { "@type": "Answer", "text": "The 12 months of Bikram Sambat in order are: 1. Baishakh (बैशाख), 2. Jestha (जेठ), 3. Ashadh (असार), 4. Shrawan (साउन), 5. Bhadra (भदौ), 6. Ashwin (असोज), 7. Kartik (कार्तिक), 8. Mangsir (मंसिर), 9. Poush (पुस), 10. Magh (माघ), 11. Falgun (फागुन), 12. Chaitra (चैत). Each has 29 to 32 days with lengths defined by a fixed calendar lookup table." }
-      },
-      {
-        "@type": "Question",
-        "name": "When is Nepali New Year 2083?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Nepali New Year 2083 (Nava Barsha 2083) is on April 14, 2026 AD - Baishakh 1, 2083 BS. This national holiday marks the first day of the Bikram Sambat year and is celebrated across Nepal." }
-      },
-      {
-        "@type": "Question",
-        "name": "How far ahead is the Nepali calendar compared to English calendar?",
-        "acceptedAnswer": { "@type": "Answer", "text": "The Nepali (Bikram Sambat) calendar runs approximately 56 years and 8 months ahead of the Gregorian (English/AD) calendar. For example, the year 2026 AD corresponds mostly to BS 2083. The exact offset varies slightly by month because BS months have irregular lengths." }
-      },
-      {
-        "@type": "Question",
-        "name": "What year is 2026 in Nepali calendar?",
-        "acceptedAnswer": { "@type": "Answer", "text": "From January 1 to April 13, 2026 AD, the Nepali (Bikram Sambat) year is 2082. From April 14, 2026 onward, it becomes 2083. So most of the year 2026 AD is the Nepali year 2083." }
-      },
-      {
-        "@type": "Question",
-        "name": "Does NepDate Widget support Nepali Unicode?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. NepDate Widget's Text tab includes a Preeti-to-Unicode converter supporting 8 legacy Nepali font encodings: Preeti, Kantipur, Himalaya, Sagarmatha, and four more. Paste Preeti-encoded text and it converts to proper Unicode Devanagari instantly. Conversion also works in reverse (Unicode to Preeti) and supports full .txt and .docx document files. The app interface itself is fully available in Nepali (नेपाली) - switch language instantly from Settings with no restart." }
-      },
-      {
-        "@type": "Question",
-        "name": "Can I use NepDate Widget for government paperwork dates?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Yes. NepDate Widget's Nepali date converter is built specifically for this use case. Type a Bikram Sambat date from a government form, lalpurja (land deed), court document, bank statement, or academic certificate and get the Gregorian equivalent instantly - or the reverse. Supports BS years 1970 to 2100 and accepts Nepali digits. Works entirely offline, so you are never dependent on an internet connection during document work." }
-      },
-      {
-        "@type": "Question",
-        "name": "What is the difference between BS and AD calendar systems?",
-        "acceptedAnswer": { "@type": "Answer", "text": "BS (Bikram Sambat) is Nepal's official civil and administrative calendar, running approximately 56 years and 8 months ahead of the Gregorian (AD) calendar used internationally. Both are solar calendars, but BS months have irregular lengths (29–32 days) defined by a fixed lookup table rather than a formula. Nepal uses BS for all official documents - government forms, bank statements, tax filings, property deeds, court records, and academic certificates - while most of the world uses AD. As of May 2026 AD, the current Nepali year is BS 2083. NepDate Widget converts between the two calendar systems instantly and works offline." }
-      }
-    ]
-  }
-  </script>
+
 
   <script type="application/ld+json">
   {
@@ -315,7 +157,7 @@
     "@context": "https://schema.org",
     "@type": "WebPage",
     "@id": "https://nepdatewidget.rajuprasai.com.np/#webpage",
-    "name": "NepDate Widget - Free Nepali Calendar for Windows",
+    "name": "Bikram Sambat Nepali Calendar for Windows - NepDate Widget",
     "description": "The best free Nepali calendar for Windows. Full Bikram Sambat Patro with tithi and holidays, BS↔AD date conversion, loan EMI calculator, and 25+ tools - all offline.",
     "url": "https://nepdatewidget.rajuprasai.com.np/",
     "dateModified": "2026-06-01",
@@ -368,7 +210,8 @@
     }
   }
   </script>
-  <link rel="stylesheet" href="css/style.min.css" />
+  <link rel="preload" href="css/style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="css/style.min.css" /></noscript>
 </head>
 
 <body>
