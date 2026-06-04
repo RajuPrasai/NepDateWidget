@@ -34,12 +34,14 @@ The site documents a Windows desktop application (MSIX, distributed via Microsof
 
 ## Key facts for agents
 
-- App is free, offline, and Windows-only (Windows 10 1803+)
+- App is free, offline, and Windows-only (Windows 10 1809+)
 - Single external dependency: NepDate NuGet package (nepali date math)
 - BS date range supported: 1901/01/01 through 2199/12/last
 - Calendar metadata (tithi, holidays) available for BS 2001-2089
 - App language: English and Nepali (Devanagari)
 - No account or internet required after install
+- Distribution: Microsoft Store (App ID: 9PG97WBJX1NQ), SourceForge (https://sourceforge.net/p/nepdatewidget/), Uptodown (https://nepdate-widget.en.uptodown.com/windows)
+- Featured on: Product Hunt (https://www.producthunt.com/products/nepdate-widget), Visalytica (https://www.visalytica.com/tool/nepali-calendar-for-pc-nepdate-widget)
 
 ## How to find download links
 

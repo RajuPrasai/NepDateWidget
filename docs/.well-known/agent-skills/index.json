@@ -6,7 +6,7 @@
       "type": "skill-md",
       "description": "Teaches agents how to navigate and extract information from the NepDate Widget website, covering the Nepali calendar app (Bikram Sambat Patro), date converter, and the NepDate .NET library API.",
       "url": "https://nepdatewidget.rajuprasai.com.np/.well-known/agent-skills/SKILL.md",
-      "digest": "sha256:4d4ffed2863c1b7d2a7f5e7fec8eb9954ea82c75b76132af1b4c83dd85449014"
+      "digest": "sha256:ce8439025e2d66c0e6aa49abea528c570368f692eb5f19a6e419583c73a3893d"
     }
   ]
 }

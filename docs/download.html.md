@@ -18,6 +18,13 @@ Benefits of the Store install:
 
 ---
 
+## Also Available On
+
+- [SourceForge](https://sourceforge.net/p/nepdatewidget/) - alternative download and user reviews
+- [Uptodown](https://nepdate-widget.en.uptodown.com/windows) - Windows download and user ratings
+
+---
+
 ## Direct Download
 
 Available on the [GitHub Releases page](https://github.com/RajuPrasai/NepDateWidget/releases).

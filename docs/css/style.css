@@ -386,7 +386,7 @@ body {
 
 /* -------- Hero -------- */
 .hero {
-  padding: 80px 0 72px;
+  padding: 90px 0 160px;
   position: relative;
   overflow: visible;
 }
@@ -3606,4 +3606,32 @@ kbd {
 .feat-block .lang-compare .shot img {
   width: 100%;
   border-radius: var(--radius-xs);
+}
+
+/* ── Platform badge band ── */
+.section-badge-band { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.badge-band-inner {
+  padding: 48px clamp(20px, 4vw, 60px);
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.badge-band-label {
+  font-size: 1.3rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--accent);
+}
+.badge-band-items {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-evenly; width: 100%; row-gap: 16px;
+}
+.badge-item { display: inline-flex; align-items: center; transition: transform .2s ease, opacity .2s ease; }
+.badge-item:hover { transform: translateY(-3px) scale(1.04); opacity: .85; }
+.badge-band-items img { height: 56px; width: auto; display: block; }
+.badge-item-sf img { height: 40px; width: auto; }
+.badge-ghost { display: inline-flex; flex-direction: row; align-items: center; gap: 12px; height: 60px; }
+.badge-ghost .bg-text { display: flex; flex-direction: column; gap: 4px; }
+.badge-ghost .bg-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; opacity: .55; line-height: 1; }
+.badge-ghost .bg-name { font-size: 1.25rem; font-weight: 700; line-height: 1; white-space: nowrap; }
+@media (max-width: 640px) {
+  .badge-band-inner { padding: 32px clamp(16px, 5vw, 28px); gap: 14px; }
+  .badge-band-items img { height: 44px; }
+  .badge-ghost { height: 48px; }
 }

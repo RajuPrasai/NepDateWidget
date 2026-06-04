@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <script>!function(){var p=null;try{p=localStorage.getItem('nepdate-theme')}catch(e){}if(p!=='light'&&p!=='dark')p=null;var t=p||(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-pref',p||'system');document.documentElement.style.backgroundColor=t==='dark'?'#0a0e1a':'#fff';document.documentElement.classList.add('no-transition');requestAnimationFrame(function(){requestAnimationFrame(function(){document.documentElement.classList.remove('no-transition')})})}()</script>
+  <script>!function () { var p = null; try { p = localStorage.getItem('nepdate-theme') } catch (e) { } if (p !== 'light' && p !== 'dark') p = null; var t = p || (window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'); document.documentElement.setAttribute('data-theme', t); document.documentElement.setAttribute('data-theme-pref', p || 'system'); document.documentElement.style.backgroundColor = t === 'dark' ? '#0a0e1a' : '#fff'; document.documentElement.classList.add('no-transition'); requestAnimationFrame(function () { requestAnimationFrame(function () { document.documentElement.classList.remove('no-transition') }) }) }()</script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#dc3f10" />
   <title>Nepali Calendar for PC - NepDate Widget</title>
@@ -16,14 +16,18 @@
   <meta name="color-scheme" content="light dark" />
   <link rel="dns-prefetch" href="https://github.com" />
   <link rel="dns-prefetch" href="https://buymemomo.com" />
-  <link rel="preload" as="image" href="assets/screenshots/tab-calander.webp" imagesrcset="assets/screenshots/tab-calander-480w.webp 480w, assets/screenshots/tab-calander.webp 948w" imagesizes="(max-width: 640px) 60vw, 460px" />
+  <link rel="preload" as="image" href="assets/screenshots/tab-calander.webp"
+    imagesrcset="assets/screenshots/tab-calander-480w.webp 480w, assets/screenshots/tab-calander.webp 948w"
+    imagesizes="(max-width: 640px) 60vw, 460px" />
   <link rel="preload" as="font" href="assets/fonts/Inter-Variable.woff2" type="font/woff2" crossorigin />
 
   <!-- RFC 8288 link relations for agent discovery -->
   <link rel="api-catalog" href="/.well-known/api-catalog" type="application/linkset+json" />
-  <link rel="service-desc" href="/.well-known/mcp/server-card.json" type="application/json" title="NepDate Widget service description" />
+  <link rel="service-desc" href="/.well-known/mcp/server-card.json" type="application/json"
+    title="NepDate Widget service description" />
   <link rel="service-doc" href="/docs/api-reference.md" type="text/markdown" title="NepDate Widget API Reference" />
-  <link rel="describedby" href="/.well-known/agent-skills/index.json" type="application/json" title="Agent Skills Discovery Index" />
+  <link rel="describedby" href="/.well-known/agent-skills/index.json" type="application/json"
+    title="Agent Skills Discovery Index" />
   <link rel="alternate" type="text/markdown" href="/index.html.md" title="Markdown version" />
 
   <meta name="robots" content="index, follow" />
@@ -37,7 +41,8 @@
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="ne_NP" />
   <meta property="og:title" content="Bikram Sambat Nepali Calendar for Windows - NepDate Widget" />
-  <meta property="og:description" content="The best free Nepali calendar for Windows. Full Bikram Sambat Patro, BS↔AD date conversion, Preeti↔Unicode, EMI calculator, network toolkit, and RunBox launcher - one offline widget on your taskbar." />
+  <meta property="og:description"
+    content="The best free Nepali calendar for Windows. Full Bikram Sambat Patro, BS↔AD date conversion, Preeti↔Unicode, EMI calculator, network toolkit, and RunBox launcher - one offline widget on your taskbar." />
   <meta property="og:image" content="https://nepdatewidget.rajuprasai.com.np/assets/screenshots/website-hero.webp" />
   <meta property="og:image:width" content="3810" />
   <meta property="og:image:height" content="2160" />
@@ -45,7 +50,8 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@CrossLegCoder" />
   <meta name="twitter:title" content="Bikram Sambat Nepali Calendar for Windows - NepDate Widget" />
-  <meta name="twitter:description" content="Free Nepali calendar for Windows. Bikram Sambat Patro, BS↔AD date conversion, Preeti↔Unicode, EMI calculator, network tools - one offline Windows widget." />
+  <meta name="twitter:description"
+    content="Free Nepali calendar for Windows. Bikram Sambat Patro, BS↔AD date conversion, Preeti↔Unicode, EMI calculator, network tools - one offline Windows widget." />
   <meta name="twitter:image" content="https://nepdatewidget.rajuprasai.com.np/assets/screenshots/website-hero.webp" />
   <meta name="twitter:image:alt" content="NepDate Widget on Windows taskbar with Bikram Sambat calendar open" />
   <meta property="og:image:alt" content="NepDate Widget on Windows taskbar with Bikram Sambat calendar open" />
@@ -136,7 +142,11 @@
     "sameAs": [
       "https://github.com/RajuPrasai/NepDateWidget",
       "https://github.com/RajuPrasai",
-      "https://apps.microsoft.com/detail/9PG97WBJX1NQ"
+      "https://apps.microsoft.com/detail/9PG97WBJX1NQ",
+      "https://www.producthunt.com/products/nepdate-widget",
+      "https://sourceforge.net/p/nepdatewidget/",
+      "https://nepdate-widget.en.uptodown.com/windows",
+      "https://www.visalytica.com/tool/nepali-calendar-for-pc-nepdate-widget"
     ],
     "founder": { "@type": "Person", "@id": "https://rajuprasai.com.np/#person", "name": "Raju Prasai", "url": "https://rajuprasai.com.np/" }
   }
@@ -211,7 +221,9 @@
   }
   </script>
   <link rel="preload" href="css/style.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-  <noscript><link rel="stylesheet" href="css/style.min.css" /></noscript>
+  <noscript>
+    <link rel="stylesheet" href="css/style.min.css" />
+  </noscript>
 </head>
 
 <body>
@@ -233,19 +245,11 @@
       <div class="header-right">
         <a class="btn btn-momo btn-sm" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener noreferrer"
           aria-label="Buy me a momo">
-          <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16" viewBox="0 0 24 24"
-              fill="currentColor" aria-hidden="true">
-              <path d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z" />
-              <path
-                d="M9 6.6c.4-1.1 1.5-1.9 2.7-1.9.4 0 .8.1 1.2.3-.4.4-.7.9-.9 1.5l-.2.7c-.4-.1-.8-.3-1.2-.3-.6 0-1.1.2-1.6.5l-.5-.4c.2-.2.3-.3.5-.4Zm6 0 .5-.4c.2.1.3.2.5.4-.4-.3-1-.5-1.6-.5-.4 0-.8.2-1.2.3l-.2-.7c-.2-.6-.5-1.1-.9-1.5.4-.2.8-.3 1.2-.3 1.2 0 2.3.8 2.7 1.9-.3.3-.6.6-1 .8Z" />
-              <path
-                d="M12 4.5c0-.7.6-1.3 1.3-1.3.4 0 .7.1 1 .4-.3.6-.5 1.3-.5 2 0 .3 0 .7.1 1l-.7-.1c-.7 0-1.3-.6-1.3-1.3 0-.3.1-.5.1-.7Z" />
-              <path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z" />
-            </svg></span>
+          <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.7-9.5-9.3C1.1 7.8 3.6 4 7.4 4c2 0 3.4 1 4.6 2.6C13.2 5 14.6 4 16.6 4c3.8 0 6.3 3.8 4.9 7.7C19.5 16.3 12 21 12 21z"/></svg></span>
           <span>Buy me a momo</span>
         </a>
-        <a class="github-btn" href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener noreferrer"
-          aria-label="GitHub repository">
+        <a class="github-btn" href="https://github.com/RajuPrasai/NepDateWidget" target="_blank"
+          rel="noopener noreferrer" aria-label="GitHub repository">
           <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true">
             <path
               d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
@@ -288,7 +292,8 @@
   <main id="main">
 
     <!-- Hero -->
-    <section class="hero" data-snippet="NepDate Widget is the most complete free Nepali date converter for Windows. Converts BS to AD and AD to BS instantly from the taskbar. Includes Bikram Sambat calendar, EMI calculator, Preeti to Unicode converter, network toolkit, unit converter, and RunBox launcher. All offline, all free.">
+    <section class="hero"
+      data-snippet="NepDate Widget is the most complete free Nepali date converter for Windows. Converts BS to AD and AD to BS instantly from the taskbar. Includes Bikram Sambat calendar, EMI calculator, Preeti to Unicode converter, network toolkit, unit converter, and RunBox launcher. All offline, all free.">
       <div class="container">
         <div class="hero-grid">
           <div>
@@ -327,8 +332,10 @@
                 Zero telemetry
               </span>
             </div>
-            <h1>Premium <span class="grad">Nepali Calendar</span>, Date Converter, and <span class="grad">Productivity Tools</span> for PC</h1>
-            <h2 class="hero-tagline">A deceptively powerful nepali desktop companion living quietly on your taskbar.<br/>
+            <h1>Premium <span class="grad">Nepali Calendar</span>, Date Converter, and <span class="grad">Productivity
+                Tools</span> for PC</h1>
+            <h2 class="hero-tagline">A deceptively powerful nepali desktop companion living quietly on your
+              taskbar.<br />
               Packed with worthy 25+ thoughtfully crafted tools that speaks quality.</h2>
             <div class="hero-cta">
               <a class="btn btn-primary" href="download.html">Download for Windows
@@ -337,18 +344,11 @@
                   <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
                 </svg>
               </a>
-              <a class="btn btn-secondary" href="features.html">Explore all Nepali tools</a>
+              <a class="btn btn-secondary" href="features.html">Explore all Nepali tools
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </a>
               <a class="btn btn-momo" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener noreferrer">
-                <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16"
-                    viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                    <path
-                      d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z" />
-                    <path
-                      d="M9 6.6c.4-1.1 1.5-1.9 2.7-1.9.4 0 .8.1 1.2.3-.4.4-.7.9-.9 1.5l-.2.7c-.4-.1-.8-.3-1.2-.3-.6 0-1.1.2-1.6.5l-.5-.4c.2-.2.3-.3.5-.4Zm6 0 .5-.4c.2.1.3.2.5.4-.4-.3-1-.5-1.6-.5-.4 0-.8.2-1.2.3l-.2-.7c-.2-.6-.5-1.1-.9-1.5.4-.2.8-.3 1.2-.3 1.2 0 2.3.8 2.7 1.9-.3.3-.6.6-1 .8Z" />
-                    <path
-                      d="M12 4.5c0-.7.6-1.3 1.3-1.3.4 0 .7.1 1 .4-.3.6-.5 1.3-.5 2 0 .3 0 .7.1 1l-.7-.1c-.7 0-1.3-.6-1.3-1.3 0-.3.1-.5.1-.7Z" />
-                    <path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z" />
-                  </svg></span>
+                <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.7-9.5-9.3C1.1 7.8 3.6 4 7.4 4c2 0 3.4 1 4.6 2.6C13.2 5 14.6 4 16.6 4c3.8 0 6.3 3.8 4.9 7.7C19.5 16.3 12 21 12 21z"/></svg></span>
                 Buy me a momo
               </a>
             </div>
@@ -369,91 +369,181 @@
           <div class="hero-collage" aria-label="Screenshot collage">
             <div class="hc-glow"></div>
             <div class="hc-item hc-hero" data-lightbox="assets/screenshots/tab-calander.webp"
-              data-caption="Bikram Sambat month grid with tithi, holidays, and fiscal quarter"><img src="assets/screenshots/tab-calander.webp"
-                srcset="assets/screenshots/tab-calander-480w.webp 480w, assets/screenshots/tab-calander.webp 948w" sizes="(max-width: 640px) 60vw, 460px"
-                alt="Bikram Sambat calendar" loading="eager" fetchpriority="high" width="948" height="911"/></div>
+              data-caption="Bikram Sambat month grid with tithi, holidays, and fiscal quarter"><img
+                src="assets/screenshots/tab-calander.webp"
+                srcset="assets/screenshots/tab-calander-480w.webp 480w, assets/screenshots/tab-calander.webp 948w"
+                sizes="(max-width: 640px) 60vw, 460px" alt="Bikram Sambat calendar" loading="eager" fetchpriority="high"
+                width="948" height="911" /></div>
             <div class="hc-item hc-side-l" data-lightbox="assets/screenshots/tab-date-convert.webp"
-              data-caption="Nepali date converter - BS to AD and AD to BS"><img src="assets/screenshots/tab-date-convert.webp"
-                srcset="assets/screenshots/tab-date-convert-480w.webp 480w, assets/screenshots/tab-date-convert.webp 948w" sizes="(max-width: 640px) 24vw, 230px"
-                alt="Nepali date converter - BS to AD and AD to BS" loading="eager" width="948" height="911"/></div>
+              data-caption="Nepali date converter - BS to AD and AD to BS"><img
+                src="assets/screenshots/tab-date-convert.webp"
+                srcset="assets/screenshots/tab-date-convert-480w.webp 480w, assets/screenshots/tab-date-convert.webp 948w"
+                sizes="(max-width: 640px) 24vw, 230px" alt="Nepali date converter - BS to AD and AD to BS"
+                loading="eager" width="948" height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-date-days.webp"
-              data-caption="Add, subtract, and difference between BS dates"><img loading="lazy" 
-                src="assets/screenshots/tab-date-days.webp" alt="Date days calculator" width="948" height="911"/></div>
+              data-caption="Add, subtract, and difference between BS dates"><img loading="lazy"
+                src="assets/screenshots/tab-date-days.webp" alt="Date days calculator" width="948" height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-date-time.webp"
-              data-caption="Timezone converter with compact dropdowns"><img loading="lazy" src="assets/screenshots/tab-date-time.webp"
-                alt="Timezone converter" width="948" height="911"/></div>
+              data-caption="Timezone converter with compact dropdowns"><img loading="lazy"
+                src="assets/screenshots/tab-date-time.webp" alt="Timezone converter" width="948" height="911" /></div>
             <div class="hc-item hc-br" data-lightbox="assets/screenshots/tab-unit-area.webp"
-              data-caption="Area unit conversion"><img 
-                src="assets/screenshots/tab-unit-area.webp"
-                srcset="assets/screenshots/tab-unit-area-480w.webp 480w, assets/screenshots/tab-unit-area.webp 948w" sizes="(max-width: 640px) 30vw, 230px"
-                alt="Area unit conversion" loading="eager" width="948" height="911"/></div>
+              data-caption="Area unit conversion"><img src="assets/screenshots/tab-unit-area.webp"
+                srcset="assets/screenshots/tab-unit-area-480w.webp 480w, assets/screenshots/tab-unit-area.webp 948w"
+                sizes="(max-width: 640px) 30vw, 230px" alt="Area unit conversion" loading="eager" width="948"
+                height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-unit-weight.webp"
               data-caption="Weight unit conversion"><img loading="lazy" src="assets/screenshots/tab-unit-weight.webp"
-                alt="Weight unit conversion" width="948" height="911"/></div>
+                alt="Weight unit conversion" width="948" height="911" /></div>
             <div class="hc-item hc-bl" data-lightbox="assets/screenshots/tab-text-password.webp"
-              data-caption="Password generator with live strength meter"><img src="assets/screenshots/tab-text-password.webp"
-                srcset="assets/screenshots/tab-text-password-480w.webp 480w, assets/screenshots/tab-text-password.webp 948w" sizes="(max-width: 640px) 28vw, 230px"
-                alt="Password generator" loading="eager" width="948" height="911"/></div>
+              data-caption="Password generator with live strength meter"><img
+                src="assets/screenshots/tab-text-password.webp"
+                srcset="assets/screenshots/tab-text-password-480w.webp 480w, assets/screenshots/tab-text-password.webp 948w"
+                sizes="(max-width: 640px) 28vw, 230px" alt="Password generator" loading="eager" width="948"
+                height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-text-word.png"
               data-caption="Word and character count"><img loading="lazy" src="assets/screenshots/tab-text-word.png"
-                alt="Word count" width="948" height="911"/></div>
+                alt="Word count" width="948" height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-text-unicode.webp"
-              data-caption="Unicode helpers"><img loading="lazy" src="assets/screenshots/tab-text-unicode.webp" alt="Unicode helpers" width="948" height="911"/>
+              data-caption="Unicode helpers"><img loading="lazy" src="assets/screenshots/tab-text-unicode.webp"
+                alt="Unicode helpers" width="948" height="911" />
             </div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-text-script.webp"
-              data-caption="Script converter - Devanagari to Romanized"><img loading="lazy" 
-                src="assets/screenshots/tab-text-script.webp" alt="Script converter" width="948" height="911"/></div>
+              data-caption="Script converter - Devanagari to Romanized"><img loading="lazy"
+                src="assets/screenshots/tab-text-script.webp" alt="Script converter" width="948" height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-bank-interest.webp"
-              data-caption="Multi-period simple interest calculator"><img loading="lazy" src="assets/screenshots/tab-bank-interest.webp"
-                alt="Interest calculator" width="948" height="911"/></div>
+              data-caption="Multi-period simple interest calculator"><img loading="lazy"
+                src="assets/screenshots/tab-bank-interest.webp" alt="Interest calculator" width="948" height="911" />
+            </div>
             <div class="hc-item hc-tl" data-lightbox="assets/screenshots/tab-bank-emi.webp"
-              data-caption="Loan EMI calculator with full amortization schedule"><img src="assets/screenshots/tab-bank-emi.webp"
-                srcset="assets/screenshots/tab-bank-emi-480w.webp 480w, assets/screenshots/tab-bank-emi.webp 948w" sizes="(max-width: 640px) 30vw, 230px"
-                alt="Loan EMI calculator" loading="eager" width="948" height="911"/></div>
+              data-caption="Loan EMI calculator with full amortization schedule"><img
+                src="assets/screenshots/tab-bank-emi.webp"
+                srcset="assets/screenshots/tab-bank-emi-480w.webp 480w, assets/screenshots/tab-bank-emi.webp 948w"
+                sizes="(max-width: 640px) 30vw, 230px" alt="Loan EMI calculator" loading="eager" width="948"
+                height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-myip.webp"
-              data-caption="My IP - public and private addresses"><img loading="lazy" src="assets/screenshots/tab-network-myip.webp"
-                alt="My IP address" width="948" height="911"/></div>
+              data-caption="My IP - public and private addresses"><img loading="lazy"
+                src="assets/screenshots/tab-network-myip.webp" alt="My IP address" width="948" height="911" /></div>
             <div class="hc-item hc-tr" data-lightbox="assets/screenshots/tab-network-ping.webp"
-              data-caption="Ping a host with packet count and RTT summary"><img src="assets/screenshots/tab-network-ping.webp"
-                srcset="assets/screenshots/tab-network-ping-480w.webp 480w, assets/screenshots/tab-network-ping.webp 948w" sizes="(max-width: 640px) 30vw, 230px"
-                alt="Network ping" loading="eager" width="948" height="911"/></div>
+              data-caption="Ping a host with packet count and RTT summary"><img
+                src="assets/screenshots/tab-network-ping.webp"
+                srcset="assets/screenshots/tab-network-ping-480w.webp 480w, assets/screenshots/tab-network-ping.webp 948w"
+                sizes="(max-width: 640px) 30vw, 230px" alt="Network ping" loading="eager" width="948" height="911" />
+            </div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-scan.webp"
-              data-caption="IP Scanner - parallel-ping subnet scan"><img loading="lazy" src="assets/screenshots/tab-network-scan.webp"
-                alt="Network scan" width="948" height="911"/></div>
+              data-caption="IP Scanner - parallel-ping subnet scan"><img loading="lazy"
+                src="assets/screenshots/tab-network-scan.webp" alt="Network scan" width="948" height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-trace.png"
-              data-caption="Traceroute - hop-by-hop network path"><img loading="lazy" src="assets/screenshots/tab-network-trace.png"
-                alt="Traceroute" width="948" height="911"/></div>
+              data-caption="Traceroute - hop-by-hop network path"><img loading="lazy"
+                src="assets/screenshots/tab-network-trace.png" alt="Traceroute" width="948" height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-whois.png"
-              data-caption="Whois lookup"><img loading="lazy" src="assets/screenshots/tab-network-whois.png" alt="Whois lookup" width="948" height="911"/>
+              data-caption="Whois lookup"><img loading="lazy" src="assets/screenshots/tab-network-whois.png"
+                alt="Whois lookup" width="948" height="911" />
             </div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-network-dns.webp"
-              data-caption="DNS Lookup"><img loading="lazy" src="assets/screenshots/tab-network-dns.webp" alt="DNS lookup" width="948" height="911"/></div>
+              data-caption="DNS Lookup"><img loading="lazy" src="assets/screenshots/tab-network-dns.webp"
+                alt="DNS lookup" width="948" height="911" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-more-documents.webp"
-              data-caption="Documents - attach and organize local files"><img loading="lazy" 
-                src="assets/screenshots/tab-more-documents.webp" alt="Documents" width="1028" height="945"/></div>
+              data-caption="Documents - attach and organize local files"><img loading="lazy"
+                src="assets/screenshots/tab-more-documents.webp" alt="Documents" width="1028" height="945" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/tab-more-notes.webp"
-              data-caption="Quick local notes alongside your calendar"><img loading="lazy" src="assets/screenshots/tab-more-notes.webp"
-                alt="Quick notes" width="1028" height="945"/></div>
+              data-caption="Quick local notes alongside your calendar"><img loading="lazy"
+                src="assets/screenshots/tab-more-notes.webp" alt="Quick notes" width="1028" height="945" /></div>
             <div class="hc-item hc-side-r" data-lightbox="assets/screenshots/tab-more-reminder.webp"
-              data-caption="One-shot or recurring reminders pinned to BS dates"><img src="assets/screenshots/tab-more-reminder.webp"
-                srcset="assets/screenshots/tab-more-reminder-480w.webp 480w, assets/screenshots/tab-more-reminder.webp 1028w" sizes="(max-width: 640px) 24vw, 230px"
-                alt="Reminders pinned to BS dates" loading="eager" width="1028" height="945"/></div>
+              data-caption="One-shot or recurring reminders pinned to BS dates"><img
+                src="assets/screenshots/tab-more-reminder.webp"
+                srcset="assets/screenshots/tab-more-reminder-480w.webp 480w, assets/screenshots/tab-more-reminder.webp 1028w"
+                sizes="(max-width: 640px) 24vw, 230px" alt="Reminders pinned to BS dates" loading="eager" width="1028"
+                height="945" /></div>
             <div class="hc-item hc-ex2" data-lightbox="assets/screenshots/runbox-daraz.webp"
               data-caption="RunBox - Daraz quick access">
-              <img src="assets/screenshots/runbox-daraz.webp" alt="Daraz run command" loading="lazy" width="900" height="278"/></div>
+              <img src="assets/screenshots/runbox-daraz.webp" alt="Daraz run command" loading="lazy" width="900"
+                height="278" />
+            </div>
             <div class="hc-item hc-ex3" data-lightbox="assets/screenshots/runbox-map.webp"
-              data-caption="RunBox - map quick access"><img 
-                src="assets/screenshots/runbox-map.webp" alt="Map run command" loading="lazy" width="900" height="278"/></div>
+              data-caption="RunBox - map quick access"><img src="assets/screenshots/runbox-map.webp"
+                alt="Map run command" loading="lazy" width="900" height="278" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/runbox-custom-script.webp"
-              data-caption="RunBox - custom script execution"><img loading="lazy" src="assets/screenshots/runbox-custom-script.webp"
-                alt="Custom script run command" width="900" height="140"/></div>
+              data-caption="RunBox - custom script execution"><img loading="lazy"
+                src="assets/screenshots/runbox-custom-script.webp" alt="Custom script run command" width="900"
+                height="140" /></div>
             <div style="display:none" aria-hidden="true" data-lightbox="assets/screenshots/runbox-run.webp"
-              data-caption="RunBox - run a command or program"><img loading="lazy" src="assets/screenshots/runbox-run.webp"
-                alt="Run command launcher" width="900" height="650"/></div>
+              data-caption="RunBox - run a command or program"><img loading="lazy"
+                src="assets/screenshots/runbox-run.webp" alt="Run command launcher" width="900" height="650" /></div>
             <div class="hc-item hc-ex1" data-lightbox="assets/screenshots/Minibar.webp"
-              data-caption="Mini bar on taskbar"><img 
-                src="assets/screenshots/Minibar.webp" alt="Mini bar" loading="lazy" width="350" height="62"/></div>
+              data-caption="Mini bar on taskbar"><img src="assets/screenshots/Minibar.webp" alt="Mini bar"
+                loading="lazy" width="350" height="62" /></div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Platform badge band -->
+    <div class="section-head" style="margin-bottom:0">
+      <div class="section-eyebrow">Featured & Available On</div>
+    </div>
+    <section class="section-badge-band" aria-label="Featured and available on">
+      <div class="badge-band-inner">
+        <div class="badge-band-items">
+          <a href="https://apps.microsoft.com/detail/9PG97WBJX1NQ?referrer=appbadge&mode=full"
+            target="_blank" class="badge-item" aria-label="Get NepDate Widget from Microsoft Store" rel="noopener noreferrer">
+            <span class="badge-ghost">
+              <svg width="32" height="32" viewBox="0 0 22 22" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="10" height="10" rx="1" fill="#f25022"/>
+                <rect x="12" y="0" width="10" height="10" rx="1" fill="#7fba00"/>
+                <rect x="0" y="12" width="10" height="10" rx="1" fill="#00a4ef"/>
+                <rect x="12" y="12" width="10" height="10" rx="1" fill="#ffb900"/>
+              </svg>
+              <span class="bg-text">
+                <span class="bg-label">GET IT FROM</span>
+                <span class="bg-name">Microsoft Store</span>
+              </span>
+            </span>
+          </a>
+          <a href="https://www.producthunt.com/products/nepdate-widget?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-nepali-calendar-for-pc-nepdate-widget"
+            target="_blank" rel="noopener noreferrer" class="badge-item"
+            aria-label="NepDate Widget featured on Product Hunt">
+            <span class="badge-ghost">
+              <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none">
+                <circle cx="16" cy="16" r="16" fill="#DA552F"/>
+                <path d="M11 23V9h5a5 5 0 0 1 0 10h-5" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <span class="bg-text">
+                <span class="bg-label">FIND US ON</span>
+                <span class="bg-name">Product Hunt</span>
+              </span>
+            </span>
+          </a>
+          <a href="https://sourceforge.net/p/nepdatewidget/" target="_blank" rel="noopener noreferrer"
+            class="badge-item badge-item-sf" aria-label="Download NepDate Widget on SourceForge">
+            <img src="https://sourceforge.net/sflogo.php?type=17&amp;group_id=4095390"
+              alt="Download NepDate Widget on SourceForge" height="56" loading="lazy" />
+          </a>
+          <a href="https://nepdate-widget.en.uptodown.com/windows" target="_blank" rel="noopener noreferrer"
+            class="badge-item" aria-label="Download NepDate Widget on Uptodown">
+            <span class="badge-ghost">
+              <img src="assets/uptodown-icon.png" alt="" aria-hidden="true" width="36" height="36" style="height:36px;width:auto;border-radius:5px" />
+              <span class="bg-text">
+                <span class="bg-label">DOWNLOAD ON</span>
+                <span class="bg-name">Uptodown</span>
+              </span>
+            </span>
+          </a>
+          <a href="https://www.visalytica.com/tool/nepali-calendar-for-pc-nepdate-widget" target="_blank"
+            rel="noopener noreferrer" class="badge-item"
+            aria-label="NepDate Widget featured on Visalytica">
+            <span class="badge-ghost">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 20V10"/>
+                <path d="M18 20V4"/>
+                <path d="M6 20v-4"/>
+              </svg>
+              <span class="bg-text">
+                <span class="bg-label">FEATURED ON</span>
+                <span class="bg-name">Visalytica</span>
+              </span>
+            </span>
+          </a>
         </div>
       </div>
     </section>
@@ -463,9 +553,10 @@
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">Always on screen</div>
-          <h2 class="section-title">Nepali Calendar bar - fits where the clock would.</h2>
+          <h2 class="section-title">Nepali Calendar bar.</h2>
           <p class="section-sub">
-            Two compact lines pinned to your taskbar showing today's Bikram Sambat date (currently Nepali Calendar 2083). Each element toggles independently from settings,
+            Two compact lines pinned to your taskbar showing today's Bikram Sambat date (currently Nepali Calendar
+            2083). Each element toggles independently from settings,
             so you keep only what matters. Click the bar to expand into the full app.
           </p>
         </div>
@@ -481,7 +572,8 @@
             <div class="wt-line wt-line-top">Wednesday <span class="wt-sep">|</span> Kathmandu <span
                 class="wt-time">1:42 PM</span></div>
             <div class="wt-line wt-line-bot"><strong>Jestha 09, 2083</strong> <span class="wt-sep">|</span>
-              <strong>May 23, 2026</strong></div>
+              <strong>May 23, 2026</strong>
+            </div>
           </div>
         </div>
         <div class="win-taskbar-icons" aria-hidden="true">
@@ -535,7 +627,8 @@
         <div class="demo-grid">
           <div class="demo-card">
             <div class="demo-media">
-              <video autoplay loop muted playsinline width="1280" height="1127" aria-label="Widget expanding from taskbar" poster="assets/screenshots/tab-calander.webp">
+              <video autoplay loop muted playsinline width="1280" height="1127"
+                aria-label="Widget expanding from taskbar" poster="assets/screenshots/tab-calander.webp">
                 <source src="assets/gif/widget-overview.mp4" type="video/mp4" />
               </video>
             </div>
@@ -545,7 +638,8 @@
           </div>
           <div class="demo-card">
             <div class="demo-media">
-              <video autoplay loop muted playsinline width="900" height="652" aria-label="RunBox command launcher in action" poster="assets/screenshots/runbox-run.webp">
+              <video autoplay loop muted playsinline width="900" height="652"
+                aria-label="RunBox command launcher in action" poster="assets/screenshots/runbox-run.webp">
                 <source src="assets/gif/runbox.mp4" type="video/mp4" />
               </video>
             </div>
@@ -563,8 +657,10 @@
         <div class="section-head">
           <div class="section-eyebrow">What it actually does</div>
           <h2 class="section-title">One Nepali Date Converter widget. A lot of ground covered.</h2>
-          <p class="section-sub" data-snippet="NepDate Widget features: Nepali date converter (BS to AD and AD to BS), Bikram Sambat calendar with tithi and holidays, loan EMI calculator with amortization schedule, Preeti to Unicode converter, network toolkit (ping, traceroute, IP scan, Whois, DNS), RunBox global launcher, Nepali land and weight unit converter (bigha to ropani, tola to gram), notes pinned to BS dates, recurring reminders, document manager, ID photo cropping and print sheet tiling, and batch image compression and conversion.">
-            Built around the Nepali date converter and Bikram Sambat calendar, but it keeps going - Preeti to Unicode, EMI calculator,
+          <p class="section-sub"
+            data-snippet="NepDate Widget features: Nepali date converter (BS to AD and AD to BS), Bikram Sambat calendar with tithi and holidays, loan EMI calculator with amortization schedule, Preeti to Unicode converter, network toolkit (ping, traceroute, IP scan, Whois, DNS), RunBox global launcher, Nepali land and weight unit converter (bigha to ropani, tola to gram), notes pinned to BS dates, recurring reminders, document manager, ID photo cropping and print sheet tiling, and batch image compression and conversion.">
+            Built around the Nepali date converter and Bikram Sambat calendar, but it keeps going - Preeti to Unicode,
+            EMI calculator,
             networking, text tools, bigha-ropani-tola unit conversion, image tools, and a global command launcher.
           </p>
         </div>
@@ -587,12 +683,14 @@
           <div class="lang-compare">
             <div class="lang-shot">
               <div class="shot" data-lightbox="assets/screenshots/tab-calander.webp" data-caption="Calendar in English">
-                <img src="assets/screenshots/tab-calander.webp" alt="Calendar in English" loading="lazy" width="948" height="911"/></div>
+                <img src="assets/screenshots/tab-calander.webp" alt="Calendar in English" loading="lazy" width="948"
+                  height="911" />
+              </div>
             </div>
             <div class="lang-shot">
               <div class="shot" data-lightbox="assets/screenshots/tab-calander-ne.webp"
                 data-caption="Calendar in Nepali"><img src="assets/screenshots/tab-calander-ne.webp"
-                  alt="Calendar in Nepali" loading="lazy" width="948" height="911"/></div>
+                  alt="Calendar in Nepali" loading="lazy" width="948" height="911" /></div>
             </div>
           </div>
         </div>
@@ -613,7 +711,7 @@
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-text-unicode.webp"
             data-caption="Preeti to Unicode conversion"><img src="assets/screenshots/tab-text-unicode.webp"
-              alt="Preeti to Unicode conversion" loading="lazy" width="948" height="911"/></div>
+              alt="Preeti to Unicode conversion" loading="lazy" width="948" height="911" /></div>
         </div>
 
         <!-- 2. RunBox -->
@@ -633,7 +731,8 @@
             </ul>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/runbox-daraz.webp" data-caption="RunBox search prefix">
-            <img src="assets/screenshots/runbox-daraz.webp" alt="RunBox search prefix" loading="lazy" width="900" height="278"/>
+            <img src="assets/screenshots/runbox-daraz.webp" alt="RunBox search prefix" loading="lazy" width="900"
+              height="278" />
           </div>
         </div>
 
@@ -652,8 +751,9 @@
             </ul>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-bank-emi.webp"
-            data-caption="Loan EMI calculator with amortization schedule"><img src="assets/screenshots/tab-bank-emi.webp"
-              alt="Loan EMI calculator" loading="lazy" width="948" height="911"/></div>
+            data-caption="Loan EMI calculator with amortization schedule"><img
+              src="assets/screenshots/tab-bank-emi.webp" alt="Loan EMI calculator" loading="lazy" width="948"
+              height="911" /></div>
         </div>
 
         <!-- 4. Network -->
@@ -671,7 +771,9 @@
             </ul>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-network-scan.webp" data-caption="LAN subnet scanner">
-            <img src="assets/screenshots/tab-network-scan.webp" alt="LAN subnet scanner" loading="lazy" width="948" height="911"/></div>
+            <img src="assets/screenshots/tab-network-scan.webp" alt="LAN subnet scanner" loading="lazy" width="948"
+              height="911" />
+          </div>
         </div>
 
         <!-- 5. Units -->
@@ -689,7 +791,9 @@
             </ul>
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-unit-area.webp" data-caption="Area unit conversion">
-            <img src="assets/screenshots/tab-unit-area.webp" alt="Area unit conversion" loading="lazy" width="948" height="911"/></div>
+            <img src="assets/screenshots/tab-unit-area.webp" alt="Area unit conversion" loading="lazy" width="948"
+              height="911" />
+          </div>
         </div>
 
         <!-- 6. Text tools -->
@@ -709,7 +813,7 @@
           </div>
           <div class="shot" data-lightbox="assets/screenshots/tab-text-password.webp"
             data-caption="Password generator with strength meter"><img src="assets/screenshots/tab-text-password.webp"
-              alt="Password generator" loading="lazy" width="948" height="911"/></div>
+              alt="Password generator" loading="lazy" width="948" height="911" /></div>
         </div>
       </div>
     </section>
@@ -732,7 +836,7 @@
             data-caption="All data files accessible from Settings - shortcuts, scripts, history, documents, and more">
             <img src="assets/screenshots/datafiles-poweusers.webp"
               alt="Data files for power users - JSON configs accessible from Settings" loading="lazy"
-              style="width:100%; border-radius:8px;" width="1418" height="1173"/>
+              style="width:100%; border-radius:8px;" width="1418" height="1173" />
           </div>
         </div>
         <div class="power-grid">
@@ -762,7 +866,8 @@
               <span>Run scripts with 3 keystrokes</span>
             </div>
             <p class="power-benefit">Press the hotkey, type <code>scr backup</code> → your backup runs.
-              <code>scr standup</code> → opens all your morning tabs. From anywhere in Windows, any time.</p>
+              <code>scr standup</code> → opens all your morning tabs. From anywhere in Windows, any time.
+            </p>
             <p class="power-how">Defined in <code>scripts.json</code> - name, file path, interpreter (PowerShell,
               Python, cmd, WSL). Works with anything your machine can execute. Supports <code>{APPDIR}</code> for
               bundled scripts.</p>
@@ -801,7 +906,8 @@
             <p class="power-how">Settings → Export Backup packs <code>settings.json</code>, <code>shortcuts.json</code>,
               <code>scripts.json</code>, <code>notes.json</code>, <code>reminders.json</code>,
               <code>documents.json</code>, <code>run-history.json</code>, and <code>localization.json</code> into one
-              signed ZIP.</p>
+              signed ZIP.
+            </p>
           </div>
 
           <div class="power-card">
@@ -819,7 +925,8 @@
             </p>
             <p class="power-how">Stored in <code>localization.json</code> - each key maps to <code>"en"</code> and
               <code>"ne"</code> strings. New keys from app updates are merged in automatically; your customizations are
-              never overwritten.</p>
+              never overwritten.
+            </p>
           </div>
           <div class="power-card">
             <div class="power-card-header">
@@ -834,7 +941,8 @@
               order intact.</p>
             <p class="power-how">Stored in <code>documents.json</code> - each entry has <code>title</code>,
               <code>tags</code> (array), <code>filePath</code>, <code>notes</code>, and <code>sortOrder</code>. Same
-              hot-reload as every other file.</p>
+              hot-reload as every other file.
+            </p>
           </div>
         </div>
       </div>
@@ -846,7 +954,8 @@
         <div class="section-head">
           <div class="section-eyebrow">What's inside</div>
           <h2 class="section-title">The rest of what's in there.</h2>
-          <p class="section-sub">Calendar, date conversion, reminders, notes, documents, ID photo, image tools, timezone converter, holiday countdown, and deep customization - all covered.</p>
+          <p class="section-sub">Calendar, date conversion, reminders, notes, documents, ID photo, image tools, timezone
+            converter, holiday countdown, and deep customization - all covered.</p>
         </div>
 
         <div class="features">
@@ -868,7 +977,8 @@
                 <path d="M17 2l4 4-4 4M3 11v-1a4 4 0 014-4h14M7 22l-4-4 4-4M21 13v1a4 4 0 01-4 4H3" />
               </svg></div>
             <h3>Nepali Date Converter (BS ↔ AD)</h3>
-            <p>Instant bidirectional Nepali date converter. Convert Nepali date to English date or English date to Nepali date. Accepts Nepali digits, month names, and flexible separators.
+            <p>Instant bidirectional Nepali date converter. Convert Nepali date to English date or English date to
+              Nepali date. Accepts Nepali digits, month names, and flexible separators.
               Add/subtract days, find differences.</p>
           </div>
           <div class="feature">
@@ -911,7 +1021,8 @@
                 <path d="M6 10h.01M18 10h.01" />
               </svg></div>
             <h3>ID - Passport Photo</h3>
-            <p>Crop any photo to exact print dimensions - Passport/MRP, Stamp, Auto, US/DV, or fully custom. Tile copies onto an A4, 4R, or any sheet size, print-ready.</p>
+            <p>Crop any photo to exact print dimensions - Passport/MRP, Stamp, Auto, US/DV, or fully custom. Tile copies
+              onto an A4, 4R, or any sheet size, print-ready.</p>
           </div>
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -921,7 +1032,8 @@
                 <path d="M15 15l-3-3-3 3" />
               </svg></div>
             <h3>Image Compress, Resize - Convert</h3>
-            <p>Batch-process JPEG, PNG, WebP, AVIF, RAW, PDF, and more. Compress with a quality slider, resize to exact pixels, and convert format - any combination in one pass.</p>
+            <p>Batch-process JPEG, PNG, WebP, AVIF, RAW, PDF, and more. Compress with a quality slider, resize to exact
+              pixels, and convert format - any combination in one pass.</p>
           </div>
           <div class="feature">
             <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -1019,7 +1131,8 @@
             <p>Drop-in Bikram Sambat support for any .NET application. Same author. Same quality bar.</p>
           </div>
           <div class="cta">
-            <a class="btn btn-primary" href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener noreferrer">
+            <a class="btn btn-primary" href="https://nepdate.rajuprasai.com.np/" target="_blank"
+              rel="noopener noreferrer">
               Visit NepDate
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                 stroke-linecap="round" stroke-linejoin="round">
@@ -1032,13 +1145,15 @@
     </section>
 
     <!-- FAQ -->
-    <section class="section section-faq" style="background:var(--bg-alt);" data-snippet="NepDate Widget FAQ: Free for personal use. Supports Windows 10 (1809+) and Windows 11. Works almost entirely offline. Converts Bikram Sambat (BS) dates to Gregorian (AD) and vice versa. Zero telemetry, no account required. Lightweight WPF app with negligible performance impact.">
+    <section class="section section-faq" style="background:var(--bg-alt);"
+      data-snippet="NepDate Widget FAQ: Free for personal use. Supports Windows 10 (1809+) and Windows 11. Works almost entirely offline. Converts Bikram Sambat (BS) dates to Gregorian (AD) and vice versa. Zero telemetry, no account required. Lightweight WPF app with negligible performance impact.">
       <div class="container">
         <div class="section-head">
           <div class="section-eyebrow">FAQ</div>
           <h2 class="section-title">Common questions</h2>
           <p class="section-sub">If something's not covered here, open a <a
-              href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener noreferrer">GitHub issue</a>.
+              href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener noreferrer">GitHub
+              issue</a>.
           </p>
         </div>
 
@@ -1094,7 +1209,10 @@
                 <button class="faq-q" type="button">How does the Nepali date converter work?</button>
                 <div class="faq-a">
                   <div class="faq-a-inner">
-                    <p>Type any BS (Bikram Sambat) date and it instantly shows the equivalent AD (Gregorian) date - or type the AD date to get the BS date. The converter accepts Nepali digits, full month names, and flexible separators. It also lets you add or subtract days from a BS date and calculate the difference between two BS dates in years, months, and days.</p>
+                    <p>Type any BS (Bikram Sambat) date and it instantly shows the equivalent AD (Gregorian) date - or
+                      type the AD date to get the BS date. The converter accepts Nepali digits, full month names, and
+                      flexible separators. It also lets you add or subtract days from a BS date and calculate the
+                      difference between two BS dates in years, months, and days.</p>
                   </div>
                 </div>
               </div>
@@ -1102,7 +1220,9 @@
                 <button class="faq-q" type="button">How do I convert a Nepali (BS) date to English (AD)?</button>
                 <div class="faq-a">
                   <div class="faq-a-inner">
-                    <p>Open the Date tab, select the BS → AD direction, and type the Bikram Sambat year, month, and day. The Gregorian equivalent appears instantly. To go the other way, switch to AD → BS and type the English date.</p>
+                    <p>Open the Date tab, select the BS → AD direction, and type the Bikram Sambat year, month, and day.
+                      The Gregorian equivalent appears instantly. To go the other way, switch to AD → BS and type the
+                      English date.</p>
                   </div>
                 </div>
               </div>
@@ -1110,7 +1230,9 @@
                 <button class="faq-q" type="button">How do I convert today's English date to Nepali (BS)?</button>
                 <div class="faq-a">
                   <div class="faq-a-inner">
-                    <p>NepDate Widget's mini bar always shows today's Bikram Sambat date on your taskbar. To convert any specific date, open the Date tab, select AD → BS, and type the Gregorian date - the BS equivalent appears immediately.</p>
+                    <p>NepDate Widget's mini bar always shows today's Bikram Sambat date on your taskbar. To convert any
+                      specific date, open the Date tab, select AD → BS, and type the Gregorian date - the BS equivalent
+                      appears immediately.</p>
                   </div>
                 </div>
               </div>
@@ -1149,7 +1271,8 @@
                 <button class="faq-q" type="button">How is this different from the NepDate?</button>
                 <div class="faq-a">
                   <div class="faq-a-inner">
-                    <p><a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener noreferrer">NepDate</a> is a
+                    <p><a href="https://nepdate.rajuprasai.com.np/" target="_blank"
+                        rel="noopener noreferrer">NepDate</a> is a
                       .NET library developers embed in their own apps. NepDate Widget is the end-user desktop app - it
                       uses NepDate internally for every BS date calculation.</p>
                   </div>
@@ -1214,7 +1337,8 @@
                     <p>Yes. Search prefixes live in <code>shortcuts.json</code> and custom scripts in
                       <code>scripts.json</code> in your AppData folder. Add, edit, or delete entries - changes take
                       effect immediately, no restart needed. You can import entries from other sources by following the
-                      same JSON structure.</p>
+                      same JSON structure.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -1266,10 +1390,13 @@
             <div class="faq-group">
               <div class="faq-group-label">Calendar</div>
               <div class="faq-item">
-                <button class="faq-q" type="button">Does NepDate Widget cover older calendar years like 2079, 2080, and 2082?</button>
+                <button class="faq-q" type="button">Does NepDate Widget cover older calendar years like 2079, 2080, and
+                  2082?</button>
                 <div class="faq-a">
                   <div class="faq-a-inner">
-                    <p>Yes. The Bikram Sambat calendar covers all years from BS 1970 to BS 2100 (AD 1913 to 2043). Navigate to any past year - 2078, 2079, 2080, 2081, 2082 - or any future year up to 2100, with tithi, public holidays, and festivals shown for each month.</p>
+                    <p>Yes. The Bikram Sambat calendar covers all years from BS 1970 to BS 2100 (AD 1913 to 2043).
+                      Navigate to any past year - 2078, 2079, 2080, 2081, 2082 - or any future year up to 2100, with
+                      tithi, public holidays, and festivals shown for each month.</p>
                   </div>
                 </div>
               </div>
@@ -1277,7 +1404,11 @@
                 <button class="faq-q" type="button">What is a BS to AD converter and when would I need one?</button>
                 <div class="faq-a">
                   <div class="faq-a-inner">
-                    <p>A BS to AD converter translates Bikram Sambat dates to Gregorian (English) dates. If you deal with Nepali government documents, bank statements, academic certificates, or any official paperwork, you regularly encounter BS dates that need converting to AD for international forms, travel bookings, or communication with people outside Nepal. NepDate Widget does this conversion instantly and offline from your Windows taskbar.</p>
+                    <p>A BS to AD converter translates Bikram Sambat dates to Gregorian (English) dates. If you deal
+                      with Nepali government documents, bank statements, academic certificates, or any official
+                      paperwork, you regularly encounter BS dates that need converting to AD for international forms,
+                      travel bookings, or communication with people outside Nepal. NepDate Widget does this conversion
+                      instantly and offline from your Windows taskbar.</p>
                   </div>
                 </div>
               </div>
@@ -1285,7 +1416,11 @@
                 <button class="faq-q" type="button">Does NepDate Widget support Nepali Unicode?</button>
                 <div class="faq-a">
                   <div class="faq-a-inner">
-                    <p>Yes. NepDate Widget's Text tab includes a Preeti-to-Unicode converter supporting 8 legacy Nepali font encodings - Preeti, Kantipur, Himalaya, Sagarmatha, and four more. Paste Preeti-encoded text and Unicode Devanagari output appears instantly. Conversion also works in reverse (Unicode to Preeti) and handles full .txt and .docx document files. The app interface itself is available in Nepali (नेपाली) - switch language from Settings instantly with no restart required.</p>
+                    <p>Yes. NepDate Widget's Text tab includes a Preeti-to-Unicode converter supporting 8 legacy Nepali
+                      font encodings - Preeti, Kantipur, Himalaya, Sagarmatha, and four more. Paste Preeti-encoded text
+                      and Unicode Devanagari output appears instantly. Conversion also works in reverse (Unicode to
+                      Preeti) and handles full .txt and .docx document files. The app interface itself is available in
+                      Nepali (नेपाली) - switch language from Settings instantly with no restart required.</p>
                   </div>
                 </div>
               </div>
@@ -1293,15 +1428,25 @@
                 <button class="faq-q" type="button">Can I use NepDate Widget for government paperwork dates?</button>
                 <div class="faq-a">
                   <div class="faq-a-inner">
-                    <p>Yes. NepDate Widget's Nepali date converter is built for this. Type a Bikram Sambat date from a lalpurja (land deed), court document, bank statement, tax notice, or academic certificate - the Gregorian equivalent appears instantly, or the reverse. Supports BS 1970–2100, accepts Nepali digits, and works entirely offline so you are never dependent on an internet connection during document work.</p>
+                    <p>Yes. NepDate Widget's Nepali date converter is built for this. Type a Bikram Sambat date from a
+                      lalpurja (land deed), court document, bank statement, tax notice, or academic certificate - the
+                      Gregorian equivalent appears instantly, or the reverse. Supports BS 1970–2100, accepts Nepali
+                      digits, and works entirely offline so you are never dependent on an internet connection during
+                      document work.</p>
                   </div>
                 </div>
               </div>
               <div class="faq-item">
-                <button class="faq-q" type="button">What is the difference between the BS and AD calendar systems?</button>
+                <button class="faq-q" type="button">What is the difference between the BS and AD calendar
+                  systems?</button>
                 <div class="faq-a">
                   <div class="faq-a-inner">
-                    <p>BS (Bikram Sambat) is Nepal's official calendar, running approximately 56 years and 8 months ahead of the Gregorian (AD) calendar used internationally. Both are solar calendars, but BS months have irregular lengths (29–32 days) defined by a fixed lookup table - not a formula. Nepal uses BS for all official documents: government forms, bank statements, income tax filings, property deeds, court records, and academic certificates. As of May 2026 AD, the current Nepali year is BS 2083. NepDate Widget converts between the two systems instantly and offline.</p>
+                    <p>BS (Bikram Sambat) is Nepal's official calendar, running approximately 56 years and 8 months
+                      ahead of the Gregorian (AD) calendar used internationally. Both are solar calendars, but BS months
+                      have irregular lengths (29–32 days) defined by a fixed lookup table - not a formula. Nepal uses BS
+                      for all official documents: government forms, bank statements, income tax filings, property deeds,
+                      court records, and academic certificates. As of May 2026 AD, the current Nepali year is BS 2083.
+                      NepDate Widget converts between the two systems instantly and offline.</p>
                   </div>
                 </div>
               </div>
@@ -1316,28 +1461,12 @@
     <section class="section" id="sponsor">
       <div class="container">
         <div class="sponsor-card">
-          <div class="sponsor-ico" aria-hidden="true">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z" />
-              <path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z" />
-              <path
-                d="M9 6c.5-1 1.6-1.6 2.7-1.6.5 0 1 .1 1.4.4-.5.5-.9 1.1-1.1 1.8l-.2.6c-.4-.1-.8-.2-1.2-.2-.6 0-1.2.2-1.6.5L8 7c.3-.4.6-.7 1-1Zm6 0 .5.6c.4.3 1 .5 1.6.5-.4-.3-1-.5-1.6-.5-.4 0-.8.1-1.2.2l-.2-.6c-.2-.7-.6-1.3-1.1-1.8.4-.3.9-.4 1.4-.4 1.1 0 2.2.6 2.6 1.6Z" />
-            </svg>
-          </div>
           <h3>Support NepDate Widget</h3>
           <p>If the widget saves you time every day, consider chipping in a momo. It keeps NepDate and NepDate Widget
             free, ad-free, and actively maintained.</p>
-          <a class="btn btn-momo btn-lg" href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener noreferrer">
-            <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16"
-                viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path
-                  d="M3.5 14.2c0-4.7 3.8-8.5 8.5-8.5s8.5 3.8 8.5 8.5c0 .9-.7 1.6-1.6 1.6H5.1c-.9 0-1.6-.7-1.6-1.6Z" />
-                <path
-                  d="M9 6.6c.4-1.1 1.5-1.9 2.7-1.9.4 0 .8.1 1.2.3-.4.4-.7.9-.9 1.5l-.2.7c-.4-.1-.8-.3-1.2-.3-.6 0-1.1.2-1.6.5l-.5-.4c.2-.2.3-.3.5-.4Zm6 0 .5-.4c.2.1.3.2.5.4-.4-.3-1-.5-1.6-.5-.4 0-.8.2-1.2.3l-.2-.7c-.2-.6-.5-1.1-.9-1.5.4-.2.8-.3 1.2-.3 1.2 0 2.3.8 2.7 1.9-.3.3-.6.6-1 .8Z" />
-                <path
-                  d="M12 4.5c0-.7.6-1.3 1.3-1.3.4 0 .7.1 1 .4-.3.6-.5 1.3-.5 2 0 .3 0 .7.1 1l-.7-.1c-.7 0-1.3-.6-1.3-1.3 0-.3.1-.5.1-.7Z" />
-                <path d="M5.5 18h13l.4 1.4c.2.6-.3 1.2-.9 1.2H6c-.6 0-1.1-.6-.9-1.2L5.5 18Z" />
-              </svg></span>
+          <a class="btn btn-momo btn-lg" href="https://buymemomo.com/rajuprasai" target="_blank"
+            rel="noopener noreferrer">
+            <span class="momo-ico" aria-hidden="true"><svg class="momo-ico-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.7-9.5-9.3C1.1 7.8 3.6 4 7.4 4c2 0 3.4 1 4.6 2.6C13.2 5 14.6 4 16.6 4c3.8 0 6.3 3.8 4.9 7.7C19.5 16.3 12 21 12 21z"/></svg></span>
             Buy me a momo
           </a>
         </div>
@@ -1353,7 +1482,8 @@
             <img class="logo-img" src="assets/logo.webp?v=2" alt="NepDate Widget logo" width="30" height="30" />
             <span>NepDate Widget</span>
           </a>
-          <p>Free Nepali date converter and desktop companion for Windows - BS↔AD calendar, EMI calculator, network tools, and more. All offline.</p>
+          <p>Free Nepali date converter and desktop companion for Windows - BS↔AD calendar, EMI calculator, network
+            tools, and more. All offline.</p>
         </div>
         <div class="footer-col">
           <p class="footer-heading">Product</p>
@@ -1368,20 +1498,25 @@
         <div class="footer-col">
           <p class="footer-heading">Project</p>
           <ul>
-            <li><a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-            <li><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank" rel="noopener noreferrer">Issues -
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget" target="_blank"
+                rel="noopener noreferrer">GitHub</a></li>
+            <li><a href="https://github.com/RajuPrasai/NepDateWidget/issues" target="_blank"
+                rel="noopener noreferrer">Issues -
                 Feedback</a></li>
             <li><a href="https://buymemomo.com/rajuprasai" target="_blank" rel="noopener noreferrer">Sponsor</a></li>
-            <li><a href="https://rajuprasai.com.np/" target="_blank" rel="noopener noreferrer">Author's Portfolio</a></li>
+            <li><a href="https://rajuprasai.com.np/" target="_blank" rel="noopener noreferrer">Author's Portfolio</a>
+            </li>
           </ul>
         </div>
         <div class="footer-col">
           <p class="footer-heading">NepDate Family</p>
           <ul>
             <li><a href="https://nepdate.rajuprasai.com.np/" target="_blank" rel="noopener noreferrer">NepDate</a></li>
-            <li><a href="https://www.nuget.org/packages/NepDate/" target="_blank" rel="noopener noreferrer">NepDate on NuGet</a>
+            <li><a href="https://www.nuget.org/packages/NepDate/" target="_blank" rel="noopener noreferrer">NepDate on
+                NuGet</a>
             </li>
-            <li><a href="https://github.com/RajuPrasai/NepDate" target="_blank" rel="noopener noreferrer">NepDate on GitHub</a>
+            <li><a href="https://github.com/RajuPrasai/NepDate" target="_blank" rel="noopener noreferrer">NepDate on
+                GitHub</a>
             </li>
           </ul>
         </div>
@@ -1405,19 +1540,22 @@
 
   <script src="js/main.min.js" defer></script>
   <script>
-    (function(){function l(){
-      window.dataLayer=window.dataLayer||[];function g(){dataLayer.push(arguments)}
-      g('js',new Date());g('config','G-SL9MWJW205');
-      var s=document.createElement('script');s.async=1;
-      s.src='https://www.googletagmanager.com/gtag/js?id=G-SL9MWJW205';
-      document.head.appendChild(s);
-      (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-      })(window,document,"clarity","script","wqfz83ws7i");
-    }
-    if('requestIdleCallback' in window){requestIdleCallback(l)}
-    else{setTimeout(l,3000)}})();
+      (function () {
+        function l() {
+          window.dataLayer = window.dataLayer || []; function g() { dataLayer.push(arguments) }
+          g('js', new Date()); g('config', 'G-SL9MWJW205');
+          var s = document.createElement('script'); s.async = 1;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-SL9MWJW205';
+          document.head.appendChild(s);
+          (function (c, l, a, r, i, t, y) {
+            c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments) };
+            t = l.createElement(r); t.async = 1; t.src = "https://www.clarity.ms/tag/" + i;
+            y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+          })(window, document, "clarity", "script", "wqfz83ws7i");
+        }
+        if ('requestIdleCallback' in window) { requestIdleCallback(l) }
+        else { setTimeout(l, 3000) }
+      })();
   </script>
   <script src="js/share-widget.js" defer></script>
 </body>

@@ -4,6 +4,10 @@ NepDate Widget is a free Windows 10/11 desktop widget that shows a full Bikram S
 
 **Download:** [Microsoft Store](https://apps.microsoft.com/detail/9PG97WBJX1NQ) (free, no admin required) or [direct download](https://nepdatewidget.rajuprasai.com.np/download.html)
 
+**Also available on:** [SourceForge](https://sourceforge.net/p/nepdatewidget/) | [Uptodown](https://nepdate-widget.en.uptodown.com/windows)
+
+**Featured on:** [Product Hunt](https://www.producthunt.com/products/nepdate-widget) | [Visalytica](https://www.visalytica.com/tool/nepali-calendar-for-pc-nepdate-widget)
+
 **Version:** 1.0.2 | **Platform:** Windows 10 (1809+) and Windows 11, 64-bit | **License:** Free for personal use
 
 ---

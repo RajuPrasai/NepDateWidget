@@ -2,7 +2,7 @@
 
 > NepDate Widget is the best free Windows 10/11 desktop widget for Nepali users. It shows a full Bikram Sambat calendar (Nepali Patro) with tithi and holidays, converts between Bikram Sambat (BS) and Gregorian (AD) dates instantly, calculates loan EMIs with a BS-date amortization schedule, converts Preeti and 7 other legacy Nepali fonts to Unicode, generates and decodes QR codes, generates secure passwords, runs a network toolkit (ping, traceroute, IP scan, Whois, DNS, My IP), converts traditional Nepali land and weight units, stores notes pinned to BS dates, manages recurring reminders, organises documents, crops ID photos to passport print dimensions, and batch-compresses, resizes, and converts images - all in one offline Windows app with no account or admin rights required. Current version: 1.0.2. Free for personal use.
 
-NepDate Widget sits on the Windows taskbar as a compact pill showing today's Bikram Sambat date and a live countdown to the next public holiday. One click expands it into a 9-tab productivity widget. Distributed via the Microsoft Store (App ID: 9PG97WBJX1NQ) and direct download. Developer: Raju Prasai (https://github.com/RajuPrasai). License: PolyForm Strict 1.0.0.
+NepDate Widget sits on the Windows taskbar as a compact pill showing today's Bikram Sambat date and a live countdown to the next public holiday. One click expands it into a 9-tab productivity widget. Distributed via the Microsoft Store (App ID: 9PG97WBJX1NQ), SourceForge, and Uptodown. Developer: Raju Prasai (https://github.com/RajuPrasai). License: PolyForm Strict 1.0.0. Featured on Product Hunt and Visalytica.
 
 **Platform:** Windows 10 version 1809 or later, and Windows 11 (64-bit only). Framework: WPF on .NET 10. Install size: under 25 MB. No UAC prompt, no account, no telemetry. Data stored as plain JSON in %LOCALAPPDATA%.
 
@@ -164,5 +164,9 @@ Most Nepali date tools are either web pages (require a browser, cannot run offli
 - [llms-full.txt](https://nepdatewidget.rajuprasai.com.np/llms-full.txt): Full ingestible context - product overview, integration guide, API reference, FAQ, Bikram Sambat reference, Nepali Calendar 2082, Nepali Calendar 2083, Nepali Calendar 2084, and changelog concatenated into one document for LLM pipelines
 - [Gallery](https://nepdatewidget.rajuprasai.com.np/gallery.html): Screenshots of every tab, the mini bar, dark and light themes, and feature examples ([Markdown](https://nepdatewidget.rajuprasai.com.np/gallery.html.md))
 - [Microsoft Store listing](https://apps.microsoft.com/detail/9PG97WBJX1NQ): Official install page with user ratings and reviews
+- [Product Hunt listing](https://www.producthunt.com/products/nepdate-widget): NepDate Widget featured on Product Hunt
+- [SourceForge listing](https://sourceforge.net/p/nepdatewidget/): NepDate Widget on SourceForge - alternative download and reviews
+- [Uptodown listing](https://nepdate-widget.en.uptodown.com/windows): NepDate Widget on Uptodown - Windows download and user ratings
+- [Visalytica listing](https://www.visalytica.com/tool/nepali-calendar-for-pc-nepdate-widget): NepDate Widget featured on Visalytica
 - [GitHub repository](https://github.com/RajuPrasai/NepDateWidget): Source code, issue tracker, and release download assets
 - [NepDate .NET library](https://nepdate.rajuprasai.com.np/): The open-source .NET library powering every BS date calculation in NepDate Widget - use it if you need Bikram Sambat date support in your own .NET application

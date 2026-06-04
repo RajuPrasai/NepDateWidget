@@ -2,7 +2,7 @@
 
 Full documentation for all tools in NepDate Widget, a free Windows 10/11 taskbar widget combining 25+ Nepali productivity tools.
 
-**Download:** [Microsoft Store](https://apps.microsoft.com/detail/9PG97WBJX1NQ) | **Website:** https://nepdatewidget.rajuprasai.com.np/
+**Download:** [Microsoft Store](https://apps.microsoft.com/detail/9PG97WBJX1NQ) | [SourceForge](https://sourceforge.net/p/nepdatewidget/) | [Uptodown](https://nepdate-widget.en.uptodown.com/windows) | **Featured on:** [Product Hunt](https://www.producthunt.com/products/nepdate-widget) | [Visalytica](https://www.visalytica.com/tool/nepali-calendar-for-pc-nepdate-widget) | **Website:** https://nepdatewidget.rajuprasai.com.np/
 
 ---
 
