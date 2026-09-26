@@ -52,6 +52,8 @@ internal static class Win32Interop
     internal const uint EVENT_SYSTEM_FOREGROUND = 3;
     internal const uint WINEVENT_OUTOFCONTEXT = 0x0000;
     internal const uint WINEVENT_SKIPOWNPROCESS = 0x0002;
+    internal const uint EVENT_OBJECT_LOCATIONCHANGE = 0x800B;
+    internal const int OBJID_WINDOW = 0;
 
     // ── Structs ───────────────────────────────────────────────────────────────
     [StructLayout(LayoutKind.Sequential)]
@@ -159,6 +161,18 @@ internal static class Win32Interop
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool EnumWindows(
+        EnumWindowsProc lpEnumFunc,
+        IntPtr lParam);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool IsWindowVisible(IntPtr hWnd);
+
+    internal delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
     // ── DWM / Mica / Dark mode ────────────────────────────────────────────────
     internal const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
     internal const int DWMWA_WINDOW_CORNER_PREFERENCE = 33;
@@ -180,58 +194,137 @@ internal static class Win32Interop
     [DllImport("dwmapi.dll", PreserveSig = true)]
     internal static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
+    // ── DWM cloaking ──────────────────────────────────────────────────────────
+    internal const int DWMWA_CLOAKED = 14;
+
+    [DllImport("dwmapi.dll")]
+    internal static extern int DwmGetWindowAttribute(IntPtr hwnd, int dwAttribute, out int pvAttribute, int cbAttribute);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool IsIconic(IntPtr hWnd);
+
     // ── Fullscreen detection logic ────────────────────────────────────────────
 
     /// <summary>
-    /// Returns true when a true fullscreen application is in the foreground.
-    /// Two detection strategies:
-    ///  1) SHQueryUserNotificationState for D3D games and presentation mode.
-    ///  2) Per-monitor rect comparison for browsers (F11 / YouTube fullscreen).
+    /// Returns true when a fullscreen application is occupying the monitor
+    /// containing the supplied window.
+    ///
+    /// Detection combines Windows' fullscreen notification state with a
+    /// per-monitor top-level window scan. This keeps fullscreen suppression
+    /// tied to the widget's monitor rather than whichever monitor currently
+    /// has the foreground window.
     /// </summary>
-    internal static bool IsForegroundFullscreen()
+    internal static bool IsMonitorFullscreen(IntPtr widgetHwnd)
     {
-        if (SHQueryUserNotificationState(out int state) == 0)
+        if (widgetHwnd == IntPtr.Zero)
         {
-            if (state is QUNS_RUNNING_D3D_FULL_SCREEN or QUNS_PRESENTATION_MODE)
+            return false;
+        }
+
+        IntPtr widgetMonitor = MonitorFromWindow(widgetHwnd, MONITOR_DEFAULTTONEAREST);
+        if (widgetMonitor == IntPtr.Zero)
+        {
+            return false;
+        }
+
+        // Preserve the existing D3D/presentation-mode detection, but only
+        // suppress the widget when the foreground fullscreen state belongs
+        // to the widget's monitor.
+        if (SHQueryUserNotificationState(out int state) == 0 &&
+            state is QUNS_RUNNING_D3D_FULL_SCREEN or QUNS_PRESENTATION_MODE)
+        {
+            IntPtr foregroundWindow = GetForegroundWindow();
+
+            if (foregroundWindow != IntPtr.Zero &&
+                MonitorFromWindow(foregroundWindow, MONITOR_DEFAULTTONEAREST) == widgetMonitor)
             {
                 return true;
             }
         }
 
-        IntPtr hWnd = GetForegroundWindow();
-        if (hWnd == IntPtr.Zero)
+        bool fullscreenFound = false;
+
+        EnumWindows((hWnd, _) =>
         {
-            return false;
-        }
+            if (!IsWindowVisible(hWnd) ||
+                hWnd == widgetHwnd ||
+                hWnd == GetDesktopWindow() ||
+                hWnd == GetShellWindow())
+            {
+                return true;
+            }
 
-        if (hWnd == GetDesktopWindow() || hWnd == GetShellWindow())
-        {
-            return false;
-        }
+            var className = new StringBuilder(256);
+            GetClassName(hWnd, className, className.Capacity);
 
-        var className = new StringBuilder(256);
-        GetClassName(hWnd, className, className.Capacity);
-        if (className.ToString() == "WorkerW")
-        {
-            return false;
-        }
+            if (className.ToString() is "WorkerW" or "Progman")
+            {
+                return true;
+            }
 
-        GetWindowRect(hWnd, out RECT rcApp);
+            // Skip minimized windows and DWM-cloaked windows (Search host, Start menu,
+            // Widgets board, ApplicationFrameHost shells, etc.) — these report
+            // IsWindowVisible == true and are often sized to the full monitor even
+            // though the user can't actually see them.
+            if (IsIconic(hWnd))
+            {
+                return true;
+            }
 
-        IntPtr hMon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
-        var mi = new MONITORINFO { cbSize = Marshal.SizeOf<MONITORINFO>() };
-        if (!GetMonitorInfo(hMon, ref mi))
-        {
-            return false;
-        }
+            if (DwmGetWindowAttribute(hWnd, DWMWA_CLOAKED, out int cloaked, sizeof(int)) == 0 && cloaked != 0)
+            {
+                return true;
+            }
 
-        RECT rcMon = mi.rcMonitor;
-        const int T = 1;
-        return rcApp.Left >= rcMon.Left - T &&
-               rcApp.Top >= rcMon.Top - T &&
-               rcApp.Right <= rcMon.Right + T &&
-               rcApp.Bottom <= rcMon.Bottom + T &&
-               rcApp.Right - rcApp.Left >= rcMon.Right - rcMon.Left - T &&
-               rcApp.Bottom - rcApp.Top >= rcMon.Bottom - rcMon.Top - T;
+            IntPtr windowMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+            if (windowMonitor != widgetMonitor)
+            {
+                return true;
+            }
+
+            if (!GetWindowRect(hWnd, out RECT windowRect))
+            {
+                return true;
+            }
+
+            var monitorInfo = new MONITORINFO
+            {
+                cbSize = Marshal.SizeOf<MONITORINFO>()
+            };
+
+            if (!GetMonitorInfo(widgetMonitor, ref monitorInfo))
+            {
+                return true;
+            }
+
+            if (IsFullscreenRect(windowRect, monitorInfo.rcMonitor))
+            {
+                fullscreenFound = true;
+                return false;
+            }
+
+            return true;
+        }, IntPtr.Zero);
+
+        return fullscreenFound;
+    }
+
+    /// <summary>
+    /// Determines whether a window rectangle covers the monitor rectangle,
+    /// allowing a one-pixel tolerance for window-manager rounding.
+    /// </summary>
+    internal static bool IsFullscreenRect(RECT windowRect, RECT monitorRect)
+    {
+        const int tolerance = 1;
+
+        return windowRect.Left >= monitorRect.Left - tolerance &&
+              windowRect.Top >= monitorRect.Top - tolerance &&
+              windowRect.Right <= monitorRect.Right + tolerance &&
+              windowRect.Bottom <= monitorRect.Bottom + tolerance &&
+              windowRect.Right - windowRect.Left >=
+                  monitorRect.Right - monitorRect.Left - tolerance &&
+              windowRect.Bottom - windowRect.Top >=
+                  monitorRect.Bottom - monitorRect.Top - tolerance;
     }
 }

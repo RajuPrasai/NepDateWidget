@@ -40,6 +40,9 @@ public partial class MainWindow : Window
     private bool _intentionalHide;
     private IntPtr _winEventHook;
     private Win32Interop.WinEventDelegate? _winEventProc;
+    private IntPtr _locationChangeHook;
+    private Win32Interop.WinEventDelegate? _locationChangeProc;
+    private readonly DispatcherTimer _locationChangeDebounce;
 
     // ── Reminders ────────────────────────────────────────────────────────────
     private IReminderService? _reminderService;
@@ -136,6 +139,22 @@ public partial class MainWindow : Window
             Win32Interop.EVENT_SYSTEM_FOREGROUND, Win32Interop.EVENT_SYSTEM_FOREGROUND,
             IntPtr.Zero, _winEventProc,
             0, 0, Win32Interop.WINEVENT_OUTOFCONTEXT | Win32Interop.WINEVENT_SKIPOWNPROCESS);
+
+        _locationChangeDebounce = new DispatcherTimer(DispatcherPriority.Background)
+        {
+            Interval = TimeSpan.FromMilliseconds(60)
+        };
+        _locationChangeDebounce.Tick += (_, _) =>
+        {
+            _locationChangeDebounce.Stop();
+            FullScreenCheck();
+        };
+
+        _locationChangeProc = OnWindowLocationChanged;
+        _locationChangeHook = Win32Interop.SetWinEventHook(
+            Win32Interop.EVENT_OBJECT_LOCATIONCHANGE, Win32Interop.EVENT_OBJECT_LOCATIONCHANGE,
+            IntPtr.Zero, _locationChangeProc,
+            0, 0, Win32Interop.WINEVENT_OUTOFCONTEXT | Win32Interop.WINEVENT_SKIPOWNPROCESS);
     }
 
     // ── Window lifetime ──────────────────────────────────────────────────────
@@ -206,6 +225,12 @@ public partial class MainWindow : Window
             {
                 Win32Interop.UnhookWinEvent(_winEventHook);
                 _winEventHook = IntPtr.Zero;
+            }
+
+            if (_locationChangeHook != IntPtr.Zero)
+            {
+                Win32Interop.UnhookWinEvent(_locationChangeHook);
+                _locationChangeHook = IntPtr.Zero;
             }
 
             SystemEvents.PowerModeChanged -= OnPowerModeChanged;
@@ -633,7 +658,7 @@ public partial class MainWindow : Window
         // apps naturally. The pill, however, is topmost and must be hidden explicitly
         // regardless of whether the shell is currently open.
 
-        if (Win32Interop.IsForegroundFullscreen())
+        if (Win32Interop.IsMonitorFullscreen(_hwnd))
         {
             if (!_hiddenForFullscreen)
             {
@@ -650,6 +675,24 @@ public partial class MainWindow : Window
             Win32Interop.SetWindowPos(_hwnd, Win32Interop.HWND_TOPMOST, 0, 0, 0, 0,
                 Win32Interop.SWP_NOMOVE | Win32Interop.SWP_NOSIZE | Win32Interop.SWP_NOACTIVATE);
         }
+    }
+
+    private void OnWindowLocationChanged(
+        IntPtr hWinEventHook, uint eventType, IntPtr hwnd,
+        int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+    {
+        // Only whole-window moves/resizes — not child UI elements (scrollbars,
+        // carets, progress bars, etc., which fire this constantly).
+        if (idObject != Win32Interop.OBJID_WINDOW || idChild != 0 ||
+            hwnd == IntPtr.Zero || hwnd == _hwnd)
+        {
+            return;
+        }
+
+        // Coalesce bursts (e.g. animated fullscreen transitions fire many of
+        // these in a row) into a single check ~60ms after things settle.
+        _locationChangeDebounce.Stop();
+        _locationChangeDebounce.Start();
     }
 
     // ── System events ────────────────────────────────────────────────────────
